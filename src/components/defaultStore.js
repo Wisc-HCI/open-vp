@@ -65,7 +65,6 @@ export const ProgrammingSlice = (set) => ({
     programData: {},
     transferBlock: (data, sourceInfo, destInfo) => {
       set((state) => {
-        console.log({ data, sourceInfo, destInfo });
         let newSpawn = false;
         let id = data.id;
 
@@ -91,8 +90,6 @@ export const ProgrammingSlice = (set) => ({
           );
         } else {
           if (destIsList) {
-            const properties = state.programData[destInfo.parentId].properties;
-            console.log(properties)
             state.programData[destInfo.parentId].properties[destInfo.fieldInfo.value].splice(destInfo.idx, 0, id);
           } else {
             state.programData[destInfo.parentId].properties[destInfo.fieldInfo.value] = id;
@@ -106,7 +103,6 @@ export const ProgrammingSlice = (set) => ({
           } else if (!newSpawn && sourceIsList) {
             state.programData[sourceInfo.parentId].properties[destInfo.fieldInfo.value].splice(sourceInfo.idx, 1);
           } else if (!newSpawn && !sourceIsList) {
-            console.log("!newSpawn && !sourceIsList");
             state.programData[sourceInfo.parentId][sourceInfo.fieldInfo.value] = null;
           }
         }
@@ -122,12 +118,36 @@ export const ProgrammingSlice = (set) => ({
           }
         });
       }),
+    createPlacedBlock: (data, x, y) => {
+      set((state) => {
+        let id = data.id;
+
+        if (!state.programData[data.id]) {
+          // Clone the data with a new id
+          id = generateUuid(data.type);
+          state.programData[id] = { ...data, id };
+        }
+
+        state.programData[id].position = {x, y};
+      })
+    },
     updateItemName: (id, value) => {
       set((state) => {
-        console.log(id)
         const item = state.programData[id];
         const usedId = (item.dataType === DATA_TYPES.REFERENCE || item.dataType === DATA_TYPES.CALL) ? item.ref : id;
         state.programData[usedId].name = value;
+      })
+    },
+    updateItemSelected: (id, value) => {
+      set((state) => {
+        const item = state.programData[id];
+        const usedId = (item.dataType === DATA_TYPES.REFERENCE || item.dataType === DATA_TYPES.CALL) ? item.ref : id;
+        state.programData[usedId].selected = value;
+      })
+    },
+    updateItemEditing: (id, value) => {
+      set((state) => {
+        state.programData[id].editing = value;
       })
     }
   })

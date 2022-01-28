@@ -12,7 +12,8 @@ export const DropRegion = ({
   idx,
   minHeight,
   hideText,
-  disabled
+  disabled,
+  highlightColor
 }) => {
   const transferBlock = useProgrammingStore(transferBlockSelector);
 
@@ -28,7 +29,7 @@ export const DropRegion = ({
           idx
         });
       },
-      canDrop: () => !disabled,
+      canDrop: (item) => !disabled && !item.onCanvas,
       collect: (monitor) => ({
         isOver: monitor.isOver(),
         item: monitor.getItem()
@@ -37,7 +38,7 @@ export const DropRegion = ({
     [fieldInfo, parentId, idx, disabled]
   );
 
-  const validDropType = fieldInfo.accepts.includes(dropProps.item?.data?.type);
+  const validDropType = fieldInfo.accepts.includes(dropProps.item?.data?.type) && !dropProps.item?.onCanvas;
 
   const renderedData = data
     ? data
@@ -72,6 +73,7 @@ export const DropRegion = ({
           parentId={parentId}
           fieldInfo={fieldInfo}
           bounded
+          highlightColor={highlightColor}
         />
       ) : renderedData ? (
         <PreviewBlock
@@ -80,6 +82,7 @@ export const DropRegion = ({
           parentId={parentId}
           fieldInfo={fieldInfo}
           bounded
+          highlightColor={highlightColor}
         />
       ) : hideText ? null : (
         fieldInfo.name

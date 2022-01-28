@@ -1,10 +1,6 @@
-import { useState, useCallback } from "react";
-import { DropZone } from "./DropZone";
-import { List } from "./List";
-import { forwardRef } from "react";
-import { DATA_TYPES } from "../Constants";
-import { FiSquare, FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiChevronRight } from "react-icons/fi";
-import { Box, DropButton, TextInput, Button } from "grommet";
+import { useCallback } from "react";
+import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiChevronRight } from "react-icons/fi";
+import { Box, DropButton, Button } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { useSpring, animated } from '@react-spring/web';
 import { config } from 'react-spring';
@@ -114,7 +110,7 @@ const NameEditToggleExtra = ({isEditing, setIsEditing, locked, inTopLevel}) => {
 const CollapseToggleExtra = ({isCollapsed, setIsCollapsed, inTopLevel}) => {
 
     const carrotStyle = useSpring({
-        rotate: inDrawer || !expanded ? '0deg' : '90deg',
+        rotate: isCollapsed ? '0deg' : '90deg',
         config: config.wobbly
     });
 
@@ -144,7 +140,7 @@ const CollapseToggleExtra = ({isCollapsed, setIsCollapsed, inTopLevel}) => {
     }
 }
 
-const IndicatorExtra = ({value, label}) => {
+const IndicatorExtra = ({value, label, inTopLevel}) => {
 
     if (inTopLevel) {
         return (
@@ -164,7 +160,18 @@ const IndicatorExtra = ({value, label}) => {
             <Button 
                 plain
                 style={{padding:'5pt 10pt 5pt 10pt'}} 
-                icon={carrot} 
+                icon={
+                    <Box 
+                        height="25px" 
+                        justify='center'
+                        align='end' 
+                        border={{color:'#00000088'}}
+                        background="#00000011"
+                        round='full'
+                        style={{color:'white'}}>
+                        {value}
+                    </Box>
+                } 
                 label={label}
             />
         )
@@ -226,7 +233,7 @@ const ButtonSwitch = ({data, blockSpec, isEditing, setIsEditing, isCollapsed, se
     } else if (feature?.type === EXTRA_TYPES.FUNCTION_BUTTON) {
         return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled}/>
     } else if (feature?.type === EXTRA_TYPES.INDICATOR) {
-        return <IndicatorExtra value={feature.accessor(data)} label={feature.label} interactionDisabled={interactionDisabled}/>
+        return <IndicatorExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled}/>
     } else if (feature?.type === EXTRA_TYPES.DROPDOWN) {
         return <DropdownExtra 
                     data={data} 
@@ -245,7 +252,6 @@ const ButtonSwitch = ({data, blockSpec, isEditing, setIsEditing, isCollapsed, se
 }
   
 export const ExtraBar = ({data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, interactionDisabled}) => {
-    console.log(interactionDisabled)
     return (
         <Box direction='row'>
             {blockSpec?.extras?.map((extra,extraIdx)=>(

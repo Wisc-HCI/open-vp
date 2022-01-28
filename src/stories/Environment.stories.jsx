@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES } from '../components';
-import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal, FiSquare, FiEdit3 } from "react-icons/fi";
+import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal } from "react-icons/fi";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -129,7 +129,7 @@ Simple.args = {
         },
         children: {
           name: "Children",
-          accepts: ["operationType"],
+          accepts: ["operationType",'functionType'],
           default: [],
           isList: true
         }
@@ -183,7 +183,9 @@ Simple.args = {
       },
       position: { x: 0, y: 10 },
       canDelete: false,
-      canEdit: true
+      canEdit: true,
+      selected: false,
+      editing: false,
     },
     "655sssefs": {
       id: "655sssefs",
@@ -202,7 +204,9 @@ Simple.args = {
       },
       position: { x: 300, y: 10 },
       canDelete: true,
-      canEdit: true
+      canEdit: true,
+      selected: true,
+      editing: false,
       
     },
     "2dfsessfs": {
@@ -217,6 +221,8 @@ Simple.args = {
       },
       canDelete: true,
       canEdit: true,
+      selected: true,
+      editing: false,
     },
     "6dewwwwww": {
       id: "6dewwwwww",
@@ -225,6 +231,8 @@ Simple.args = {
       dataType: DATA_TYPES.INSTANCE,
       canDelete: true,
       canEdit: true,
+      selected: false,
+      editing: false,
     },
     "pspssse32": {
       id: "pspssse32",
@@ -233,6 +241,8 @@ Simple.args = {
       dataType: DATA_TYPES.INSTANCE,
       canDelete: true,
       canEdit: true,
+      selected: false,
+      editing: false,
     }
   },
 };

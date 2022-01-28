@@ -190,7 +190,7 @@ export const Drawer = ({ highlightColor }) => {
                         <List data={blocks} border={false} style={{ padding: 5, width: 235 }} margin='none' pad='none'>
                             {(block, idx) => (
                                 <Box animation={{ type: 'fadeIn', delay: idx * 100 }} style={{ marginBottom: 5, width: 225 }}>
-                                    <Block staticData={block} parentId="drawer" bounded/>
+                                    <Block staticData={block} parentId="drawer" bounded highlightColor={highlightColor}/>
                                 </Box>
                             )}
                         </List>

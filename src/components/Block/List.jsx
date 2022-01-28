@@ -1,7 +1,7 @@
 import { Block } from ".";
 import { DropRegion } from "./DropRegion";
 
-export const List = ({ ids, parentId, fieldInfo, interactionDisabled }) => {
+export const List = ({ ids, parentId, fieldInfo, interactionDisabled, highlightColor }) => {
   // const setField = useStore((store) => store.setField);
   const minHeight = ids.length === 0 ? 30 : 8;
 
@@ -26,6 +26,7 @@ export const List = ({ ids, parentId, fieldInfo, interactionDisabled }) => {
         minHeight={minHeight}
         disabled={interactionDisabled}
         hideText
+        highlightColor={highlightColor}
       />
       {ids.map((id, idx) => (
         <Block
@@ -35,6 +36,7 @@ export const List = ({ ids, parentId, fieldInfo, interactionDisabled }) => {
           fieldInfo={fieldInfo}
           idx={idx}
           bounded
+          highlightColor={highlightColor}
           after={
             <DropRegion
               key={`dropzone-${idx}`}
@@ -45,6 +47,7 @@ export const List = ({ ids, parentId, fieldInfo, interactionDisabled }) => {
               minHeight={8}
               hideText
               disabled={interactionDisabled}
+              highlightColor={highlightColor}
             />
           }
         />

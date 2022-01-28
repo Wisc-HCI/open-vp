@@ -5,7 +5,8 @@ export const DropZone = ({
   parentId,
   fieldInfo,
   idx,
-  interactionDisabled
+  interactionDisabled,
+  highlightColor
 }) => {
   return (
     <div
@@ -28,6 +29,7 @@ export const DropZone = ({
         minHeight={30}
         bounded
         disabled={id !== null || interactionDisabled}
+        highlightColor={highlightColor}
       />
     </div>
   );

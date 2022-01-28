@@ -5,6 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { ProgrammingProvider } from "./ProgrammingContext";
 import { Grommet } from "grommet";
+import {ReactFlowProvider} from "react-flow-renderer";
 
 export default function Environment({ store, highlightColor }) {
 
@@ -48,15 +49,16 @@ export default function Environment({ store, highlightColor }) {
               margin: 0,
               height: "100%",
               width: "100%",
-              backgroundColor: "blue",
               display: "flex",
               flexDirection: "row"
             }}
           >
             <Drawer highlightColor={highlightColor}/>
-            <Canvas />
+            <ReactFlowProvider>
+              <Canvas highlightColor={highlightColor}/>
+            </ReactFlowProvider>
           </div>
-          <DragLayer />
+          <DragLayer highlightColor={highlightColor}/>
         </DndProvider>
       </ProgrammingProvider>
     </Grommet>

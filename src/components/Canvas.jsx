@@ -2,18 +2,21 @@ import ReactFlow, {
     MiniMap,
     Controls,
     Background,
-    ReactFlowProvider
+    useReactFlow
   } from "react-flow-renderer";
+  import { useDrop } from 'react-dnd';
   import { useProgrammingStore } from "./ProgrammingContext";
   import { useMemo } from "react";
   import { VisualBlock } from "./Block";
   import { DATA_TYPES } from "./Constants";
+
+  const CanvasNode = ({data}) => {
+    const {highlightColor, ...rest} = data;
+    return (
+      <VisualBlock data={rest} x={0} y={0} typeSpec={rest.typeSpec} onCanvas highlightColor={highlightColor}/>
+  )};
   
-  const CanvasNode = ({ data }) => (
-    <VisualBlock data={data} x={0} y={0} typeSpec={data.typeSpec} onCanvas />
-  );
-  
-  export const Canvas = () => {
+  export const Canvas = ({highlightColor}) => {
     const nodes = useProgrammingStore((store) =>
       Object.values(store.programData)
         .map((data) => {
@@ -32,19 +35,41 @@ import ReactFlow, {
             id: data.id,
             position:data.position,
             type: 'canvasNode',
-            data: { ...data, ref, typeSpec: {...typeSpec, color, onCanvas}}
+            data: { ...data, highlightColor, ref, typeSpec: {...typeSpec, color, onCanvas}}
           }
         })
         .filter((data) => data.data.typeSpec?.onCanvas)
     );
+
+    const acceptTypes = useProgrammingStore(store=>Object.entries(store.programSpec.objectTypes)
+      .filter(([_,objectType])=>objectType.instanceBlock?.onCanvas || objectType.referenceBlock?.onCanvas || objectType.callBlock?.onCanvas)
+      .map(([objectKey])=>objectKey))
     
     const moveNode = useProgrammingStore((store) => store.moveBlock);
+    const createPlacedNode = useProgrammingStore((store) => store.createPlacedBlock);
+
+    const {project} = useReactFlow();
+
+    const drop = useDrop({
+      accept: acceptTypes,
+      canDrop: (item) => item.onCanvas,
+      drop: (item, monitor) => {
+          const clientOffset = monitor.getClientOffset();
+          const position = project({
+              x: clientOffset.x - 350,
+              y: clientOffset.y,
+          });
+          createPlacedNode(item.data,position.x,position.y)
+      }
+    })[1]
   
     return (
-      <ReactFlowProvider>
+      
         <div style={{ backgroundColor: "black", display:'flex', flex:1 }}>
           <ReactFlow
+            ref={drop}
             maxZoom={1.5}
+            minZoom={0.5}
             nodesConnectable={false}
             elementsSelectable={false}
             nodesDraggable={true}
@@ -52,12 +77,8 @@ import ReactFlow, {
             nodes={nodes}
             onConnect={(_) => {}}
             onNodesChange={moveNode}
-            // onLoad={(reactFlowInstance) => {
-            //   reactFlowInstance.fitView();
-            //   reactFlowInstance.zoomTo(1);
-            // }}
             fitViewOnInit
-            defaultZoom={1}
+            defaultZoom={0.5}
             snapToGrid={true}
             snapGrid={[30, 30]}
           >
@@ -81,7 +102,6 @@ import ReactFlow, {
             <Background variant="lines" color="#555" gap={30} />
           </ReactFlow>
         </div>
-      </ReactFlowProvider>
     );
   };
   

@@ -1,7 +1,7 @@
 import { useDragLayer } from "react-dnd";
 import { VisualBlock } from "./Block";
 
-export const DragLayer = () => {
+export const DragLayer = ({highlightColor}) => {
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     currentOffset: monitor.getSourceClientOffset(),
@@ -28,6 +28,7 @@ export const DragLayer = () => {
           data={item.data}
           isDragging={isDragging}
           typeSpec={item.typeSpec}
+          highlightColor={highlightColor}
         />
       )}
     </div>

@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import { PreviewBlock } from './PreviewBlock';
 import { VisualBlock } from "./VisualBlock";
+import { DATA_TYPES } from "..";
 
 const Block = ({
   id,
@@ -13,25 +14,33 @@ const Block = ({
   idx,
   dragDisabled,
   bounded,
-  after
+  after,
+  highlightColor
 }) => {
   const [data, typeSpec] = useProgrammingStore(
     useCallback(
       (state) => {
-        const data = staticData ? staticData : state.programData[id] ? state.programData[id] : null
-        const typeSpec = state.programSpec.objectTypes[data?.type]
+        const data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
+        const typeSpec = state.programSpec.objectTypes[data?.type];
         const refData = data?.ref ? state.programData[data?.ref] : {};
-        return [{...data,refData}, typeSpec]
+        const selected = data?.selected || refData.selected;
+        return [{...data,refData,selected}, typeSpec]
       },
       [id, staticData]
     )
   );
 
+  const onCanvas = data.dataType === DATA_TYPES.REFERENCE
+        ? typeSpec.referenceBlock.onCanvas
+        : data.dataType === DATA_TYPES.CALL 
+        ? typeSpec.callBlock.onCanvas
+        : typeSpec.instanceBlock.onCanvas;
+
   const [dragProps, drag, preview] = useDrag(
     () => ({
       type: data?.type ? data.type : "null",
       item: () => {
-        return { data, typeSpec, parentId, fieldInfo, idx };
+        return { data, typeSpec, parentId, fieldInfo, idx, onCanvas };
       },
       canDrag: !dragDisabled,
       collect: (monitor) => ({ isDragging: monitor.isDragging() })
@@ -49,7 +58,7 @@ const Block = ({
     return (
       <>
         <div hidden={parentId !== "drawer" && dragProps.isDragging} style={{display:'flex',flex:1}}>
-          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded}/>
+          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor}/>
         </div>
         <div hidden={parentId !== "drawer" && dragProps.isDragging} style={{display:'flex'}}>
           {after}
