@@ -6,61 +6,8 @@ import { useProgrammingStore } from "./ProgrammingContext";
 import { Button, List, Box, TextInput, Text } from 'grommet';
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { DATA_TYPES } from './Constants';
+import { instanceTemplateFromSpec, referenceTemplateFromSpec, callTemplateFromSpec } from './Generators';
 
-const instanceTemplateFromSpec = (type, objectSpec) => {
-    let data = { 
-        id: type, 
-        type, 
-        dataType: DATA_TYPES.INSTANCE, 
-        properties:{}, 
-        name: `New ${objectSpec.name}`,
-        canDelete: true,
-        canEdit: true
-    };
-    if (objectSpec.properties) {
-        Object.entries(objectSpec.properties).forEach(([propKey, propInfo]) => {
-            data.properties[propKey] = propInfo.default
-        })
-    }
-    if (objectSpec.instanceBlock.onCanvas) {
-        data.position = { x: 0, y: 0 };
-    }
-    return data;
-};
-
-const referenceTemplateFromSpec = (type, instanceReference, objectSpec) => {
-    let data = { 
-        id: type, 
-        type, 
-        ref: instanceReference.id, 
-        dataType: DATA_TYPES.REFERENCE,
-        canDelete: true,
-        canEdit: true
-    };
-    if (objectSpec.referenceBlock.onCanvas) {
-        data.position = { x: 0, y: 0 };
-    }
-    return data;
-};
-
-const callTemplateFromSpec = (type, functionReference, objectSpec) => {
-    let data = { 
-        id: type, 
-        type, 
-        ref: functionReference.id, 
-        dataType: DATA_TYPES.CALL, 
-        properties:{},
-        canDelete: true,
-        canEdit: true
-    };
-    if (objectSpec.callBlock.onCanvas) {
-        data.position = { x: 0, y: 0 };
-    }
-    functionReference.arguments && Object.entries(functionReference.arguments).forEach(([argKey, argInfo]) => {
-        data.properties[argKey] = argInfo.default
-    })
-    return data;
-};
 
 const TipContent = ({ message }) => (
     <Box direction="row" align="center">
@@ -115,8 +62,7 @@ export const Drawer = ({ highlightColor }) => {
                 })
             }
         }
-
-        return blocks
+        return blocks.filter(block=>block.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === '')
     });
 
     const hlcolor = highlightColor ? highlightColor : 'cyan';
@@ -190,7 +136,7 @@ export const Drawer = ({ highlightColor }) => {
                         <List data={blocks} border={false} style={{ padding: 5, width: 235 }} margin='none' pad='none'>
                             {(block, idx) => (
                                 <Box animation={{ type: 'fadeIn', delay: idx * 100 }} style={{ marginBottom: 5, width: 225 }}>
-                                    <Block staticData={block} parentId="drawer" bounded highlightColor={highlightColor}/>
+                                    <Block staticData={block} parentId="spawner" bounded highlightColor={highlightColor} context={[]}/>
                                 </Box>
                             )}
                         </List>

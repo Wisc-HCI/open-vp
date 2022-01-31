@@ -2,6 +2,7 @@ import { useProgrammingStore } from "../ProgrammingContext";
 import { useDrop } from "react-dnd";
 import { Block, PreviewBlock } from "./index";
 import { useCallback } from "react";
+import { isEqual, intersection } from 'lodash';
 
 const transferBlockSelector = (state) => state.transferBlock;
 
@@ -13,7 +14,8 @@ export const DropRegion = ({
   minHeight,
   hideText,
   disabled,
-  highlightColor
+  highlightColor,
+  context
 }) => {
   const transferBlock = useProgrammingStore(transferBlockSelector);
 
@@ -29,7 +31,7 @@ export const DropRegion = ({
           idx
         });
       },
-      canDrop: (item) => !disabled && !item.onCanvas,
+      canDrop: (item) => !disabled && !item.onCanvas && isEqual(intersection(context,item.context),item.context),
       collect: (monitor) => ({
         isOver: monitor.isOver(),
         item: monitor.getItem()
@@ -38,7 +40,7 @@ export const DropRegion = ({
     [fieldInfo, parentId, idx, disabled]
   );
 
-  const validDropType = fieldInfo.accepts.includes(dropProps.item?.data?.type) && !dropProps.item?.onCanvas;
+  const validDropType = fieldInfo.accepts.includes(dropProps.item?.data?.type) && !dropProps.item?.onCanvas && isEqual(intersection(context,dropProps.item.context),dropProps.item.context);
 
   const renderedData = data
     ? data
@@ -74,6 +76,7 @@ export const DropRegion = ({
           fieldInfo={fieldInfo}
           bounded
           highlightColor={highlightColor}
+          context={context}
         />
       ) : renderedData ? (
         <PreviewBlock
@@ -83,6 +86,7 @@ export const DropRegion = ({
           fieldInfo={fieldInfo}
           bounded
           highlightColor={highlightColor}
+          context={context}
         />
       ) : hideText ? null : (
         fieldInfo.name

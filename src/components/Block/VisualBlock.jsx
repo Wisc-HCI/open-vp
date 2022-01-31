@@ -4,13 +4,14 @@ import { List } from "./List";
 import { forwardRef } from "react";
 import { DATA_TYPES, TYPES } from "../Constants";
 import { FiSquare } from "react-icons/fi";
-import { TextInput } from "grommet";
+import { TextInput, Box } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { ExtraBar } from "./ExtraBar";
 import { Selectable } from "./Selectable";
+import { Block } from ".";
 
 export const VisualBlock = forwardRef(
-    ({ data, x, y, scale, typeSpec, onCanvas, interactionDisabled, bounded, highlightColor }, ref) => {
+    ({ data, x, y, scale, typeSpec, onCanvas, interactionDisabled, bounded, highlightColor, context }, ref) => {
       const blockSpec = data.dataType === DATA_TYPES.REFERENCE
         ? typeSpec.referenceBlock 
         : data.dataType === DATA_TYPES.CALL 
@@ -22,8 +23,6 @@ export const VisualBlock = forwardRef(
 
       const updateItemName = useProgrammingStore(store=>store.updateItemName);
       const setIsEditing = useProgrammingStore(store=>store.updateItemEditing);
-
-      // const setIsSelected = useProgrammingStore(store=>store.updateItemSelected);
 
       const Icon = blockSpec.icon ? blockSpec.icon : FiSquare;
 
@@ -69,28 +68,33 @@ export const VisualBlock = forwardRef(
                 setIsCollapsed={setIsCollapsed}/>
             )}
           </div>
-          {data.dataType === DATA_TYPES.INSTANCE && typeSpec.type === TYPES.FUNCTION && (
+          {data.dataType === DATA_TYPES.INSTANCE && typeSpec.type === TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length && (
             <div 
               style={{
                 borderRadius: 4,
-                width: 'inherit',
+                display:'flex',
                 margin: 4,
                 padding: 5,
                 backgroundColor: "rgba(0,0,0,0.2)"
               }}
             >
-              
+              {data.argumentBlockData.map((argBlockData,argIdx)=>(
+                <Box key={argIdx} animation={{ type: 'fadeIn', delay: argIdx * 100 }} style={{ marginBottom: 5, display:'flex' }}>
+                  <Block staticData={argBlockData} parentId='spawner' bounded highlightColor={highlightColor} context={context}/>
+                </Box>
+              ))}
             </div>
           )}
-          {data.refData?.arguments && Object.entries(data.refData?.arguments).map(([argKey,argInfo])=>{
+          {data.dataType===DATA_TYPES.CALL && data.argumentBlockData.map((argInfo,argIdx)=>{
             return (
               <DropZone
-                  key={argKey}
-                  id={data.properties[argKey]}
-                  fieldInfo={{...argInfo,value:argKey}}
+                  key={argIdx}
+                  id={data.properties[argInfo.ref]}
+                  fieldInfo={{name:argInfo.name,value:argInfo.ref,accepts:[argInfo.type]}}
                   parentId={data.id}
                   interactionDisabled={interactionDisabled}
                   highlightColor={highlightColor}
+                  context={context}
               />
             )
           })}
@@ -104,6 +108,7 @@ export const VisualBlock = forwardRef(
                   parentId={data.id}
                   interactionDisabled={interactionDisabled}
                   highlightColor={highlightColor}
+                  context={context}
                 />
               );
             } else {
@@ -115,6 +120,7 @@ export const VisualBlock = forwardRef(
                   parentId={data.id}
                   interactionDisabled={interactionDisabled}
                   highlightColor={highlightColor}
+                  context={context}
                 />
               );
             }

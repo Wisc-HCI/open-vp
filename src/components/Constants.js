@@ -2,7 +2,8 @@
 export const DATA_TYPES = {
     INSTANCE: 0,
     REFERENCE: 1,
-    CALL: 2
+    CALL: 2,
+    ARGUMENT: 3
 }
 
 export const TYPES = {

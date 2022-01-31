@@ -192,13 +192,7 @@ Simple.args = {
       name: 'MyFunction',
       type: "functionType",
       dataType: DATA_TYPES.INSTANCE,
-      arguments: {
-        s3siakawme: {
-          name: 'Hat',
-          accepts: ['hatType'],
-          default: null
-        }
-      },
+      arguments: ['s3siakawme'],
       properties: {
         children: []
       },
@@ -208,6 +202,16 @@ Simple.args = {
       selected: true,
       editing: false,
       
+    },
+    "s3siakawme" : {
+      id: "s3siakawme",
+      name: 'Passed Hat',
+      type: "hatType",
+      dataType: DATA_TYPES.ARGUMENT,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
     },
     "2dfsessfs": {
       id: "2dfsessfs",

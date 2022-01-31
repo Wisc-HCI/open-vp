@@ -5,6 +5,7 @@ import { getEmptyImage } from "react-dnd-html5-backend";
 import { PreviewBlock } from './PreviewBlock';
 import { VisualBlock } from "./VisualBlock";
 import { DATA_TYPES } from "..";
+import { referenceTemplateFromSpec } from "../Generators";
 
 const Block = ({
   id,
@@ -15,7 +16,8 @@ const Block = ({
   dragDisabled,
   bounded,
   after,
-  highlightColor
+  highlightColor,
+  context
 }) => {
   const [data, typeSpec] = useProgrammingStore(
     useCallback(
@@ -24,11 +26,20 @@ const Block = ({
         const typeSpec = state.programSpec.objectTypes[data?.type];
         const refData = data?.ref ? state.programData[data?.ref] : {};
         const selected = data?.selected || refData.selected;
-        return [{...data,refData,selected}, typeSpec]
+        const argumentBlocks = data?.arguments ? data.arguments : refData?.arguments ? refData.arguments: [];
+        const argumentBlockData = argumentBlocks.map((instanceId)=>{
+          const inst = state.programData[instanceId];
+          const instType = state.programSpec.objectTypes[inst.type];
+          return referenceTemplateFromSpec(inst.type,inst,instType)
+        })
+        return [{...data,refData,selected,argumentBlockData}, typeSpec]
       },
       [id, staticData]
     )
   );
+
+  const blockContext = data.arguments ? data.arguments : [];
+  const wholeContext = [...context,...blockContext];
 
   const onCanvas = data.dataType === DATA_TYPES.REFERENCE
         ? typeSpec.referenceBlock.onCanvas
@@ -40,7 +51,7 @@ const Block = ({
     () => ({
       type: data?.type ? data.type : "null",
       item: () => {
-        return { data, typeSpec, parentId, fieldInfo, idx, onCanvas };
+        return { data, typeSpec, parentId, fieldInfo, idx, onCanvas, context:wholeContext };
       },
       canDrag: !dragDisabled,
       collect: (monitor) => ({ isDragging: monitor.isDragging() })
@@ -57,10 +68,10 @@ const Block = ({
   } else {
     return (
       <>
-        <div hidden={parentId !== "drawer" && dragProps.isDragging} style={{display:'flex',flex:1}}>
-          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor}/>
+        <div hidden={parentId !== "spawner" && dragProps.isDragging} style={{display:'flex',flex:1}}>
+          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext}/>
         </div>
-        <div hidden={parentId !== "drawer" && dragProps.isDragging} style={{display:'flex'}}>
+        <div hidden={parentId !== "spawner" && dragProps.isDragging} style={{display:'flex'}}>
           {after}
         </div>
       </>

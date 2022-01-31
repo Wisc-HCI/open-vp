@@ -64,6 +64,7 @@ export const ProgrammingSlice = (set) => ({
     programSpec: DEFAULT_PROGRAM_SPEC,
     programData: {},
     transferBlock: (data, sourceInfo, destInfo) => {
+      console.log({sourceInfo,destInfo})
       set((state) => {
         let newSpawn = false;
         let id = data.id;
@@ -78,6 +79,7 @@ export const ProgrammingSlice = (set) => ({
         const sourceIsList = sourceInfo.fieldInfo?.isList;
         const destIsList = destInfo.fieldInfo.isList;
 
+        // If both source and dest are the same list, handle this specially
         if (
           destIsList &&
           sourceIsList &&
@@ -89,25 +91,27 @@ export const ProgrammingSlice = (set) => ({
             destInfo.idx
           );
         } else {
+          // Place the value in its new location
           if (destIsList) {
             state.programData[destInfo.parentId].properties[destInfo.fieldInfo.value].splice(destInfo.idx, 0, id);
           } else {
             state.programData[destInfo.parentId].properties[destInfo.fieldInfo.value] = id;
           }
+          // If existing, remove from the previous location
           if (
             !newSpawn &&
             sourceInfo.parentId === destInfo.parentId &&
             sourceInfo.fieldInfo === destInfo.fieldInfo
           ) {
-            // ignore
+            // ignore if dropped in the source
           } else if (!newSpawn && sourceIsList) {
+            // Insert at the right location
             state.programData[sourceInfo.parentId].properties[destInfo.fieldInfo.value].splice(sourceInfo.idx, 1);
           } else if (!newSpawn && !sourceIsList) {
-            state.programData[sourceInfo.parentId][sourceInfo.fieldInfo.value] = null;
+            console.log('removing from previous by setting to null')
+            state.programData[sourceInfo.parentId].properties[sourceInfo.fieldInfo.value] = null;
           }
         }
-
-        // TODO: Handle cases where the parents/fields are the same
       });
     },
     moveBlock: (changes) =>

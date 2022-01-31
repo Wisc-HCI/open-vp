@@ -9,18 +9,19 @@ import ReactFlow, {
   import { useMemo } from "react";
   import { VisualBlock } from "./Block";
   import { DATA_TYPES } from "./Constants";
+  import { referenceTemplateFromSpec } from "./Generators";
 
   const CanvasNode = ({data}) => {
     const {highlightColor, ...rest} = data;
     return (
-      <VisualBlock data={rest} x={0} y={0} typeSpec={rest.typeSpec} onCanvas highlightColor={highlightColor}/>
+      <VisualBlock data={rest} x={0} y={0} typeSpec={rest.typeSpec} onCanvas highlightColor={highlightColor} context={rest.context}/>
   )};
   
   export const Canvas = ({highlightColor}) => {
-    const nodes = useProgrammingStore((store) =>
-      Object.values(store.programData)
+    const nodes = useProgrammingStore((state) =>
+      Object.values(state.programData)
         .map((data) => {
-          const typeSpec = store.programSpec.objectTypes[data.type];
+          const typeSpec = state.programSpec.objectTypes[data.type];
           const blockType = data.dataType === DATA_TYPES.INSTANCE 
             ? 'instanceBlock' 
             : data.dataType === DATA_TYPES.CALL 
@@ -28,25 +29,31 @@ import ReactFlow, {
             : data.dataType === DATA_TYPES.REFERENCE
             ? 'referenceBlock'
             : 'nullBlock'
-          const color = store.programSpec.objectTypes[data.type][blockType]?.color;
-          const onCanvas = store.programSpec.objectTypes[data.type][blockType]?.onCanvas;
-          const ref = data.ref ? store.programData[data.ref] : {};
+          const color = state.programSpec.objectTypes[data.type][blockType]?.color;
+          const onCanvas = state.programSpec.objectTypes[data.type][blockType]?.onCanvas;
+          const ref = data.ref ? state.programData[data.ref] : {};
+          const argumentBlocks = data?.arguments ? data.arguments : ref?.arguments ? ref.arguments: [];
+          const argumentBlockData = argumentBlocks.map((instanceId)=>{
+            const inst = state.programData[instanceId];
+            const instType = state.programSpec.objectTypes[inst.type];
+            return referenceTemplateFromSpec(inst.type,inst,instType)
+          })
           return {
             id: data.id,
             position:data.position,
             type: 'canvasNode',
-            data: { ...data, highlightColor, ref, typeSpec: {...typeSpec, color, onCanvas}}
+            data: { ...data, highlightColor, ref, typeSpec: {...typeSpec, color, onCanvas}, context: data.arguments ? data.arguments : [], argumentBlockData}
           }
         })
         .filter((data) => data.data.typeSpec?.onCanvas)
     );
 
-    const acceptTypes = useProgrammingStore(store=>Object.entries(store.programSpec.objectTypes)
+    const acceptTypes = useProgrammingStore(state=>Object.entries(state.programSpec.objectTypes)
       .filter(([_,objectType])=>objectType.instanceBlock?.onCanvas || objectType.referenceBlock?.onCanvas || objectType.callBlock?.onCanvas)
       .map(([objectKey])=>objectKey))
     
-    const moveNode = useProgrammingStore((store) => store.moveBlock);
-    const createPlacedNode = useProgrammingStore((store) => store.createPlacedBlock);
+    const moveNode = useProgrammingStore((state) => state.moveBlock);
+    const createPlacedNode = useProgrammingStore((state) => state.createPlacedBlock);
 
     const {project} = useReactFlow();
 

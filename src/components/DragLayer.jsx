@@ -29,6 +29,7 @@ export const DragLayer = ({highlightColor}) => {
           isDragging={isDragging}
           typeSpec={item.typeSpec}
           highlightColor={highlightColor}
+          context={item.context}
         />
       )}
     </div>
