@@ -153,6 +153,11 @@ export const ProgrammingSlice = (set) => ({
       set((state) => {
         state.programData[id].editing = value;
       })
+    },
+    updateItemSimpleParameter: (id, parameter, value) => {
+      set((state) => {
+        state.programData[id].parameters[parameter] = value;
+      })
     }
   })
 

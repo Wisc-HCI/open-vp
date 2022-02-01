@@ -32,6 +32,7 @@ const Block = ({
           const instType = state.programSpec.objectTypes[inst.type];
           return referenceTemplateFromSpec(inst.type,inst,instType)
         })
+        // Package up information on the block, data about the corresponding reference (if applicable), and argument blocks it contains
         return [{...data,refData,selected,argumentBlockData}, typeSpec]
       },
       [id, staticData]
@@ -68,10 +69,12 @@ const Block = ({
   } else {
     return (
       <>
+        {/* Hide the visual block if it is not coming from a spawner. The "after" is also hidden, if applicable */}
         <div hidden={parentId !== "spawner" && dragProps.isDragging} style={{display:'flex',flex:1}}>
           <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext}/>
         </div>
         <div hidden={parentId !== "spawner" && dragProps.isDragging} style={{display:'flex'}}>
+          {/* 'after' is usually a drop region in the case of lists */}
           {after}
         </div>
       </>
