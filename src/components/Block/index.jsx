@@ -61,9 +61,11 @@ const Block = ({
     [data, typeSpec, parentId, fieldInfo, idx, dragDisabled]
   );
 
+  const hidden = parentId !== 'spawner' && dragProps.isDragging;
+
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: false });
-  }, [preview]);
+  }, [preview, getEmptyImage]);
 
   if (!data) {
     return null;
@@ -71,10 +73,10 @@ const Block = ({
     return (
       <>
         {/* Hide the visual block if it is not coming from a spawner. The "after" is also hidden, if applicable */}
-        <div hidden={parentId !== "spawner" && dragProps.isDragging} style={{display:'flex',flex:1}}>
+        <div hidden={hidden} style={{display:'flex',flex:1,display:hidden?'none':null}}>
           <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext} interactionDisabled={interactionDisabled}/>
         </div>
-        <div hidden={parentId !== "spawner" && dragProps.isDragging} style={{display:'flex'}}>
+        <div hidden={hidden} style={{display:'flex',display:hidden?'none':null}}>
           {/* 'after' is usually a drop region in the case of lists */}
           {after}
         </div>

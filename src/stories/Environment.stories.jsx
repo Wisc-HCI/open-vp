@@ -38,6 +38,11 @@ Simple.args = {
         icon: FiBriefcase,
         collapse: true,
         extras: [
+          { 
+            type: EXTRA_TYPES.INDICATOR,
+            accessor: (data)=>data.properties.children.length,
+            label: 'Size'
+          },
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
@@ -50,7 +55,12 @@ Simple.args = {
                 type: EXTRA_TYPES.DROPDOWN,
                 contents: [
                   EXTRA_TYPES.NAME_EDIT_TOGGLE,
-                  EXTRA_TYPES.LOCKED_INDICATOR
+                  EXTRA_TYPES.LOCKED_INDICATOR,
+                  { 
+                    type: EXTRA_TYPES.INDICATOR,
+                    accessor: (data)=>data.properties.children.length,
+                    label: 'Size'
+                  },
                 ]
               }
             ]
