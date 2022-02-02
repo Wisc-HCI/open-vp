@@ -27,6 +27,8 @@ var _Block = require("./Block");
 
 var _Constants = require("./Constants");
 
+var _Generators = require("./Generators");
+
 var _excluded = ["highlightColor"];
 
 var CanvasNode = function CanvasNode(_ref) {
@@ -39,21 +41,28 @@ var CanvasNode = function CanvasNode(_ref) {
     y: 0,
     typeSpec: rest.typeSpec,
     onCanvas: true,
-    highlightColor: highlightColor
+    highlightColor: highlightColor,
+    context: rest.context
   });
 };
 
 var Canvas = function Canvas(_ref2) {
   var highlightColor = _ref2.highlightColor;
-  var nodes = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
-    return Object.values(store.programData).map(function (data) {
-      var _store$programSpec$ob, _store$programSpec$ob2;
+  var nodes = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return Object.values(state.programData).map(function (data) {
+      var _state$programSpec$ob, _state$programSpec$ob2;
 
-      var typeSpec = store.programSpec.objectTypes[data.type];
+      var typeSpec = state.programSpec.objectTypes[data.type];
       var blockType = data.dataType === _Constants.DATA_TYPES.INSTANCE ? 'instanceBlock' : data.dataType === _Constants.DATA_TYPES.CALL ? 'callBlock' : data.dataType === _Constants.DATA_TYPES.REFERENCE ? 'referenceBlock' : 'nullBlock';
-      var color = (_store$programSpec$ob = store.programSpec.objectTypes[data.type][blockType]) === null || _store$programSpec$ob === void 0 ? void 0 : _store$programSpec$ob.color;
-      var onCanvas = (_store$programSpec$ob2 = store.programSpec.objectTypes[data.type][blockType]) === null || _store$programSpec$ob2 === void 0 ? void 0 : _store$programSpec$ob2.onCanvas;
-      var ref = data.ref ? store.programData[data.ref] : {};
+      var color = (_state$programSpec$ob = state.programSpec.objectTypes[data.type][blockType]) === null || _state$programSpec$ob === void 0 ? void 0 : _state$programSpec$ob.color;
+      var onCanvas = (_state$programSpec$ob2 = state.programSpec.objectTypes[data.type][blockType]) === null || _state$programSpec$ob2 === void 0 ? void 0 : _state$programSpec$ob2.onCanvas;
+      var ref = data.ref ? state.programData[data.ref] : {};
+      var argumentBlocks = data !== null && data !== void 0 && data.arguments ? data.arguments : ref !== null && ref !== void 0 && ref.arguments ? ref.arguments : [];
+      var argumentBlockData = argumentBlocks.map(function (instanceId) {
+        var inst = state.programData[instanceId];
+        var instType = state.programSpec.objectTypes[inst.type];
+        return (0, _Generators.referenceTemplateFromSpec)(inst.type, inst, instType);
+      });
       return {
         id: data.id,
         position: data.position,
@@ -64,7 +73,9 @@ var Canvas = function Canvas(_ref2) {
           typeSpec: (0, _objectSpread2.default)((0, _objectSpread2.default)({}, typeSpec), {}, {
             color: color,
             onCanvas: onCanvas
-          })
+          }),
+          context: data.arguments ? data.arguments : [],
+          argumentBlockData: argumentBlockData
         })
       };
     }).filter(function (data) {
@@ -73,8 +84,8 @@ var Canvas = function Canvas(_ref2) {
       return (_data$data$typeSpec = data.data.typeSpec) === null || _data$data$typeSpec === void 0 ? void 0 : _data$data$typeSpec.onCanvas;
     });
   });
-  var acceptTypes = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
-    return Object.entries(store.programSpec.objectTypes).filter(function (_ref3) {
+  var acceptTypes = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return Object.entries(state.programSpec.objectTypes).filter(function (_ref3) {
       var _objectType$instanceB, _objectType$reference, _objectType$callBlock;
 
       var _ref4 = (0, _slicedToArray2.default)(_ref3, 2),
@@ -89,11 +100,11 @@ var Canvas = function Canvas(_ref2) {
       return objectKey;
     });
   });
-  var moveNode = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
-    return store.moveBlock;
+  var moveNode = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.moveBlock;
   });
-  var createPlacedNode = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
-    return store.createPlacedBlock;
+  var createPlacedNode = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.createPlacedBlock;
   });
 
   var _useReactFlow = (0, _reactFlowRenderer.useReactFlow)(),

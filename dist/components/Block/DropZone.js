@@ -13,7 +13,8 @@ var DropZone = function DropZone(_ref) {
       fieldInfo = _ref.fieldInfo,
       idx = _ref.idx,
       interactionDisabled = _ref.interactionDisabled,
-      highlightColor = _ref.highlightColor;
+      highlightColor = _ref.highlightColor,
+      context = _ref.context;
   return /*#__PURE__*/React.createElement("div", {
     className: "nodrag",
     style: {
@@ -33,7 +34,8 @@ var DropZone = function DropZone(_ref) {
     minHeight: 30,
     bounded: true,
     disabled: id !== null || interactionDisabled,
-    highlightColor: highlightColor
+    highlightColor: highlightColor,
+    context: context
   }));
 };
 

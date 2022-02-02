@@ -40,7 +40,8 @@ var DragLayer = function DragLayer(_ref) {
     data: item.data,
     isDragging: isDragging,
     typeSpec: item.typeSpec,
-    highlightColor: highlightColor
+    highlightColor: highlightColor,
+    context: item.context
   }));
 };
 

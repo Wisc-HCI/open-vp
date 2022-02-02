@@ -76,6 +76,10 @@ var ProgrammingSlice = function ProgrammingSlice(set) {
     programSpec: DEFAULT_PROGRAM_SPEC,
     programData: {},
     transferBlock: function transferBlock(data, sourceInfo, destInfo) {
+      console.log({
+        sourceInfo: sourceInfo,
+        destInfo: destInfo
+      });
       set(function (state) {
         var _sourceInfo$fieldInfo;
 
@@ -92,25 +96,28 @@ var ProgrammingSlice = function ProgrammingSlice(set) {
         }
 
         var sourceIsList = (_sourceInfo$fieldInfo = sourceInfo.fieldInfo) === null || _sourceInfo$fieldInfo === void 0 ? void 0 : _sourceInfo$fieldInfo.isList;
-        var destIsList = destInfo.fieldInfo.isList;
+        var destIsList = destInfo.fieldInfo.isList; // If both source and dest are the same list, handle this specially
 
         if (destIsList && sourceIsList && sourceInfo.parentId === destInfo.parentId) {
           state.programData[destInfo.parentId].properties[destInfo.fieldInfo.value] = move(state.programData[destInfo.parentId].properties[destInfo.fieldInfo.value], sourceInfo.idx, destInfo.idx);
         } else {
+          // Place the value in its new location
           if (destIsList) {
             state.programData[destInfo.parentId].properties[destInfo.fieldInfo.value].splice(destInfo.idx, 0, id);
           } else {
             state.programData[destInfo.parentId].properties[destInfo.fieldInfo.value] = id;
-          }
+          } // If existing, remove from the previous location
 
-          if (!newSpawn && sourceInfo.parentId === destInfo.parentId && sourceInfo.fieldInfo === destInfo.fieldInfo) {// ignore
+
+          if (!newSpawn && sourceInfo.parentId === destInfo.parentId && sourceInfo.fieldInfo === destInfo.fieldInfo) {// ignore if dropped in the source
           } else if (!newSpawn && sourceIsList) {
+            // Insert at the right location
             state.programData[sourceInfo.parentId].properties[destInfo.fieldInfo.value].splice(sourceInfo.idx, 1);
           } else if (!newSpawn && !sourceIsList) {
-            state.programData[sourceInfo.parentId][sourceInfo.fieldInfo.value] = null;
+            console.log('removing from previous by setting to null');
+            state.programData[sourceInfo.parentId].properties[sourceInfo.fieldInfo.value] = null;
           }
-        } // TODO: Handle cases where the parents/fields are the same
-
+        }
       });
     },
     moveBlock: function moveBlock(changes) {
@@ -157,6 +164,11 @@ var ProgrammingSlice = function ProgrammingSlice(set) {
     updateItemEditing: function updateItemEditing(id, value) {
       set(function (state) {
         state.programData[id].editing = value;
+      });
+    },
+    updateItemSimpleProperty: function updateItemSimpleProperty(id, property, value) {
+      set(function (state) {
+        state.programData[id].properties[property] = value;
       });
     }
   };

@@ -31,7 +31,8 @@ function Environment(_ref) {
     global: {
       colors: {
         brand: highlightColor,
-        background: '#111111'
+        background: '#111111',
+        control: highlightColor
       },
       font: {
         family: "Helvetica"
@@ -51,6 +52,24 @@ function Environment(_ref) {
     button: {
       border: {
         radius: "10px"
+      }
+    },
+    radioButton: {
+      size: "16px",
+      border: {
+        color: '#00000088'
+      }
+    },
+    checkBox: {
+      size: "20px",
+      border: {
+        color: '#00000088'
+      },
+      color: highlightColor,
+      hover: {
+        border: {
+          color: '#00000088'
+        }
       }
     },
     textInput: {

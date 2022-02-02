@@ -14,7 +14,8 @@ var List = function List(_ref) {
       parentId = _ref.parentId,
       fieldInfo = _ref.fieldInfo,
       interactionDisabled = _ref.interactionDisabled,
-      highlightColor = _ref.highlightColor;
+      highlightColor = _ref.highlightColor,
+      context = _ref.context;
   // const setField = useStore((store) => store.setField);
   var minHeight = ids.length === 0 ? 30 : 8;
   return /*#__PURE__*/React.createElement("div", {
@@ -24,8 +25,9 @@ var List = function List(_ref) {
       backgroundColor: "#00000088",
       borderRadius: 3,
       minHeight: 30,
-      minWidth: 190,
-      margin: 4
+      minWidth: 100,
+      margin: 4,
+      flex: 1
     }
   }, /*#__PURE__*/React.createElement(_DropRegion.DropRegion, {
     key: "initial",
@@ -36,7 +38,8 @@ var List = function List(_ref) {
     minHeight: minHeight,
     disabled: interactionDisabled,
     hideText: true,
-    highlightColor: highlightColor
+    highlightColor: highlightColor,
+    context: context
   }), ids.map(function (id, idx) {
     return /*#__PURE__*/React.createElement(_.Block, {
       key: id,
@@ -46,6 +49,7 @@ var List = function List(_ref) {
       idx: idx,
       bounded: true,
       highlightColor: highlightColor,
+      context: context,
       after: /*#__PURE__*/React.createElement(_DropRegion.DropRegion, {
         key: "dropzone-".concat(idx),
         id: null,
@@ -55,7 +59,8 @@ var List = function List(_ref) {
         minHeight: 8,
         hideText: true,
         disabled: interactionDisabled,
-        highlightColor: highlightColor
+        highlightColor: highlightColor,
+        context: context
       })
     });
   }));

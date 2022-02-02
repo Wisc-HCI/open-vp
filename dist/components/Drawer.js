@@ -27,87 +27,10 @@ var _fi = require("react-icons/fi");
 
 var _Constants = require("./Constants");
 
-var instanceTemplateFromSpec = function instanceTemplateFromSpec(type, objectSpec) {
-  var data = {
-    id: type,
-    type: type,
-    dataType: _Constants.DATA_TYPES.INSTANCE,
-    properties: {},
-    name: "New ".concat(objectSpec.name),
-    canDelete: true,
-    canEdit: true
-  };
+var _Generators = require("./Generators");
 
-  if (objectSpec.properties) {
-    Object.entries(objectSpec.properties).forEach(function (_ref) {
-      var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
-          propKey = _ref2[0],
-          propInfo = _ref2[1];
-
-      data.properties[propKey] = propInfo.default;
-    });
-  }
-
-  if (objectSpec.instanceBlock.onCanvas) {
-    data.position = {
-      x: 0,
-      y: 0
-    };
-  }
-
-  return data;
-};
-
-var referenceTemplateFromSpec = function referenceTemplateFromSpec(type, instanceReference, objectSpec) {
-  var data = {
-    id: type,
-    type: type,
-    ref: instanceReference.id,
-    dataType: _Constants.DATA_TYPES.REFERENCE,
-    canDelete: true,
-    canEdit: true
-  };
-
-  if (objectSpec.referenceBlock.onCanvas) {
-    data.position = {
-      x: 0,
-      y: 0
-    };
-  }
-
-  return data;
-};
-
-var callTemplateFromSpec = function callTemplateFromSpec(type, functionReference, objectSpec) {
-  var data = {
-    id: type,
-    type: type,
-    ref: functionReference.id,
-    dataType: _Constants.DATA_TYPES.CALL,
-    properties: {},
-    canDelete: true,
-    canEdit: true
-  };
-
-  if (objectSpec.callBlock.onCanvas) {
-    data.position = {
-      x: 0,
-      y: 0
-    };
-  }
-
-  functionReference.arguments && Object.entries(functionReference.arguments).forEach(function (_ref3) {
-    var _ref4 = (0, _slicedToArray2.default)(_ref3, 2),
-        argKey = _ref4[0],
-        argInfo = _ref4[1];
-
-    data.properties[argKey] = argInfo.default;
-  });
-  return data;
-};
-
-var TipContent = function TipContent(_ref5) {
-  var message = _ref5.message;
+var TipContent = function TipContent(_ref) {
+  var message = _ref.message;
   return /*#__PURE__*/React.createElement(_grommet.Box, {
     direction: "row",
     align: "center"
@@ -130,8 +53,8 @@ var TipContent = function TipContent(_ref5) {
   }, message)));
 };
 
-var Drawer = function Drawer(_ref6) {
-  var highlightColor = _ref6.highlightColor;
+var Drawer = function Drawer(_ref2) {
+  var highlightColor = _ref2.highlightColor;
 
   var _useState = (0, _react.useState)(''),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
@@ -146,24 +69,26 @@ var Drawer = function Drawer(_ref6) {
 
       if (drawer.dataType === _Constants.DATA_TYPES.INSTANCE) {
         drawer.objectTypes.forEach(function (objectType) {
-          blocks.push(instanceTemplateFromSpec(objectType, store.programSpec.objectTypes[objectType]));
+          blocks.push((0, _Generators.instanceTemplateFromSpec)(objectType, store.programSpec.objectTypes[objectType]));
         });
       } else if (drawer.dataType === _Constants.DATA_TYPES.REFERENCE) {
         Object.values(store.programData).filter(function (d) {
           return d.dataType === _Constants.DATA_TYPES.INSTANCE && d.type === drawer.objectType;
         }).forEach(function (instanceReference) {
-          blocks.push(referenceTemplateFromSpec(drawer.objectType, instanceReference, store.programSpec.objectTypes[drawer.objectType]));
+          blocks.push((0, _Generators.referenceTemplateFromSpec)(drawer.objectType, instanceReference, store.programSpec.objectTypes[drawer.objectType]));
         });
       } else if (drawer.dataType === _Constants.DATA_TYPES.CALL) {
         Object.values(store.programData).filter(function (d) {
           return d.dataType === _Constants.DATA_TYPES.INSTANCE && d.type === drawer.objectType;
         }).forEach(function (functionReference) {
-          blocks.push(callTemplateFromSpec(drawer.objectType, functionReference, store.programSpec.objectTypes[drawer.objectType]));
+          blocks.push((0, _Generators.callTemplateFromSpec)(drawer.objectType, functionReference, store.programSpec.objectTypes[drawer.objectType]));
         });
       }
     }
 
-    return blocks;
+    return blocks.filter(function (block) {
+      return block.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === '';
+    });
   });
   var hlcolor = highlightColor ? highlightColor : 'cyan';
   var drawers = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
@@ -289,9 +214,11 @@ var Drawer = function Drawer(_ref6) {
       }
     }, /*#__PURE__*/React.createElement(_Block.Block, {
       staticData: block,
-      parentId: "drawer",
+      parentId: "spawner",
       bounded: true,
-      highlightColor: highlightColor
+      highlightColor: highlightColor,
+      context: [],
+      interactionDisabled: true
     }));
   }))));
 };

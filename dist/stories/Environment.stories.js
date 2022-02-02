@@ -17,6 +17,8 @@ var _components = require("../components");
 
 var _fi = require("react-icons/fi");
 
+var _Constants = require("../components/Constants");
+
 var _excluded = ["drawers", "objectTypes", "programData"];
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 var _default = {
@@ -97,7 +99,8 @@ Simple.args = {
           name: 'Children',
           accepts: ['operationType', 'functionType'],
           default: [],
-          isList: true
+          isList: true,
+          fullWidth: true
         }
       }
     },
@@ -125,7 +128,8 @@ Simple.args = {
           name: 'Children',
           accepts: ['operationType'],
           default: [],
-          isList: true
+          isList: true,
+          fullWidth: true
         }
       }
     },
@@ -160,6 +164,35 @@ Simple.args = {
           accepts: ["operationType", 'functionType'],
           default: [],
           isList: true
+        },
+        speed: {
+          name: "Speed",
+          type: _Constants.SIMPLE_PROPERTY_TYPES.NUMBER,
+          default: 1,
+          min: 0,
+          max: 2
+        },
+        doFunky: {
+          name: "Do Funky",
+          type: _Constants.SIMPLE_PROPERTY_TYPES.BOOLEAN,
+          default: false
+        },
+        greeting: {
+          name: "Greeting",
+          type: _Constants.SIMPLE_PROPERTY_TYPES.STRING,
+          default: ''
+        },
+        time: {
+          name: "Time",
+          type: _Constants.SIMPLE_PROPERTY_TYPES.OPTIONS,
+          options: [{
+            value: 'am',
+            label: 'AM'
+          }, {
+            value: 'pm',
+            label: 'PM'
+          }],
+          default: 'am'
         }
       }
     },
@@ -201,7 +234,7 @@ Simple.args = {
       type: "programType",
       dataType: _components.DATA_TYPES.INSTANCE,
       properties: {
-        children: []
+        children: ['2dfsessfs']
       },
       position: {
         x: 0,
@@ -217,13 +250,7 @@ Simple.args = {
       name: 'MyFunction',
       type: "functionType",
       dataType: _components.DATA_TYPES.INSTANCE,
-      arguments: {
-        s3siakawme: {
-          name: 'Hat',
-          accepts: ['hatType'],
-          default: null
-        }
-      },
+      arguments: ['s3siakawme'],
       properties: {
         children: []
       },
@@ -236,19 +263,32 @@ Simple.args = {
       selected: true,
       editing: false
     },
+    "s3siakawme": {
+      id: "s3siakawme",
+      name: 'Passed Hat',
+      type: "hatType",
+      dataType: _components.DATA_TYPES.ARGUMENT,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false
+    },
     "2dfsessfs": {
       id: "2dfsessfs",
       name: 'MyOperation',
       type: "operationType",
       dataType: _components.DATA_TYPES.INSTANCE,
       properties: {
+        hat: null,
+        boot: null,
         children: [],
-        field1: null,
-        field2: null
+        speed: 1,
+        doFunky: true,
+        greeting: 'Hello!'
       },
       canDelete: true,
       canEdit: true,
-      selected: true,
+      selected: false,
       editing: false
     },
     "6dewwwwww": {

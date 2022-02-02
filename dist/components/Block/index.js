@@ -19,6 +19,8 @@ Object.defineProperty(exports, "VisualBlock", {
   }
 });
 
+var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/toConsumableArray"));
+
 var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectSpread2"));
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
@@ -37,6 +39,8 @@ var _VisualBlock = require("./VisualBlock");
 
 var _ = require("..");
 
+var _Generators = require("../Generators");
+
 var Block = function Block(_ref) {
   var id = _ref.id,
       staticData = _ref.staticData,
@@ -46,22 +50,35 @@ var Block = function Block(_ref) {
       dragDisabled = _ref.dragDisabled,
       bounded = _ref.bounded,
       after = _ref.after,
-      highlightColor = _ref.highlightColor;
+      highlightColor = _ref.highlightColor,
+      context = _ref.context,
+      interactionDisabled = _ref.interactionDisabled;
 
   var _useProgrammingStore = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (state) {
     var data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
     var typeSpec = state.programSpec.objectTypes[data === null || data === void 0 ? void 0 : data.type];
     var refData = data !== null && data !== void 0 && data.ref ? state.programData[data === null || data === void 0 ? void 0 : data.ref] : {};
     var selected = (data === null || data === void 0 ? void 0 : data.selected) || refData.selected;
+    var argumentBlocks = data !== null && data !== void 0 && data.arguments ? data.arguments : refData !== null && refData !== void 0 && refData.arguments ? refData.arguments : [];
+    var argumentBlockData = argumentBlocks.map(function (instanceId) {
+      var inst = state.programData[instanceId];
+      var instType = state.programSpec.objectTypes[inst.type];
+      return (0, _Generators.referenceTemplateFromSpec)(inst.type, inst, instType);
+    }); // Package up information on the block, data about the corresponding reference (if applicable), and argument blocks it contains
+
+    // Package up information on the block, data about the corresponding reference (if applicable), and argument blocks it contains
     return [(0, _objectSpread2.default)((0, _objectSpread2.default)({}, data), {}, {
       refData: refData,
-      selected: selected
+      selected: selected,
+      argumentBlockData: argumentBlockData
     }), typeSpec];
   }, [id, staticData])),
       _useProgrammingStore2 = (0, _slicedToArray2.default)(_useProgrammingStore, 2),
       data = _useProgrammingStore2[0],
       typeSpec = _useProgrammingStore2[1];
 
+  var blockContext = data.arguments ? data.arguments : [];
+  var wholeContext = [].concat((0, _toConsumableArray2.default)(context), (0, _toConsumableArray2.default)(blockContext));
   var onCanvas = data.dataType === _.DATA_TYPES.REFERENCE ? typeSpec.referenceBlock.onCanvas : data.dataType === _.DATA_TYPES.CALL ? typeSpec.callBlock.onCanvas : typeSpec.instanceBlock.onCanvas;
 
   var _useDrag = (0, _reactDnd.useDrag)(function () {
@@ -74,7 +91,8 @@ var Block = function Block(_ref) {
           parentId: parentId,
           fieldInfo: fieldInfo,
           idx: idx,
-          onCanvas: onCanvas
+          onCanvas: onCanvas,
+          context: wholeContext
         };
       },
       canDrag: !dragDisabled,
@@ -100,7 +118,7 @@ var Block = function Block(_ref) {
     return null;
   } else {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-      hidden: parentId !== "drawer" && dragProps.isDragging,
+      hidden: parentId !== "spawner" && dragProps.isDragging,
       style: {
         display: 'flex',
         flex: 1
@@ -110,9 +128,11 @@ var Block = function Block(_ref) {
       ref: drag,
       typeSpec: typeSpec,
       bounded: bounded,
-      highlightColor: highlightColor
+      highlightColor: highlightColor,
+      context: wholeContext,
+      interactionDisabled: interactionDisabled
     })), /*#__PURE__*/React.createElement("div", {
-      hidden: parentId !== "drawer" && dragProps.isDragging,
+      hidden: parentId !== "spawner" && dragProps.isDragging,
       style: {
         display: 'flex'
       }

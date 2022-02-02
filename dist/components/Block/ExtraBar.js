@@ -19,6 +19,8 @@ var _reactSpring = require("react-spring");
 
 var _ = require("..");
 
+var _ExpandCarrot = require("./ExpandCarrot");
+
 var FunctionButtonExtra = function FunctionButtonExtra(_ref) {
   var actionInfo = _ref.actionInfo,
       data = _ref.data,
@@ -141,13 +143,6 @@ var CollapseToggleExtra = function CollapseToggleExtra(_ref4) {
   var isCollapsed = _ref4.isCollapsed,
       setIsCollapsed = _ref4.setIsCollapsed,
       inTopLevel = _ref4.inTopLevel;
-  var carrotStyle = (0, _web.useSpring)({
-    rotate: isCollapsed ? '0deg' : '90deg',
-    config: _reactSpring.config.wobbly
-  });
-  var carrot = /*#__PURE__*/React.createElement(_web.animated.div, {
-    style: carrotStyle
-  }, /*#__PURE__*/React.createElement(_fi.FiChevronRight, null));
 
   if (inTopLevel) {
     return /*#__PURE__*/React.createElement(_grommet.Box, {
@@ -158,14 +153,18 @@ var CollapseToggleExtra = function CollapseToggleExtra(_ref4) {
       onClick: function onClick() {
         return setIsCollapsed(!isCollapsed);
       }
-    }, carrot);
+    }, /*#__PURE__*/React.createElement(_ExpandCarrot.ExpandCarrot, {
+      expanded: !isCollapsed
+    }));
   } else {
     return /*#__PURE__*/React.createElement(_grommet.Button, {
       plain: true,
       style: {
         padding: '5pt 10pt 5pt 10pt'
       },
-      icon: carrot,
+      icon: /*#__PURE__*/React.createElement(_ExpandCarrot.ExpandCarrot, {
+        expanded: !isCollapsed
+      }),
       label: isCollapsed ? 'Expand' : 'Minimize',
       onClick: function onClick() {
         return setIsCollapsed(!isCollapsed);
