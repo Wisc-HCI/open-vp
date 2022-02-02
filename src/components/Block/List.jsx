@@ -13,8 +13,9 @@ export const List = ({ ids, parentId, fieldInfo, interactionDisabled, highlightC
         backgroundColor: "#00000088",
         borderRadius: 3,
         minHeight: 30,
-        minWidth: 190,
-        margin: 4
+        minWidth: 100,
+        margin: 4,
+        flex:1
       }}
     >
       <DropRegion

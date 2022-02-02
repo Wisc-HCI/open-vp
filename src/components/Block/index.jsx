@@ -17,7 +17,8 @@ const Block = ({
   bounded,
   after,
   highlightColor,
-  context
+  context,
+  interactionDisabled
 }) => {
   const [data, typeSpec] = useProgrammingStore(
     useCallback(
@@ -71,7 +72,7 @@ const Block = ({
       <>
         {/* Hide the visual block if it is not coming from a spawner. The "after" is also hidden, if applicable */}
         <div hidden={parentId !== "spawner" && dragProps.isDragging} style={{display:'flex',flex:1}}>
-          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext}/>
+          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext} interactionDisabled={interactionDisabled}/>
         </div>
         <div hidden={parentId !== "spawner" && dragProps.isDragging} style={{display:'flex'}}>
           {/* 'after' is usually a drop region in the case of lists */}

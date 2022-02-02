@@ -1,6 +1,7 @@
 import React, { useLayoutEffect } from 'react';
 import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES } from '../components';
 import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal } from "react-icons/fi";
+import { SIMPLE_PROPERTY_TYPES } from '../components/Constants';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -63,7 +64,8 @@ Simple.args = {
           name: 'Children',
           accepts: ['operationType', 'functionType'],
           default: [],
-          isList: true
+          isList: true,
+          fullWidth: true
         }
       }
     },
@@ -94,7 +96,8 @@ Simple.args = {
           name: 'Children',
           accepts: ['operationType'],
           default: [],
-          isList: true
+          isList: true,
+          fullWidth: true
         }
       }
     },
@@ -132,6 +135,29 @@ Simple.args = {
           accepts: ["operationType",'functionType'],
           default: [],
           isList: true
+        },
+        speed: {
+          name: "Speed",
+          type: SIMPLE_PROPERTY_TYPES.NUMBER,
+          default: 1,
+          min: 0,
+          max: 2
+        },
+        doFunky: {
+          name: "Do Funky",
+          type: SIMPLE_PROPERTY_TYPES.BOOLEAN,
+          default: false
+        },
+        greeting: {
+          name: "Greeting",
+          type: SIMPLE_PROPERTY_TYPES.STRING,
+          default: ''
+        },
+        time: {
+          name: "Time",
+          type: SIMPLE_PROPERTY_TYPES.OPTIONS,
+          options: [{value:'am',label:'AM'},{value:'pm',label:'PM'}],
+          default: 'am'
         }
       }
     },
@@ -179,7 +205,7 @@ Simple.args = {
       type: "programType",
       dataType: DATA_TYPES.INSTANCE,
       properties: {
-        children: []
+        children: ['2dfsessfs']
       },
       position: { x: 0, y: 10 },
       canDelete: false,
@@ -219,13 +245,16 @@ Simple.args = {
       type: "operationType",
       dataType: DATA_TYPES.INSTANCE,
       properties: {
+        hat: null,
+        boot: null,
         children: [],
-        field1: null,
-        field2: null
+        speed: 1,
+        doFunky: true,
+        greeting: 'Hello!'
       },
       canDelete: true,
       canEdit: true,
-      selected: true,
+      selected: false,
       editing: false,
     },
     "6dewwwwww": {

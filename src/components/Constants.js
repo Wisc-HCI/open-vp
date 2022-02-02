@@ -23,3 +23,10 @@ export const EXTRA_TYPES = {
     DELETE_BUTTON: 7, // TO ADD
     ADD_ARGUMENT: 8 // TO ADD
 }
+
+export const SIMPLE_PROPERTY_TYPES = {
+    BOOLEAN: 0,
+    NUMBER: 1,
+    STRING: 2,
+    OPTIONS: 3
+}

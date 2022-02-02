@@ -63,7 +63,7 @@ export const DropRegion = ({
             ? "#88888888"
             : null,
         minHeight: minHeight,
-        minWidth: 190,
+        minWidth: 100,
         display:'flex',
         flex:1
       }}

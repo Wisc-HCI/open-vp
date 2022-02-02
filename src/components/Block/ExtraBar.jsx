@@ -5,6 +5,7 @@ import { useProgrammingStore } from "../ProgrammingContext";
 import { useSpring, animated } from '@react-spring/web';
 import { config } from 'react-spring';
 import { EXTRA_TYPES } from "..";
+import { ExpandCarrot } from "./ExpandCarrot";
 
 const FunctionButtonExtra = ({actionInfo, data, blockSpec}) => {
     const onClick = useProgrammingStore(useCallback(state=>{
@@ -109,13 +110,6 @@ const NameEditToggleExtra = ({isEditing, setIsEditing, locked, inTopLevel}) => {
 
 const CollapseToggleExtra = ({isCollapsed, setIsCollapsed, inTopLevel}) => {
 
-    const carrotStyle = useSpring({
-        rotate: isCollapsed ? '0deg' : '90deg',
-        config: config.wobbly
-    });
-
-    const carrot = <animated.div style={carrotStyle}><FiChevronRight/></animated.div>
-
     if (inTopLevel) {
         return (
             <Box 
@@ -124,7 +118,7 @@ const CollapseToggleExtra = ({isCollapsed, setIsCollapsed, inTopLevel}) => {
                 justify='center' 
                 align='end' 
                 onClick={()=>setIsCollapsed(!isCollapsed)}>
-                {carrot}
+                <ExpandCarrot expanded={!isCollapsed}/>
             </Box>
         )
     } else {
@@ -132,7 +126,7 @@ const CollapseToggleExtra = ({isCollapsed, setIsCollapsed, inTopLevel}) => {
             <Button 
                 plain 
                 style={{padding:'5pt 10pt 5pt 10pt'}} 
-                icon={carrot} 
+                icon={<ExpandCarrot expanded={!isCollapsed}/>} 
                 label={isCollapsed ? 'Expand' : 'Minimize'}
                 onClick={()=>setIsCollapsed(!isCollapsed)}
             />
