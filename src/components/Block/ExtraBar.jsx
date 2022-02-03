@@ -1,9 +1,7 @@
 import { useCallback } from "react";
-import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiChevronRight } from "react-icons/fi";
-import { Box, DropButton, Button, Tag, Text } from "grommet";
+import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff } from "react-icons/fi";
+import { Box, DropButton, Button } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
-import { useSpring, animated } from '@react-spring/web';
-import { config } from 'react-spring';
 import { EXTRA_TYPES } from "..";
 import { ExpandCarrot } from "./ExpandCarrot";
 
@@ -113,6 +111,38 @@ const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, inTopLevel }) =>
     }
 }
 
+const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel }) => {
+    if (isSelected && inTopLevel) {
+        return (
+            <FiEyeOff onClick={() => setIsSelected(!isSelected)}/>
+        )
+    } else if (!isSelected && inTopLevel) {
+        return (
+            <FiEye onClick={() => setIsSelected(!isSelected)}/>
+        )
+    } else if (isSelected && !inTopLevel) {
+        return (
+            <Button
+                plain
+                style={{ padding: '5pt 10pt 5pt 10pt' }}
+                icon={<FiEyeOff />}
+                label='Deselect'
+                onClick={() => setIsSelected(!isSelected)}
+            />
+        )
+    } else if (!isSelected && !inTopLevel) {
+        return (
+            <Button
+                plain
+                style={{ padding: '5pt 10pt 5pt 10pt' }}
+                icon={<FiEye />}
+                label='Select'
+                onClick={() => setIsSelected(!isSelected)}
+            />
+        )
+    }
+}
+
 const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
 
     if (inTopLevel) {
@@ -157,7 +187,11 @@ const IndicatorExtra = ({ value, label, inTopLevel }) => {
     }
 }
 
-const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isEditing, isCollapsed, setIsEditing, setIsCollapsed, interactionDisabled }) => {
+const DropdownExtra = ({ 
+    icon, contents, label, inTopLevel, data, blockSpec, 
+    isEditing, isCollapsed, isSelected, 
+    setIsEditing, setIsCollapsed, setIsSelected,
+    interactionDisabled }) => {
 
     const DropIcon = icon ? icon : FiMoreHorizontal;
 
@@ -176,8 +210,10 @@ const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isE
                                 inTopLevel={false}
                                 isEditing={isEditing}
                                 isCollapsed={isCollapsed}
+                                isSelected={isSelected}
                                 setIsEditing={setIsEditing}
                                 setIsCollapsed={setIsCollapsed}
+                                setIsSelected={setIsSelected}
                                 interactionDisabled={interactionDisabled}
                             />)
                     })}
@@ -200,13 +236,19 @@ const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isE
     )
 }
 
-const ButtonSwitch = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, interactionDisabled, inTopLevel, feature }) => {
+const ButtonSwitch = ({ data, blockSpec, 
+    isEditing, setIsEditing, 
+    isCollapsed, setIsCollapsed, 
+    isSelected, setIsSelected,
+    interactionDisabled, inTopLevel, feature }) => {
     if (feature === EXTRA_TYPES.LOCKED_INDICATOR) {
         return <LockIndicatorExtra locked={!data.canEdit} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature === EXTRA_TYPES.NAME_EDIT_TOGGLE) {
         return <NameEditToggleExtra isEditing={isEditing} setIsEditing={setIsEditing} locked={!data.canEdit} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature === EXTRA_TYPES.COLLAPSE_TOGGLE) {
         return <CollapseToggleExtra isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+    } else if (feature === EXTRA_TYPES.SELECTION_TOGGLE) {
+        return <SelectionToggleExtra isSelected={isSelected} setIsSelected={setIsSelected} inTopLevel={inTopLevel} />
     } else if (feature?.type === EXTRA_TYPES.FUNCTION_BUTTON) {
         return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled} />
     } else if (feature?.type === EXTRA_TYPES.INDICATOR) {
@@ -221,14 +263,16 @@ const ButtonSwitch = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, s
             inTopLevel={false}
             isEditing={isEditing}
             isCollapsed={isCollapsed}
+            isSelected={isSelected}
             setIsEditing={setIsEditing}
             setIsCollapsed={setIsCollapsed}
+            setIsSelected={setIsSelected}
             interactionDisabled={interactionDisabled}
         />
     } else { return null }
 }
 
-export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, interactionDisabled }) => {
+export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, isSelected, setIsSelected, interactionDisabled }) => {
     return (
         <Box direction='row' margin={{ left: 'xsmall' }} gap='none' align='center' alignContent='center' justify='between' flex={false}>
             {blockSpec?.extras?.map((extra, extraIdx) => (
@@ -239,8 +283,10 @@ export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed
                     inTopLevel={true}
                     isEditing={isEditing}
                     isCollapsed={isCollapsed}
+                    isSelected={isSelected}
                     setIsEditing={setIsEditing}
                     setIsCollapsed={setIsCollapsed}
+                    setIsSelected={setIsSelected}
                     interactionDisabled={interactionDisabled}
                     feature={extra}
                 />

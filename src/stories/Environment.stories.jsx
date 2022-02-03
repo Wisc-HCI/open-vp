@@ -119,7 +119,10 @@ Simple.args = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            contents: [EXTRA_TYPES.LOCKED_INDICATOR]
+            contents: [
+              EXTRA_TYPES.SELECTION_TOGGLE,
+              EXTRA_TYPES.LOCKED_INDICATOR
+            ]
           }
         ]
       },

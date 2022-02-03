@@ -27,6 +27,7 @@ export const VisualBlock = forwardRef(
 
     const updateItemName = useProgrammingStore(store => store.updateItemName);
     const setIsEditing = useProgrammingStore(store => store.updateItemEditing);
+    const setIsSelected = useProgrammingStore(store => store.updateItemSelected);
     const updateItemSimpleProperty = useProgrammingStore(store => store.updateItemSimpleProperty);
 
     const simpleProperties = typeSpec.properties ? pickBy(typeSpec.properties, (entry) => Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)) : {};
@@ -72,7 +73,9 @@ export const VisualBlock = forwardRef(
               blockSpec={blockSpec}
               isEditing={data.editing}
               isCollapsed={isCollapsed}
+              isSelected={data.selected}
               setIsEditing={(v)=>setIsEditing(data.id,v)}
+              setIsSelected={(v)=>setIsSelected(data.id,v)}
               setIsCollapsed={setIsCollapsed} />
           )}
         </div>
