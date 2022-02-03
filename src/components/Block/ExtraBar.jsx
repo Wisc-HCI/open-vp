@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiChevronRight } from "react-icons/fi";
+import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiChevronRight, FiTrash2 } from "react-icons/fi";
 import { Box, DropButton, Button, Tag, Text } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { useSpring, animated } from '@react-spring/web';
@@ -157,7 +157,21 @@ const IndicatorExtra = ({ value, label, inTopLevel }) => {
     }
 }
 
-const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isEditing, isCollapsed, setIsEditing, setIsCollapsed, interactionDisabled }) => {
+const DeleteExtra = ({data, inTopLevel, locked, fieldInfo, parentId}) => {
+    const deleteFunc = useProgrammingStore(state => state.deleteBlock);
+    return (
+        <Button 
+            plain 
+            disabled={locked}
+            style={{padding:'5pt 10pt 5pt 10pt'}} 
+            icon={<FiTrash2/>} 
+            label={inTopLevel? '' : 'Delete'}
+            onClick={()=>deleteFunc(data, parentId, fieldInfo)}
+        />
+    )
+}
+
+const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isEditing, isCollapsed, setIsEditing, setIsCollapsed, interactionDisabled, fieldInfo, parentId}) => {
 
     const DropIcon = icon ? icon : FiMoreHorizontal;
 
@@ -179,6 +193,8 @@ const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isE
                                 setIsEditing={setIsEditing}
                                 setIsCollapsed={setIsCollapsed}
                                 interactionDisabled={interactionDisabled}
+                                fieldInfo={fieldInfo}
+                                parentId={parentId}
                             />)
                     })}
                 </Box>
@@ -200,7 +216,7 @@ const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isE
     )
 }
 
-const ButtonSwitch = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, interactionDisabled, inTopLevel, feature }) => {
+const ButtonSwitch = ({data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, interactionDisabled, inTopLevel, feature, fieldInfo, parentId}) => {
     if (feature === EXTRA_TYPES.LOCKED_INDICATOR) {
         return <LockIndicatorExtra locked={!data.canEdit} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature === EXTRA_TYPES.NAME_EDIT_TOGGLE) {
@@ -212,23 +228,35 @@ const ButtonSwitch = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, s
     } else if (feature?.type === EXTRA_TYPES.INDICATOR) {
         return <IndicatorExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature?.type === EXTRA_TYPES.DROPDOWN) {
-        return <DropdownExtra
-            data={data}
-            blockSpec={blockSpec}
-            icon={feature?.icon}
-            contents={feature?.contents}
-            label={feature?.label}
-            inTopLevel={false}
-            isEditing={isEditing}
-            isCollapsed={isCollapsed}
-            setIsEditing={setIsEditing}
-            setIsCollapsed={setIsCollapsed}
-            interactionDisabled={interactionDisabled}
-        />
-    } else { return null }
+        return <DropdownExtra 
+                    data={data} 
+                    blockSpec={blockSpec} 
+                    icon={feature?.icon} 
+                    contents={feature?.contents}
+                    label={feature?.label}
+                    inTopLevel={false}
+                    isEditing={isEditing}
+                    isCollapsed={isCollapsed}
+                    setIsEditing={setIsEditing}
+                    setIsCollapsed={setIsCollapsed}
+                    interactionDisabled={interactionDisabled}
+                    fieldInfo={fieldInfo}
+                    parentId={parentId}
+                 />
+    } else if (feature === EXTRA_TYPES.DELETE_BUTTON) {
+        return <DeleteExtra 
+                    data={data}
+                    inTopLevel={inTopLevel}
+                    locked={interactionDisabled}
+                    fieldInfo={fieldInfo}
+                    parentId={parentId}
+                />
+    } else {
+        return null;
+    }
 }
-
-export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, interactionDisabled }) => {
+  
+export const ExtraBar = ({data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, interactionDisabled, fieldInfo, parentId}) => {
     return (
         <Box direction='row' margin={{ left: 'xsmall' }} gap='none' align='center' alignContent='center' justify='between' flex={false}>
             {blockSpec?.extras?.map((extra, extraIdx) => (
@@ -243,7 +271,9 @@ export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed
                     setIsCollapsed={setIsCollapsed}
                     interactionDisabled={interactionDisabled}
                     feature={extra}
-                />
+                    fieldInfo={fieldInfo}
+                    parentId={parentId}
+                    />
             ))}
         </Box>
     )

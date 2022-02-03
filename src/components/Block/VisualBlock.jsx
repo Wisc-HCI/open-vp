@@ -14,7 +14,7 @@ import { ExpandCarrot } from "./ExpandCarrot";
 import { NumberInput } from "./Input";
 
 export const VisualBlock = forwardRef(
-  ({ data, x, y, scale, typeSpec, onCanvas, interactionDisabled, bounded, highlightColor, context }, ref) => {
+  ({ data, x, y, scale, typeSpec, onCanvas, interactionDisabled, bounded, highlightColor, context, fieldInfo, parentId }, ref) => {
     const blockSpec = data.dataType === DATA_TYPES.REFERENCE
       ? typeSpec.referenceBlock
       : data.dataType === DATA_TYPES.CALL
@@ -34,7 +34,7 @@ export const VisualBlock = forwardRef(
 
     const Icon = blockSpec.icon ? blockSpec.icon : FiSquare;
 
-    const name = [DATA_TYPES.CALL, DATA_TYPES.REFERENCE].includes(data.dataType) ? data.refData.name : data.name;
+    const name = [DATA_TYPES.CALL, DATA_TYPES.REFERENCE].includes(data.dataType) ? data?.refData?.name : data?.name;
 
     return (
       <Selectable
@@ -67,6 +67,8 @@ export const VisualBlock = forwardRef(
           <TextInput size='small' icon={<Icon />} value={name} focusIndicator={false} disabled={interactionDisabled || !data.editing} onChange={e => updateItemName(data.id, e.target.value)} />
           {blockSpec?.extras && (
             <ExtraBar
+              fieldInfo={fieldInfo}
+              parentId={parentId}
               interactionDisabled={interactionDisabled}
               data={data}
               blockSpec={blockSpec}

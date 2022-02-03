@@ -26,7 +26,7 @@ const Block = ({
         const data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
         const typeSpec = state.programSpec.objectTypes[data?.type];
         const refData = data?.ref ? state.programData[data?.ref] : {};
-        const selected = data?.selected || refData.selected;
+        const selected = data?.selected || refData?.selected;
         const argumentBlocks = data?.arguments ? data.arguments : refData?.arguments ? refData.arguments: [];
         const argumentBlockData = argumentBlocks.map((instanceId)=>{
           const inst = state.programData[instanceId];
@@ -47,7 +47,9 @@ const Block = ({
         ? typeSpec.referenceBlock.onCanvas
         : data.dataType === DATA_TYPES.CALL 
         ? typeSpec.callBlock.onCanvas
-        : typeSpec.instanceBlock.onCanvas;
+        : data.dataType === DATA_TYPES.INSTANCE
+        ? typeSpec.instanceBlock.onCanvas
+        : "null";
 
   const [dragProps, drag, preview] = useDrag(
     () => ({
@@ -67,14 +69,14 @@ const Block = ({
     preview(getEmptyImage(), { captureDraggingState: false });
   }, [preview, getEmptyImage]);
 
-  if (!data) {
+  if (!data || onCanvas === "null") {
     return null;
   } else {
     return (
       <>
         {/* Hide the visual block if it is not coming from a spawner. The "after" is also hidden, if applicable */}
         <div hidden={hidden} style={{display:'flex',flex:1,display:hidden?'none':null}}>
-          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext} interactionDisabled={interactionDisabled}/>
+          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext} interactionDisabled={interactionDisabled} fieldInfo={fieldInfo} parentId={parentId}/>
         </div>
         <div hidden={hidden} style={{display:'flex',display:hidden?'none':null}}>
           {/* 'after' is usually a drop region in the case of lists */}

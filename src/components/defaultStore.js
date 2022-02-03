@@ -1,7 +1,8 @@
 import create from "zustand";
 import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
-import { DATA_TYPES } from ".";
+import { DATA_TYPES, TYPES } from ".";
+import { remove, pickBy } from 'lodash';
 
 const DEFAULT_PROGRAM_SPEC = {
     drawers: [],
@@ -45,6 +46,92 @@ export function move(array, moveIndex, toIndex) {
     ];
   }
   return array;
+}
+
+export function deleteSelfBlock(state, data) {
+  if (data.typeSpec?.type === TYPES.FUNCTION) {
+    // Find all references to the function
+    const callReferences = pickBy(state.programData, (entry) => entry.dataType === DATA_TYPES.CALL && entry.refData.id === data.id);
+    const callIds = Object.keys(callReferences);
+
+    // Find the parent's of the references, and remove the references from them
+    Object.keys(state.programData).forEach((entryId) => {
+      const entry = state.programData[entryId];
+      if(state.programSpec.objectTypes[entry.type].properties) {
+        // Iterate through properties
+        Object.keys(state.programSpec.objectTypes[entry.type].properties).forEach((propName) => {
+          if (propName) {
+            const property = state.programSpec.objectTypes[entry.type].properties[propName];
+    
+            if (property && (property.type || property.type == 0)) {
+              // Ignore SIMPLE types.
+            } else if (property && property.isList) {
+              // Iterate through property list and remove all applicable references
+              for (let i = 0; i < callIds.length; i++) {
+                if (entry.properties[propName]?.includes(callIds[i])) {
+                  remove(state.programData[entryId].properties[propName], (field) => field === callIds[i]);
+                }
+              }
+            } else if (property && entry.properties[propName]) {
+              // Delete reference from property
+              if (callIds.includes(entry.properties[propName])) {
+                entry.properties[propName] = null;
+                state.programData[entryId].properties[propName] = null;
+              }
+            }
+          }
+        });
+      }
+    });
+
+    // Delete the reference and any children
+    callIds.forEach((reference) => {
+      state = deleteChildren(state, state.programData[reference]);
+      delete state.programData[reference];
+    });
+  }
+  
+  // Remove self from state
+  delete state.programData[data.id];
+
+  return state;
+}
+
+export function deleteChildren(state, data) {
+  // Clear arguments if function
+  if (data.arguments) {
+    data.arguments.forEach((argumentId) => {
+      delete state.programData[argumentId];
+    });
+  }
+
+  // Clear children and properties (if applicable)
+  if (state.programSpec.objectTypes[data.type].properties) {
+    Object.keys(state.programSpec.objectTypes[data.type].properties).forEach((propName) => {
+      if (propName) {
+        const property = state.programSpec.objectTypes[data.type].properties[propName];
+
+        // Clearing child fields/references
+        if (property && (property.type || property.type == 0)) {
+          // Ignore SIMPLE types.
+        } else if (property && property.isList) {
+          // Iterate over list and remove each entry (probably recursively)
+          if (data.properties[propName]) {
+            data.properties[propName].forEach((child) => {
+              // Recursively delete children
+              state = deleteChildren(state, state.programData[child]);
+              state = deleteSelfBlock(state, state.programData[child]);
+            });
+          }
+        } else if (property && data.properties[propName]) {
+          // Delete Reference to Child
+          delete state.programData[data.properties[propName]];
+        }
+      }
+    });
+  }
+
+  return state;
 }
 
 const immer = (config) => (set, get, api) =>
@@ -122,6 +209,24 @@ export const ProgrammingSlice = (set) => ({
           }
         });
       }),
+    deleteBlock: (data, parentId, fieldInfo) => {
+      set((state) => {
+        // Delete block's children and parameters
+        state = deleteChildren(state, data);
+
+        // Delete current block
+        state = deleteSelfBlock(state, data);
+
+        // Clear parent properties
+        if (parentId && fieldInfo && !fieldInfo.isList) {
+          // Clear parent's field value (to null)
+          state.programData[parentId].properties[fieldInfo.value] = null;
+        } else if (parentId && fieldInfo && fieldInfo.isList) {
+          // Erase self from the parent's list
+          remove(state.programData[parentId].properties[fieldInfo.value], (entry) => entry === data.id);
+        }
+      });
+    },
     createPlacedBlock: (data, x, y) => {
       set((state) => {
         let id = data.id;

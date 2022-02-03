@@ -119,7 +119,10 @@ Simple.args = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            contents: [EXTRA_TYPES.LOCKED_INDICATOR]
+            contents: [
+              EXTRA_TYPES.LOCKED_INDICATOR,
+              EXTRA_TYPES.DELETE_BUTTON
+            ]
           }
         ]
       },
@@ -150,6 +153,9 @@ Simple.args = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
+            contents: [
+              EXTRA_TYPES.DELETE_BUTTON
+            ],
             actions: []
           }
         ]
@@ -205,6 +211,9 @@ Simple.args = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
+            contents: [
+              EXTRA_TYPES.DELETE_BUTTON
+            ],
             actions: []
           }
         ]
