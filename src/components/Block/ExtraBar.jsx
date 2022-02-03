@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff, FiTrash2 } from "react-icons/fi";
+import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff, FiTrash2, FiZap, FiZapOff } from "react-icons/fi";
 import { Box, DropButton, Button } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { EXTRA_TYPES } from "..";
@@ -150,7 +150,6 @@ const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
             <Button
                 size='small'
                 justify='center'
-                background='blue'
                 align='center'
                 icon={<ExpandCarrot expanded={!isCollapsed} />}
                 onClick={() => setIsCollapsed(!isCollapsed)}/>
@@ -164,6 +163,31 @@ const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
                 icon={<ExpandCarrot expanded={!isCollapsed} />}
                 onClick={() => setIsCollapsed(!isCollapsed)}
                 label={isCollapsed ? "Expand" : "Collapse"}
+            />
+        )
+    }
+}
+
+const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel }) => {
+    const Icon = isDebugging ? FiZapOff : FiZap;
+    if (inTopLevel) {
+        return (
+            <Button
+                size='small'
+                justify='center'
+                align='center'
+                icon={<Icon />}
+                onClick={() => setIsDebugging(!isDebugging)}/>
+        )
+    } else {
+        return (
+            <Button
+                plain
+                size='small'
+                style={{ padding: '5pt 10pt 5pt 10pt' }}
+                icon={<Icon />}
+                onClick={() => setIsDebugging(!isDebugging)}
+                label={isDebugging ? "Cancel Debug" : "Debug"}
             />
         )
     }
@@ -203,8 +227,8 @@ const DeleteExtra = ({data, inTopLevel, locked, fieldInfo, parentId}) => {
 
 const DropdownExtra = ({ 
     icon, contents, label, inTopLevel, data, blockSpec, 
-    isEditing, isCollapsed, isSelected, 
-    setIsEditing, setIsCollapsed, setIsSelected,
+    isEditing, isCollapsed, isSelected, isDebugging,
+    setIsEditing, setIsCollapsed, setIsSelected, setIsDebugging,
     interactionDisabled, parentId, fieldInfo }) => {
 
     const DropIcon = icon ? icon : FiMoreHorizontal;
@@ -225,9 +249,11 @@ const DropdownExtra = ({
                                 isEditing={isEditing}
                                 isCollapsed={isCollapsed}
                                 isSelected={isSelected}
+                                isDebugging={isDebugging}
                                 setIsEditing={setIsEditing}
                                 setIsCollapsed={setIsCollapsed}
                                 setIsSelected={setIsSelected}
+                                setIsDebugging={setIsDebugging}
                                 interactionDisabled={interactionDisabled}
                                 fieldInfo={fieldInfo}
                                 parentId={parentId}
@@ -257,8 +283,10 @@ const ButtonSwitch = ({
     isEditing, setIsEditing, 
     isCollapsed, setIsCollapsed, 
     isSelected, setIsSelected,
+    isDebugging, setIsDebugging,
     interactionDisabled, inTopLevel, 
     feature, fieldInfo, parentId }) => {
+
     if (feature === EXTRA_TYPES.LOCKED_INDICATOR) {
         return <LockIndicatorExtra locked={!data.canEdit} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature === EXTRA_TYPES.NAME_EDIT_TOGGLE) {
@@ -267,6 +295,8 @@ const ButtonSwitch = ({
         return <CollapseToggleExtra isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature === EXTRA_TYPES.SELECTION_TOGGLE) {
         return <SelectionToggleExtra isSelected={isSelected} setIsSelected={setIsSelected} inTopLevel={inTopLevel} />
+    } else if (feature === EXTRA_TYPES.DEBUG_TOGGLE) {
+        return <DebugToggleExtra isDebugging={isDebugging} setIsDebugging={setIsDebugging} inTopLevel={inTopLevel} />
     } else if (feature?.type === EXTRA_TYPES.FUNCTION_BUTTON) {
         return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled} />
     } else if (feature?.type === EXTRA_TYPES.INDICATOR) {
@@ -284,15 +314,24 @@ const ButtonSwitch = ({
             isEditing={isEditing}
             isCollapsed={isCollapsed}
             isSelected={isSelected}
+            isDebugging={isDebugging}
             setIsEditing={setIsEditing}
             setIsCollapsed={setIsCollapsed}
             setIsSelected={setIsSelected}
+            setIsDebugging={setIsDebugging}
             interactionDisabled={interactionDisabled}
         />
     } else { return null }
 }
 
-export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, isSelected, setIsSelected, interactionDisabled, fieldInfo, parentId }) => {
+export const ExtraBar = ({ 
+    data, blockSpec, 
+    isEditing, setIsEditing, 
+    isCollapsed, setIsCollapsed, 
+    isSelected, setIsSelected, 
+    isDebugging, setIsDebugging,
+    interactionDisabled, fieldInfo, parentId }) => {
+
     return (
         <Box direction='row' margin={{ left: 'xsmall' }} gap='none' align='center' alignContent='center' justify='between' flex={false}>
             {blockSpec?.extras?.map((extra, extraIdx) => (
@@ -304,9 +343,11 @@ export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed
                     isEditing={isEditing}
                     isCollapsed={isCollapsed}
                     isSelected={isSelected}
+                    isDebugging={isDebugging}
                     setIsEditing={setIsEditing}
                     setIsCollapsed={setIsCollapsed}
                     setIsSelected={setIsSelected}
+                    setIsDebugging={setIsDebugging}
                     interactionDisabled={interactionDisabled}
                     feature={extra}
                     fieldInfo={fieldInfo}

@@ -15,13 +15,14 @@ export const TYPES = {
 export const EXTRA_TYPES = {
     LOCKED_INDICATOR: 0, // Should be working
     NAME_EDIT_TOGGLE: 1, // Should be working
-    SELECTION_TOGGLE: 2, // Needs testing
-    COLLAPSE_TOGGLE: 3, // Needs testing
+    SELECTION_TOGGLE: 2, // Should be working
+    COLLAPSE_TOGGLE: 3, // Should be working
     FUNCTION_BUTTON: 4, // Needs development
-    INDICATOR: 5, // Needs testing
+    INDICATOR: 5, // Should be working
     DROPDOWN: 6,  // Should be working
     DELETE_BUTTON: 7, // Needs testing
-    ADD_ARGUMENT: 8 // TO ADD
+    ADD_ARGUMENT: 8, // TO ADD
+    DEBUG_TOGGLE: 9 // Should be working
 }
 
 export const SIMPLE_PROPERTY_TYPES = {

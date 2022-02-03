@@ -122,7 +122,8 @@ Simple.args = {
             contents: [
               EXTRA_TYPES.SELECTION_TOGGLE,
               EXTRA_TYPES.DELETE_BUTTON,
-              EXTRA_TYPES.LOCKED_INDICATOR
+              EXTRA_TYPES.LOCKED_INDICATOR,
+              EXTRA_TYPES.DEBUG_TOGGLE
             ]
           }
         ]
@@ -155,7 +156,8 @@ Simple.args = {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
             contents: [
-              EXTRA_TYPES.DELETE_BUTTON
+              EXTRA_TYPES.DELETE_BUTTON,
+              EXTRA_TYPES.DEBUG_TOGGLE
             ]
           }
         ]

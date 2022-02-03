@@ -23,6 +23,7 @@ export const VisualBlock = forwardRef(
 
 
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const [isDebugging, setIsDebugging] = useState(false);
     const [simplePropertiesCollapsed, setSimplePropertiesCollapsed] = useState(true);
 
     const updateItemName = useProgrammingStore(store => store.updateItemName);
@@ -76,9 +77,11 @@ export const VisualBlock = forwardRef(
               isEditing={data.editing}
               isCollapsed={isCollapsed}
               isSelected={data.selected}
+              isDebugging={isDebugging}
               setIsEditing={(v)=>setIsEditing(data.id,v)}
               setIsSelected={(v)=>setIsSelected(data.id,v)}
-              setIsCollapsed={setIsCollapsed} />
+              setIsCollapsed={setIsCollapsed}
+              setIsDebugging={setIsDebugging} />
           )}
         </div>
         {/* If the block is a function instance (the actual function and not a call) then render the spawn area for arguments */}
@@ -260,10 +263,10 @@ export const VisualBlock = forwardRef(
         )}
 
         {/* Just a utility for showing the data in each node, will likely remove. */}
-        {false && (
-          <p style={{ whiteSpace: "pre" }}>
-            {JSON.stringify(data, null, "\t")}
-          </p>
+        {isDebugging && (
+          <Box round='small' pad='small' background='#00000044' style={{ whiteSpace: "pre", color:'white', fontFamily:'monospace' }}>
+            {JSON.stringify(data, null, "  ")}
+          </Box>
         )}
       </Selectable>
     );
