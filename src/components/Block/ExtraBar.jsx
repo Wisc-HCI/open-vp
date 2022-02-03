@@ -320,6 +320,8 @@ const ButtonSwitch = ({
             setIsSelected={setIsSelected}
             setIsDebugging={setIsDebugging}
             interactionDisabled={interactionDisabled}
+            parentId={parentId}
+            fieldInfo={fieldInfo}
         />
     } else { return null }
 }
