@@ -3,6 +3,7 @@ import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
 import { DATA_TYPES, TYPES } from ".";
 import { remove, pickBy } from 'lodash';
+import { instanceTemplateFromSpec } from "./Generators";
 
 const DEFAULT_PROGRAM_SPEC = {
     drawers: [],
@@ -145,7 +146,7 @@ const immer = (config) => (set, get, api) =>
     api
   );
 
-export const ProgrammingSlice = (set) => ({
+export const ProgrammingSlice = (set,get) => ({
     activeDrawer: null,
     setActiveDrawer: (activeDrawer) => set({activeDrawer}),
     programSpec: DEFAULT_PROGRAM_SPEC,
@@ -238,6 +239,14 @@ export const ProgrammingSlice = (set) => ({
         }
 
         state.programData[id].position = {x, y};
+      })
+    },
+    addArgument: (parentFunctionId, argumentType) => {
+      set((state) => {
+        const id = generateUuid(argumentType);
+        const template = {...instanceTemplateFromSpec(argumentType,state.programSpec.objectTypes[argumentType],true),id};
+        state.programData[id] = template;
+        state.programData[parentFunctionId].arguments.push(id);
       })
     },
     updateItemName: (id, value) => {

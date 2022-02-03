@@ -88,7 +88,9 @@ export const VisualBlock = forwardRef(
         {!isCollapsed && (
           <Box animation={['fadeIn','zoomIn']}>
             {data.dataType === DATA_TYPES.INSTANCE && typeSpec.type === TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length && (
-              <div
+              <Box
+                gap='xsmall'
+                direction='column'
                 style={{
                   borderRadius: 4,
                   display: 'flex',
@@ -100,7 +102,7 @@ export const VisualBlock = forwardRef(
                 {data.argumentBlockData.map((argBlockData, argIdx) => (
                   <Block key={argIdx} staticData={argBlockData} parentId='spawner' bounded highlightColor={highlightColor} context={context} />
                 ))}
-              </div>
+              </Box>
             )}
             {/* If the block has simple parameters, show them in a collapse block */}
             {Object.keys(simpleProperties).length > 0 && data.dataType === DATA_TYPES.INSTANCE && (

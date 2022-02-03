@@ -22,7 +22,8 @@ export const EXTRA_TYPES = {
     DROPDOWN: 6,  // Should be working
     DELETE_BUTTON: 7, // Needs testing
     ADD_ARGUMENT: 8, // TO ADD
-    DEBUG_TOGGLE: 9 // Should be working
+    ADD_ARGUMENT_GROUP: 9, // TO ADD
+    DEBUG_TOGGLE: 10 // Should be working
 }
 
 export const SIMPLE_PROPERTY_TYPES = {

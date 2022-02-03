@@ -1,12 +1,12 @@
 import { DATA_TYPES } from './Constants';
 
-export const instanceTemplateFromSpec = (type, objectSpec) => {
+export const instanceTemplateFromSpec = (type, objectSpec, isArg) => {
     let data = { 
         id: type, 
         type, 
         dataType: DATA_TYPES.INSTANCE, 
         properties:{}, 
-        name: `New ${objectSpec.name}`,
+        name: `New ${objectSpec.name}${isArg ? ' Argument':''}`,
         canDelete: true,
         canEdit: true,
         editing: false,
@@ -17,7 +17,7 @@ export const instanceTemplateFromSpec = (type, objectSpec) => {
             data.properties[propKey] = propInfo.default
         })
     }
-    if (objectSpec.instanceBlock.onCanvas) {
+    if (objectSpec.instanceBlock?.onCanvas) {
         data.position = { x: 0, y: 0 };
     }
     return data;

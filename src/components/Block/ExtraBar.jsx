@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff, FiTrash2, FiZap, FiZapOff } from "react-icons/fi";
+import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff, FiTrash2, FiZap, FiZapOff, FiPlus } from "react-icons/fi";
 import { Box, DropButton, Button } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { EXTRA_TYPES } from "..";
@@ -211,13 +211,45 @@ const IndicatorExtra = ({ value, label, inTopLevel }) => {
     }
 }
 
+const AddArgumentExtra = ({data, argumentType, interactionDisabled, inTopLevel}) => {
+
+    const typeSpec = useProgrammingStore(useCallback(store=>store.programSpec.objectTypes[argumentType],[argumentType]))
+    const Icon = typeSpec?.referenceBlock?.icon ? typeSpec.referenceBlock.icon : FiPlus;
+    const addArgument = useProgrammingStore(store=>store.addArgument);
+
+    return (
+        <Button
+            plain
+            disabled={interactionDisabled}
+            style={{ padding: inTopLevel ? null : '5pt 10pt 5pt 10pt' }}
+            icon={<Icon/>}
+            onClick={()=>addArgument(data.id,argumentType)}
+            label={inTopLevel ? null : `Add ${typeSpec.name} Argument`}
+        />
+    )
+}
+
+const AddArgumentGroupExtra = ({data, allowed, interactionDisabled, inTopLevel}) => {
+
+    return (
+        <DropdownExtra
+            icon={FiPlus}
+            label='Add Argument'
+            contents={allowed.map(argumentType=>({type:EXTRA_TYPES.ADD_ARGUMENT,argumentType}))}
+            inTopLevel={inTopLevel}
+            data={data}
+            interactionDisabled={interactionDisabled}
+        />
+    )
+}
+
 const DeleteExtra = ({data, inTopLevel, locked, fieldInfo, parentId}) => {
     const deleteFunc = useProgrammingStore(state => state.deleteBlock);
     return (
         <Button 
             plain 
             disabled={locked}
-            style={{padding:'5pt 10pt 5pt 10pt'}} 
+            style={{padding:inTopLevel?null:'5pt 10pt 5pt 10pt'}} 
             icon={<FiTrash2/>} 
             label={inTopLevel? null : 'Delete'}
             onClick={()=>deleteFunc(data, parentId, fieldInfo)}
@@ -263,17 +295,13 @@ const DropdownExtra = ({
             }
             dropProps={{ align: inTopLevel ? { top: 'bottom' } : { left: 'right' }, elevation: 'none', background: 'none' }}
         >
-            {inTopLevel ? (
-                <DropIcon />
-            ) : (
-                <Button
-                    as='div'
-                    plain
-                    style={{ padding: '5pt 10pt 5pt 10pt' }}
-                    icon={<DropIcon />}
-                    label={label}
-                />
-            )}
+            <Button
+                as='div'
+                plain
+                style={{ padding: '5pt 10pt 5pt 10pt' }}
+                icon={<DropIcon />}
+                label={inTopLevel ? null : label}
+            />
         </DropButton>
     )
 }
@@ -297,12 +325,23 @@ const ButtonSwitch = ({
         return <SelectionToggleExtra isSelected={isSelected} setIsSelected={setIsSelected} inTopLevel={inTopLevel} />
     } else if (feature === EXTRA_TYPES.DEBUG_TOGGLE) {
         return <DebugToggleExtra isDebugging={isDebugging} setIsDebugging={setIsDebugging} inTopLevel={inTopLevel} />
+    } else if (feature === EXTRA_TYPES.DELETE_BUTTON) {
+        return <DeleteExtra data={data} inTopLevel={inTopLevel} locked={interactionDisabled} fieldInfo={fieldInfo} parentId={parentId} />
+    } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT) {
+        return <AddArgumentExtra data={data} argumentType={feature?.argumentType} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
+    } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT_GROUP) {
+        return <AddArgumentGroupExtra data={data} allowed={feature?.allowed} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
     } else if (feature?.type === EXTRA_TYPES.FUNCTION_BUTTON) {
         return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled} />
     } else if (feature?.type === EXTRA_TYPES.INDICATOR) {
         return <IndicatorExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
-    } else if (feature === EXTRA_TYPES.DELETE_BUTTON) {
-        return <DeleteExtra data={data} inTopLevel={inTopLevel} locked={interactionDisabled} fieldInfo={fieldInfo} parentId={parentId} />
+    } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT) {
+        return <AddArgumentGroupExtra 
+            data={data} 
+            allowed={feature?.allowed} 
+            interactionDisabled={interactionDisabled} 
+            inTopLevel={inTopLevel}
+        />
     } else if (feature?.type === EXTRA_TYPES.DROPDOWN) {
         return <DropdownExtra
             data={data}
@@ -310,7 +349,7 @@ const ButtonSwitch = ({
             icon={feature?.icon}
             contents={feature?.contents}
             label={feature?.label}
-            inTopLevel={false}
+            inTopLevel={inTopLevel}
             isEditing={isEditing}
             isCollapsed={isCollapsed}
             isSelected={isSelected}
