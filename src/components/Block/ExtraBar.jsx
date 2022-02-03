@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff } from "react-icons/fi";
+import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff, FiTrash2 } from "react-icons/fi";
 import { Box, DropButton, Button } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { EXTRA_TYPES } from "..";
@@ -187,11 +187,25 @@ const IndicatorExtra = ({ value, label, inTopLevel }) => {
     }
 }
 
+const DeleteExtra = ({data, inTopLevel, locked, fieldInfo, parentId}) => {
+    const deleteFunc = useProgrammingStore(state => state.deleteBlock);
+    return (
+        <Button 
+            plain 
+            disabled={locked}
+            style={{padding:'5pt 10pt 5pt 10pt'}} 
+            icon={<FiTrash2/>} 
+            label={inTopLevel? null : 'Delete'}
+            onClick={()=>deleteFunc(data, parentId, fieldInfo)}
+        />
+    )
+}
+
 const DropdownExtra = ({ 
     icon, contents, label, inTopLevel, data, blockSpec, 
     isEditing, isCollapsed, isSelected, 
     setIsEditing, setIsCollapsed, setIsSelected,
-    interactionDisabled }) => {
+    interactionDisabled, parentId, fieldInfo }) => {
 
     const DropIcon = icon ? icon : FiMoreHorizontal;
 
@@ -215,6 +229,8 @@ const DropdownExtra = ({
                                 setIsCollapsed={setIsCollapsed}
                                 setIsSelected={setIsSelected}
                                 interactionDisabled={interactionDisabled}
+                                fieldInfo={fieldInfo}
+                                parentId={parentId}
                             />)
                     })}
                 </Box>
@@ -236,11 +252,13 @@ const DropdownExtra = ({
     )
 }
 
-const ButtonSwitch = ({ data, blockSpec, 
+const ButtonSwitch = ({ 
+    data, blockSpec, 
     isEditing, setIsEditing, 
     isCollapsed, setIsCollapsed, 
     isSelected, setIsSelected,
-    interactionDisabled, inTopLevel, feature }) => {
+    interactionDisabled, inTopLevel, 
+    feature, fieldInfo, parentId }) => {
     if (feature === EXTRA_TYPES.LOCKED_INDICATOR) {
         return <LockIndicatorExtra locked={!data.canEdit} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature === EXTRA_TYPES.NAME_EDIT_TOGGLE) {
@@ -253,6 +271,8 @@ const ButtonSwitch = ({ data, blockSpec,
         return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled} />
     } else if (feature?.type === EXTRA_TYPES.INDICATOR) {
         return <IndicatorExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+    } else if (feature === EXTRA_TYPES.DELETE_BUTTON) {
+        return <DeleteExtra data={data} inTopLevel={inTopLevel} locked={interactionDisabled} fieldInfo={fieldInfo} parentId={parentId} />
     } else if (feature?.type === EXTRA_TYPES.DROPDOWN) {
         return <DropdownExtra
             data={data}
@@ -272,7 +292,7 @@ const ButtonSwitch = ({ data, blockSpec,
     } else { return null }
 }
 
-export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, isSelected, setIsSelected, interactionDisabled }) => {
+export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, isSelected, setIsSelected, interactionDisabled, fieldInfo, parentId }) => {
     return (
         <Box direction='row' margin={{ left: 'xsmall' }} gap='none' align='center' alignContent='center' justify='between' flex={false}>
             {blockSpec?.extras?.map((extra, extraIdx) => (
@@ -289,7 +309,9 @@ export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed
                     setIsSelected={setIsSelected}
                     interactionDisabled={interactionDisabled}
                     feature={extra}
-                />
+                    fieldInfo={fieldInfo}
+                    parentId={parentId}
+                    />
             ))}
         </Box>
     )

@@ -121,6 +121,7 @@ Simple.args = {
             type: EXTRA_TYPES.DROPDOWN,
             contents: [
               EXTRA_TYPES.SELECTION_TOGGLE,
+              EXTRA_TYPES.DELETE_BUTTON,
               EXTRA_TYPES.LOCKED_INDICATOR
             ]
           }
@@ -153,7 +154,9 @@ Simple.args = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            actions: []
+            contents: [
+              EXTRA_TYPES.DELETE_BUTTON
+            ]
           }
         ]
       },
@@ -208,7 +211,9 @@ Simple.args = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            actions: []
+            contents: [
+              EXTRA_TYPES.DELETE_BUTTON
+            ]
           }
         ]
       }
@@ -226,7 +231,7 @@ Simple.args = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            actions: []
+            contents: [EXTRA_TYPES.DELETE_BUTTON]
           }
         ]
       }

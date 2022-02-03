@@ -20,7 +20,7 @@ export const EXTRA_TYPES = {
     FUNCTION_BUTTON: 4, // Needs development
     INDICATOR: 5, // Needs testing
     DROPDOWN: 6,  // Should be working
-    DELETE_BUTTON: 7, // TO ADD
+    DELETE_BUTTON: 7, // Needs testing
     ADD_ARGUMENT: 8 // TO ADD
 }
 
