@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES } from '../components';
-import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal } from "react-icons/fi";
+import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal, FiLayers } from "react-icons/fi";
 import { SIMPLE_PROPERTY_TYPES } from '../components/Constants';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -23,7 +23,7 @@ export const Simple = Template.bind({});
 Simple.args = {
   highlightColor: '#ff00ff',
   drawers: [
-    { title: "Structures", dataType: DATA_TYPES.INSTANCE, objectTypes: ["functionType", "operationType"], icon: FiClipboard },
+    { title: "Structures", dataType: DATA_TYPES.INSTANCE, objectTypes: ["functionType", "operationType", "blockType"], icon: FiClipboard },
     { title: "Functions", dataType: DATA_TYPES.CALL, objectType: 'functionType', icon: FiLogOut },
     { title: "Hats", dataType: DATA_TYPES.REFERENCE, objectType: 'hatType', icon: FiGrid },
     { title: "Boots", dataType: DATA_TYPES.REFERENCE, objectType: 'bootType', icon: FiBox },
@@ -36,7 +36,6 @@ Simple.args = {
         onCanvas: true,
         color: "#3f3f3f",
         icon: FiBriefcase,
-        collapse: true,
         extras: [
           { 
             type: EXTRA_TYPES.INDICATOR,
@@ -55,6 +54,7 @@ Simple.args = {
                 type: EXTRA_TYPES.DROPDOWN,
                 contents: [
                   EXTRA_TYPES.NAME_EDIT_TOGGLE,
+                  EXTRA_TYPES.COLLAPSE_TOGGLE,
                   EXTRA_TYPES.LOCKED_INDICATOR,
                   { 
                     type: EXTRA_TYPES.INDICATOR,
@@ -72,7 +72,35 @@ Simple.args = {
       properties: {
         children: {
           name: 'Children',
-          accepts: ['operationType', 'functionType'],
+          accepts: ['operationType', 'functionType', 'blockType'],
+          default: [],
+          isList: true,
+          fullWidth: true
+        }
+      }
+    },
+    blockType: {
+      name: "Block",
+      type: TYPES.OBJECT,
+      instanceBlock: {
+        onCanvas: false,
+        color: '#7f7f7f',
+        icon: FiLayers,
+        extras: [
+          EXTRA_TYPES.COLLAPSE_TOGGLE,
+          { 
+            type: EXTRA_TYPES.INDICATOR,
+            accessor: (data)=>data.properties.children.length,
+            label: 'Size'
+          },
+          EXTRA_TYPES.LOCKED_INDICATOR
+        ]
+      },
+      referenceBlock: null,
+      properties: {
+        children: {
+          name: 'Children',
+          accepts: ['operationType', 'functionType', 'blockType'],
           default: [],
           isList: true,
           fullWidth: true
@@ -86,7 +114,6 @@ Simple.args = {
         onCanvas: true,
         color: "#62869e",
         icon: FiLogOut,
-        collapse: true,
         extras: [
           EXTRA_TYPES.LOCKED_INDICATOR,
           {
@@ -139,12 +166,6 @@ Simple.args = {
           accepts: ["bootType"],
           default: null,
           isList: false
-        },
-        children: {
-          name: "Children",
-          accepts: ["operationType",'functionType'],
-          default: [],
-          isList: true
         },
         speed: {
           name: "Speed",
@@ -257,7 +278,6 @@ Simple.args = {
       properties: {
         hat: null,
         boot: null,
-        children: [],
         speed: 1,
         doFunky: true,
         greeting: 'Hello!'

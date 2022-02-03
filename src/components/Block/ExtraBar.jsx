@@ -1,11 +1,32 @@
 import { useCallback } from "react";
 import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiChevronRight } from "react-icons/fi";
-import { Box, DropButton, Button, Tag } from "grommet";
+import { Box, DropButton, Button, Tag, Text } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { useSpring, animated } from '@react-spring/web';
 import { config } from 'react-spring';
 import { EXTRA_TYPES } from "..";
 import { ExpandCarrot } from "./ExpandCarrot";
+
+const Pill = ({value}) => {
+    return (
+        <div
+            style={{
+                borderRadius:20,
+                minWidth:9,
+                backgroundColor: "#00000022",
+                paddingLeft:7,
+                paddingRight:7,
+                borderStyle:'solid',
+                borderColor:'#00000088',
+                borderWidth: 1,
+                textAlign:'center',
+                fontSize:10
+            }}
+        >
+            {value}
+        </div>
+    )
+}
 
 const FunctionButtonExtra = ({ actionInfo, data, blockSpec }) => {
     const onClick = useProgrammingStore(useCallback(state => {
@@ -31,9 +52,7 @@ const FunctionButtonExtra = ({ actionInfo, data, blockSpec }) => {
 const LockIndicatorExtra = ({ locked, inTopLevel }) => {
     if (locked && inTopLevel) {
         return (
-            <Box height="25px" width="25px" justify='center' align='end'>
-                <FiLock />
-            </Box>
+            <FiLock />
         )
     } else if (!locked && inTopLevel) {
         return null
@@ -63,25 +82,11 @@ const LockIndicatorExtra = ({ locked, inTopLevel }) => {
 const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, inTopLevel }) => {
     if (isEditing && inTopLevel) {
         return (
-            <Box
-                height="25px"
-                width="25px"
-                justify='center'
-                align='end'
-                onClick={() => setIsEditing(!isEditing)}>
-                <FiSave />
-            </Box>
+            <FiSave onClick={() => setIsEditing(!isEditing)}/>
         )
     } else if (!isEditing && inTopLevel) {
         return (
-            <Box
-                height="25px"
-                width="25px"
-                justify='center'
-                align='end'
-                onClick={() => setIsEditing(!isEditing)}>
-                <FiEdit3 />
-            </Box>
+            <FiEdit3 onClick={() => setIsEditing(!isEditing)}/>
         )
     } else if (isEditing && !inTopLevel) {
         return (
@@ -112,23 +117,23 @@ const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
 
     if (inTopLevel) {
         return (
-            <Box
-                height="25px"
-                width="25px"
+            <Button
+                size='small'
                 justify='center'
-                align='end'
-                onClick={() => setIsCollapsed(!isCollapsed)}>
-                <ExpandCarrot expanded={!isCollapsed} />
-            </Box>
+                background='blue'
+                align='center'
+                icon={<ExpandCarrot expanded={!isCollapsed} />}
+                onClick={() => setIsCollapsed(!isCollapsed)}/>
         )
     } else {
         return (
             <Button
                 plain
+                size='small'
                 style={{ padding: '5pt 10pt 5pt 10pt' }}
                 icon={<ExpandCarrot expanded={!isCollapsed} />}
-                label={isCollapsed ? 'Expand' : 'Minimize'}
                 onClick={() => setIsCollapsed(!isCollapsed)}
+                label={isCollapsed ? "Expand" : "Collapse"}
             />
         )
     }
@@ -137,32 +142,14 @@ const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
 const IndicatorExtra = ({ value, label, inTopLevel }) => {
 
     if (inTopLevel) {
-        return (
-            
-                <Tag
-                    value={value}
-                    size='large'
-                    border={{ color: '#00000088' }}
-                    background="#00000011"
-                    style={{ color: 'white', height: 25, width: 25, marginTop: 4, paddingTop:2 }}>
-                    {value}
-                </Tag>
-
-        )
+        return ( <Pill value={value} /> )
     } else {
         return (
             <Button
                 plain
                 style={{ padding: '5pt 10pt 5pt 10pt' }}
                 icon={
-                    <Tag
-                        value={value}
-                        size='small'
-                        border={{ color: '#00000088' }}
-                        background="#00000011"
-                        style={{ color: 'white', height: 20, width: 20, paddingTop: 2 }}>
-                        {value}
-                    </Tag>
+                    <Pill value={value} />
                 }
                 label={label}
             />
@@ -178,7 +165,7 @@ const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isE
         <DropButton
             disabled={interactionDisabled}
             dropContent={
-                <Box round='xsmall' background='grey' direction="column" align='start'>
+                <Box round='xsmall' background='grey' direction="column" align='start' border={{color:'lightgrey'}}>
                     {contents?.map((feature, featureIdx) => {
                         return (
                             <ButtonSwitch
@@ -199,9 +186,7 @@ const DropdownExtra = ({ icon, contents, label, inTopLevel, data, blockSpec, isE
             dropProps={{ align: inTopLevel ? { top: 'bottom' } : { left: 'right' }, elevation: 'none', background: 'none' }}
         >
             {inTopLevel ? (
-                <Box height="25px" width="25px" justify='center' align='end'>
-                    <DropIcon />
-                </Box>
+                <DropIcon />
             ) : (
                 <Button
                     as='div'
@@ -245,7 +230,7 @@ const ButtonSwitch = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, s
 
 export const ExtraBar = ({ data, blockSpec, isEditing, setIsEditing, isCollapsed, setIsCollapsed, interactionDisabled }) => {
     return (
-        <Box direction='row' margin={{ right: 'small', left: 'small' }}>
+        <Box direction='row' margin={{ left: 'xsmall' }} gap='none' align='center' alignContent='center' justify='between' flex={false}>
             {blockSpec?.extras?.map((extra, extraIdx) => (
                 <ButtonSwitch
                     key={extraIdx}
