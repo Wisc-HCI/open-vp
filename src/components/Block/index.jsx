@@ -63,7 +63,7 @@ const Block = ({
     [data, typeSpec, parentId, fieldInfo, idx, dragDisabled]
   );
 
-  const hidden = parentId !== 'spawner' && dragProps.isDragging;
+  const hidden = !fieldInfo?.isSpawner && dragProps.isDragging;
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: false });

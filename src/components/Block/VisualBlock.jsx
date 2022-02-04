@@ -100,7 +100,7 @@ export const VisualBlock = forwardRef(
                 }}
               >
                 {data.argumentBlockData.map((argBlockData, argIdx) => (
-                  <Block key={argIdx} staticData={argBlockData} parentId='spawner' bounded highlightColor={highlightColor} context={context} />
+                  <Block key={argIdx} staticData={argBlockData} parentId={data.id} bounded highlightColor={highlightColor} context={context} fieldInfo={{ name: '', value: null, accepts: [], isSpawner: true }}/>
                 ))}
               </Box>
             )}
