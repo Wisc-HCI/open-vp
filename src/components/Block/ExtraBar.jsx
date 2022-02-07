@@ -26,7 +26,7 @@ const Pill = ({value}) => {
     )
 }
 
-const FunctionButtonExtra = ({ actionInfo, data, blockSpec }) => {
+const FunctionButtonExtra = ({ actionInfo, data, blockSpec, inTopLevel, interactionDisabled }) => {
     const onClick = useProgrammingStore(useCallback(state => {
         if (typeof actionInfo.onClick === 'function') {
             return actionInfo.onClick
@@ -36,12 +36,16 @@ const FunctionButtonExtra = ({ actionInfo, data, blockSpec }) => {
     }, [actionInfo]))
 
     const ExtraActionIcon = actionInfo.icon ? actionInfo.icon : FiCircle;
+
     return (
         <Button
-            plain
-            style={{ padding: '5pt 10pt 5pt 10pt' }}
+            size='small'
+            focusIndicator={false}
+            disabled={interactionDisabled}
+            plain={!inTopLevel}
+            style={{ padding: inTopLevel ? null : '5pt 10pt 5pt 10pt' }}
             icon={<ExtraActionIcon />}
-            label={actionInfo.label}
+            label={inTopLevel ? null : actionInfo.label}
             onClick={() => onClick(data, blockSpec)}
         />
     )
@@ -145,52 +149,30 @@ const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel }) => {
 
 const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
 
-    if (inTopLevel) {
-        return (
-            <Button
-                size='small'
-                justify='center'
-                align='center'
-                icon={<ExpandCarrot expanded={!isCollapsed} />}
-                onClick={() => setIsCollapsed(!isCollapsed)}/>
-        )
-    } else {
-        return (
-            <Button
-                plain
-                size='small'
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
-                icon={<ExpandCarrot expanded={!isCollapsed} />}
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                label={isCollapsed ? "Expand" : "Collapse"}
-            />
-        )
-    }
+    return (
+        <Button
+            plain={inTopLevel}
+            size='small'
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+            icon={<ExpandCarrot expanded={!isCollapsed} />}
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            label={inTopLevel ? null : isCollapsed ? "Expand" : "Collapse"}
+        />
+    )
 }
 
 const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel }) => {
     const Icon = isDebugging ? FiZapOff : FiZap;
-    if (inTopLevel) {
-        return (
-            <Button
-                size='small'
-                justify='center'
-                align='center'
-                icon={<Icon />}
-                onClick={() => setIsDebugging(!isDebugging)}/>
-        )
-    } else {
-        return (
-            <Button
-                plain
-                size='small'
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
-                icon={<Icon />}
-                onClick={() => setIsDebugging(!isDebugging)}
-                label={isDebugging ? "Cancel Debug" : "Debug"}
-            />
-        )
-    }
+    return (
+        <Button
+            plain={inTopLevel}
+            size='small'
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+            icon={<Icon />}
+            onClick={() => setIsDebugging(!isDebugging)}
+            label={inTopLevel ? null : isDebugging ? "Cancel Debug" : "Debug"}
+        />
+    )
 }
 
 const IndicatorExtra = ({ value, label, inTopLevel }) => {
@@ -201,7 +183,7 @@ const IndicatorExtra = ({ value, label, inTopLevel }) => {
         return (
             <Button
                 plain
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
+                style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
                 icon={
                     <Pill value={value} />
                 }
@@ -221,7 +203,7 @@ const AddArgumentExtra = ({data, argumentType, interactionDisabled, inTopLevel})
         <Button
             plain
             disabled={interactionDisabled}
-            style={{ padding: inTopLevel ? null : '5pt 10pt 5pt 10pt' }}
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={<Icon/>}
             onClick={()=>addArgument(data.id,argumentType)}
             label={inTopLevel ? null : `Add ${typeSpec.name} Argument`}
@@ -249,7 +231,7 @@ const DeleteExtra = ({data, inTopLevel, locked, fieldInfo, parentId}) => {
         <Button 
             plain 
             disabled={locked}
-            style={{padding:inTopLevel?null:'5pt 10pt 5pt 10pt'}} 
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={<FiTrash2/>} 
             label={inTopLevel? null : 'Delete'}
             onClick={()=>deleteFunc(data, parentId, fieldInfo)}
@@ -298,7 +280,7 @@ const DropdownExtra = ({
             <Button
                 as='div'
                 plain
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
+                style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
                 icon={<DropIcon />}
                 label={inTopLevel ? null : label}
             />
@@ -332,7 +314,7 @@ const ButtonSwitch = ({
     } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT_GROUP) {
         return <AddArgumentGroupExtra data={data} allowed={feature?.allowed} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
     } else if (feature?.type === EXTRA_TYPES.FUNCTION_BUTTON) {
-        return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled} />
+        return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
     } else if (feature?.type === EXTRA_TYPES.INDICATOR) {
         return <IndicatorExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT) {

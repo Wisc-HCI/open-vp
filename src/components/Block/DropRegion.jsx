@@ -15,7 +15,8 @@ export const DropRegion = ({
   hideText,
   disabled,
   highlightColor,
-  context
+  context,
+  showBuffer
 }) => {
   const transferBlock = useProgrammingStore(transferBlockSelector);
 
@@ -87,6 +88,7 @@ export const DropRegion = ({
           bounded
           highlightColor={highlightColor}
           context={context}
+          style={{marginBottom:showBuffer?minHeight:null,marginTop:showBuffer?minHeight:null}}
         />
       ) : hideText ? null : (
         fieldInfo.name

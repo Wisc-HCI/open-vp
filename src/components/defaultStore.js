@@ -5,6 +5,14 @@ import { DATA_TYPES, TYPES } from ".";
 import { remove, pickBy } from 'lodash';
 import { instanceTemplateFromSpec } from "./Generators";
 
+const randInt8 = () => {
+  return Math.floor((Math.random() * 256));
+}
+
+const randomColor = () => {
+  return `rgb(${randInt8()},${randInt8()},${randInt8()})`
+}
+
 const DEFAULT_PROGRAM_SPEC = {
     drawers: [],
     objectTypes: {}
@@ -330,6 +338,18 @@ export const ProgrammingSlice = (set,get) => ({
     updateItemSimpleProperty: (id, property, value) => {
       set((state) => {
         state.programData[id].properties[property] = value;
+      })
+    },
+    // Just to illustrate alternative functionExtraTypes
+    updateItemBlockColors: (data) => {
+      set((state) => {
+        const color = randomColor();
+        ['instanceBlock','referenceBlock','callBlock'].forEach(blockType=>{
+          if (state.programSpec.objectTypes[data.type][blockType]) {
+            state.programSpec.objectTypes[data.type][blockType].color = color;
+          }
+        })
+        
       })
     }
   })

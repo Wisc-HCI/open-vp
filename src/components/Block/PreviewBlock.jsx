@@ -3,7 +3,7 @@ import { useProgrammingStore } from "../ProgrammingContext";
 import { VisualBlock } from './VisualBlock';
 import { referenceTemplateFromSpec } from "../Generators";
 
-export const PreviewBlock = ({ id, staticData, bounded, highlightColor, context }) => {
+export const PreviewBlock = ({ id, staticData, bounded, highlightColor, context, style}) => {
   const [data, typeSpec] = useProgrammingStore(
     useCallback(
       (state) => {
@@ -29,6 +29,6 @@ export const PreviewBlock = ({ id, staticData, bounded, highlightColor, context 
     if (!data) {
       return null;
     } else {
-      return <VisualBlock data={data} typeSpec={typeSpec} interactionDisabled bounded={bounded} highlightColor={highlightColor} context={wholeContext}/>;
+      return <VisualBlock data={data} typeSpec={typeSpec} interactionDisabled bounded={bounded} highlightColor={highlightColor} context={wholeContext} style={style}/>;
     }
   };

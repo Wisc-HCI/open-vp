@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES } from '../components';
-import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal, FiLayers } from "react-icons/fi";
+import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal, FiLayers, FiFeather } from "react-icons/fi";
 import { SIMPLE_PROPERTY_TYPES } from '../components/Constants';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -61,6 +61,12 @@ Simple.args = {
                     accessor: (data)=>data.properties.children.length,
                     label: 'Size'
                   },
+                  { 
+                    type: EXTRA_TYPES.FUNCTION_BUTTON,
+                    onClick: 'updateItemBlockColors',
+                    label: 'Cycle Color',
+                    icon: FiFeather
+                  }
                 ]
               }
             ]
@@ -92,6 +98,12 @@ Simple.args = {
             type: EXTRA_TYPES.INDICATOR,
             accessor: (data)=>data.properties.children.length,
             label: 'Size'
+          },
+          { 
+            type: EXTRA_TYPES.FUNCTION_BUTTON,
+            onClick: 'updateItemBlockColors',
+            label: 'Cycle Color',
+            icon: FiFeather
           },
           EXTRA_TYPES.LOCKED_INDICATOR
         ]

@@ -14,13 +14,14 @@ import { ExpandCarrot } from "./ExpandCarrot";
 import { NumberInput } from "./Input";
 
 export const VisualBlock = forwardRef(
-  ({ data, x, y, scale, typeSpec, onCanvas, interactionDisabled, bounded, highlightColor, context, fieldInfo, parentId }, ref) => {
+  ({ data, x, y, scale, typeSpec, onCanvas, interactionDisabled, bounded, highlightColor, context, fieldInfo, parentId, style }, ref) => {
     const blockSpec = data.dataType === DATA_TYPES.REFERENCE
       ? typeSpec.referenceBlock
       : data.dataType === DATA_TYPES.CALL
         ? typeSpec.callBlock
         : typeSpec.instanceBlock;
 
+    const blockStyle = style ? style : {};
 
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isDebugging, setIsDebugging] = useState(false);
@@ -54,7 +55,8 @@ export const VisualBlock = forwardRef(
           transform: `translate(${x ? x : 0}px, ${y ? y : 0}px) scale(${scale ? scale : 1
             })`,
           WebkitTransform: `translate(${x ? x : 0}px, ${y ? y : 0}px) scale(${scale ? scale : 1
-            })`
+            })`,
+          ...blockStyle
         }}
       >
         {/* The 'Selectable' component just handles the highlighting, but is essentially a div */}

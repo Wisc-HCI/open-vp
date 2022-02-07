@@ -13,17 +13,17 @@ export const TYPES = {
 }
 
 export const EXTRA_TYPES = {
-    LOCKED_INDICATOR: 0, // Should be working
-    NAME_EDIT_TOGGLE: 1, // Should be working
-    SELECTION_TOGGLE: 2, // Should be working
-    COLLAPSE_TOGGLE: 3, // Should be working
-    FUNCTION_BUTTON: 4, // Needs development
-    INDICATOR: 5, // Should be working
-    DROPDOWN: 6,  // Should be working
-    DELETE_BUTTON: 7, // Needs testing
-    ADD_ARGUMENT: 8, // TO ADD
-    ADD_ARGUMENT_GROUP: 9, // TO ADD
-    DEBUG_TOGGLE: 10 // Should be working
+    LOCKED_INDICATOR: 0, 
+    NAME_EDIT_TOGGLE: 1, 
+    SELECTION_TOGGLE: 2, 
+    COLLAPSE_TOGGLE: 3, 
+    FUNCTION_BUTTON: 4, 
+    INDICATOR: 5, 
+    DROPDOWN: 6,  
+    DELETE_BUTTON: 7, 
+    ADD_ARGUMENT: 8, 
+    ADD_ARGUMENT_GROUP: 9, 
+    DEBUG_TOGGLE: 10 
 }
 
 export const SIMPLE_PROPERTY_TYPES = {
