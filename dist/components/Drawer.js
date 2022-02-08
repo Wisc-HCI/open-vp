@@ -218,7 +218,13 @@ var Drawer = function Drawer(_ref2) {
       bounded: true,
       highlightColor: highlightColor,
       context: [],
-      interactionDisabled: true
+      interactionDisabled: true,
+      fieldInfo: {
+        name: '',
+        value: null,
+        accepts: [],
+        isSpawner: true
+      }
     }));
   }))));
 };

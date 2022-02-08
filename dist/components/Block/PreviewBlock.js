@@ -26,7 +26,8 @@ var PreviewBlock = function PreviewBlock(_ref) {
       staticData = _ref.staticData,
       bounded = _ref.bounded,
       highlightColor = _ref.highlightColor,
-      context = _ref.context;
+      context = _ref.context,
+      style = _ref.style;
 
   var _useProgrammingStore = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (state) {
     var data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
@@ -61,7 +62,8 @@ var PreviewBlock = function PreviewBlock(_ref) {
       interactionDisabled: true,
       bounded: bounded,
       highlightColor: highlightColor,
-      context: wholeContext
+      context: wholeContext,
+      style: style
     });
   }
 };

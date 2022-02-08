@@ -30,5 +30,6 @@ export const SIMPLE_PROPERTY_TYPES = {
     BOOLEAN: 0,
     NUMBER: 1,
     STRING: 2,
-    OPTIONS: 3
+    OPTIONS: 3,
+    IGNORED: 4
 }

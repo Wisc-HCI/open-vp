@@ -1,7 +1,8 @@
 {
   "name": "simple-vp",
   "version": "0.1.0",
-  "private": true,
+  "main": "dist/index.js",
+  "private": false,
   "files": [
     "dist",
     "README.md"

@@ -58,7 +58,7 @@ var Block = function Block(_ref) {
     var data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
     var typeSpec = state.programSpec.objectTypes[data === null || data === void 0 ? void 0 : data.type];
     var refData = data !== null && data !== void 0 && data.ref ? state.programData[data === null || data === void 0 ? void 0 : data.ref] : {};
-    var selected = (data === null || data === void 0 ? void 0 : data.selected) || refData.selected;
+    var selected = (data === null || data === void 0 ? void 0 : data.selected) || (refData === null || refData === void 0 ? void 0 : refData.selected);
     var argumentBlocks = data !== null && data !== void 0 && data.arguments ? data.arguments : refData !== null && refData !== void 0 && refData.arguments ? refData.arguments : [];
     var argumentBlockData = argumentBlocks.map(function (instanceId) {
       var inst = state.programData[instanceId];
@@ -79,7 +79,7 @@ var Block = function Block(_ref) {
 
   var blockContext = data.arguments ? data.arguments : [];
   var wholeContext = [].concat((0, _toConsumableArray2.default)(context), (0, _toConsumableArray2.default)(blockContext));
-  var onCanvas = data.dataType === _.DATA_TYPES.REFERENCE ? typeSpec.referenceBlock.onCanvas : data.dataType === _.DATA_TYPES.CALL ? typeSpec.callBlock.onCanvas : typeSpec.instanceBlock.onCanvas;
+  var onCanvas = data.dataType === _.DATA_TYPES.REFERENCE ? typeSpec.referenceBlock.onCanvas : data.dataType === _.DATA_TYPES.CALL ? typeSpec.callBlock.onCanvas : data.dataType === _.DATA_TYPES.INSTANCE ? typeSpec.instanceBlock.onCanvas : "null";
 
   var _useDrag = (0, _reactDnd.useDrag)(function () {
     return {
@@ -108,20 +108,21 @@ var Block = function Block(_ref) {
       drag = _useDrag2[1],
       preview = _useDrag2[2];
 
+  var hidden = !(fieldInfo !== null && fieldInfo !== void 0 && fieldInfo.isSpawner) && dragProps.isDragging;
   (0, _react.useEffect)(function () {
     preview((0, _reactDndHtml5Backend.getEmptyImage)(), {
       captureDraggingState: false
     });
   }, [preview]);
 
-  if (!data) {
+  if (!data || onCanvas === "null") {
     return null;
   } else {
     return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-      hidden: parentId !== "spawner" && dragProps.isDragging,
+      hidden: hidden,
       style: {
-        display: 'flex',
-        flex: 1
+        flex: 1,
+        display: hidden ? 'none' : 'flex'
       }
     }, /*#__PURE__*/React.createElement(_VisualBlock.VisualBlock, {
       data: data,
@@ -130,11 +131,13 @@ var Block = function Block(_ref) {
       bounded: bounded,
       highlightColor: highlightColor,
       context: wholeContext,
-      interactionDisabled: interactionDisabled
+      interactionDisabled: interactionDisabled,
+      fieldInfo: fieldInfo,
+      parentId: parentId
     })), /*#__PURE__*/React.createElement("div", {
-      hidden: parentId !== "spawner" && dragProps.isDragging,
+      hidden: hidden,
       style: {
-        display: 'flex'
+        display: hidden ? 'none' : 'flex'
       }
     }, after));
   }

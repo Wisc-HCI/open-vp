@@ -38,7 +38,7 @@ var _ExpandCarrot = require("./ExpandCarrot");
 var _Input = require("./Input");
 
 var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
-  var _Object$entries;
+  var _data$refData, _Object$entries;
 
   var data = _ref.data,
       x = _ref.x,
@@ -49,25 +49,40 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       interactionDisabled = _ref.interactionDisabled,
       bounded = _ref.bounded,
       highlightColor = _ref.highlightColor,
-      context = _ref.context;
+      context = _ref.context,
+      fieldInfo = _ref.fieldInfo,
+      parentId = _ref.parentId,
+      style = _ref.style;
   var blockSpec = data.dataType === _Constants.DATA_TYPES.REFERENCE ? typeSpec.referenceBlock : data.dataType === _Constants.DATA_TYPES.CALL ? typeSpec.callBlock : typeSpec.instanceBlock;
+  var blockStyle = style ? style : {};
 
   var _useState = (0, _react.useState)(false),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       isCollapsed = _useState2[0],
       setIsCollapsed = _useState2[1];
 
-  var _useState3 = (0, _react.useState)(true),
+  var _useState3 = (0, _react.useState)(false),
       _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
-      simplePropertiesCollapsed = _useState4[0],
-      setSimplePropertiesCollapsed = _useState4[1];
+      isDebugging = _useState4[0],
+      setIsDebugging = _useState4[1];
+
+  var _useState5 = (0, _react.useState)(true),
+      _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+      simplePropertiesCollapsed = _useState6[0],
+      setSimplePropertiesCollapsed = _useState6[1];
 
   var updateItemName = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.updateItemName;
   });
-  var setIsEditing = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
+
+  var _setIsEditing = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.updateItemEditing;
   });
+
+  var _setIsSelected = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
+    return store.updateItemSelected;
+  });
+
   var updateItemSimpleProperty = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.updateItemSimpleProperty;
   });
@@ -78,13 +93,13 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     return Object.values(_Constants.SIMPLE_PROPERTY_TYPES).includes(entry.type);
   }) : {};
   var Icon = blockSpec.icon ? blockSpec.icon : _fi.FiSquare;
-  var name = [_Constants.DATA_TYPES.CALL, _Constants.DATA_TYPES.REFERENCE].includes(data.dataType) ? data.refData.name : data.name;
+  var name = [_Constants.DATA_TYPES.CALL, _Constants.DATA_TYPES.REFERENCE].includes(data.dataType) ? data === null || data === void 0 ? void 0 : (_data$refData = data.refData) === null || _data$refData === void 0 ? void 0 : _data$refData.name : data === null || data === void 0 ? void 0 : data.name;
   return /*#__PURE__*/React.createElement(_Selectable.Selectable, {
     selected: data.selected,
     highlightColor: highlightColor,
     className: onCanvas && blockSpec.onCanvas ? null : "nodrag",
     ref: ref,
-    style: {
+    style: (0, _objectSpread2.default)({
       minWidth: 175,
       width: bounded ? "inherit" : "max-content",
       backgroundColor: blockSpec.color,
@@ -93,7 +108,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       flex: bounded ? 1 : null,
       transform: "translate(".concat(x ? x : 0, "px, ").concat(y ? y : 0, "px) scale(").concat(scale ? scale : 1, ")"),
       WebkitTransform: "translate(".concat(x ? x : 0, "px, ").concat(y ? y : 0, "px) scale(").concat(scale ? scale : 1, ")")
-    }
+    }, blockStyle)
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       margin: 4,
@@ -110,14 +125,28 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       return updateItemName(data.id, e.target.value);
     }
   }), (blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras) && /*#__PURE__*/React.createElement(_ExtraBar.ExtraBar, {
+    fieldInfo: fieldInfo,
+    parentId: parentId,
     interactionDisabled: interactionDisabled,
     data: data,
     blockSpec: blockSpec,
     isEditing: data.editing,
     isCollapsed: isCollapsed,
-    setIsEditing: setIsEditing,
-    setIsCollapsed: setIsCollapsed
-  })), data.dataType === _Constants.DATA_TYPES.INSTANCE && typeSpec.type === _Constants.TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length && /*#__PURE__*/React.createElement("div", {
+    isSelected: data.selected,
+    isDebugging: isDebugging,
+    setIsEditing: function setIsEditing(v) {
+      return _setIsEditing(data.id, v);
+    },
+    setIsSelected: function setIsSelected(v) {
+      return _setIsSelected(data.id, v);
+    },
+    setIsCollapsed: setIsCollapsed,
+    setIsDebugging: setIsDebugging
+  })), !isCollapsed && /*#__PURE__*/React.createElement(_grommet.Box, {
+    animation: ['fadeIn', 'zoomIn']
+  }, data.dataType === _Constants.DATA_TYPES.INSTANCE && typeSpec.type === _Constants.TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length && /*#__PURE__*/React.createElement(_grommet.Box, {
+    gap: "xsmall",
+    direction: "column",
     style: {
       borderRadius: 4,
       display: 'flex',
@@ -129,10 +158,16 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     return /*#__PURE__*/React.createElement(_.Block, {
       key: argIdx,
       staticData: argBlockData,
-      parentId: "spawner",
+      parentId: data.id,
       bounded: true,
       highlightColor: highlightColor,
-      context: context
+      context: context,
+      fieldInfo: {
+        name: '',
+        value: null,
+        accepts: [],
+        isSpawner: true
+      }
     });
   })), Object.keys(simpleProperties).length > 0 && data.dataType === _Constants.DATA_TYPES.INSTANCE && /*#__PURE__*/React.createElement(_grommet.Box, {
     margin: "xsmall",
@@ -308,10 +343,15 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       highlightColor: highlightColor,
       context: context
     }));
-  })), false && /*#__PURE__*/React.createElement("p", {
+  }))), isDebugging && /*#__PURE__*/React.createElement(_grommet.Box, {
+    round: "small",
+    pad: "small",
+    background: "#00000044",
     style: {
-      whiteSpace: "pre"
+      whiteSpace: "pre",
+      color: 'white',
+      fontFamily: 'monospace'
     }
-  }, JSON.stringify(data, null, "\t")));
+  }, JSON.stringify(data, null, "  ")));
 });
 exports.VisualBlock = VisualBlock;

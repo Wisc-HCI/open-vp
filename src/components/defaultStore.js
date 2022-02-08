@@ -65,7 +65,7 @@ export function deleteFromChildren(state, idsToDelete, parentData) {
         const property = state.programSpec.objectTypes[parentData.type].properties[propName];
 
         // Clearing child fields/references
-        if (property && (property.type || property.type == 0)) {
+        if (property && (property.type || property.type === TYPES.OBJECT)) {
           // Ignore SIMPLE types.
         } else if (property && property.isList) {
           parentData.properties[propName].forEach((child) => {
@@ -115,7 +115,7 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
           if (propName) {
             const property = state.programSpec.objectTypes[entry.type].properties[propName];
     
-            if (property && (property.type || property.type == 0)) {
+            if (property && (property.type || property.type === TYPES.OBJECT)) {
               // Ignore SIMPLE types.
             } else if (property && property.isList) {
               // Iterate through property list and remove all applicable references
@@ -178,7 +178,7 @@ export function deleteChildren(state, data, parentId, fieldInfo) {
         const property = state.programSpec.objectTypes[data.type].properties[propName];
 
         // Clearing child fields/references
-        if (property && (property.type || property.type == 0)) {
+        if (property && (property.type || property.type === TYPES.OBJECT)) {
           // Ignore SIMPLE types.
         } else if (property && property.isList) {
           // Iterate over list and remove each entry (probably recursively)

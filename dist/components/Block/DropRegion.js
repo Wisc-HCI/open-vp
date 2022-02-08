@@ -34,7 +34,8 @@ var DropRegion = function DropRegion(_ref) {
       hideText = _ref.hideText,
       disabled = _ref.disabled,
       highlightColor = _ref.highlightColor,
-      context = _ref.context;
+      context = _ref.context,
+      showBuffer = _ref.showBuffer;
   var transferBlock = (0, _ProgrammingContext.useProgrammingStore)(transferBlockSelector);
   var data = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (store) {
     return store.programData[id];
@@ -94,7 +95,11 @@ var DropRegion = function DropRegion(_ref) {
     fieldInfo: fieldInfo,
     bounded: true,
     highlightColor: highlightColor,
-    context: context
+    context: context,
+    style: {
+      marginBottom: showBuffer ? minHeight : null,
+      marginTop: showBuffer ? minHeight : null
+    }
   }) : hideText ? null : fieldInfo.name);
 };
 

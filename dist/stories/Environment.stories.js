@@ -55,7 +55,7 @@ Simple.args = {
   drawers: [{
     title: "Structures",
     dataType: _components.DATA_TYPES.INSTANCE,
-    objectTypes: ["functionType", "operationType"],
+    objectTypes: ["functionType", "operationType", "blockType"],
     icon: _fi.FiClipboard
   }, {
     title: "Functions",
@@ -81,15 +81,31 @@ Simple.args = {
         onCanvas: true,
         color: "#3f3f3f",
         icon: _fi.FiBriefcase,
-        collapse: true,
         extras: [{
+          type: _components.EXTRA_TYPES.INDICATOR,
+          accessor: function accessor(data) {
+            return data.properties.children.length;
+          },
+          label: 'Size'
+        }, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
           contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, {
             icon: _fi.FiMoreHorizontal,
             label: 'More Options',
             type: _components.EXTRA_TYPES.DROPDOWN,
-            contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR]
+            contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, {
+              type: _components.EXTRA_TYPES.INDICATOR,
+              accessor: function accessor(data) {
+                return data.properties.children.length;
+              },
+              label: 'Size'
+            }, {
+              type: _components.EXTRA_TYPES.FUNCTION_BUTTON,
+              onClick: 'updateItemBlockColors',
+              label: 'Cycle Color',
+              icon: _fi.FiFeather
+            }]
           }]
         }, _components.EXTRA_TYPES.LOCKED_INDICATOR]
       },
@@ -97,7 +113,38 @@ Simple.args = {
       properties: {
         children: {
           name: 'Children',
-          accepts: ['operationType', 'functionType'],
+          accepts: ['operationType', 'functionType', 'blockType'],
+          default: [],
+          isList: true,
+          fullWidth: true
+        }
+      }
+    },
+    blockType: {
+      name: "Block",
+      type: _components.TYPES.OBJECT,
+      instanceBlock: {
+        onCanvas: false,
+        color: '#7f7f7f',
+        icon: _fi.FiLayers,
+        extras: [_components.EXTRA_TYPES.COLLAPSE_TOGGLE, {
+          type: _components.EXTRA_TYPES.INDICATOR,
+          accessor: function accessor(data) {
+            return data.properties.children.length;
+          },
+          label: 'Size'
+        }, {
+          type: _components.EXTRA_TYPES.FUNCTION_BUTTON,
+          onClick: 'updateItemBlockColors',
+          label: 'Cycle Color',
+          icon: _fi.FiFeather
+        }, _components.EXTRA_TYPES.LOCKED_INDICATOR]
+      },
+      referenceBlock: null,
+      properties: {
+        children: {
+          name: 'Children',
+          accepts: ['operationType', 'functionType', 'blockType'],
           default: [],
           isList: true,
           fullWidth: true
@@ -111,11 +158,19 @@ Simple.args = {
         onCanvas: true,
         color: "#62869e",
         icon: _fi.FiLogOut,
-        collapse: true,
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.LOCKED_INDICATOR]
+          contents: [_components.EXTRA_TYPES.SELECTION_TOGGLE, _components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.LOCKED_INDICATOR, _components.EXTRA_TYPES.DEBUG_TOGGLE, {
+            type: _components.EXTRA_TYPES.ADD_ARGUMENT_GROUP,
+            allowed: ['hatType', 'bootType']
+          }, {
+            type: _components.EXTRA_TYPES.ADD_ARGUMENT,
+            argumentType: 'hatType'
+          }]
+        }, {
+          type: _components.EXTRA_TYPES.ADD_ARGUMENT_GROUP,
+          allowed: ['hatType', 'bootType']
         }]
       },
       callBlock: {
@@ -143,7 +198,7 @@ Simple.args = {
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          actions: []
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
         }]
       },
       properties: {
@@ -158,12 +213,6 @@ Simple.args = {
           accepts: ["bootType"],
           default: null,
           isList: false
-        },
-        children: {
-          name: "Children",
-          accepts: ["operationType", 'functionType'],
-          default: [],
-          isList: true
         },
         speed: {
           name: "Speed",
@@ -207,7 +256,7 @@ Simple.args = {
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          actions: []
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
         }]
       }
     },
@@ -222,7 +271,7 @@ Simple.args = {
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          actions: []
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
         }]
       }
     }
@@ -255,7 +304,7 @@ Simple.args = {
         children: []
       },
       position: {
-        x: 300,
+        x: 400,
         y: 10
       },
       canDelete: true,
@@ -281,7 +330,6 @@ Simple.args = {
       properties: {
         hat: null,
         boot: null,
-        children: [],
         speed: 1,
         doFunky: true,
         greeting: 'Hello!'

@@ -20,29 +20,23 @@ var TYPES = {
 exports.TYPES = TYPES;
 var EXTRA_TYPES = {
   LOCKED_INDICATOR: 0,
-  // Should be working
   NAME_EDIT_TOGGLE: 1,
-  // Should be working
   SELECTION_TOGGLE: 2,
-  // Needs testing
   COLLAPSE_TOGGLE: 3,
-  // Needs testing
   FUNCTION_BUTTON: 4,
-  // Needs development
   INDICATOR: 5,
-  // Needs testing
   DROPDOWN: 6,
-  // Should be working
   DELETE_BUTTON: 7,
-  // TO ADD
-  ADD_ARGUMENT: 8 // TO ADD
-
+  ADD_ARGUMENT: 8,
+  ADD_ARGUMENT_GROUP: 9,
+  DEBUG_TOGGLE: 10
 };
 exports.EXTRA_TYPES = EXTRA_TYPES;
 var SIMPLE_PROPERTY_TYPES = {
   BOOLEAN: 0,
   NUMBER: 1,
   STRING: 2,
-  OPTIONS: 3
+  OPTIONS: 3,
+  IGNORED: 4
 };
 exports.SIMPLE_PROPERTY_TYPES = SIMPLE_PROPERTY_TYPES;

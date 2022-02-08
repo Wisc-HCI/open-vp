@@ -67,7 +67,7 @@ const Block = ({
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: false });
-  }, [preview, getEmptyImage]);
+  }, [preview]);
 
   if (!data || onCanvas === "null") {
     return null;
@@ -75,10 +75,10 @@ const Block = ({
     return (
       <>
         {/* Hide the visual block if it is not coming from a spawner. The "after" is also hidden, if applicable */}
-        <div hidden={hidden} style={{display:'flex',flex:1,display:hidden?'none':null}}>
+        <div hidden={hidden} style={{flex:1,display:hidden?'none':'flex'}}>
           <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext} interactionDisabled={interactionDisabled} fieldInfo={fieldInfo} parentId={parentId}/>
         </div>
-        <div hidden={hidden} style={{display:'flex',display:hidden?'none':null}}>
+        <div hidden={hidden} style={{display:hidden?'none':'flex'}}>
           {/* 'after' is usually a drop region in the case of lists */}
           {after}
         </div>

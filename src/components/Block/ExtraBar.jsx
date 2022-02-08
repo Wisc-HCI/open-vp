@@ -41,6 +41,7 @@ const FunctionButtonExtra = ({ actionInfo, data, blockSpec, inTopLevel, interact
         <Button
             size='small'
             focusIndicator={false}
+            hoverIndicator={false}
             disabled={interactionDisabled}
             plain={!inTopLevel}
             style={{ padding: inTopLevel ? null : '5pt 10pt 5pt 10pt' }}
@@ -52,106 +53,60 @@ const FunctionButtonExtra = ({ actionInfo, data, blockSpec, inTopLevel, interact
 }
 
 const LockIndicatorExtra = ({ locked, inTopLevel }) => {
-    if (locked && inTopLevel) {
-        return (
-            <FiLock />
-        )
-    } else if (!locked && inTopLevel) {
-        return null
-    } else if (locked && !inTopLevel) {
-        return (
-            <Button
-                plain
-                disabled
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
-                icon={<FiLock />}
-                label='Locked'
-            />
-        )
-    } else if (!locked && !inTopLevel) {
-        return (
-            <Button
-                plain
-                disabled
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
-                icon={<FiUnlock />}
-                label='Unlocked'
-            />
-        )
-    }
+    const Icon = locked ? FiLock : FiUnlock;
+    return (
+        <Button
+            size='small'
+            plain
+            focusIndicator={false}
+            hoverIndicator={false}
+            disabled
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+            icon={<Icon />}
+            label={inTopLevel ? null : locked ? 'Locked' : 'Unlocked'}
+        />
+    )
 }
 
 const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, inTopLevel }) => {
-    if (isEditing && inTopLevel) {
-        return (
-            <FiSave onClick={() => setIsEditing(!isEditing)}/>
-        )
-    } else if (!isEditing && inTopLevel) {
-        return (
-            <FiEdit3 onClick={() => setIsEditing(!isEditing)}/>
-        )
-    } else if (isEditing && !inTopLevel) {
-        return (
-            <Button
-                plain
-                disabled={locked}
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
-                icon={<FiSave />}
-                label='Save'
-                onClick={() => setIsEditing(!isEditing)}
-            />
-        )
-    } else if (!isEditing && !inTopLevel) {
-        return (
-            <Button
-                plain
-                disabled={locked}
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
-                icon={<FiEdit3 />}
-                label='Edit'
-                onClick={() => setIsEditing(!isEditing)}
-            />
-        )
-    }
+    const Icon = isEditing ? FiSave : FiEdit3;
+    return (
+        <Button
+            size='small'
+            plain
+            focusIndicator={false}
+            hoverIndicator={false}
+            disabled={locked}
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+            icon={<Icon />}
+            label={inTopLevel ? null : isEditing ? 'Save' : 'Edit Name'}
+            onClick={() => setIsEditing(!isEditing)}
+        />
+    )
 }
 
 const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel }) => {
-    if (isSelected && inTopLevel) {
-        return (
-            <FiEyeOff onClick={() => setIsSelected(!isSelected)}/>
-        )
-    } else if (!isSelected && inTopLevel) {
-        return (
-            <FiEye onClick={() => setIsSelected(!isSelected)}/>
-        )
-    } else if (isSelected && !inTopLevel) {
-        return (
-            <Button
-                plain
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
-                icon={<FiEyeOff />}
-                label='Deselect'
-                onClick={() => setIsSelected(!isSelected)}
-            />
-        )
-    } else if (!isSelected && !inTopLevel) {
-        return (
-            <Button
-                plain
-                style={{ padding: '5pt 10pt 5pt 10pt' }}
-                icon={<FiEye />}
-                label='Select'
-                onClick={() => setIsSelected(!isSelected)}
-            />
-        )
-    }
+    const Icon = isSelected ? FiEyeOff : FiEye;
+    return (
+        <Button
+            plain
+            focusIndicator={false}
+            hoverIndicator={false}
+            size='small'
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+            icon={<Icon />}
+            label={inTopLevel ? null : isSelected ? 'Deselect' : 'Select'}
+            onClick={() => setIsSelected(!isSelected)}
+        />
+    )
 }
 
 const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
-
     return (
         <Button
-            plain={inTopLevel}
+            plain
+            focusIndicator={false}
+            hoverIndicator={false}
             size='small'
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={<ExpandCarrot expanded={!isCollapsed} />}
@@ -165,7 +120,9 @@ const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel }) => {
     const Icon = isDebugging ? FiZapOff : FiZap;
     return (
         <Button
-            plain={inTopLevel}
+            plain
+            focusIndicator={false}
+            hoverIndicator={false}
             size='small'
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={<Icon />}
@@ -182,7 +139,10 @@ const IndicatorExtra = ({ value, label, inTopLevel }) => {
     } else {
         return (
             <Button
+                size='small'
                 plain
+                focusIndicator={false}
+                hoverIndicator={false}
                 style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
                 icon={
                     <Pill value={value} />
@@ -201,7 +161,10 @@ const AddArgumentExtra = ({data, argumentType, interactionDisabled, inTopLevel})
 
     return (
         <Button
+            size='small'
             plain
+            focusIndicator={false}
+            hoverIndicator={false}
             disabled={interactionDisabled}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={<Icon/>}
@@ -229,7 +192,10 @@ const DeleteExtra = ({data, inTopLevel, locked, fieldInfo, parentId}) => {
     const deleteFunc = useProgrammingStore(state => state.deleteBlock);
     return (
         <Button 
+            size='small'
             plain 
+            focusIndicator={false}
+            hoverIndicator={false}
             disabled={locked}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={<FiTrash2/>} 
@@ -250,6 +216,8 @@ const DropdownExtra = ({
     return (
         <DropButton
             disabled={interactionDisabled}
+            focusIndicator={false}
+            hoverIndicator={false}
             dropContent={
                 <Box round='xsmall' background='grey' direction="column" align='start' border={{color:'lightgrey'}}>
                     {contents?.map((feature, featureIdx) => {
@@ -278,7 +246,10 @@ const DropdownExtra = ({
             dropProps={{ align: inTopLevel ? { top: 'bottom' } : { left: 'right' }, elevation: 'none', background: 'none' }}
         >
             <Button
+                size='small'
                 as='div'
+                focusIndicator={false}
+                hoverIndicator={false}
                 plain
                 style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
                 icon={<DropIcon />}
