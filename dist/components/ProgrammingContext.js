@@ -1,11 +1,13 @@
 "use strict";
 
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.useProgrammingStore = exports.ProgrammingProvider = void 0;
 
-var _react = require("react");
+var _react = _interopRequireWildcard(require("react"));
 
 var _defaultStore = require("./defaultStore");
 
@@ -23,7 +25,7 @@ exports.useProgrammingStore = useProgrammingStore;
 var ProgrammingProvider = function ProgrammingProvider(_ref) {
   var store = _ref.store,
       children = _ref.children;
-  return /*#__PURE__*/React.createElement(ProgrammingContext.Provider, {
+  return /*#__PURE__*/_react.default.createElement(ProgrammingContext.Provider, {
     value: store ? store : _defaultStore.useDefaultProgrammingStore
   }, children);
 };
