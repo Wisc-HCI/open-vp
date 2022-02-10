@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
 
 Object.defineProperty(exports, "__esModule", {
@@ -9,13 +11,13 @@ exports.DropRegion = void 0;
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
 
+var _react = _interopRequireWildcard(require("react"));
+
 var _ProgrammingContext = require("../ProgrammingContext");
 
 var _reactDnd = require("react-dnd");
 
 var _index = require("./index");
-
-var _react = require("react");
 
 var _lodash = require("lodash");
 
@@ -69,7 +71,7 @@ var DropRegion = function DropRegion(_ref) {
   var validDropType = fieldInfo.accepts.includes((_dropProps$item = dropProps.item) === null || _dropProps$item === void 0 ? void 0 : (_dropProps$item$data = _dropProps$item.data) === null || _dropProps$item$data === void 0 ? void 0 : _dropProps$item$data.type) && !((_dropProps$item2 = dropProps.item) !== null && _dropProps$item2 !== void 0 && _dropProps$item2.onCanvas) && (0, _lodash.isEqual)((0, _lodash.intersection)(context, dropProps.item.context), dropProps.item.context);
   var renderedData = data ? data : dropProps.item && validDropType && !disabled && dropProps.isOver ? dropProps.item.data : null;
   var isPreview = renderedData && renderedData !== data;
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/_react.default.createElement("div", {
     className: "nodrag",
     ref: drop,
     style: {
@@ -80,7 +82,7 @@ var DropRegion = function DropRegion(_ref) {
       display: 'flex',
       flex: 1
     }
-  }, renderedData && !isPreview ? /*#__PURE__*/React.createElement(_index.Block, {
+  }, renderedData && !isPreview ? /*#__PURE__*/_react.default.createElement(_index.Block, {
     staticData: renderedData,
     idx: idx,
     parentId: parentId,
@@ -88,7 +90,7 @@ var DropRegion = function DropRegion(_ref) {
     bounded: true,
     highlightColor: highlightColor,
     context: context
-  }) : renderedData ? /*#__PURE__*/React.createElement(_index.PreviewBlock, {
+  }) : renderedData ? /*#__PURE__*/_react.default.createElement(_index.PreviewBlock, {
     staticData: renderedData,
     idx: idx,
     parentId: parentId,

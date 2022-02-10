@@ -1,3 +1,4 @@
+import React from 'react';
 import { useDragLayer } from "react-dnd";
 import { VisualBlock } from "./Block";
 

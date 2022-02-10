@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
 
 Object.defineProperty(exports, "__esModule", {
@@ -11,7 +13,7 @@ var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
 
-var _react = require("react");
+var _react = _interopRequireWildcard(require("react"));
 
 var _Block = require("./Block");
 
@@ -31,24 +33,24 @@ var _Generators = require("./Generators");
 
 var TipContent = function TipContent(_ref) {
   var message = _ref.message;
-  return /*#__PURE__*/React.createElement(_grommet.Box, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     direction: "row",
     align: "center"
-  }, /*#__PURE__*/React.createElement("svg", {
+  }, /*#__PURE__*/_react.default.createElement("svg", {
     viewBox: "0 0 22 22",
     version: "1.1",
     width: "22px",
     height: "22px"
-  }, /*#__PURE__*/React.createElement("polygon", {
+  }, /*#__PURE__*/_react.default.createElement("polygon", {
     fill: "grey",
     points: "6 2 18 12 6 22",
     transform: "matrix(-1 0 0 1 30 0)"
-  })), /*#__PURE__*/React.createElement(_grommet.Box, {
+  })), /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     background: "grey",
     direction: "row",
     pad: "small",
     round: "xxsmall"
-  }, /*#__PURE__*/React.createElement(_grommet.Text, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.Text, {
     color: "#313131"
   }, message)));
 };
@@ -108,13 +110,13 @@ var Drawer = function Drawer(_ref2) {
     width: activeDrawer !== null ? 285 : 50,
     config: _reactSpring.config.stiff
   });
-  return /*#__PURE__*/React.createElement(_web.animated.div, {
+  return /*#__PURE__*/_react.default.createElement(_web.animated.div, {
     style: (0, _objectSpread2.default)({
       backgroundColor: "black",
       display: 'flex',
       padding: 0
     }, sidebarStyle)
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       display: 'flex',
       height: '100%',
@@ -122,7 +124,7 @@ var Drawer = function Drawer(_ref2) {
       backgroundColor: "#212121",
       padding: 0
     }
-  }, /*#__PURE__*/React.createElement(_grommet.List, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.List, {
     data: drawers,
     border: false,
     align: "center",
@@ -131,11 +133,11 @@ var Drawer = function Drawer(_ref2) {
     radius: "none"
   }, function (drawer, drawerIdx) {
     var Icon = drawer.icon;
-    return /*#__PURE__*/React.createElement(_grommet.Button, {
+    return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
       primary: true,
       fill: true,
       tip: {
-        content: /*#__PURE__*/React.createElement(TipContent, {
+        content: /*#__PURE__*/_react.default.createElement(TipContent, {
           message: drawer.title
         }),
         plain: true,
@@ -158,31 +160,31 @@ var Drawer = function Drawer(_ref2) {
       onClick: function onClick() {
         setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
       },
-      icon: /*#__PURE__*/React.createElement(Icon, null)
+      icon: /*#__PURE__*/_react.default.createElement(Icon, null)
     });
-  })), /*#__PURE__*/React.createElement(_web.animated.div, {
+  })), /*#__PURE__*/_react.default.createElement(_web.animated.div, {
     style: (0, _objectSpread2.default)({
       height: '100%',
       backgroundColor: '#2f2f2f',
       overflow: 'hidden'
     }, drawerStyle)
-  }, activeDrawer !== null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(_grommet.Box, {
+  }, activeDrawer !== null && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     background: "#444444",
     direction: "column",
     pad: "small",
     animation: "fadeIn"
-  }, /*#__PURE__*/React.createElement(_grommet.Box, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     direction: "row",
     justify: "between",
     align: "center"
-  }, /*#__PURE__*/React.createElement(_grommet.Box, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     pad: "small"
-  }, /*#__PURE__*/React.createElement(_grommet.Text, null, drawers[activeDrawer].title)), drawers[activeDrawer].dataType === _Constants.DATA_TYPES.REFERENCE && /*#__PURE__*/React.createElement(_grommet.Button, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.Text, null, drawers[activeDrawer].title)), drawers[activeDrawer].dataType === _Constants.DATA_TYPES.REFERENCE && /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     secondary: true,
-    icon: /*#__PURE__*/React.createElement(_fi.FiPlus, null)
-  })), /*#__PURE__*/React.createElement(_grommet.TextInput, {
+    icon: /*#__PURE__*/_react.default.createElement(_fi.FiPlus, null)
+  })), /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
     size: "small",
-    icon: /*#__PURE__*/React.createElement(_fi.FiSearch, {
+    icon: /*#__PURE__*/_react.default.createElement(_fi.FiSearch, {
       style: {
         height: 15
       }
@@ -193,7 +195,7 @@ var Drawer = function Drawer(_ref2) {
     onChange: function onChange(e) {
       return setSearchTerm(e.target.value);
     }
-  })), /*#__PURE__*/React.createElement(_grommet.List, {
+  })), /*#__PURE__*/_react.default.createElement(_grommet.List, {
     data: blocks,
     border: false,
     style: {
@@ -203,7 +205,7 @@ var Drawer = function Drawer(_ref2) {
     margin: "none",
     pad: "none"
   }, function (block, idx) {
-    return /*#__PURE__*/React.createElement(_grommet.Box, {
+    return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       animation: {
         type: 'fadeIn',
         delay: idx * 100
@@ -212,7 +214,7 @@ var Drawer = function Drawer(_ref2) {
         marginBottom: 5,
         width: 225
       }
-    }, /*#__PURE__*/React.createElement(_Block.Block, {
+    }, /*#__PURE__*/_react.default.createElement(_Block.Block, {
       staticData: block,
       parentId: "spawner",
       bounded: true,

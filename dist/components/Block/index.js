@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
 
 Object.defineProperty(exports, "__esModule", {
@@ -25,11 +27,11 @@ var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
 
+var _react = _interopRequireWildcard(require("react"));
+
 var _ProgrammingContext = require("../ProgrammingContext");
 
 var _reactDnd = require("react-dnd");
-
-var _react = require("react");
 
 var _reactDndHtml5Backend = require("react-dnd-html5-backend");
 
@@ -118,13 +120,13 @@ var Block = function Block(_ref) {
   if (!data || onCanvas === "null") {
     return null;
   } else {
-    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement("div", {
       hidden: hidden,
       style: {
         flex: 1,
         display: hidden ? 'none' : 'flex'
       }
-    }, /*#__PURE__*/React.createElement(_VisualBlock.VisualBlock, {
+    }, /*#__PURE__*/_react.default.createElement(_VisualBlock.VisualBlock, {
       data: data,
       ref: drag,
       typeSpec: typeSpec,
@@ -134,7 +136,7 @@ var Block = function Block(_ref) {
       interactionDisabled: interactionDisabled,
       fieldInfo: fieldInfo,
       parentId: parentId
-    })), /*#__PURE__*/React.createElement("div", {
+    })), /*#__PURE__*/_react.default.createElement("div", {
       hidden: hidden,
       style: {
         display: hidden ? 'none' : 'flex'

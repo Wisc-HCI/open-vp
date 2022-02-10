@@ -1,9 +1,13 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.DropZone = void 0;
+
+var _react = _interopRequireDefault(require("react"));
 
 var _DropRegion = require("./DropRegion");
 
@@ -15,7 +19,7 @@ var DropZone = function DropZone(_ref) {
       interactionDisabled = _ref.interactionDisabled,
       highlightColor = _ref.highlightColor,
       context = _ref.context;
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/_react.default.createElement("div", {
     className: "nodrag",
     style: {
       padding: 4,
@@ -26,7 +30,7 @@ var DropZone = function DropZone(_ref) {
       margin: 4,
       flex: 1
     }
-  }, /*#__PURE__*/React.createElement(_DropRegion.DropRegion, {
+  }, /*#__PURE__*/_react.default.createElement(_DropRegion.DropRegion, {
     id: id,
     parentId: parentId,
     fieldInfo: fieldInfo,

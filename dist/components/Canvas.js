@@ -15,13 +15,13 @@ var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/
 
 var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectWithoutProperties"));
 
+var _react = _interopRequireWildcard(require("react"));
+
 var _reactFlowRenderer = _interopRequireWildcard(require("react-flow-renderer"));
 
 var _reactDnd = require("react-dnd");
 
 var _ProgrammingContext = require("./ProgrammingContext");
-
-var _react = require("react");
 
 var _Block = require("./Block");
 
@@ -35,7 +35,7 @@ var CanvasNode = function CanvasNode(_ref) {
   var data = _ref.data;
   var highlightColor = data.highlightColor,
       rest = (0, _objectWithoutProperties2.default)(data, _excluded);
-  return /*#__PURE__*/React.createElement(_Block.VisualBlock, {
+  return /*#__PURE__*/_react.default.createElement(_Block.VisualBlock, {
     data: rest,
     x: 0,
     y: 0,
@@ -124,13 +124,13 @@ var Canvas = function Canvas(_ref2) {
       createPlacedNode(item.data, position.x, position.y);
     }
   })[1];
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       backgroundColor: "black",
       display: 'flex',
       flex: 1
     }
-  }, /*#__PURE__*/React.createElement(_reactFlowRenderer.default, {
+  }, /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.default, {
     ref: drop,
     maxZoom: 1.5,
     minZoom: 0.5,
@@ -149,7 +149,7 @@ var Canvas = function Canvas(_ref2) {
     defaultZoom: 0.5,
     snapToGrid: true,
     snapGrid: [30, 30]
-  }, /*#__PURE__*/React.createElement(_reactFlowRenderer.MiniMap, {
+  }, /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.MiniMap, {
     maskColor: "#1a192b44",
     nodeStrokeColor: function nodeStrokeColor(n) {
       var _n$style;
@@ -166,7 +166,7 @@ var Canvas = function Canvas(_ref2) {
       return "#fff";
     },
     nodeBorderRadius: 3
-  }), /*#__PURE__*/React.createElement(_reactFlowRenderer.Controls, null), /*#__PURE__*/React.createElement(_reactFlowRenderer.Background, {
+  }), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.Controls, null), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.Background, {
     variant: "lines",
     color: "#555",
     gap: 30

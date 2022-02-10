@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { Block } from "./Block";
 import { useSpring, animated } from '@react-spring/web';

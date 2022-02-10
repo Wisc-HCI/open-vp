@@ -1,3 +1,4 @@
+import React from 'react';
 import { Canvas } from "./Canvas";
 import { Drawer } from "./Drawer";
 import { DragLayer } from "./DragLayer";

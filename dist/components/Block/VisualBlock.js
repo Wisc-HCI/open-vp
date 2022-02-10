@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
 
 Object.defineProperty(exports, "__esModule", {
@@ -11,7 +13,7 @@ var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
 
-var _react = require("react");
+var _react = _interopRequireWildcard(require("react"));
 
 var _DropZone = require("./DropZone");
 
@@ -94,7 +96,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   }) : {};
   var Icon = blockSpec.icon ? blockSpec.icon : _fi.FiSquare;
   var name = [_Constants.DATA_TYPES.CALL, _Constants.DATA_TYPES.REFERENCE].includes(data.dataType) ? data === null || data === void 0 ? void 0 : (_data$refData = data.refData) === null || _data$refData === void 0 ? void 0 : _data$refData.name : data === null || data === void 0 ? void 0 : data.name;
-  return /*#__PURE__*/React.createElement(_Selectable.Selectable, {
+  return /*#__PURE__*/_react.default.createElement(_Selectable.Selectable, {
     selected: data.selected,
     highlightColor: highlightColor,
     className: onCanvas && blockSpec.onCanvas ? null : "nodrag",
@@ -109,22 +111,22 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       transform: "translate(".concat(x ? x : 0, "px, ").concat(y ? y : 0, "px) scale(").concat(scale ? scale : 1, ")"),
       WebkitTransform: "translate(".concat(x ? x : 0, "px, ").concat(y ? y : 0, "px) scale(").concat(scale ? scale : 1, ")")
     }, blockStyle)
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       margin: 4,
       display: 'flex',
       alignItems: 'center'
     }
-  }, /*#__PURE__*/React.createElement(_grommet.TextInput, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
     size: "small",
-    icon: /*#__PURE__*/React.createElement(Icon, null),
+    icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     value: name,
     focusIndicator: false,
     disabled: interactionDisabled || !data.editing,
     onChange: function onChange(e) {
       return updateItemName(data.id, e.target.value);
     }
-  }), (blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras) && /*#__PURE__*/React.createElement(_ExtraBar.ExtraBar, {
+  }), (blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras) && /*#__PURE__*/_react.default.createElement(_ExtraBar.ExtraBar, {
     fieldInfo: fieldInfo,
     parentId: parentId,
     interactionDisabled: interactionDisabled,
@@ -142,9 +144,9 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     },
     setIsCollapsed: setIsCollapsed,
     setIsDebugging: setIsDebugging
-  })), !isCollapsed && /*#__PURE__*/React.createElement(_grommet.Box, {
+  })), !isCollapsed && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     animation: ['fadeIn', 'zoomIn']
-  }, data.dataType === _Constants.DATA_TYPES.INSTANCE && typeSpec.type === _Constants.TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length && /*#__PURE__*/React.createElement(_grommet.Box, {
+  }, data.dataType === _Constants.DATA_TYPES.INSTANCE && typeSpec.type === _Constants.TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     gap: "xsmall",
     direction: "column",
     style: {
@@ -155,7 +157,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       backgroundColor: "rgba(0,0,0,0.2)"
     }
   }, data.argumentBlockData.map(function (argBlockData, argIdx) {
-    return /*#__PURE__*/React.createElement(_.Block, {
+    return /*#__PURE__*/_react.default.createElement(_.Block, {
       key: argIdx,
       staticData: argBlockData,
       parentId: data.id,
@@ -169,7 +171,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
         isSpawner: true
       }
     });
-  })), Object.keys(simpleProperties).length > 0 && data.dataType === _Constants.DATA_TYPES.INSTANCE && /*#__PURE__*/React.createElement(_grommet.Box, {
+  })), Object.keys(simpleProperties).length > 0 && data.dataType === _Constants.DATA_TYPES.INSTANCE && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     margin: "xsmall",
     background: "#ffffff50",
     round: "xxsmall",
@@ -178,7 +180,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     direction: "column",
     pad: "xsmall",
     flex: true
-  }, /*#__PURE__*/React.createElement(_grommet.Box, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     direction: "row",
     align: "center",
     justify: "between",
@@ -186,22 +188,22 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     style: {
       width: '100%'
     }
-  }, /*#__PURE__*/React.createElement(_grommet.Text, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.Text, {
     margin: {
       left: 'medium'
     }
-  }, "Settings"), /*#__PURE__*/React.createElement(_grommet.Button, {
+  }, "Settings"), /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     plain: true,
     style: {
       padding: '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(_ExpandCarrot.ExpandCarrot, {
+    icon: /*#__PURE__*/_react.default.createElement(_ExpandCarrot.ExpandCarrot, {
       expanded: !simplePropertiesCollapsed
     }),
     onClick: interactionDisabled ? null : function () {
       return setSimplePropertiesCollapsed(!simplePropertiesCollapsed);
     }
-  })), !simplePropertiesCollapsed && /*#__PURE__*/React.createElement(_grommet.Box, {
+  })), !simplePropertiesCollapsed && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     flex: true,
     animation: ["fadeIn", "slideDown"],
     style: {
@@ -212,7 +214,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
         propKey = _ref3[0],
         propInfo = _ref3[1];
 
-    return /*#__PURE__*/React.createElement(_grommet.Box, {
+    return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       key: propKey,
       direction: "row",
       background: "#ffffff50",
@@ -224,10 +226,10 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       margin: {
         bottom: 'xsmall'
       }
-    }, /*#__PURE__*/React.createElement(_grommet.Text, {
+    }, /*#__PURE__*/_react.default.createElement(_grommet.Text, {
       size: "small",
       color: "#00000088"
-    }, propInfo.name), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.BOOLEAN && /*#__PURE__*/React.createElement(_grommet.CheckBox, {
+    }, propInfo.name), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.BOOLEAN && /*#__PURE__*/_react.default.createElement(_grommet.CheckBox, {
       size: "small",
       focusIndicator: false,
       disabled: interactionDisabled,
@@ -235,9 +237,9 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       onChange: function onChange() {
         return updateItemSimpleProperty(data.id, propKey, !data.properties[propKey]);
       }
-    }), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.NUMBER && /*#__PURE__*/React.createElement(_grommet.Box, {
+    }), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.NUMBER && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       width: "xsmall"
-    }, /*#__PURE__*/React.createElement(_Input.NumberInput, {
+    }, /*#__PURE__*/_react.default.createElement(_Input.NumberInput, {
       size: "xsmall",
       style: {
         color: '#00000088'
@@ -249,9 +251,9 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       onChange: function onChange(value) {
         return updateItemSimpleProperty(data.id, propKey, value);
       }
-    })), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.STRING && /*#__PURE__*/React.createElement(_grommet.Box, {
+    })), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.STRING && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       width: "xsmall"
-    }, /*#__PURE__*/React.createElement(_grommet.TextInput, {
+    }, /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
       size: "xsmall",
       textAlign: "center",
       style: {
@@ -262,7 +264,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       onChange: function onChange(e) {
         return updateItemSimpleProperty(data.id, propKey, e.target.value);
       }
-    })), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.OPTIONS && /*#__PURE__*/React.createElement(_grommet.RadioButtonGroup, {
+    })), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.OPTIONS && /*#__PURE__*/_react.default.createElement(_grommet.RadioButtonGroup, {
       name: propInfo.name,
       disabled: interactionDisabled,
       size: "xsmall",
@@ -277,7 +279,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       }
     }));
   }))), data.dataType === _Constants.DATA_TYPES.CALL && data.argumentBlockData.map(function (argInfo, argIdx) {
-    return /*#__PURE__*/React.createElement(_grommet.Box, {
+    return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       key: argIdx,
       direction: "row",
       margin: "xsmall",
@@ -287,11 +289,11 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       align: "center",
       justify: "between",
       flex: true
-    }, /*#__PURE__*/React.createElement(_grommet.Box, {
+    }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       pad: "xsmall",
       alignContent: "center",
       align: "center"
-    }, argInfo.name), /*#__PURE__*/React.createElement(_DropZone.DropZone, {
+    }, argInfo.name), /*#__PURE__*/_react.default.createElement(_DropZone.DropZone, {
       id: data.properties[argInfo.ref],
       fieldInfo: {
         name: '',
@@ -309,7 +311,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
         fieldInfo = _ref5[1];
 
     var innerLabel = !fieldInfo.fullWidth ? fieldInfo.name : '';
-    return /*#__PURE__*/React.createElement(_grommet.Box, {
+    return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       key: fieldKey,
       direction: "row",
       margin: fieldInfo.fullWidth ? 'none' : 'xsmall',
@@ -319,11 +321,11 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       align: "center",
       justify: "between",
       flex: true
-    }, /*#__PURE__*/React.createElement(_grommet.Box, {
+    }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       pad: fieldInfo.fullWidth ? 'none' : 'xsmall',
       alignContent: "center",
       align: "center"
-    }, innerLabel), fieldInfo.isList ? /*#__PURE__*/React.createElement(_List.List, {
+    }, innerLabel), fieldInfo.isList ? /*#__PURE__*/_react.default.createElement(_List.List, {
       ids: data.properties[fieldKey],
       fieldInfo: (0, _objectSpread2.default)((0, _objectSpread2.default)({}, fieldInfo), {}, {
         value: fieldKey
@@ -332,7 +334,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       interactionDisabled: interactionDisabled,
       highlightColor: highlightColor,
       context: context
-    }) : /*#__PURE__*/React.createElement(_DropZone.DropZone, {
+    }) : /*#__PURE__*/_react.default.createElement(_DropZone.DropZone, {
       id: data.properties[fieldKey],
       fieldInfo: (0, _objectSpread2.default)((0, _objectSpread2.default)({}, fieldInfo), {}, {
         value: fieldKey,
@@ -343,7 +345,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       highlightColor: highlightColor,
       context: context
     }));
-  }))), isDebugging && /*#__PURE__*/React.createElement(_grommet.Box, {
+  }))), isDebugging && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     round: "small",
     pad: "small",
     background: "#00000044",

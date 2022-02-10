@@ -1,3 +1,4 @@
+import React from 'react';
 import { DropRegion } from "./DropRegion";
 
 export const DropZone = ({

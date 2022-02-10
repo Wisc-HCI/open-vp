@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from "react";
 import { DropZone } from "./DropZone";
 import { List } from "./List";

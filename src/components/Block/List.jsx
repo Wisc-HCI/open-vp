@@ -1,3 +1,4 @@
+import React from 'react';
 import { Block } from ".";
 import { DropRegion } from "./DropRegion";
 

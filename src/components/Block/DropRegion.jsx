@@ -1,3 +1,4 @@
+import React from 'react';
 import { useProgrammingStore } from "../ProgrammingContext";
 import { useDrop } from "react-dnd";
 import { Block, PreviewBlock } from "./index";

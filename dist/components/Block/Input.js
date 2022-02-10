@@ -1,9 +1,13 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.NumberInput = void 0;
+
+var _react = _interopRequireDefault(require("react"));
 
 var _grommet = require("grommet");
 
@@ -16,7 +20,7 @@ var NumberInput = function NumberInput(_ref) {
       _onChange = _ref.onChange,
       disabled = _ref.disabled,
       style = _ref.style;
-  return /*#__PURE__*/React.createElement(_grommet.TextInput, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
     disabled: disabled,
     value: value,
     type: "number",

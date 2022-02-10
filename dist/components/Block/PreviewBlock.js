@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
 
 Object.defineProperty(exports, "__esModule", {
@@ -13,7 +15,7 @@ var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
 
-var _react = require("react");
+var _react = _interopRequireWildcard(require("react"));
 
 var _ProgrammingContext = require("../ProgrammingContext");
 
@@ -56,7 +58,7 @@ var PreviewBlock = function PreviewBlock(_ref) {
   if (!data) {
     return null;
   } else {
-    return /*#__PURE__*/React.createElement(_VisualBlock.VisualBlock, {
+    return /*#__PURE__*/_react.default.createElement(_VisualBlock.VisualBlock, {
       data: data,
       typeSpec: typeSpec,
       interactionDisabled: true,

@@ -1,9 +1,13 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ExpandCarrot = void 0;
+
+var _react = _interopRequireDefault(require("react"));
 
 var _fi = require("react-icons/fi");
 
@@ -19,9 +23,9 @@ var ExpandCarrot = function ExpandCarrot(_ref) {
     height: 20,
     width: 20
   });
-  return /*#__PURE__*/React.createElement(_web.animated.div, {
+  return /*#__PURE__*/_react.default.createElement(_web.animated.div, {
     style: carrotStyle
-  }, /*#__PURE__*/React.createElement(_fi.FiChevronRight, null));
+  }, /*#__PURE__*/_react.default.createElement(_fi.FiChevronRight, null));
 };
 
 exports.ExpandCarrot = ExpandCarrot;

@@ -1,3 +1,4 @@
+import React from 'react';
 import { TextInput } from "grommet";
 import { toNumber } from 'lodash';
 

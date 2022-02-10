@@ -1,3 +1,4 @@
+import React from 'react';
 import { FiChevronRight } from "react-icons/fi";
 import { useSpring, animated } from '@react-spring/web';
 import { config } from 'react-spring';

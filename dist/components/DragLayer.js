@@ -1,9 +1,13 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.DragLayer = void 0;
+
+var _react = _interopRequireDefault(require("react"));
 
 var _reactDnd = require("react-dnd");
 
@@ -23,7 +27,7 @@ var DragLayer = function DragLayer(_ref) {
       item = _useDragLayer.item,
       currentOffset = _useDragLayer.currentOffset;
 
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       position: "fixed",
       pointerEvents: "none",
@@ -34,7 +38,7 @@ var DragLayer = function DragLayer(_ref) {
       height: 0,
       opacity: 0.5
     }
-  }, item && /*#__PURE__*/React.createElement(_Block.VisualBlock, {
+  }, item && /*#__PURE__*/_react.default.createElement(_Block.VisualBlock, {
     x: currentOffset === null || currentOffset === void 0 ? void 0 : currentOffset.x,
     y: currentOffset === null || currentOffset === void 0 ? void 0 : currentOffset.y,
     data: item.data,

@@ -1,11 +1,13 @@
 "use strict";
 
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ExtraBar = void 0;
 
-var _react = require("react");
+var _react = _interopRequireWildcard(require("react"));
 
 var _fi = require("react-icons/fi");
 
@@ -19,7 +21,7 @@ var _ExpandCarrot = require("./ExpandCarrot");
 
 var Pill = function Pill(_ref) {
   var value = _ref.value;
-  return /*#__PURE__*/React.createElement("div", {
+  return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       borderRadius: 20,
       minWidth: 9,
@@ -51,7 +53,7 @@ var FunctionButtonExtra = function FunctionButtonExtra(_ref2) {
   }, [actionInfo]));
 
   var ExtraActionIcon = actionInfo.icon ? actionInfo.icon : _fi.FiCircle;
-  return /*#__PURE__*/React.createElement(_grommet.Button, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     focusIndicator: false,
     hoverIndicator: false,
@@ -60,7 +62,7 @@ var FunctionButtonExtra = function FunctionButtonExtra(_ref2) {
     style: {
       padding: inTopLevel ? null : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(ExtraActionIcon, null),
+    icon: /*#__PURE__*/_react.default.createElement(ExtraActionIcon, null),
     label: inTopLevel ? null : actionInfo.label,
     onClick: function onClick() {
       return _onClick(data, blockSpec);
@@ -72,7 +74,7 @@ var LockIndicatorExtra = function LockIndicatorExtra(_ref3) {
   var locked = _ref3.locked,
       inTopLevel = _ref3.inTopLevel;
   var Icon = locked ? _fi.FiLock : _fi.FiUnlock;
-  return /*#__PURE__*/React.createElement(_grommet.Button, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     plain: true,
     focusIndicator: false,
@@ -81,7 +83,7 @@ var LockIndicatorExtra = function LockIndicatorExtra(_ref3) {
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(Icon, null),
+    icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     label: inTopLevel ? null : locked ? 'Locked' : 'Unlocked'
   });
 };
@@ -92,7 +94,7 @@ var NameEditToggleExtra = function NameEditToggleExtra(_ref4) {
       locked = _ref4.locked,
       inTopLevel = _ref4.inTopLevel;
   var Icon = isEditing ? _fi.FiSave : _fi.FiEdit3;
-  return /*#__PURE__*/React.createElement(_grommet.Button, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     plain: true,
     focusIndicator: false,
@@ -101,7 +103,7 @@ var NameEditToggleExtra = function NameEditToggleExtra(_ref4) {
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(Icon, null),
+    icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     label: inTopLevel ? null : isEditing ? 'Save' : 'Edit Name',
     onClick: function onClick() {
       return setIsEditing(!isEditing);
@@ -114,7 +116,7 @@ var SelectionToggleExtra = function SelectionToggleExtra(_ref5) {
       setIsSelected = _ref5.setIsSelected,
       inTopLevel = _ref5.inTopLevel;
   var Icon = isSelected ? _fi.FiEyeOff : _fi.FiEye;
-  return /*#__PURE__*/React.createElement(_grommet.Button, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     plain: true,
     focusIndicator: false,
     hoverIndicator: false,
@@ -122,7 +124,7 @@ var SelectionToggleExtra = function SelectionToggleExtra(_ref5) {
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(Icon, null),
+    icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     label: inTopLevel ? null : isSelected ? 'Deselect' : 'Select',
     onClick: function onClick() {
       return setIsSelected(!isSelected);
@@ -134,7 +136,7 @@ var CollapseToggleExtra = function CollapseToggleExtra(_ref6) {
   var isCollapsed = _ref6.isCollapsed,
       setIsCollapsed = _ref6.setIsCollapsed,
       inTopLevel = _ref6.inTopLevel;
-  return /*#__PURE__*/React.createElement(_grommet.Button, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     plain: true,
     focusIndicator: false,
     hoverIndicator: false,
@@ -142,7 +144,7 @@ var CollapseToggleExtra = function CollapseToggleExtra(_ref6) {
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(_ExpandCarrot.ExpandCarrot, {
+    icon: /*#__PURE__*/_react.default.createElement(_ExpandCarrot.ExpandCarrot, {
       expanded: !isCollapsed
     }),
     onClick: function onClick() {
@@ -157,7 +159,7 @@ var DebugToggleExtra = function DebugToggleExtra(_ref7) {
       setIsDebugging = _ref7.setIsDebugging,
       inTopLevel = _ref7.inTopLevel;
   var Icon = isDebugging ? _fi.FiZapOff : _fi.FiZap;
-  return /*#__PURE__*/React.createElement(_grommet.Button, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     plain: true,
     focusIndicator: false,
     hoverIndicator: false,
@@ -165,7 +167,7 @@ var DebugToggleExtra = function DebugToggleExtra(_ref7) {
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(Icon, null),
+    icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     onClick: function onClick() {
       return setIsDebugging(!isDebugging);
     },
@@ -179,11 +181,11 @@ var IndicatorExtra = function IndicatorExtra(_ref8) {
       inTopLevel = _ref8.inTopLevel;
 
   if (inTopLevel) {
-    return /*#__PURE__*/React.createElement(Pill, {
+    return /*#__PURE__*/_react.default.createElement(Pill, {
       value: value
     });
   } else {
-    return /*#__PURE__*/React.createElement(_grommet.Button, {
+    return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
       size: "small",
       plain: true,
       focusIndicator: false,
@@ -191,7 +193,7 @@ var IndicatorExtra = function IndicatorExtra(_ref8) {
       style: {
         padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
       },
-      icon: /*#__PURE__*/React.createElement(Pill, {
+      icon: /*#__PURE__*/_react.default.createElement(Pill, {
         value: value
       }),
       label: label
@@ -213,7 +215,7 @@ var AddArgumentExtra = function AddArgumentExtra(_ref9) {
   var addArgument = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.addArgument;
   });
-  return /*#__PURE__*/React.createElement(_grommet.Button, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     plain: true,
     focusIndicator: false,
@@ -222,7 +224,7 @@ var AddArgumentExtra = function AddArgumentExtra(_ref9) {
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(Icon, null),
+    icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     onClick: function onClick() {
       return addArgument(data.id, argumentType);
     },
@@ -235,7 +237,7 @@ var AddArgumentGroupExtra = function AddArgumentGroupExtra(_ref10) {
       allowed = _ref10.allowed,
       interactionDisabled = _ref10.interactionDisabled,
       inTopLevel = _ref10.inTopLevel;
-  return /*#__PURE__*/React.createElement(DropdownExtra, {
+  return /*#__PURE__*/_react.default.createElement(DropdownExtra, {
     icon: _fi.FiPlus,
     label: "Add Argument",
     contents: allowed.map(function (argumentType) {
@@ -259,7 +261,7 @@ var DeleteExtra = function DeleteExtra(_ref11) {
   var deleteFunc = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return state.deleteBlock;
   });
-  return /*#__PURE__*/React.createElement(_grommet.Button, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     plain: true,
     focusIndicator: false,
@@ -268,7 +270,7 @@ var DeleteExtra = function DeleteExtra(_ref11) {
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(_fi.FiTrash2, null),
+    icon: /*#__PURE__*/_react.default.createElement(_fi.FiTrash2, null),
     label: inTopLevel ? null : 'Delete',
     onClick: function onClick() {
       return deleteFunc(data, parentId, fieldInfo);
@@ -295,11 +297,11 @@ var DropdownExtra = function DropdownExtra(_ref12) {
       parentId = _ref12.parentId,
       fieldInfo = _ref12.fieldInfo;
   var DropIcon = icon ? icon : _fi.FiMoreHorizontal;
-  return /*#__PURE__*/React.createElement(_grommet.DropButton, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.DropButton, {
     disabled: interactionDisabled,
     focusIndicator: false,
     hoverIndicator: false,
-    dropContent: /*#__PURE__*/React.createElement(_grommet.Box, {
+    dropContent: /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       round: "xsmall",
       background: "grey",
       direction: "column",
@@ -308,7 +310,7 @@ var DropdownExtra = function DropdownExtra(_ref12) {
         color: 'lightgrey'
       }
     }, contents === null || contents === void 0 ? void 0 : contents.map(function (feature, featureIdx) {
-      return /*#__PURE__*/React.createElement(ButtonSwitch, {
+      return /*#__PURE__*/_react.default.createElement(ButtonSwitch, {
         key: featureIdx,
         feature: feature,
         data: data,
@@ -336,7 +338,7 @@ var DropdownExtra = function DropdownExtra(_ref12) {
       elevation: 'none',
       background: 'none'
     }
-  }, /*#__PURE__*/React.createElement(_grommet.Button, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     as: "div",
     focusIndicator: false,
@@ -345,7 +347,7 @@ var DropdownExtra = function DropdownExtra(_ref12) {
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
-    icon: /*#__PURE__*/React.createElement(DropIcon, null),
+    icon: /*#__PURE__*/_react.default.createElement(DropIcon, null),
     label: inTopLevel ? null : label
   }));
 };
@@ -368,13 +370,13 @@ var ButtonSwitch = function ButtonSwitch(_ref13) {
       parentId = _ref13.parentId;
 
   if (feature === _.EXTRA_TYPES.LOCKED_INDICATOR) {
-    return /*#__PURE__*/React.createElement(LockIndicatorExtra, {
+    return /*#__PURE__*/_react.default.createElement(LockIndicatorExtra, {
       locked: !data.canEdit,
       inTopLevel: inTopLevel,
       interactionDisabled: interactionDisabled
     });
   } else if (feature === _.EXTRA_TYPES.NAME_EDIT_TOGGLE) {
-    return /*#__PURE__*/React.createElement(NameEditToggleExtra, {
+    return /*#__PURE__*/_react.default.createElement(NameEditToggleExtra, {
       isEditing: isEditing,
       setIsEditing: setIsEditing,
       locked: !data.canEdit,
@@ -382,26 +384,26 @@ var ButtonSwitch = function ButtonSwitch(_ref13) {
       interactionDisabled: interactionDisabled
     });
   } else if (feature === _.EXTRA_TYPES.COLLAPSE_TOGGLE) {
-    return /*#__PURE__*/React.createElement(CollapseToggleExtra, {
+    return /*#__PURE__*/_react.default.createElement(CollapseToggleExtra, {
       isCollapsed: isCollapsed,
       setIsCollapsed: setIsCollapsed,
       inTopLevel: inTopLevel,
       interactionDisabled: interactionDisabled
     });
   } else if (feature === _.EXTRA_TYPES.SELECTION_TOGGLE) {
-    return /*#__PURE__*/React.createElement(SelectionToggleExtra, {
+    return /*#__PURE__*/_react.default.createElement(SelectionToggleExtra, {
       isSelected: isSelected,
       setIsSelected: setIsSelected,
       inTopLevel: inTopLevel
     });
   } else if (feature === _.EXTRA_TYPES.DEBUG_TOGGLE) {
-    return /*#__PURE__*/React.createElement(DebugToggleExtra, {
+    return /*#__PURE__*/_react.default.createElement(DebugToggleExtra, {
       isDebugging: isDebugging,
       setIsDebugging: setIsDebugging,
       inTopLevel: inTopLevel
     });
   } else if (feature === _.EXTRA_TYPES.DELETE_BUTTON) {
-    return /*#__PURE__*/React.createElement(DeleteExtra, {
+    return /*#__PURE__*/_react.default.createElement(DeleteExtra, {
       data: data,
       inTopLevel: inTopLevel,
       locked: interactionDisabled,
@@ -409,21 +411,21 @@ var ButtonSwitch = function ButtonSwitch(_ref13) {
       parentId: parentId
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.ADD_ARGUMENT) {
-    return /*#__PURE__*/React.createElement(AddArgumentExtra, {
+    return /*#__PURE__*/_react.default.createElement(AddArgumentExtra, {
       data: data,
       argumentType: feature === null || feature === void 0 ? void 0 : feature.argumentType,
       interactionDisabled: interactionDisabled,
       inTopLevel: inTopLevel
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.ADD_ARGUMENT_GROUP) {
-    return /*#__PURE__*/React.createElement(AddArgumentGroupExtra, {
+    return /*#__PURE__*/_react.default.createElement(AddArgumentGroupExtra, {
       data: data,
       allowed: feature === null || feature === void 0 ? void 0 : feature.allowed,
       interactionDisabled: interactionDisabled,
       inTopLevel: inTopLevel
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.FUNCTION_BUTTON) {
-    return /*#__PURE__*/React.createElement(FunctionButtonExtra, {
+    return /*#__PURE__*/_react.default.createElement(FunctionButtonExtra, {
       actionInfo: feature,
       data: data,
       blockSpec: blockSpec,
@@ -431,21 +433,21 @@ var ButtonSwitch = function ButtonSwitch(_ref13) {
       inTopLevel: inTopLevel
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.INDICATOR) {
-    return /*#__PURE__*/React.createElement(IndicatorExtra, {
+    return /*#__PURE__*/_react.default.createElement(IndicatorExtra, {
       value: feature.accessor(data),
       label: feature.label,
       inTopLevel: inTopLevel,
       interactionDisabled: interactionDisabled
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.ADD_ARGUMENT) {
-    return /*#__PURE__*/React.createElement(AddArgumentGroupExtra, {
+    return /*#__PURE__*/_react.default.createElement(AddArgumentGroupExtra, {
       data: data,
       allowed: feature === null || feature === void 0 ? void 0 : feature.allowed,
       interactionDisabled: interactionDisabled,
       inTopLevel: inTopLevel
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.DROPDOWN) {
-    return /*#__PURE__*/React.createElement(DropdownExtra, {
+    return /*#__PURE__*/_react.default.createElement(DropdownExtra, {
       data: data,
       blockSpec: blockSpec,
       icon: feature === null || feature === void 0 ? void 0 : feature.icon,
@@ -485,7 +487,7 @@ var ExtraBar = function ExtraBar(_ref14) {
       interactionDisabled = _ref14.interactionDisabled,
       fieldInfo = _ref14.fieldInfo,
       parentId = _ref14.parentId;
-  return /*#__PURE__*/React.createElement(_grommet.Box, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     direction: "row",
     margin: {
       left: 'xsmall'
@@ -496,7 +498,7 @@ var ExtraBar = function ExtraBar(_ref14) {
     justify: "between",
     flex: false
   }, blockSpec === null || blockSpec === void 0 ? void 0 : (_blockSpec$extras = blockSpec.extras) === null || _blockSpec$extras === void 0 ? void 0 : _blockSpec$extras.map(function (extra, extraIdx) {
-    return /*#__PURE__*/React.createElement(ButtonSwitch, {
+    return /*#__PURE__*/_react.default.createElement(ButtonSwitch, {
       key: extraIdx,
       data: data,
       blockSpec: blockSpec,

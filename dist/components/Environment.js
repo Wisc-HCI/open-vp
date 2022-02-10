@@ -1,9 +1,13 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = Environment;
+
+var _react = _interopRequireDefault(require("react"));
 
 var _Canvas = require("./Canvas");
 
@@ -78,13 +82,13 @@ function Environment(_ref) {
       }
     }
   };
-  return /*#__PURE__*/React.createElement(_grommet.Grommet, {
+  return /*#__PURE__*/_react.default.createElement(_grommet.Grommet, {
     theme: theme
-  }, /*#__PURE__*/React.createElement(_ProgrammingContext.ProgrammingProvider, {
+  }, /*#__PURE__*/_react.default.createElement(_ProgrammingContext.ProgrammingProvider, {
     store: store
-  }, /*#__PURE__*/React.createElement(_reactDnd.DndProvider, {
+  }, /*#__PURE__*/_react.default.createElement(_reactDnd.DndProvider, {
     backend: _reactDndHtml5Backend.HTML5Backend
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
       position: "absolute",
       padding: 0,
@@ -94,11 +98,11 @@ function Environment(_ref) {
       display: "flex",
       flexDirection: "row"
     }
-  }, /*#__PURE__*/React.createElement(_Drawer.Drawer, {
+  }, /*#__PURE__*/_react.default.createElement(_Drawer.Drawer, {
     highlightColor: highlightColor
-  }), /*#__PURE__*/React.createElement(_reactFlowRenderer.ReactFlowProvider, null, /*#__PURE__*/React.createElement(_Canvas.Canvas, {
+  }), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.ReactFlowProvider, null, /*#__PURE__*/_react.default.createElement(_Canvas.Canvas, {
     highlightColor: highlightColor
-  }))), /*#__PURE__*/React.createElement(_DragLayer.DragLayer, {
+  }))), /*#__PURE__*/_react.default.createElement(_DragLayer.DragLayer, {
     highlightColor: highlightColor
   }))));
 }
