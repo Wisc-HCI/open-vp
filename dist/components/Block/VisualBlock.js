@@ -117,16 +117,25 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       display: 'flex',
       alignItems: 'center'
     }
+  }, /*#__PURE__*/_react.default.createElement(_grommet.ThemeContext.Extend, {
+    value: {
+      global: {
+        edgeSize: {
+          large: '20pt'
+        }
+      }
+    }
   }, /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
     size: "small",
     icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     value: name,
+    textAlign: "start",
     focusIndicator: false,
     disabled: interactionDisabled || !data.editing,
     onChange: function onChange(e) {
       return updateItemName(data.id, e.target.value);
     }
-  }), (blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras) && /*#__PURE__*/_react.default.createElement(_ExtraBar.ExtraBar, {
+  })), (blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras) && /*#__PURE__*/_react.default.createElement(_ExtraBar.ExtraBar, {
     fieldInfo: fieldInfo,
     parentId: parentId,
     interactionDisabled: interactionDisabled,

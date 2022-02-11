@@ -7,7 +7,7 @@ var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWild
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.Fullscreen = void 0;
+exports.default = exports.Embedded = void 0;
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
 
@@ -26,7 +26,7 @@ var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
 var _excluded = ["drawers", "objectTypes", "programData", "drawerWidth"];
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 var _default = {
-  title: 'Fullscreen',
+  title: 'Embedded',
   component: _components.Environment
 }; // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 
@@ -54,25 +54,35 @@ var Template = function Template(args) {
     });
   });
   return /*#__PURE__*/_react.default.createElement("div", {
-    ref: ref,
     style: {
       display: 'flex',
       height: '100vh',
       flexDirection: 'row',
       backgroundColor: otherArgs.highlightColor
     }
+  }, /*#__PURE__*/_react.default.createElement("div", {
+    style: {
+      flex: 1,
+      backgroundColor: 'darkgray'
+    }
+  }), /*#__PURE__*/_react.default.createElement("div", {
+    ref: ref,
+    style: {
+      flex: 1,
+      margin: 10
+    }
   }, /*#__PURE__*/_react.default.createElement(_components.Environment, Object.assign({}, otherArgs, {
     store: _components.useDefaultProgrammingStore,
     height: bounds.height,
     width: bounds.width,
     drawerWidth: drawerWidth
-  })));
+  }))));
 };
 
-var Fullscreen = Template.bind({}); // More on args: https://storybook.js.org/docs/react/writing-stories/args
+var Embedded = Template.bind({}); // More on args: https://storybook.js.org/docs/react/writing-stories/args
 
-exports.Fullscreen = Fullscreen;
-Fullscreen.args = {
+exports.Embedded = Embedded;
+Embedded.args = {
   highlightColor: '#ff00ff',
   drawerWidth: 235,
   drawers: [{

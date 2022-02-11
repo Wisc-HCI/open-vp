@@ -2,13 +2,15 @@ import React from 'react';
 import { Canvas } from "./Canvas";
 import { Drawer } from "./Drawer";
 import { DragLayer } from "./DragLayer";
-import { HTML5Backend } from "react-dnd-html5-backend";
+// import { HTML5Backend } from "react-dnd-html5-backend";
+import { HTML5toTouch } from 'rdndmb-html5-to-touch'
+import { MultiBackend } from 'react-dnd-multi-backend'
 import { DndProvider } from "react-dnd";
 import { ProgrammingProvider } from "./ProgrammingContext";
 import { Grommet } from "grommet";
 import {ReactFlowProvider} from "react-flow-renderer";
 
-export default function Environment({ store, highlightColor }) {
+export default function Environment({ store, highlightColor, height, width, drawerWidth }) {
 
   const theme = {
     name: 'SimpleVP',
@@ -31,7 +33,8 @@ export default function Environment({ store, highlightColor }) {
       input: {
         padding: 4,
         extend: {backgroundColor:'#FFFFFF55'}
-      }
+      },
+      // edgeSize: {large: 50, small: 10, medium: 15}
     },
     button: {
       border: {
@@ -53,21 +56,19 @@ export default function Environment({ store, highlightColor }) {
   return (
     <Grommet theme={theme}>
       <ProgrammingProvider store={store}>
-        <DndProvider backend={HTML5Backend}>
+        <DndProvider backend={MultiBackend} options={HTML5toTouch}>
           <div
             style={{
-              position: "absolute",
               padding: 0,
               margin: 0,
-              height: "100%",
-              width: "100%",
-              display: "flex",
-              flexDirection: "row"
+              display: 'flex',
+              height,
+              width
             }}
           >
-            <Drawer highlightColor={highlightColor}/>
+            <Drawer highlightColor={highlightColor} drawerWidth={drawerWidth ? drawerWidth : 235}/>
             <ReactFlowProvider>
-              <Canvas highlightColor={highlightColor}/>
+              <Canvas highlightColor={highlightColor} drawerWidth={drawerWidth ? drawerWidth : 235}/>
             </ReactFlowProvider>
           </div>
           <DragLayer highlightColor={highlightColor}/>

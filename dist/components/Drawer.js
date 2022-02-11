@@ -31,6 +31,8 @@ var _Constants = require("./Constants");
 
 var _Generators = require("./Generators");
 
+var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
+
 var TipContent = function TipContent(_ref) {
   var message = _ref.message;
   return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
@@ -56,12 +58,23 @@ var TipContent = function TipContent(_ref) {
 };
 
 var Drawer = function Drawer(_ref2) {
-  var highlightColor = _ref2.highlightColor;
+  var highlightColor = _ref2.highlightColor,
+      drawerWidth = _ref2.drawerWidth;
 
   var _useState = (0, _react.useState)(''),
       _useState2 = (0, _slicedToArray2.default)(_useState, 2),
       searchTerm = _useState2[0],
       setSearchTerm = _useState2[1];
+
+  var _useMeasure = (0, _reactUseMeasure.default)(),
+      _useMeasure2 = (0, _slicedToArray2.default)(_useMeasure, 2),
+      drawerRef = _useMeasure2[0],
+      drawerBounds = _useMeasure2[1];
+
+  var _useMeasure3 = (0, _reactUseMeasure.default)(),
+      _useMeasure4 = (0, _slicedToArray2.default)(_useMeasure3, 2),
+      headerRef = _useMeasure4[0],
+      headerBounds = _useMeasure4[1];
 
   var blocks = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     var blocks = [];
@@ -103,11 +116,11 @@ var Drawer = function Drawer(_ref2) {
     return store.setActiveDrawer;
   });
   var drawerStyle = (0, _web.useSpring)({
-    width: activeDrawer !== null ? 235 : 0,
+    width: activeDrawer !== null ? drawerWidth : 0,
     config: _reactSpring.config.stiff
   });
   var sidebarStyle = (0, _web.useSpring)({
-    width: activeDrawer !== null ? 285 : 50,
+    width: activeDrawer !== null ? drawerWidth + 50 : 50,
     config: _reactSpring.config.stiff
   });
   return /*#__PURE__*/_react.default.createElement(_web.animated.div, {
@@ -163,12 +176,14 @@ var Drawer = function Drawer(_ref2) {
       icon: /*#__PURE__*/_react.default.createElement(Icon, null)
     });
   })), /*#__PURE__*/_react.default.createElement(_web.animated.div, {
+    ref: drawerRef,
     style: (0, _objectSpread2.default)({
       height: '100%',
       backgroundColor: '#2f2f2f',
       overflow: 'hidden'
     }, drawerStyle)
   }, activeDrawer !== null && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+    ref: headerRef,
     background: "#444444",
     direction: "column",
     pad: "small",
@@ -195,24 +210,29 @@ var Drawer = function Drawer(_ref2) {
     onChange: function onChange(e) {
       return setSearchTerm(e.target.value);
     }
-  })), /*#__PURE__*/_react.default.createElement(_grommet.List, {
+  })), /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+    style: {
+      height: drawerBounds.height - headerBounds.height,
+      overflowY: 'scroll'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_grommet.List, {
     data: blocks,
     border: false,
     style: {
-      padding: 5,
-      width: 235
+      padding: 5
     },
     margin: "none",
     pad: "none"
   }, function (block, idx) {
     return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+      key: idx,
       animation: {
         type: 'fadeIn',
         delay: idx * 100
       },
       style: {
         marginBottom: 5,
-        width: 225
+        width: drawerWidth - 10
       }
     }, /*#__PURE__*/_react.default.createElement(_Block.Block, {
       staticData: block,
@@ -228,7 +248,7 @@ var Drawer = function Drawer(_ref2) {
         isSpawner: true
       }
     }));
-  }))));
+  })))));
 };
 
 exports.Drawer = Drawer;

@@ -29,6 +29,8 @@ var _Constants = require("./Constants");
 
 var _Generators = require("./Generators");
 
+var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
+
 var _excluded = ["highlightColor"];
 
 var CanvasNode = function CanvasNode(_ref) {
@@ -47,7 +49,8 @@ var CanvasNode = function CanvasNode(_ref) {
 };
 
 var Canvas = function Canvas(_ref2) {
-  var highlightColor = _ref2.highlightColor;
+  var highlightColor = _ref2.highlightColor,
+      drawerWidth = _ref2.drawerWidth;
   var nodes = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return Object.values(state.programData).map(function (data) {
       var _state$programSpec$ob, _state$programSpec$ob2;
@@ -108,7 +111,13 @@ var Canvas = function Canvas(_ref2) {
   });
 
   var _useReactFlow = (0, _reactFlowRenderer.useReactFlow)(),
-      project = _useReactFlow.project;
+      project = _useReactFlow.project,
+      getZoom = _useReactFlow.getZoom;
+
+  var _useMeasure = (0, _reactUseMeasure.default)(),
+      _useMeasure2 = (0, _slicedToArray2.default)(_useMeasure, 2),
+      ref = _useMeasure2[0],
+      bounds = _useMeasure2[1];
 
   var drop = (0, _reactDnd.useDrop)({
     accept: acceptTypes,
@@ -117,14 +126,17 @@ var Canvas = function Canvas(_ref2) {
     },
     drop: function drop(item, monitor) {
       var clientOffset = monitor.getClientOffset();
+      console.log(monitor); // const zoom = getZoom();
+
       var position = project({
-        x: clientOffset.x - 350,
-        y: clientOffset.y
+        x: clientOffset.x - bounds.left - 50,
+        y: clientOffset.y - bounds.top
       });
       createPlacedNode(item.data, position.x, position.y);
     }
   })[1];
   return /*#__PURE__*/_react.default.createElement("div", {
+    ref: ref,
     style: {
       backgroundColor: "black",
       display: 'flex',
@@ -145,7 +157,7 @@ var Canvas = function Canvas(_ref2) {
     nodes: nodes,
     onConnect: function onConnect(_) {},
     onNodesChange: moveNode,
-    defaultZoom: 0.5,
+    defaultZoom: 1,
     fitView: true,
     snapToGrid: true,
     snapGrid: [30, 30]

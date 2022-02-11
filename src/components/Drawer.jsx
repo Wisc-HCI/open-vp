@@ -4,10 +4,11 @@ import { Block } from "./Block";
 import { useSpring, animated } from '@react-spring/web';
 import { config } from 'react-spring';
 import { useProgrammingStore } from "./ProgrammingContext";
-import { Button, List, Box, TextInput, Text } from 'grommet';
+import { Button, List, Box, TextInput, Text, InfiniteScroll } from 'grommet';
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { DATA_TYPES } from './Constants';
 import { instanceTemplateFromSpec, referenceTemplateFromSpec, callTemplateFromSpec } from './Generators';
+import useMeasure from 'react-use-measure';
 
 
 const TipContent = ({ message }) => (
@@ -25,9 +26,12 @@ const TipContent = ({ message }) => (
     </Box>
 );
 
-export const Drawer = ({ highlightColor }) => {
+export const Drawer = ({ highlightColor, drawerWidth }) => {
 
     const [searchTerm, setSearchTerm] = useState('');
+
+    const [drawerRef,drawerBounds] = useMeasure();
+    const [headerRef,headerBounds] = useMeasure();
 
     const blocks = useProgrammingStore((store) => {
         let blocks = [];
@@ -71,8 +75,8 @@ export const Drawer = ({ highlightColor }) => {
     const activeDrawer = useProgrammingStore(store => store.activeDrawer);
     const setActiveDrawer = useProgrammingStore(store => store.setActiveDrawer);
 
-    const drawerStyle = useSpring({ width: activeDrawer !== null ? 235 : 0, config: config.stiff });
-    const sidebarStyle = useSpring({ width: activeDrawer !== null ? 285 : 50, config: config.stiff });
+    const drawerStyle = useSpring({ width: activeDrawer !== null ? drawerWidth : 0, config: config.stiff });
+    const sidebarStyle = useSpring({ width: activeDrawer !== null ? drawerWidth+50 : 50, config: config.stiff });
 
     return (
         <animated.div
@@ -109,11 +113,11 @@ export const Drawer = ({ highlightColor }) => {
                     }}
                 </List>
             </div>
-            <animated.div style={{ height: '100%', backgroundColor: '#2f2f2f', overflow: 'hidden', ...drawerStyle }}>
+            <animated.div ref={drawerRef} style={{ height: '100%', backgroundColor: '#2f2f2f', overflow: 'hidden', ...drawerStyle }}>
 
                 {activeDrawer !== null && (
                     <>
-                        <Box background='#444444' direction='column' pad='small' animation='fadeIn'>
+                        <Box ref={headerRef} background='#444444' direction='column' pad='small' animation='fadeIn'>
                             <Box direction="row" justify='between' align="center">
                                 <Box pad='small'>
                                     <Text>{drawers[activeDrawer].title}</Text>
@@ -134,13 +138,16 @@ export const Drawer = ({ highlightColor }) => {
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
                         </Box>
-                        <List data={blocks} border={false} style={{ padding: 5, width: 235 }} margin='none' pad='none'>
-                            {(block, idx) => (
-                                <Box animation={{ type: 'fadeIn', delay: idx * 100 }} style={{ marginBottom: 5, width: 225 }}>
-                                    <Block staticData={block} parentId="spawner" bounded highlightColor={highlightColor} context={[]} interactionDisabled fieldInfo={{ name: '', value: null, accepts: [], isSpawner: true }}/>
-                                </Box>
-                            )}
-                        </List>
+                        <Box style={{height:drawerBounds.height-headerBounds.height, overflowY:'scroll'}}>
+                               <List data={blocks} border={false} style={{ padding: 5 }} margin='none' pad='none'>
+                                {(block, idx) => (
+                                    <Box key={idx} animation={{ type: 'fadeIn', delay: idx * 100 }} style={{ marginBottom: 5, width: drawerWidth-10 }}>
+                                        <Block staticData={block} parentId="spawner" bounded highlightColor={highlightColor} context={[]} interactionDisabled fieldInfo={{ name: '', value: null, accepts: [], isSpawner: true }}/>
+                                    </Box>
+                                )}
+                            </List>
+                        </Box>
+                        
                     </>
 
 

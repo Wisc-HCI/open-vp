@@ -6,7 +6,7 @@ import useMeasure from 'react-use-measure';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Fullscreen',
+  title: 'Stress',
   component: Environment
 };
 
@@ -26,9 +26,9 @@ const Template = (args) => {
     )
 };
 
-export const Fullscreen = Template.bind({});
+export const Stress = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Fullscreen.args = {
+Stress.args = {
   highlightColor: '#ff00ff',
   drawerWidth: 235,
   drawers: [
@@ -348,6 +348,116 @@ Fullscreen.args = {
     "pspssse32": {
       id: "pspssse32",
       name: 'Fur Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "pspssse64": {
+      id: "pspssse64",
+      name: 'Leather Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "sdfsdsq64": {
+      id: "sdfsdsq64",
+      name: 'Funky Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "8423ljdso8s3": {
+      id: "8423ljdso8s3",
+      name: 'Magenta Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "p-pspssse32": {
+      id: "p-pspssse32",
+      name: 'Pricy Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "55pspssse64": {
+      id: "55pspssse64",
+      name: 'Fast Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "6556sdfsdsq64": {
+      id: "6556sdfsdsq64",
+      name: 'Jazzy Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "448423ljdso8s3": {
+      id: "448423ljdso8s3",
+      name: 'Cute Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "45p-pspssse32": {
+      id: "45p-pspssse32",
+      name: 'Black Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "bb55pspssse64": {
+      id: "bb55pspssse64",
+      name: 'Brown Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "yy6556sdfsdsq64": {
+      id: "yy6556sdfsdsq64",
+      name: 'Ugly Boots',
+      type: "bootType",
+      dataType: DATA_TYPES.INSTANCE,
+      canDelete: true,
+      canEdit: true,
+      selected: false,
+      editing: false,
+    },
+    "44448423ljdso8s3": {
+      id: "44448423ljdso8s3",
+      name: 'Ugg Boots',
       type: "bootType",
       dataType: DATA_TYPES.INSTANCE,
       canDelete: true,

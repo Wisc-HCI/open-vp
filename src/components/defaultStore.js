@@ -311,7 +311,7 @@ export const ProgrammingSlice = (set,get) => ({
     addArgument: (parentFunctionId, argumentType) => {
       set((state) => {
         const id = generateUuid(argumentType);
-        const template = {...instanceTemplateFromSpec(argumentType,state.programSpec.objectTypes[argumentType],true),id};
+        const template = {...instanceTemplateFromSpec(argumentType,state.programSpec.objectTypes[argumentType],true),id,dataType:DATA_TYPES.REFERENCE};
         state.programData[id] = template;
         state.programData[parentFunctionId].arguments.push(id);
       })

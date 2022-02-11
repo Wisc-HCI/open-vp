@@ -58,7 +58,7 @@ var FunctionButtonExtra = function FunctionButtonExtra(_ref2) {
     focusIndicator: false,
     hoverIndicator: false,
     disabled: interactionDisabled,
-    plain: !inTopLevel,
+    plain: true,
     style: {
       padding: inTopLevel ? null : '5pt 10pt 5pt 10pt'
     },

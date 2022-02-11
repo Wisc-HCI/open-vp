@@ -5,7 +5,7 @@ import { List } from "./List";
 import { forwardRef } from "react";
 import { DATA_TYPES, TYPES, SIMPLE_PROPERTY_TYPES } from "../Constants";
 import { FiSquare } from "react-icons/fi";
-import { TextInput, Box, Button, Text, CheckBox, RadioButtonGroup } from "grommet";
+import { TextInput, Box, Button, Text, CheckBox, RadioButtonGroup, ThemeContext } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { ExtraBar } from "./ExtraBar";
 import { Selectable } from "./Selectable";
@@ -69,7 +69,9 @@ export const VisualBlock = forwardRef(
           }}
         >
           {/* The header, includes the name/text field and the extra bar */}
-          <TextInput size='small' icon={<Icon />} value={name} focusIndicator={false} disabled={interactionDisabled || !data.editing} onChange={e => updateItemName(data.id, e.target.value)} />
+          <ThemeContext.Extend value={{global:{edgeSize:{large:'20pt'}}}}>
+            <TextInput size='small' icon={<Icon/>} value={name} textAlign='start' focusIndicator={false} disabled={interactionDisabled || !data.editing} onChange={e => updateItemName(data.id, e.target.value)} />
+          </ThemeContext.Extend>
           {blockSpec?.extras && (
             <ExtraBar
               fieldInfo={fieldInfo}

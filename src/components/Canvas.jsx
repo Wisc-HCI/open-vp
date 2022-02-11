@@ -11,6 +11,7 @@ import { useMemo } from "react";
 import { VisualBlock } from "./Block";
 import { DATA_TYPES } from "./Constants";
 import { referenceTemplateFromSpec } from "./Generators";
+import useMeasure from 'react-use-measure';
 
 const CanvasNode = ({ data }) => {
   const { highlightColor, ...rest } = data;
@@ -19,7 +20,8 @@ const CanvasNode = ({ data }) => {
   )
 };
 
-export const Canvas = ({ highlightColor }) => {
+export const Canvas = ({ highlightColor, drawerWidth }) => {
+
   const nodes = useProgrammingStore((state) =>
     Object.values(state.programData)
       .map((data) => {
@@ -57,24 +59,30 @@ export const Canvas = ({ highlightColor }) => {
   const moveNode = useProgrammingStore((state) => state.moveBlock);
   const createPlacedNode = useProgrammingStore((state) => state.createPlacedBlock);
 
-  const { project } = useReactFlow();
+  const { project, getZoom } = useReactFlow();
+
+  const [ref, bounds] = useMeasure();
 
   const drop = useDrop({
     accept: acceptTypes,
     canDrop: (item) => item.onCanvas,
     drop: (item, monitor) => {
       const clientOffset = monitor.getClientOffset();
+      console.log(monitor)
+      // const zoom = getZoom();
       const position = project({
-        x: clientOffset.x - 350,
-        y: clientOffset.y,
+        x: clientOffset.x - bounds.left - 50,
+        y: clientOffset.y - bounds.top,
       });
       createPlacedNode(item.data, position.x, position.y)
     }
   })[1]
 
+  
+
   return (
 
-    <div style={{ backgroundColor: "black", display: 'flex', flex: 1 }}>
+    <div ref={ref} style={{ backgroundColor: "black", display: 'flex', flex: 1 }}>
       <ReactFlow
         ref={drop}
         maxZoom={1.5}
@@ -82,11 +90,12 @@ export const Canvas = ({ highlightColor }) => {
         nodesConnectable={false}
         elementsSelectable={false}
         nodesDraggable={true}
+        
         nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}
         nodes={nodes}
         onConnect={(_) => { }}
         onNodesChange={moveNode}
-        defaultZoom={0.5}
+        defaultZoom={1}
         fitView
         snapToGrid={true}
         snapGrid={[30, 30]}

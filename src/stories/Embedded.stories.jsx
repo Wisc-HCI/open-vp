@@ -6,7 +6,7 @@ import useMeasure from 'react-use-measure';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: 'Fullscreen',
+  title: 'Embedded',
   component: Environment
 };
 
@@ -15,20 +15,25 @@ const Template = (args) => {
   const { drawers, objectTypes, programData, drawerWidth, ...otherArgs } = args;
 
   const [ref, bounds] = useMeasure();
-  
+
   useLayoutEffect(()=>{
     useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData});
   })
   return (
-    <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:otherArgs.highlightColor}}>
+    <div style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:otherArgs.highlightColor}}>
+      <div style={{flex:1,backgroundColor:'darkgray'}}>
+      
+      </div>
+    <div ref={ref} style={{flex:1,margin:10}}>
       <Environment {...otherArgs} store={useDefaultProgrammingStore} height={bounds.height} width={bounds.width} drawerWidth={drawerWidth}/>
+    </div>
     </div>
     )
 };
 
-export const Fullscreen = Template.bind({});
+export const Embedded = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args
-Fullscreen.args = {
+Embedded.args = {
   highlightColor: '#ff00ff',
   drawerWidth: 235,
   drawers: [

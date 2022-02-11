@@ -19,7 +19,7 @@ var instanceTemplateFromSpec = function instanceTemplateFromSpec(type, objectSpe
     type: type,
     dataType: _Constants.DATA_TYPES.INSTANCE,
     properties: {},
-    name: "New ".concat(objectSpec.name).concat(isArg ? ' Argument' : ''),
+    name: "".concat(objectSpec.instanceBlock.hideNewPrefix ? '' : 'New ').concat(objectSpec.name).concat(isArg ? ' Argument' : ''),
     canDelete: true,
     canEdit: true,
     editing: false,

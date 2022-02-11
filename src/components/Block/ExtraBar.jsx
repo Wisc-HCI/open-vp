@@ -44,7 +44,7 @@ const FunctionButtonExtra = ({ actionInfo, data, blockSpec, inTopLevel, interact
             focusIndicator={false}
             hoverIndicator={false}
             disabled={interactionDisabled}
-            plain={!inTopLevel}
+            plain
             style={{ padding: inTopLevel ? null : '5pt 10pt 5pt 10pt' }}
             icon={<ExtraActionIcon />}
             label={inTopLevel ? null : actionInfo.label}

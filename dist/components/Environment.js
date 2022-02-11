@@ -15,7 +15,9 @@ var _Drawer = require("./Drawer");
 
 var _DragLayer = require("./DragLayer");
 
-var _reactDndHtml5Backend = require("react-dnd-html5-backend");
+var _rdndmbHtml5ToTouch = require("rdndmb-html5-to-touch");
+
+var _reactDndMultiBackend = require("react-dnd-multi-backend");
 
 var _reactDnd = require("react-dnd");
 
@@ -25,9 +27,13 @@ var _grommet = require("grommet");
 
 var _reactFlowRenderer = require("react-flow-renderer");
 
+// import { HTML5Backend } from "react-dnd-html5-backend";
 function Environment(_ref) {
   var store = _ref.store,
-      highlightColor = _ref.highlightColor;
+      highlightColor = _ref.highlightColor,
+      height = _ref.height,
+      width = _ref.width,
+      drawerWidth = _ref.drawerWidth;
   var theme = {
     name: 'SimpleVP',
     rounding: 4,
@@ -51,7 +57,8 @@ function Environment(_ref) {
         extend: {
           backgroundColor: '#FFFFFF55'
         }
-      }
+      } // edgeSize: {large: 50, small: 10, medium: 15}
+
     },
     button: {
       border: {
@@ -87,21 +94,22 @@ function Environment(_ref) {
   }, /*#__PURE__*/_react.default.createElement(_ProgrammingContext.ProgrammingProvider, {
     store: store
   }, /*#__PURE__*/_react.default.createElement(_reactDnd.DndProvider, {
-    backend: _reactDndHtml5Backend.HTML5Backend
+    backend: _reactDndMultiBackend.MultiBackend,
+    options: _rdndmbHtml5ToTouch.HTML5toTouch
   }, /*#__PURE__*/_react.default.createElement("div", {
     style: {
-      position: "absolute",
       padding: 0,
       margin: 0,
-      height: "100%",
-      width: "100%",
-      display: "flex",
-      flexDirection: "row"
+      display: 'flex',
+      height: height,
+      width: width
     }
   }, /*#__PURE__*/_react.default.createElement(_Drawer.Drawer, {
-    highlightColor: highlightColor
+    highlightColor: highlightColor,
+    drawerWidth: drawerWidth ? drawerWidth : 235
   }), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.ReactFlowProvider, null, /*#__PURE__*/_react.default.createElement(_Canvas.Canvas, {
-    highlightColor: highlightColor
+    highlightColor: highlightColor,
+    drawerWidth: drawerWidth ? drawerWidth : 235
   }))), /*#__PURE__*/_react.default.createElement(_DragLayer.DragLayer, {
     highlightColor: highlightColor
   }))));

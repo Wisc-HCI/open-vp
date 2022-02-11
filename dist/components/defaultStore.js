@@ -353,7 +353,8 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
       set(function (state) {
         var id = generateUuid(argumentType);
         var template = (0, _objectSpread2.default)((0, _objectSpread2.default)({}, (0, _Generators.instanceTemplateFromSpec)(argumentType, state.programSpec.objectTypes[argumentType], true)), {}, {
-          id: id
+          id: id,
+          dataType: _.DATA_TYPES.REFERENCE
         });
         state.programData[id] = template;
         state.programData[parentFunctionId].arguments.push(id);

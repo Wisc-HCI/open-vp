@@ -6,7 +6,7 @@ export const instanceTemplateFromSpec = (type, objectSpec, isArg) => {
         type, 
         dataType: DATA_TYPES.INSTANCE, 
         properties:{}, 
-        name: `New ${objectSpec.name}${isArg ? ' Argument':''}`,
+        name: `${objectSpec.instanceBlock.hideNewPrefix ? '' : 'New '}${objectSpec.name}${isArg ? ' Argument':''}`,
         canDelete: true,
         canEdit: true,
         editing: false,
