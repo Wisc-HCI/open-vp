@@ -1,6 +1,6 @@
 {
   "name": "simple-vp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "dist/index.js",
   "private": false,
   "files": [
@@ -27,7 +27,7 @@
     "react-dnd": "^14.0.5",
     "react-dnd-html5-backend": "^14.1.0",
     "react-dom": "^17.0.2",
-    "react-flow-renderer": "^10.0.0-next.35",
+    "react-flow-renderer": "^10.0.0-next.39",
     "react-icons": "^4.3.1",
     "react-scripts": "5.0.0",
     "react-spring": "^9.4.2",

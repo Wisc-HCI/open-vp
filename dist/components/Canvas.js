@@ -145,8 +145,8 @@ var Canvas = function Canvas(_ref2) {
     nodes: nodes,
     onConnect: function onConnect(_) {},
     onNodesChange: moveNode,
-    fitViewOnInit: true,
     defaultZoom: 0.5,
+    fitView: true,
     snapToGrid: true,
     snapGrid: [30, 30]
   }, /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.MiniMap, {

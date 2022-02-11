@@ -86,8 +86,8 @@ export const Canvas = ({ highlightColor }) => {
         nodes={nodes}
         onConnect={(_) => { }}
         onNodesChange={moveNode}
-        fitViewOnInit
         defaultZoom={0.5}
+        fitView
         snapToGrid={true}
         snapGrid={[30, 30]}
       >
