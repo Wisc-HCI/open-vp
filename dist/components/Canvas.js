@@ -111,8 +111,7 @@ var Canvas = function Canvas(_ref2) {
   });
 
   var _useReactFlow = (0, _reactFlowRenderer.useReactFlow)(),
-      project = _useReactFlow.project,
-      getZoom = _useReactFlow.getZoom;
+      project = _useReactFlow.project;
 
   var _useMeasure = (0, _reactUseMeasure.default)(),
       _useMeasure2 = (0, _slicedToArray2.default)(_useMeasure, 2),

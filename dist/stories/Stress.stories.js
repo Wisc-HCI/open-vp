@@ -266,6 +266,11 @@ Stress.args = {
             label: 'PM'
           }],
           default: 'am'
+        },
+        description: {
+          name: "Description",
+          type: _Constants.SIMPLE_PROPERTY_TYPES.IGNORED,
+          default: 'Some description text'
         }
       }
     },

@@ -4,7 +4,7 @@ import { Block } from "./Block";
 import { useSpring, animated } from '@react-spring/web';
 import { config } from 'react-spring';
 import { useProgrammingStore } from "./ProgrammingContext";
-import { Button, List, Box, TextInput, Text, InfiniteScroll } from 'grommet';
+import { Button, List, Box, TextInput, Text } from 'grommet';
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { DATA_TYPES } from './Constants';
 import { instanceTemplateFromSpec, referenceTemplateFromSpec, callTemplateFromSpec } from './Generators';
@@ -105,7 +105,7 @@ export const Drawer = ({ highlightColor, drawerWidth }) => {
                                 color={activeDrawer === drawerIdx ? hlcolor : '#313131'}
                                 margin={{ top: 'xsmall', bottom: 'none', left: 'xsmall', right: 'xsmall' }}
                                 round='small'
-                                onClick={() => { setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx) }}
+                                onClick={() => { setSearchTerm(''); setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx) }}
                                 icon={<Icon />}
                             />
                         )

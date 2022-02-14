@@ -31,7 +31,7 @@ var _ExtraBar = require("./ExtraBar");
 
 var _Selectable = require("./Selectable");
 
-var _ = require(".");
+var _2 = require(".");
 
 var _lodash = require("lodash");
 
@@ -166,7 +166,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       backgroundColor: "rgba(0,0,0,0.2)"
     }
   }, data.argumentBlockData.map(function (argBlockData, argIdx) {
-    return /*#__PURE__*/_react.default.createElement(_.Block, {
+    return /*#__PURE__*/_react.default.createElement(_2.Block, {
       key: argIdx,
       staticData: argBlockData,
       parentId: data.id,
@@ -218,10 +218,16 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     style: {
       width: '100%'
     }
-  }, Object.entries(simpleProperties).map(function (_ref2) {
+  }, Object.entries(simpleProperties).filter(function (_ref2) {
     var _ref3 = (0, _slicedToArray2.default)(_ref2, 2),
-        propKey = _ref3[0],
+        _ = _ref3[0],
         propInfo = _ref3[1];
+
+    return propInfo.type !== _Constants.SIMPLE_PROPERTY_TYPES.IGNORED;
+  }).map(function (_ref4) {
+    var _ref5 = (0, _slicedToArray2.default)(_ref4, 2),
+        propKey = _ref5[0],
+        propInfo = _ref5[1];
 
     return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       key: propKey,
@@ -314,10 +320,10 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       highlightColor: highlightColor,
       context: context
     }));
-  }), data.dataType === _Constants.DATA_TYPES.INSTANCE && ((_Object$entries = Object.entries(standardProperties)) === null || _Object$entries === void 0 ? void 0 : _Object$entries.map(function (_ref4) {
-    var _ref5 = (0, _slicedToArray2.default)(_ref4, 2),
-        fieldKey = _ref5[0],
-        fieldInfo = _ref5[1];
+  }), data.dataType === _Constants.DATA_TYPES.INSTANCE && ((_Object$entries = Object.entries(standardProperties)) === null || _Object$entries === void 0 ? void 0 : _Object$entries.map(function (_ref6) {
+    var _ref7 = (0, _slicedToArray2.default)(_ref6, 2),
+        fieldKey = _ref7[0],
+        fieldInfo = _ref7[1];
 
     var innerLabel = !fieldInfo.fullWidth ? fieldInfo.name : '';
     return /*#__PURE__*/_react.default.createElement(_grommet.Box, {

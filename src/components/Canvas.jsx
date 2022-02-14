@@ -59,7 +59,7 @@ export const Canvas = ({ highlightColor, drawerWidth }) => {
   const moveNode = useProgrammingStore((state) => state.moveBlock);
   const createPlacedNode = useProgrammingStore((state) => state.createPlacedBlock);
 
-  const { project, getZoom } = useReactFlow();
+  const { project } = useReactFlow();
 
   const [ref, bounds] = useMeasure();
 

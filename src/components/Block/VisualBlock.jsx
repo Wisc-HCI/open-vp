@@ -138,7 +138,7 @@ export const VisualBlock = forwardRef(
                 </Box>
                 {!simplePropertiesCollapsed && (
                   <Box flex animation={["fadeIn", "slideDown"]} style={{ width: '100%' }}>
-                    {Object.entries(simpleProperties).map(([propKey, propInfo]) => (
+                    {Object.entries(simpleProperties).filter(([_,propInfo])=>propInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED).map(([propKey, propInfo]) => (
                       <Box
                         key={propKey}
                         direction='row'

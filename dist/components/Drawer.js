@@ -170,6 +170,7 @@ var Drawer = function Drawer(_ref2) {
       },
       round: "small",
       onClick: function onClick() {
+        setSearchTerm('');
         setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
       },
       icon: /*#__PURE__*/_react.default.createElement(Icon, null)

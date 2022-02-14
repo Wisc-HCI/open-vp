@@ -231,6 +231,11 @@ Stress.args = {
           type: SIMPLE_PROPERTY_TYPES.OPTIONS,
           options: [{value:'am',label:'AM'},{value:'pm',label:'PM'}],
           default: 'am'
+        },
+        description: {
+          name: "Description",
+          type: SIMPLE_PROPERTY_TYPES.IGNORED,
+          default: 'Some description text'
         }
       }
     },
