@@ -120,7 +120,7 @@ var Drawer = function Drawer(_ref2) {
     config: _reactSpring.config.stiff
   });
   var sidebarStyle = (0, _web.useSpring)({
-    width: activeDrawer !== null ? drawerWidth + 50 : 50,
+    width: activeDrawer !== null ? drawerWidth + 52 : 52,
     config: _reactSpring.config.stiff
   });
   return /*#__PURE__*/_react.default.createElement(_web.animated.div, {
@@ -133,7 +133,7 @@ var Drawer = function Drawer(_ref2) {
     style: {
       display: 'flex',
       height: '100%',
-      width: 50,
+      width: 52,
       backgroundColor: "#212121",
       padding: 0
     }
@@ -148,7 +148,6 @@ var Drawer = function Drawer(_ref2) {
     var Icon = drawer.icon;
     return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
       primary: true,
-      fill: true,
       tip: {
         content: /*#__PURE__*/_react.default.createElement(TipContent, {
           message: drawer.title
@@ -166,8 +165,8 @@ var Drawer = function Drawer(_ref2) {
       margin: {
         top: 'xsmall',
         bottom: 'none',
-        left: 'xxsmall',
-        right: 'none'
+        left: 'xsmall',
+        right: 'xsmall'
       },
       round: "small",
       onClick: function onClick() {

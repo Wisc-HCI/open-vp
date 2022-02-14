@@ -76,7 +76,7 @@ export const Drawer = ({ highlightColor, drawerWidth }) => {
     const setActiveDrawer = useProgrammingStore(store => store.setActiveDrawer);
 
     const drawerStyle = useSpring({ width: activeDrawer !== null ? drawerWidth : 0, config: config.stiff });
-    const sidebarStyle = useSpring({ width: activeDrawer !== null ? drawerWidth+50 : 50, config: config.stiff });
+    const sidebarStyle = useSpring({ width: activeDrawer !== null ? drawerWidth+52 : 52, config: config.stiff });
 
     return (
         <animated.div
@@ -86,14 +86,13 @@ export const Drawer = ({ highlightColor, drawerWidth }) => {
                 padding: 0,
                 ...sidebarStyle
             }}>
-            <div style={{ display: 'flex', height: '100%', width: 50, backgroundColor: "#212121", padding: 0 }}>
+            <div style={{ display: 'flex', height: '100%', width: 52, backgroundColor: "#212121", padding: 0 }}>
                 <List data={drawers} border={false} align='center' margin='none' pad='none' radius='none'>
                     {(drawer, drawerIdx) => {
                         const Icon = drawer.icon;
                         return (
                             <Button
                                 primary
-                                fill
                                 tip={{
                                     content: <TipContent message={drawer.title} />,
                                     plain: true,
@@ -104,7 +103,7 @@ export const Drawer = ({ highlightColor, drawerWidth }) => {
                                 focusIndicator={false}
                                 hoverIndicator={activeDrawer === drawerIdx ? hlcolor : '#414141'}
                                 color={activeDrawer === drawerIdx ? hlcolor : '#313131'}
-                                margin={{ top: 'xsmall', bottom: 'none', left: 'xxsmall', right: 'none' }}
+                                margin={{ top: 'xsmall', bottom: 'none', left: 'xsmall', right: 'xsmall' }}
                                 round='small'
                                 onClick={() => { setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx) }}
                                 icon={<Icon />}

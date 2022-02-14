@@ -302,7 +302,7 @@ Embedded.args = {
       name: 'MyFunction',
       type: "functionType",
       dataType: DATA_TYPES.INSTANCE,
-      arguments: ['s3siakawme'],
+      arguments: [],
       properties: {
         children: []
       },

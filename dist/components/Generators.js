@@ -12,14 +12,14 @@ var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm
 var _Constants = require("./Constants");
 
 var instanceTemplateFromSpec = function instanceTemplateFromSpec(type, objectSpec, isArg) {
-  var _objectSpec$instanceB;
+  var _objectSpec$instanceB, _objectSpec$instanceB2;
 
   var data = {
     id: type,
     type: type,
     dataType: _Constants.DATA_TYPES.INSTANCE,
     properties: {},
-    name: "".concat(objectSpec.instanceBlock.hideNewPrefix ? '' : 'New ').concat(objectSpec.name).concat(isArg ? ' Argument' : ''),
+    name: "".concat((_objectSpec$instanceB = objectSpec.instanceBlock) !== null && _objectSpec$instanceB !== void 0 && _objectSpec$instanceB.hideNewPrefix ? '' : 'New ').concat(objectSpec.name).concat(isArg ? ' Argument' : ''),
     canDelete: true,
     canEdit: true,
     editing: false,
@@ -36,7 +36,7 @@ var instanceTemplateFromSpec = function instanceTemplateFromSpec(type, objectSpe
     });
   }
 
-  if ((_objectSpec$instanceB = objectSpec.instanceBlock) !== null && _objectSpec$instanceB !== void 0 && _objectSpec$instanceB.onCanvas) {
+  if ((_objectSpec$instanceB2 = objectSpec.instanceBlock) !== null && _objectSpec$instanceB2 !== void 0 && _objectSpec$instanceB2.onCanvas) {
     data.position = {
       x: 0,
       y: 0

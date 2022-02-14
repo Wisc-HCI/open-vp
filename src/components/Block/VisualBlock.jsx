@@ -92,7 +92,7 @@ export const VisualBlock = forwardRef(
         {/* If the block is a function instance (the actual function and not a call) then render the spawn area for arguments */}
         {!isCollapsed && (
           <Box animation={['fadeIn','zoomIn']}>
-            {data.dataType === DATA_TYPES.INSTANCE && typeSpec.type === TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length && (
+            {data.dataType === DATA_TYPES.INSTANCE && typeSpec.type === TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length > 0 && (
               <Box
                 gap='xsmall'
                 direction='column'
@@ -200,7 +200,6 @@ export const VisualBlock = forwardRef(
                     )}
                   </Box>)}
               </Box>
-
             )}
             {/* If the block is a function call (the call and not the actual function instance) then show the argument fields */}
             {data.dataType === DATA_TYPES.CALL && data.argumentBlockData.map((argInfo, argIdx) => {

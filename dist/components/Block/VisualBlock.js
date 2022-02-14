@@ -155,7 +155,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     setIsDebugging: setIsDebugging
   })), !isCollapsed && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     animation: ['fadeIn', 'zoomIn']
-  }, data.dataType === _Constants.DATA_TYPES.INSTANCE && typeSpec.type === _Constants.TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+  }, data.dataType === _Constants.DATA_TYPES.INSTANCE && typeSpec.type === _Constants.TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length > 0 && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     gap: "xsmall",
     direction: "column",
     style: {
