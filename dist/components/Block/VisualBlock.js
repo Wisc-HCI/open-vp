@@ -31,7 +31,7 @@ var _ExtraBar = require("./ExtraBar");
 
 var _Selectable = require("./Selectable");
 
-var _2 = require(".");
+var _ = require(".");
 
 var _lodash = require("lodash");
 
@@ -40,7 +40,7 @@ var _ExpandCarrot = require("./ExpandCarrot");
 var _Input = require("./Input");
 
 var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
-  var _data$refData, _Object$entries;
+  var _data$refData, _data$refData2, _data$refData3, _data$refData4, _Object$entries;
 
   var data = _ref.data,
       x = _ref.x,
@@ -76,28 +76,40 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   var updateItemName = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.updateItemName;
   });
-
-  var _setIsEditing = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
+  var setIsEditing = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.updateItemEditing;
   });
-
-  var _setIsSelected = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
+  var setIsSelected = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.updateItemSelected;
   });
-
   var updateItemSimpleProperty = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.updateItemSimpleProperty;
   });
   var simpleProperties = typeSpec.properties ? (0, _lodash.pickBy)(typeSpec.properties, function (entry) {
-    return Object.values(_Constants.SIMPLE_PROPERTY_TYPES).includes(entry.type);
+    return Object.values(_Constants.SIMPLE_PROPERTY_TYPES).includes(entry.type) && entry.type !== _Constants.SIMPLE_PROPERTY_TYPES.IGNORED;
   }) : {};
   var standardProperties = typeSpec.properties ? (0, _lodash.omitBy)(typeSpec.properties, function (entry) {
     return Object.values(_Constants.SIMPLE_PROPERTY_TYPES).includes(entry.type);
   }) : {};
   var Icon = blockSpec.icon ? blockSpec.icon : _fi.FiSquare;
   var name = [_Constants.DATA_TYPES.CALL, _Constants.DATA_TYPES.REFERENCE].includes(data.dataType) ? data === null || data === void 0 ? void 0 : (_data$refData = data.refData) === null || _data$refData === void 0 ? void 0 : _data$refData.name : data === null || data === void 0 ? void 0 : data.name;
+  var editing = data.editing || ((_data$refData2 = data.refData) === null || _data$refData2 === void 0 ? void 0 : _data$refData2.editing);
+  var selected = data.selected || ((_data$refData3 = data.refData) === null || _data$refData3 === void 0 ? void 0 : _data$refData3.selected);
+  var undraggableArgs = {
+    draggable: false,
+    onDragStart: function onDragStart(e) {
+      return e.stopPropagation();
+    },
+    onDragEnd: function onDragEnd(e) {
+      return e.stopPropagation();
+    },
+    onDrag: function onDrag(e) {
+      return e.stopPropagation();
+    }
+  };
   return /*#__PURE__*/_react.default.createElement(_Selectable.Selectable, {
-    selected: data.selected,
+    role: "Handle",
+    selected: selected,
     highlightColor: highlightColor,
     className: onCanvas && blockSpec.onCanvas ? null : "nodrag",
     ref: ref,
@@ -120,36 +132,51 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   }, /*#__PURE__*/_react.default.createElement(_grommet.ThemeContext.Extend, {
     value: {
       global: {
+        input: {
+          extend: {
+            backgroundColor: editing ? "".concat(highlightColor, "55") : '#FFFFFF55',
+            userSelect: editing ? 'none' : 'auto'
+          }
+        },
+        control: {
+          border: {
+            color: editing ? highlightColor : null
+          }
+        },
         edgeSize: {
           large: '20pt'
         }
       }
     }
-  }, /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.TextInput, Object.assign({}, undraggableArgs, {
     size: "small",
     icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     value: name,
     textAlign: "start",
     focusIndicator: false,
-    disabled: interactionDisabled || !data.editing,
+    disabled: !data.editing && !((_data$refData4 = data.refData) !== null && _data$refData4 !== void 0 && _data$refData4.editing),
     onChange: function onChange(e) {
-      return updateItemName(data.id, e.target.value);
+      return updateItemName(data.refData ? data.refData.id : data.id, e.target.value);
     }
-  })), (blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras) && /*#__PURE__*/_react.default.createElement(_ExtraBar.ExtraBar, {
+  }))), (blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras) && /*#__PURE__*/_react.default.createElement(_ExtraBar.ExtraBar, {
     fieldInfo: fieldInfo,
     parentId: parentId,
     interactionDisabled: interactionDisabled,
     data: data,
     blockSpec: blockSpec,
-    isEditing: data.editing,
+    isEditing: editing,
     isCollapsed: isCollapsed,
-    isSelected: data.selected,
+    isSelected: selected,
     isDebugging: isDebugging,
-    setIsEditing: function setIsEditing(v) {
-      return _setIsEditing(data.id, v);
+    setIsEditing: data.refData ? function (v) {
+      return setIsEditing(data.refData.id, v);
+    } : function (v) {
+      return setIsEditing(data.id, v);
     },
-    setIsSelected: function setIsSelected(v) {
-      return _setIsSelected(data.id, v);
+    setIsSelected: data.refData ? function (v) {
+      return setIsSelected(data.refData.id, v);
+    } : function (v) {
+      return setIsSelected(data.id, v);
     },
     setIsCollapsed: setIsCollapsed,
     setIsDebugging: setIsDebugging
@@ -166,7 +193,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       backgroundColor: "rgba(0,0,0,0.2)"
     }
   }, data.argumentBlockData.map(function (argBlockData, argIdx) {
-    return /*#__PURE__*/_react.default.createElement(_2.Block, {
+    return /*#__PURE__*/_react.default.createElement(_.Block, {
       key: argIdx,
       staticData: argBlockData,
       parentId: data.id,
@@ -218,16 +245,10 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     style: {
       width: '100%'
     }
-  }, Object.entries(simpleProperties).filter(function (_ref2) {
+  }, Object.entries(simpleProperties).map(function (_ref2) {
     var _ref3 = (0, _slicedToArray2.default)(_ref2, 2),
-        _ = _ref3[0],
+        propKey = _ref3[0],
         propInfo = _ref3[1];
-
-    return propInfo.type !== _Constants.SIMPLE_PROPERTY_TYPES.IGNORED;
-  }).map(function (_ref4) {
-    var _ref5 = (0, _slicedToArray2.default)(_ref4, 2),
-        propKey = _ref5[0],
-        propInfo = _ref5[1];
 
     return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       key: propKey,
@@ -320,10 +341,10 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       highlightColor: highlightColor,
       context: context
     }));
-  }), data.dataType === _Constants.DATA_TYPES.INSTANCE && ((_Object$entries = Object.entries(standardProperties)) === null || _Object$entries === void 0 ? void 0 : _Object$entries.map(function (_ref6) {
-    var _ref7 = (0, _slicedToArray2.default)(_ref6, 2),
-        fieldKey = _ref7[0],
-        fieldInfo = _ref7[1];
+  }), data.dataType === _Constants.DATA_TYPES.INSTANCE && ((_Object$entries = Object.entries(standardProperties)) === null || _Object$entries === void 0 ? void 0 : _Object$entries.map(function (_ref4) {
+    var _ref5 = (0, _slicedToArray2.default)(_ref4, 2),
+        fieldKey = _ref5[0],
+        fieldInfo = _ref5[1];
 
     var innerLabel = !fieldInfo.fullWidth ? fieldInfo.name : '';
     return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
@@ -369,6 +390,8 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       color: 'white',
       fontFamily: 'monospace'
     }
-  }, JSON.stringify(data, null, "  ")));
+  }, JSON.stringify((0, _objectSpread2.default)((0, _objectSpread2.default)({}, data), {}, {
+    interactionDisabled: interactionDisabled ? true : false
+  }), null, "  ")));
 });
 exports.VisualBlock = VisualBlock;

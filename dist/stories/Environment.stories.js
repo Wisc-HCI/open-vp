@@ -184,7 +184,7 @@ Fullscreen.args = {
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.SELECTION_TOGGLE, _components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.LOCKED_INDICATOR, _components.EXTRA_TYPES.DEBUG_TOGGLE, {
+          contents: [_components.EXTRA_TYPES.SELECTION_TOGGLE, _components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.LOCKED_INDICATOR, _components.EXTRA_TYPES.DEBUG_TOGGLE, {
             type: _components.EXTRA_TYPES.ADD_ARGUMENT_GROUP,
             allowed: ['hatType', 'bootType']
           }, {
@@ -199,7 +199,12 @@ Fullscreen.args = {
       callBlock: {
         onCanvas: false,
         color: "#62869e",
-        icon: _fi.FiLogOut
+        icon: _fi.FiLogOut,
+        extras: [{
+          icon: _fi.FiMoreHorizontal,
+          type: _components.EXTRA_TYPES.DROPDOWN,
+          contents: [_components.EXTRA_TYPES.DEBUG_TOGGLE]
+        }]
       },
       properties: {
         children: {
@@ -280,7 +285,7 @@ Fullscreen.args = {
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE, _components.EXTRA_TYPES.NAME_EDIT_TOGGLE]
         }]
       }
     },
@@ -333,7 +338,7 @@ Fullscreen.args = {
       },
       canDelete: true,
       canEdit: true,
-      selected: true,
+      selected: false,
       editing: false
     },
     "s3siakawme": {

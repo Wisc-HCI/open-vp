@@ -349,6 +349,16 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
         };
       });
     },
+    addInstance: function addInstance(instanceType) {
+      set(function (state) {
+        var id = generateUuid(instanceType);
+        var template = (0, _objectSpread2.default)((0, _objectSpread2.default)({}, (0, _Generators.instanceTemplateFromSpec)(instanceType, state.programSpec.objectTypes[instanceType], false)), {}, {
+          id: id,
+          dataType: _.DATA_TYPES.INSTANCE
+        });
+        state.programData[id] = template;
+      });
+    },
     addArgument: function addArgument(parentFunctionId, argumentType) {
       set(function (state) {
         var id = generateUuid(argumentType);

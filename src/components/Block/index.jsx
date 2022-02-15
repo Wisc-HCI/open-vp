@@ -28,6 +28,7 @@ const Block = ({
         const typeSpec = state.programSpec.objectTypes[data?.type];
         const refData = data?.ref ? state.programData[data?.ref] : {};
         const selected = data?.selected || refData?.selected;
+        const editing = data?.editing || refData?.editing;
         const argumentBlocks = data?.arguments ? data.arguments : refData?.arguments ? refData.arguments: [];
         const argumentBlockData = argumentBlocks.map((instanceId)=>{
           const inst = state.programData[instanceId];
@@ -35,7 +36,7 @@ const Block = ({
           return referenceTemplateFromSpec(inst.type,inst,instType)
         })
         // Package up information on the block, data about the corresponding reference (if applicable), and argument blocks it contains
-        return [{...data,refData,selected,argumentBlockData}, typeSpec]
+        return [{...data,refData,selected,editing,argumentBlockData}, typeSpec]
       },
       [id, staticData]
     )
@@ -58,7 +59,7 @@ const Block = ({
       item: () => {
         return { data, typeSpec, parentId, fieldInfo, idx, onCanvas, context:wholeContext };
       },
-      canDrag: !dragDisabled,
+      canDrag: !dragDisabled && !data.editing,
       collect: (monitor) => ({ isDragging: monitor.isDragging() })
     }),
     [data, typeSpec, parentId, fieldInfo, idx, dragDisabled]

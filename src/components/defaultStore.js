@@ -308,6 +308,13 @@ export const ProgrammingSlice = (set,get) => ({
         state.programData[id].position = {x, y};
       })
     },
+    addInstance: (instanceType) => {
+      set((state) => {
+        const id = generateUuid(instanceType);
+        const template = {...instanceTemplateFromSpec(instanceType,state.programSpec.objectTypes[instanceType],false),id,dataType:DATA_TYPES.INSTANCE};
+        state.programData[id] = template;
+      })
+    },
     addArgument: (parentFunctionId, argumentType) => {
       set((state) => {
         const id = generateUuid(argumentType);

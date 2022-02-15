@@ -33,19 +33,25 @@ export const VisualBlock = forwardRef(
     const setIsSelected = useProgrammingStore(store => store.updateItemSelected);
     const updateItemSimpleProperty = useProgrammingStore(store => store.updateItemSimpleProperty);
 
-    const simpleProperties = typeSpec.properties ? pickBy(typeSpec.properties, (entry) => Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)) : {};
+    const simpleProperties = typeSpec.properties ? pickBy(typeSpec.properties, (entry) => Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type) && entry.type !== SIMPLE_PROPERTY_TYPES.IGNORED) : {};
     const standardProperties = typeSpec.properties ? omitBy(typeSpec.properties, (entry) => Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)) : {};
 
     const Icon = blockSpec.icon ? blockSpec.icon : FiSquare;
 
     const name = [DATA_TYPES.CALL, DATA_TYPES.REFERENCE].includes(data.dataType) ? data?.refData?.name : data?.name;
 
+    const editing = data.editing || data.refData?.editing;
+    const selected = data.selected || data.refData?.selected;
+
+    const undraggableArgs = {draggable:false,onDragStart:e=>e.stopPropagation(),onDragEnd:e=>e.stopPropagation(),onDrag:e=>e.stopPropagation()}
+
     return (
       <Selectable
-        selected={data.selected}
+        role='Handle'
+        selected={selected}
         highlightColor={highlightColor}
         className={onCanvas && blockSpec.onCanvas ? null : "nodrag"}
-        ref={ref}
+        ref={ref} 
         style={{
           minWidth: 175,
           width: bounded ? "inherit" : "max-content",
@@ -69,8 +75,9 @@ export const VisualBlock = forwardRef(
           }}
         >
           {/* The header, includes the name/text field and the extra bar */}
-          <ThemeContext.Extend value={{global:{edgeSize:{large:'20pt'}}}}>
-            <TextInput size='small' icon={<Icon/>} value={name} textAlign='start' focusIndicator={false} disabled={interactionDisabled || !data.editing} onChange={e => updateItemName(data.id, e.target.value)} />
+          <ThemeContext.Extend 
+              value={{global:{input:{extend: {backgroundColor:editing ? `${highlightColor}55` : '#FFFFFF55',userSelect:editing ? 'none' : 'auto'}},control:{border:{color:editing ? highlightColor : null}},edgeSize:{large:'20pt'}}}}>
+            <TextInput {...undraggableArgs} size='small' icon={<Icon/>} value={name} textAlign='start' focusIndicator={false} disabled={!data.editing && !data.refData?.editing} onChange={e => updateItemName(data.refData ? data.refData.id : data.id, e.target.value)} />
           </ThemeContext.Extend>
           {blockSpec?.extras && (
             <ExtraBar
@@ -79,12 +86,12 @@ export const VisualBlock = forwardRef(
               interactionDisabled={interactionDisabled}
               data={data}
               blockSpec={blockSpec}
-              isEditing={data.editing}
+              isEditing={editing}
               isCollapsed={isCollapsed}
-              isSelected={data.selected}
+              isSelected={selected}
               isDebugging={isDebugging}
-              setIsEditing={(v)=>setIsEditing(data.id,v)}
-              setIsSelected={(v)=>setIsSelected(data.id,v)}
+              setIsEditing={data.refData ? (v)=>setIsEditing(data.refData.id,v) : (v)=>setIsEditing(data.id,v)}
+              setIsSelected={data.refData ? (v)=>setIsSelected(data.refData.id,v) : (v)=>setIsSelected(data.id,v)}
               setIsCollapsed={setIsCollapsed}
               setIsDebugging={setIsDebugging} />
           )}
@@ -138,7 +145,7 @@ export const VisualBlock = forwardRef(
                 </Box>
                 {!simplePropertiesCollapsed && (
                   <Box flex animation={["fadeIn", "slideDown"]} style={{ width: '100%' }}>
-                    {Object.entries(simpleProperties).filter(([_,propInfo])=>propInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED).map(([propKey, propInfo]) => (
+                    {Object.entries(simpleProperties).map(([propKey, propInfo]) => (
                       <Box
                         key={propKey}
                         direction='row'
@@ -271,7 +278,7 @@ export const VisualBlock = forwardRef(
         {/* Just a utility for showing the data in each node, will likely remove. */}
         {isDebugging && (
           <Box round='small' pad='small' background='#00000044' style={{ whiteSpace: "pre", color:'white', fontFamily:'monospace' }}>
-            {JSON.stringify(data, null, "  ")}
+            {JSON.stringify({...data,interactionDisabled:interactionDisabled?true:false}, null, "  ")}
           </Box>
         )}
       </Selectable>

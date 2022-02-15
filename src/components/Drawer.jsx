@@ -74,6 +74,7 @@ export const Drawer = ({ highlightColor, drawerWidth }) => {
     const drawers = useProgrammingStore(store => store.programSpec.drawers);
     const activeDrawer = useProgrammingStore(store => store.activeDrawer);
     const setActiveDrawer = useProgrammingStore(store => store.setActiveDrawer);
+    const addInstance = useProgrammingStore(store => store.addInstance);
 
     const drawerStyle = useSpring({ width: activeDrawer !== null ? drawerWidth : 0, config: config.stiff });
     const sidebarStyle = useSpring({ width: activeDrawer !== null ? drawerWidth+52 : 52, config: config.stiff });
@@ -124,6 +125,7 @@ export const Drawer = ({ highlightColor, drawerWidth }) => {
                                 {drawers[activeDrawer].dataType === DATA_TYPES.REFERENCE && (
                                     <Button
                                         secondary
+                                        onClick={()=>addInstance(drawers[activeDrawer].objectType)}
                                         icon={<FiPlus />}
                                     />
                                 )}

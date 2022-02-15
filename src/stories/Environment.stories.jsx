@@ -142,6 +142,7 @@ Fullscreen.args = {
             type: EXTRA_TYPES.DROPDOWN,
             contents: [
               EXTRA_TYPES.SELECTION_TOGGLE,
+              EXTRA_TYPES.NAME_EDIT_TOGGLE,
               EXTRA_TYPES.DELETE_BUTTON,
               EXTRA_TYPES.LOCKED_INDICATOR,
               EXTRA_TYPES.DEBUG_TOGGLE,
@@ -164,7 +165,16 @@ Fullscreen.args = {
       callBlock: {
         onCanvas: false,
         color: "#62869e",
-        icon: FiLogOut
+        icon: FiLogOut,
+        extras:[
+          {
+            icon: FiMoreHorizontal,
+            type: EXTRA_TYPES.DROPDOWN,
+            contents:[
+              EXTRA_TYPES.DEBUG_TOGGLE
+            ]
+          }
+        ]
       },
       properties: {
         children: {
@@ -249,7 +259,8 @@ Fullscreen.args = {
             type: EXTRA_TYPES.DROPDOWN,
             contents: [
               EXTRA_TYPES.DELETE_BUTTON,
-              EXTRA_TYPES.DEBUG_TOGGLE
+              EXTRA_TYPES.DEBUG_TOGGLE,
+              EXTRA_TYPES.NAME_EDIT_TOGGLE
             ]
           }
         ]
@@ -304,7 +315,7 @@ Fullscreen.args = {
       position: { x: 400, y: 10 },
       canDelete: true,
       canEdit: true,
-      selected: true,
+      selected: false,
       editing: false,
       
     },

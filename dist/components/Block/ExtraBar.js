@@ -298,7 +298,6 @@ var DropdownExtra = function DropdownExtra(_ref12) {
       fieldInfo = _ref12.fieldInfo;
   var DropIcon = icon ? icon : _fi.FiMoreHorizontal;
   return /*#__PURE__*/_react.default.createElement(_grommet.DropButton, {
-    disabled: interactionDisabled,
     focusIndicator: false,
     hoverIndicator: false,
     dropContent: /*#__PURE__*/_react.default.createElement(_grommet.Box, {

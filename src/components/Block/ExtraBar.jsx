@@ -216,7 +216,6 @@ const DropdownExtra = ({
 
     return (
         <DropButton
-            disabled={interactionDisabled}
             focusIndicator={false}
             hoverIndicator={false}
             dropContent={

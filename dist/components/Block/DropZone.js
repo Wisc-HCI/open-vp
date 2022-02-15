@@ -37,7 +37,7 @@ var DropZone = function DropZone(_ref) {
     idx: idx,
     minHeight: 30,
     bounded: true,
-    disabled: id !== null || interactionDisabled,
+    disabled: id || interactionDisabled,
     highlightColor: highlightColor,
     context: context
   }));

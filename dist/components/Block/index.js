@@ -61,6 +61,7 @@ var Block = function Block(_ref) {
     var typeSpec = state.programSpec.objectTypes[data === null || data === void 0 ? void 0 : data.type];
     var refData = data !== null && data !== void 0 && data.ref ? state.programData[data === null || data === void 0 ? void 0 : data.ref] : {};
     var selected = (data === null || data === void 0 ? void 0 : data.selected) || (refData === null || refData === void 0 ? void 0 : refData.selected);
+    var editing = (data === null || data === void 0 ? void 0 : data.editing) || (refData === null || refData === void 0 ? void 0 : refData.editing);
     var argumentBlocks = data !== null && data !== void 0 && data.arguments ? data.arguments : refData !== null && refData !== void 0 && refData.arguments ? refData.arguments : [];
     var argumentBlockData = argumentBlocks.map(function (instanceId) {
       var inst = state.programData[instanceId];
@@ -72,6 +73,7 @@ var Block = function Block(_ref) {
     return [(0, _objectSpread2.default)((0, _objectSpread2.default)({}, data), {}, {
       refData: refData,
       selected: selected,
+      editing: editing,
       argumentBlockData: argumentBlockData
     }), typeSpec];
   }, [id, staticData])),
@@ -97,7 +99,7 @@ var Block = function Block(_ref) {
           context: wholeContext
         };
       },
-      canDrag: !dragDisabled,
+      canDrag: !dragDisabled && !data.editing,
       collect: function collect(monitor) {
         return {
           isDragging: monitor.isDragging()

@@ -115,6 +115,9 @@ var Drawer = function Drawer(_ref2) {
   var setActiveDrawer = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.setActiveDrawer;
   });
+  var addInstance = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
+    return store.addInstance;
+  });
   var drawerStyle = (0, _web.useSpring)({
     width: activeDrawer !== null ? drawerWidth : 0,
     config: _reactSpring.config.stiff
@@ -196,6 +199,9 @@ var Drawer = function Drawer(_ref2) {
     pad: "small"
   }, /*#__PURE__*/_react.default.createElement(_grommet.Text, null, drawers[activeDrawer].title)), drawers[activeDrawer].dataType === _Constants.DATA_TYPES.REFERENCE && /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     secondary: true,
+    onClick: function onClick() {
+      return addInstance(drawers[activeDrawer].objectType);
+    },
     icon: /*#__PURE__*/_react.default.createElement(_fi.FiPlus, null)
   })), /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
     size: "small",

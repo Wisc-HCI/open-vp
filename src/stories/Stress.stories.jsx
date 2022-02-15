@@ -91,6 +91,11 @@ Stress.args = {
           default: [],
           isList: true,
           fullWidth: true
+        },
+        description: {
+          name: "Description",
+          type: SIMPLE_PROPERTY_TYPES.IGNORED,
+          default: 'Some description text'
         }
       }
     },
