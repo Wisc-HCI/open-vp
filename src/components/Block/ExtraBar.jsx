@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff, FiTrash2, FiZap, FiZapOff, FiPlus } from "react-icons/fi";
 import { Box, DropButton, Button } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
-import { EXTRA_TYPES } from "..";
+import { DATA_TYPES, EXTRA_TYPES } from "..";
 import { ExpandCarrot } from "./ExpandCarrot";
 
 const Pill = ({value}) => {
@@ -191,13 +191,16 @@ const AddArgumentGroupExtra = ({data, allowed, interactionDisabled, inTopLevel})
 
 const DeleteExtra = ({data, inTopLevel, locked, fieldInfo, parentId}) => {
     const deleteFunc = useProgrammingStore(state => state.deleteBlock);
+    const canDeleteInstance = parentId === 'spawner' && data.dataType === DATA_TYPES.REFERENCE && data.refData?.canDelete;
+    const canDelete = (!locked && data.canDelete) || canDeleteInstance;
+
     return (
         <Button 
             size='small'
             plain 
             focusIndicator={false}
             hoverIndicator={false}
-            disabled={locked}
+            disabled={!canDelete}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={<FiTrash2/>} 
             label={inTopLevel? null : 'Delete'}
