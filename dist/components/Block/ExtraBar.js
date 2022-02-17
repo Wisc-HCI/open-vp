@@ -253,6 +253,8 @@ var AddArgumentGroupExtra = function AddArgumentGroupExtra(_ref10) {
 };
 
 var DeleteExtra = function DeleteExtra(_ref11) {
+  var _data$refData;
+
   var data = _ref11.data,
       inTopLevel = _ref11.inTopLevel,
       locked = _ref11.locked,
@@ -261,12 +263,14 @@ var DeleteExtra = function DeleteExtra(_ref11) {
   var deleteFunc = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return state.deleteBlock;
   });
+  var canDeleteInstance = parentId === 'spawner' && data.dataType === _.DATA_TYPES.REFERENCE && ((_data$refData = data.refData) === null || _data$refData === void 0 ? void 0 : _data$refData.canDelete);
+  var canDelete = !locked && data.canDelete || canDeleteInstance;
   return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     plain: true,
     focusIndicator: false,
     hoverIndicator: false,
-    disabled: locked,
+    disabled: !canDelete,
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },

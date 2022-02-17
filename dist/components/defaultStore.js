@@ -73,41 +73,59 @@ function move(array, moveIndex, toIndex) {
 }
 
 function deleteFromChildren(state, idsToDelete, parentData) {
-  var _state$programSpec$ob;
+  // Corner case for call blocks (don't look at parent's information)
+  if (parentData.dataType === _.DATA_TYPES.CALL) {
+    var _Object$keys;
 
-  // Clear children and properties (if applicable)
-  if ((_state$programSpec$ob = state.programSpec.objectTypes[parentData.type]) !== null && _state$programSpec$ob !== void 0 && _state$programSpec$ob.properties) {
-    Object.keys(state.programSpec.objectTypes[parentData.type].properties).forEach(function (propName) {
-      if (propName) {
-        var _state$programData$pa;
+    (_Object$keys = Object.keys(parentData.properties)) === null || _Object$keys === void 0 ? void 0 : _Object$keys.forEach(function (propName) {
+      var _state$programData$pa;
 
-        var property = state.programSpec.objectTypes[parentData.type].properties[propName]; // Clearing child fields/references
-
-        if (property && (property.type || property.type === _.TYPES.OBJECT)) {// Ignore SIMPLE types.
-        } else if (property && property.isList) {
-          parentData.properties[propName].forEach(function (child) {
-            state = deleteFromChildren(state, idsToDelete, state.programData[child]);
-          });
-
-          var _loop = function _loop(i) {
-            (0, _lodash.remove)(state.programData[parentData.id].properties[propName], function (field) {
-              var _state$programData$fi;
-
-              return ((_state$programData$fi = state.programData[field]) === null || _state$programData$fi === void 0 ? void 0 : _state$programData$fi.ref) === idsToDelete[i];
-            });
-          };
-
-          for (var i = 0; i < idsToDelete.length; i++) {
-            _loop(i);
-          }
-        } else if (property && parentData.properties[propName] && idsToDelete.includes((_state$programData$pa = state.programData[parentData.properties[propName]]) === null || _state$programData$pa === void 0 ? void 0 : _state$programData$pa.ref)) {
-          // Delete Reference to Child
-          delete state.programData[parentData.properties[propName]]; // entry.properties[propName] = null;
-
-          state.programData[parentData.id].properties[propName] = null;
-        }
+      if (idsToDelete.includes((_state$programData$pa = state.programData[parentData.properties[propName]]) === null || _state$programData$pa === void 0 ? void 0 : _state$programData$pa.ref)) {
+        delete state.programData[parentData.properties[propName]];
+        state.programData[parentData.id].properties[propName] = null;
       }
     });
+
+    for (var i = 0; i < idsToDelete.length; i++) {
+      delete state.programData[parentData.id].properties[idsToDelete[i]];
+    }
+  } else {
+    var _state$programSpec$ob;
+
+    // Clear children and properties (if applicable)
+    if ((_state$programSpec$ob = state.programSpec.objectTypes[parentData.type]) !== null && _state$programSpec$ob !== void 0 && _state$programSpec$ob.properties) {
+      Object.keys(state.programSpec.objectTypes[parentData.type].properties).forEach(function (propName) {
+        if (propName) {
+          var _state$programData$pa2;
+
+          var property = state.programSpec.objectTypes[parentData.type].properties[propName]; // Clearing child fields/references
+
+          if (property && (property.type || property.type === _.TYPES.OBJECT)) {// Ignore SIMPLE types.
+          } else if (property && property.isList) {
+            parentData.properties[propName].forEach(function (child) {
+              state = deleteFromChildren(state, idsToDelete, state.programData[child]);
+            });
+
+            var _loop = function _loop(_i) {
+              (0, _lodash.remove)(state.programData[parentData.id].properties[propName], function (field) {
+                var _state$programData$fi;
+
+                return ((_state$programData$fi = state.programData[field]) === null || _state$programData$fi === void 0 ? void 0 : _state$programData$fi.ref) === idsToDelete[_i];
+              });
+            };
+
+            for (var _i = 0; _i < idsToDelete.length; _i++) {
+              _loop(_i);
+            }
+          } else if (property && parentData.properties[propName] && idsToDelete.includes((_state$programData$pa2 = state.programData[parentData.properties[propName]]) === null || _state$programData$pa2 === void 0 ? void 0 : _state$programData$pa2.ref)) {
+            // Delete Reference to Child
+            delete state.programData[parentData.properties[propName]]; // entry.properties[propName] = null;
+
+            state.programData[parentData.id].properties[propName] = null;
+          }
+        }
+      });
+    }
   }
 
   return state;
@@ -183,15 +201,15 @@ function deleteSelfBlock(state, data, parentId, fieldInfo) {
       state = deleteFromProgram(state, [data.ref]);
       delete state.programData[data.ref];
     } else {
-      var _state$programData$pa2;
+      var _state$programData$pa3;
 
       // Argument deletion
       state = deleteFromChildren(state, [data.ref], state.programData[parentId]); // Remove argument from function
 
-      if ((_state$programData$pa2 = state.programData[parentId]) !== null && _state$programData$pa2 !== void 0 && _state$programData$pa2.arguments) {
-        var _state$programData$pa3;
+      if ((_state$programData$pa3 = state.programData[parentId]) !== null && _state$programData$pa3 !== void 0 && _state$programData$pa3.arguments) {
+        var _state$programData$pa4;
 
-        (0, _lodash.remove)((_state$programData$pa3 = state.programData[parentId]) === null || _state$programData$pa3 === void 0 ? void 0 : _state$programData$pa3.arguments, function (field) {
+        (0, _lodash.remove)((_state$programData$pa4 = state.programData[parentId]) === null || _state$programData$pa4 === void 0 ? void 0 : _state$programData$pa4.arguments, function (field) {
           return field === data.ref;
         });
       }
