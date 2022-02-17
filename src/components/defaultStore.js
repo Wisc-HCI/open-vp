@@ -58,31 +58,44 @@ export function move(array, moveIndex, toIndex) {
 }
 
 export function deleteFromChildren(state, idsToDelete, parentData) {
-  // Clear children and properties (if applicable)
-  if (state.programSpec.objectTypes[parentData.type]?.properties) {
-    Object.keys(state.programSpec.objectTypes[parentData.type].properties).forEach((propName) => {
-      if (propName) {
-        const property = state.programSpec.objectTypes[parentData.type].properties[propName];
-
-        // Clearing child fields/references
-        if (property && (property.type || property.type === TYPES.OBJECT)) {
-          // Ignore SIMPLE types.
-        } else if (property && property.isList) {
-          parentData.properties[propName].forEach((child) => {
-            state = deleteFromChildren(state, idsToDelete, state.programData[child]);
-          })
-
-          for (let i = 0; i < idsToDelete.length; i++) {
-            remove(state.programData[parentData.id].properties[propName], (field) => state.programData[field]?.ref === idsToDelete[i]);
-          }
-        } else if (property && parentData.properties[propName] && idsToDelete.includes(state.programData[parentData.properties[propName]]?.ref)) {
-          // Delete Reference to Child
-          delete state.programData[parentData.properties[propName]];
-          // entry.properties[propName] = null;
-          state.programData[parentData.id].properties[propName] = null;
-        }
+  // Corner case for call blocks (don't look at parent's information)
+  if (parentData.dataType === DATA_TYPES.CALL)  {
+    Object.keys(parentData.properties)?.forEach((propName) => {
+      if (idsToDelete.includes(state.programData[parentData.properties[propName]]?.ref)) {
+        delete state.programData[parentData.properties[propName]];
+        state.programData[parentData.id].properties[propName] = null;
       }
     });
+    for (let i = 0; i < idsToDelete.length; i++) {
+      delete state.programData[parentData.id].properties[idsToDelete[i]];
+    }
+  } else {
+    // Clear children and properties (if applicable)
+    if (state.programSpec.objectTypes[parentData.type]?.properties) {
+      Object.keys(state.programSpec.objectTypes[parentData.type].properties).forEach((propName) => {
+        if (propName) {
+          const property = state.programSpec.objectTypes[parentData.type].properties[propName];
+
+          // Clearing child fields/references
+          if (property && (property.type || property.type === TYPES.OBJECT)) {
+            // Ignore SIMPLE types.
+          } else if (property && property.isList) {
+            parentData.properties[propName].forEach((child) => {
+              state = deleteFromChildren(state, idsToDelete, state.programData[child]);
+            })
+
+            for (let i = 0; i < idsToDelete.length; i++) {
+              remove(state.programData[parentData.id].properties[propName], (field) => state.programData[field]?.ref === idsToDelete[i]);
+            }
+          } else if (property && parentData.properties[propName] && idsToDelete.includes(state.programData[parentData.properties[propName]]?.ref)) {
+            // Delete Reference to Child
+            delete state.programData[parentData.properties[propName]];
+            // entry.properties[propName] = null;
+            state.programData[parentData.id].properties[propName] = null;
+          }
+        }
+      });
+    }
   }
 
   return state
