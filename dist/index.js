@@ -3,53 +3,22 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "DATA_TYPES", {
-  enumerable: true,
-  get: function get() {
-    return _components.DATA_TYPES;
-  }
-});
-Object.defineProperty(exports, "EXTRA_TYPES", {
-  enumerable: true,
-  get: function get() {
-    return _components.EXTRA_TYPES;
-  }
-});
-Object.defineProperty(exports, "Environment", {
-  enumerable: true,
-  get: function get() {
-    return _components.Environment;
-  }
-});
-Object.defineProperty(exports, "ImmerProgrammingSlice", {
-  enumerable: true,
-  get: function get() {
-    return _components.ImmerProgrammingSlice;
-  }
-});
-Object.defineProperty(exports, "ProgrammingSlice", {
-  enumerable: true,
-  get: function get() {
-    return _components.ProgrammingSlice;
-  }
-});
-Object.defineProperty(exports, "SIMPLE_PROPERTY_TYPES", {
-  enumerable: true,
-  get: function get() {
-    return _components.SIMPLE_PROPERTY_TYPES;
-  }
-});
-Object.defineProperty(exports, "TYPES", {
-  enumerable: true,
-  get: function get() {
-    return _components.TYPES;
-  }
-});
-Object.defineProperty(exports, "useDefaultProgrammingStore", {
-  enumerable: true,
-  get: function get() {
-    return _components.useDefaultProgrammingStore;
-  }
-});
+exports.default = void 0;
 
 var _components = require("./components");
+
+var _default = {
+  ProgrammingSlice: _components.ProgrammingSlice,
+  ImmerProgrammingSlice: _components.ImmerProgrammingSlice,
+  useDefaultProgrammingStore: _components.useDefaultProgrammingStore,
+  Environment: _components.Environment,
+  DATA_TYPES: _components.DATA_TYPES,
+  TYPES: _components.TYPES,
+  EXTRA_TYPES: _components.EXTRA_TYPES,
+  SIMPLE_PROPERTY_TYPES: _components.SIMPLE_PROPERTY_TYPES,
+  ExternalBlock: _components.ExternalBlock,
+  instanceTemplateFromSpec: _components.instanceTemplateFromSpec,
+  referenceTemplateFromSpec: _components.referenceTemplateFromSpec,
+  callTemplateFromSpec: _components.callTemplateFromSpec
+};
+exports.default = _default;

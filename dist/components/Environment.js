@@ -27,6 +27,8 @@ var _grommet = require("grommet");
 
 var _reactFlowRenderer = require("react-flow-renderer");
 
+var _theme = require("./theme");
+
 // import { HTML5Backend } from "react-dnd-html5-backend";
 function Environment(_ref) {
   var store = _ref.store,
@@ -34,61 +36,7 @@ function Environment(_ref) {
       height = _ref.height,
       width = _ref.width,
       drawerWidth = _ref.drawerWidth;
-  var theme = {
-    name: 'SimpleVP',
-    rounding: 4,
-    defaultMode: 'dark',
-    global: {
-      colors: {
-        brand: highlightColor,
-        background: '#111111',
-        control: highlightColor
-      },
-      font: {
-        family: "Helvetica"
-      },
-      focus: {
-        border: {
-          color: highlightColor
-        }
-      },
-      input: {
-        padding: 4,
-        extend: {
-          backgroundColor: '#FFFFFF55'
-        }
-      } // edgeSize: {large: 50, small: 10, medium: 15}
-
-    },
-    button: {
-      border: {
-        radius: "10px"
-      }
-    },
-    radioButton: {
-      size: "16px",
-      border: {
-        color: '#00000088'
-      }
-    },
-    checkBox: {
-      size: "20px",
-      border: {
-        color: '#00000088'
-      },
-      color: highlightColor,
-      hover: {
-        border: {
-          color: '#00000088'
-        }
-      }
-    },
-    textInput: {
-      disabled: {
-        opacity: 1
-      }
-    }
-  };
+  var theme = (0, _theme.getTheme)(highlightColor);
   return /*#__PURE__*/_react.default.createElement(_grommet.Grommet, {
     theme: theme
   }, /*#__PURE__*/_react.default.createElement(_ProgrammingContext.ProgrammingProvider, {

@@ -23,6 +23,12 @@ Object.defineProperty(exports, "Environment", {
     return _Environment.default;
   }
 });
+Object.defineProperty(exports, "ExternalBlock", {
+  enumerable: true,
+  get: function get() {
+    return _ExternalBlock.ExternalBlock;
+  }
+});
 Object.defineProperty(exports, "ImmerProgrammingSlice", {
   enumerable: true,
   get: function get() {
@@ -47,6 +53,24 @@ Object.defineProperty(exports, "TYPES", {
     return _Constants.TYPES;
   }
 });
+Object.defineProperty(exports, "callTemplateFromSpec", {
+  enumerable: true,
+  get: function get() {
+    return _Generators.callTemplateFromSpec;
+  }
+});
+Object.defineProperty(exports, "instanceTemplateFromSpec", {
+  enumerable: true,
+  get: function get() {
+    return _Generators.instanceTemplateFromSpec;
+  }
+});
+Object.defineProperty(exports, "referenceTemplateFromSpec", {
+  enumerable: true,
+  get: function get() {
+    return _Generators.referenceTemplateFromSpec;
+  }
+});
 Object.defineProperty(exports, "useDefaultProgrammingStore", {
   enumerable: true,
   get: function get() {
@@ -58,4 +82,8 @@ var _defaultStore = require("./defaultStore");
 
 var _Environment = _interopRequireDefault(require("./Environment"));
 
+var _ExternalBlock = require("./Block/ExternalBlock");
+
 var _Constants = require("./Constants");
+
+var _Generators = require("./Generators");

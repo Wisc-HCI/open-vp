@@ -6,7 +6,7 @@ import { getEmptyImage } from "react-dnd-html5-backend";
 import { PreviewBlock } from './PreviewBlock';
 import { VisualBlock } from "./VisualBlock";
 import { DATA_TYPES } from "..";
-import { referenceTemplateFromSpec } from "../Generators";
+import { combinedBlockData } from "../Generators";
 
 const Block = ({
   id,
@@ -23,21 +23,7 @@ const Block = ({
 }) => {
   const [data, typeSpec] = useProgrammingStore(
     useCallback(
-      (state) => {
-        const data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
-        const typeSpec = state.programSpec.objectTypes[data?.type];
-        const refData = data?.ref ? state.programData[data?.ref] : {};
-        const selected = data?.selected || refData?.selected;
-        const editing = data?.editing || refData?.editing;
-        const argumentBlocks = data?.arguments ? data.arguments : refData?.arguments ? refData.arguments: [];
-        const argumentBlockData = argumentBlocks.map((instanceId)=>{
-          const inst = state.programData[instanceId];
-          const instType = state.programSpec.objectTypes[inst.type];
-          return referenceTemplateFromSpec(inst.type,inst,instType)
-        })
-        // Package up information on the block, data about the corresponding reference (if applicable), and argument blocks it contains
-        return [{...data,refData,selected,editing,argumentBlockData}, typeSpec]
-      },
+      (state) => combinedBlockData(state,staticData,id),
       [id, staticData]
     )
   );

@@ -5,7 +5,9 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.referenceTemplateFromSpec = exports.instanceTemplateFromSpec = exports.callTemplateFromSpec = void 0;
+exports.referenceTemplateFromSpec = exports.instanceTemplateFromSpec = exports.combinedBlockData = exports.callTemplateFromSpec = void 0;
+
+var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectSpread2"));
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
 
@@ -105,3 +107,30 @@ var callTemplateFromSpec = function callTemplateFromSpec(type, functionReference
 };
 
 exports.callTemplateFromSpec = callTemplateFromSpec;
+
+var combinedBlockData = function combinedBlockData(state, staticData, id) {
+  var data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
+  var typeSpec = state.programSpec.objectTypes[data === null || data === void 0 ? void 0 : data.type] ? state.programSpec.objectTypes[data === null || data === void 0 ? void 0 : data.type] : {
+    instanceBlock: {},
+    referenceBlock: {},
+    callBlock: {}
+  };
+  var refData = data !== null && data !== void 0 && data.ref ? state.programData[data === null || data === void 0 ? void 0 : data.ref] : {};
+  var selected = (data === null || data === void 0 ? void 0 : data.selected) || (refData === null || refData === void 0 ? void 0 : refData.selected);
+  var editing = (data === null || data === void 0 ? void 0 : data.editing) || (refData === null || refData === void 0 ? void 0 : refData.editing);
+  var argumentBlocks = data !== null && data !== void 0 && data.arguments ? data.arguments : refData !== null && refData !== void 0 && refData.arguments ? refData.arguments : [];
+  var argumentBlockData = argumentBlocks.map(function (instanceId) {
+    var inst = state.programData[instanceId];
+    var instType = state.programSpec.objectTypes[inst.type];
+    return referenceTemplateFromSpec(inst.type, inst, instType);
+  }); // Package up information on the block, data about the corresponding reference (if applicable), and argument blocks it contains
+
+  return [(0, _objectSpread2.default)((0, _objectSpread2.default)({}, data), {}, {
+    refData: refData,
+    selected: selected,
+    editing: editing,
+    argumentBlockData: argumentBlockData
+  }), typeSpec];
+};
+
+exports.combinedBlockData = combinedBlockData;
