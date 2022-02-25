@@ -14,7 +14,7 @@ import {
 } from './components';
 
 
-export default { 
+export { 
     ProgrammingSlice, 
     ImmerProgrammingSlice, 
     useDefaultProgrammingStore, 
