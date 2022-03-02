@@ -45,6 +45,10 @@ var instanceTemplateFromSpec = function instanceTemplateFromSpec(type, objectSpe
     };
   }
 
+  if (objectSpec.type === _Constants.TYPES.FUNCTION) {
+    data.arguments = [];
+  }
+
   return data;
 };
 

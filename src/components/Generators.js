@@ -1,4 +1,4 @@
-import { DATA_TYPES } from './Constants';
+import { DATA_TYPES, TYPES } from './Constants';
 
 export const instanceTemplateFromSpec = (type, objectSpec, isArg) => {
     let data = { 
@@ -19,6 +19,9 @@ export const instanceTemplateFromSpec = (type, objectSpec, isArg) => {
     }
     if (objectSpec.instanceBlock?.onCanvas) {
         data.position = { x: 0, y: 0 };
+    }
+    if (objectSpec.type === TYPES.FUNCTION) {
+        data.arguments = []
     }
     return data;
 };
