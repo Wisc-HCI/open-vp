@@ -27,7 +27,7 @@ export const DropRegion = ({
     () => ({
       accept: fieldInfo.accepts,
       drop: (item, _) => {
-        console.log(item)
+        // console.log(item)
         transferBlock(item.data, item, {
           fieldInfo,
           parentId,
@@ -44,7 +44,7 @@ export const DropRegion = ({
   );
 
   const validDropType = fieldInfo.accepts.includes(dropProps.item?.data?.type) && !dropProps.item?.onCanvas && isEqual(intersection(context,dropProps.item.context),dropProps.item.context);
-  console.log({validDropType,disabled})
+  // console.log({validDropType,disabled})
 
   const renderedData = data
     ? data

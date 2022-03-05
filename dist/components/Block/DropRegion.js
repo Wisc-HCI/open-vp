@@ -69,11 +69,8 @@ var DropRegion = function DropRegion(_ref) {
       dropProps = _useDrop2[0],
       drop = _useDrop2[1];
 
-  var validDropType = fieldInfo.accepts.includes((_dropProps$item = dropProps.item) === null || _dropProps$item === void 0 ? void 0 : (_dropProps$item$data = _dropProps$item.data) === null || _dropProps$item$data === void 0 ? void 0 : _dropProps$item$data.type) && !((_dropProps$item2 = dropProps.item) !== null && _dropProps$item2 !== void 0 && _dropProps$item2.onCanvas) && (0, _lodash.isEqual)((0, _lodash.intersection)(context, dropProps.item.context), dropProps.item.context);
-  console.log({
-    validDropType: validDropType,
-    disabled: disabled
-  });
+  var validDropType = fieldInfo.accepts.includes((_dropProps$item = dropProps.item) === null || _dropProps$item === void 0 ? void 0 : (_dropProps$item$data = _dropProps$item.data) === null || _dropProps$item$data === void 0 ? void 0 : _dropProps$item$data.type) && !((_dropProps$item2 = dropProps.item) !== null && _dropProps$item2 !== void 0 && _dropProps$item2.onCanvas) && (0, _lodash.isEqual)((0, _lodash.intersection)(context, dropProps.item.context), dropProps.item.context); // console.log({validDropType,disabled})
+
   var renderedData = data ? data : dropProps.item && validDropType && !disabled && dropProps.isOver ? dropProps.item.data : null;
   var isPreview = renderedData && renderedData !== data;
   return /*#__PURE__*/_react.default.createElement("div", {
