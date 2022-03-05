@@ -47,7 +47,7 @@ var DropRegion = function DropRegion(_ref) {
     return {
       accept: fieldInfo.accepts,
       drop: function drop(item, _) {
-        console.log(item);
+        // console.log(item)
         transferBlock(item.data, item, {
           fieldInfo: fieldInfo,
           parentId: parentId,
