@@ -219,7 +219,8 @@ Stress.args = {
           type: SIMPLE_PROPERTY_TYPES.NUMBER,
           default: 1,
           min: 0,
-          max: 2
+          max: 2,
+          visualScaling: 100
         },
         doFunky: {
           name: "Do Funky",

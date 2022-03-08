@@ -19,10 +19,12 @@ var NumberInput = function NumberInput(_ref) {
       max = _ref.max,
       _onChange = _ref.onChange,
       disabled = _ref.disabled,
-      style = _ref.style;
+      style = _ref.style,
+      visualScaling = _ref.visualScaling;
+  var usedScaling = visualScaling ? visualScaling : 1;
   return /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
     disabled: disabled,
-    value: value,
+    value: value * usedScaling,
     type: "number",
     step: 0.1,
     textAlign: "center",
@@ -31,7 +33,7 @@ var NumberInput = function NumberInput(_ref) {
       color: (0, _lodash.toNumber)(value) >= min && (0, _lodash.toNumber)(value) <= max ? style === null || style === void 0 ? void 0 : style.color : 'red'
     },
     onChange: function onChange(event) {
-      _onChange((0, _lodash.toNumber)(event.target.value));
+      _onChange((0, _lodash.toNumber)(event.target.value) / usedScaling);
     }
   });
 };

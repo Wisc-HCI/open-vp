@@ -175,6 +175,7 @@ export const VisualBlock = forwardRef(
                               max={propInfo.max !== undefined ? propInfo.max : 10}
                               value={data.properties[propKey]}
                               disabled={interactionDisabled}
+                              visualScaling={propInfo.visualScaling}
                               onChange={(value) => updateItemSimpleProperty(data.id, propKey, value)}
                             />
                           </Box>

@@ -90,6 +90,10 @@ var DropRegion = function DropRegion(_ref) {
     parentId: parentId,
     fieldInfo: fieldInfo,
     bounded: true,
+    style: {
+      marginTop: 4,
+      marginBottom: 4
+    },
     highlightColor: highlightColor,
     context: context
   }) : renderedData ? /*#__PURE__*/_react.default.createElement(_index.PreviewBlock, {

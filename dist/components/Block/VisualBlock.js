@@ -284,6 +284,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       max: propInfo.max !== undefined ? propInfo.max : 10,
       value: data.properties[propKey],
       disabled: interactionDisabled,
+      visualScaling: propInfo.visualScaling,
       onChange: function onChange(value) {
         return updateItemSimpleProperty(data.id, propKey, value);
       }

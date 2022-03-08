@@ -86,11 +86,13 @@ const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, inTopLevel }) =>
     )
 }
 
-const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel }) => {
+const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel, data, locked }) => {
     const Icon = isSelected ? FiEyeOff : FiEye;
+    const disabled = data.dataType === DATA_TYPES.INSTANCE && locked;
     return (
         <Button
             plain
+            disabled={disabled}
             focusIndicator={false}
             hoverIndicator={false}
             size='small'
@@ -176,7 +178,7 @@ const AddArgumentExtra = ({data, argumentType, interactionDisabled, inTopLevel})
 }
 
 const AddArgumentGroupExtra = ({data, allowed, interactionDisabled, inTopLevel}) => {
-
+    
     return (
         <DropdownExtra
             icon={FiPlus}
@@ -278,7 +280,7 @@ const ButtonSwitch = ({
     } else if (feature === EXTRA_TYPES.COLLAPSE_TOGGLE) {
         return <CollapseToggleExtra isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature === EXTRA_TYPES.SELECTION_TOGGLE) {
-        return <SelectionToggleExtra isSelected={isSelected} setIsSelected={setIsSelected} inTopLevel={inTopLevel} />
+        return <SelectionToggleExtra locked={interactionDisabled} data={data} isSelected={isSelected} setIsSelected={setIsSelected} inTopLevel={inTopLevel} />
     } else if (feature === EXTRA_TYPES.DEBUG_TOGGLE) {
         return <DebugToggleExtra isDebugging={isDebugging} setIsDebugging={setIsDebugging} inTopLevel={inTopLevel} />
     } else if (feature === EXTRA_TYPES.DELETE_BUTTON) {

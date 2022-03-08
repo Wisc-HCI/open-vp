@@ -50,6 +50,7 @@ export const List = ({ ids, parentId, fieldInfo, interactionDisabled, highlightC
               idx={idx + 1}
               minHeight={8}
               hideText
+              showBuffer
               disabled={interactionDisabled}
               highlightColor={highlightColor}
               context={context}

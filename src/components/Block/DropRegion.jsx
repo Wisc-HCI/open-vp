@@ -79,6 +79,7 @@ export const DropRegion = ({
           parentId={parentId}
           fieldInfo={fieldInfo}
           bounded
+          style={{marginTop:4,marginBottom:4}}
           highlightColor={highlightColor}
           context={context}
         />
@@ -91,7 +92,10 @@ export const DropRegion = ({
           bounded
           highlightColor={highlightColor}
           context={context}
-          style={{marginBottom:showBuffer?minHeight:null,marginTop:showBuffer?minHeight:null}}
+          style={{
+            marginBottom:showBuffer?minHeight:null,
+            marginTop:showBuffer?minHeight:null
+          }}
         />
       ) : hideText ? null : (
         fieldInfo.name

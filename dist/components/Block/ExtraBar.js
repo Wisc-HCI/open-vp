@@ -114,10 +114,14 @@ var NameEditToggleExtra = function NameEditToggleExtra(_ref4) {
 var SelectionToggleExtra = function SelectionToggleExtra(_ref5) {
   var isSelected = _ref5.isSelected,
       setIsSelected = _ref5.setIsSelected,
-      inTopLevel = _ref5.inTopLevel;
+      inTopLevel = _ref5.inTopLevel,
+      data = _ref5.data,
+      locked = _ref5.locked;
   var Icon = isSelected ? _fi.FiEyeOff : _fi.FiEye;
+  var disabled = data.dataType === _.DATA_TYPES.INSTANCE && locked;
   return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     plain: true,
+    disabled: disabled,
     focusIndicator: false,
     hoverIndicator: false,
     size: "small",
@@ -395,6 +399,8 @@ var ButtonSwitch = function ButtonSwitch(_ref13) {
     });
   } else if (feature === _.EXTRA_TYPES.SELECTION_TOGGLE) {
     return /*#__PURE__*/_react.default.createElement(SelectionToggleExtra, {
+      locked: interactionDisabled,
+      data: data,
       isSelected: isSelected,
       setIsSelected: setIsSelected,
       inTopLevel: inTopLevel

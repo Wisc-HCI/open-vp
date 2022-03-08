@@ -62,6 +62,7 @@ var List = function List(_ref) {
         idx: idx + 1,
         minHeight: 8,
         hideText: true,
+        showBuffer: true,
         disabled: interactionDisabled,
         highlightColor: highlightColor,
         context: context
