@@ -90,8 +90,8 @@ export const VisualBlock = forwardRef(
               isCollapsed={isCollapsed}
               isSelected={selected}
               isDebugging={isDebugging}
-              setIsEditing={(data.refData && Object.entries(data.refData).length !== 0) ? (v)=>setIsEditing(data.refData.id,v) : (v)=>setIsEditing(data.id,v)}
-              setIsSelected={(data.refData && Object.entries(data.refData).length !== 0)  ? (v)=>setIsSelected(data.refData.id,v) : (v)=>setIsSelected(data.id,v)}
+              setIsEditing={ data.ref ? (v)=>setIsEditing(data.ref,v) : (v)=>setIsEditing(data.id,v)}
+              setIsSelected={ data.ref ? (v)=>setIsSelected(data.ref,v) : (v)=>setIsSelected(data.id,v)}
               setIsCollapsed={setIsCollapsed}
               setIsDebugging={setIsDebugging} />
           )}
