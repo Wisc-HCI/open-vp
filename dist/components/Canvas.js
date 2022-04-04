@@ -37,6 +37,7 @@ var CanvasNode = function CanvasNode(_ref) {
   var data = _ref.data;
   var highlightColor = data.highlightColor,
       rest = (0, _objectWithoutProperties2.default)(data, _excluded);
+  console.log(rest);
   return /*#__PURE__*/_react.default.createElement(_Block.VisualBlock, {
     data: rest,
     x: 0,
@@ -59,7 +60,7 @@ var Canvas = function Canvas(_ref2) {
       var blockType = data.dataType === _Constants.DATA_TYPES.INSTANCE ? 'instanceBlock' : data.dataType === _Constants.DATA_TYPES.CALL ? 'callBlock' : data.dataType === _Constants.DATA_TYPES.REFERENCE ? 'referenceBlock' : 'nullBlock';
       var color = (_state$programSpec$ob = state.programSpec.objectTypes[data.type][blockType]) === null || _state$programSpec$ob === void 0 ? void 0 : _state$programSpec$ob.color;
       var onCanvas = (_state$programSpec$ob2 = state.programSpec.objectTypes[data.type][blockType]) === null || _state$programSpec$ob2 === void 0 ? void 0 : _state$programSpec$ob2.onCanvas;
-      var ref = data.ref ? state.programData[data.ref] : {};
+      var ref = data.ref ? state.programData[data.ref] : null;
       var argumentBlocks = data !== null && data !== void 0 && data.arguments ? data.arguments : ref !== null && ref !== void 0 && ref.arguments ? ref.arguments : [];
       var argumentBlockData = argumentBlocks.map(function (instanceId) {
         var inst = state.programData[instanceId];

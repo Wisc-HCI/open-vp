@@ -57,6 +57,7 @@ Fullscreen.args = {
             contents: [
               EXTRA_TYPES.NAME_EDIT_TOGGLE,
               EXTRA_TYPES.LOCKED_INDICATOR,
+              EXTRA_TYPES.SELECTION_TOGGLE,
               {
                 icon: FiMoreHorizontal,
                 label: 'More Options',
@@ -200,7 +201,8 @@ Fullscreen.args = {
             type: EXTRA_TYPES.DROPDOWN,
             contents: [
               EXTRA_TYPES.DELETE_BUTTON,
-              EXTRA_TYPES.DEBUG_TOGGLE
+              EXTRA_TYPES.DEBUG_TOGGLE,
+              EXTRA_TYPES.SELECTION_TOGGLE
             ]
           }
         ],
@@ -260,7 +262,8 @@ Fullscreen.args = {
             contents: [
               EXTRA_TYPES.DELETE_BUTTON,
               EXTRA_TYPES.DEBUG_TOGGLE,
-              EXTRA_TYPES.NAME_EDIT_TOGGLE
+              EXTRA_TYPES.NAME_EDIT_TOGGLE,
+              EXTRA_TYPES.SELECTION_TOGGLE
             ]
           }
         ]
@@ -281,7 +284,8 @@ Fullscreen.args = {
             type: EXTRA_TYPES.DROPDOWN,
             contents: [
               EXTRA_TYPES.DELETE_BUTTON,
-              EXTRA_TYPES.DEBUG_TOGGLE
+              EXTRA_TYPES.DEBUG_TOGGLE,
+              EXTRA_TYPES.SELECTION_TOGGLE
             ]
           }
         ]

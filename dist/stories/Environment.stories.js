@@ -113,7 +113,7 @@ Fullscreen.args = {
         }, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, {
+          contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, _components.EXTRA_TYPES.SELECTION_TOGGLE, {
             icon: _fi.FiMoreHorizontal,
             label: 'More Options',
             type: _components.EXTRA_TYPES.DROPDOWN,
@@ -226,7 +226,7 @@ Fullscreen.args = {
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE, _components.EXTRA_TYPES.SELECTION_TOGGLE]
         }],
         hideNewPrefix: true
       },
@@ -285,7 +285,7 @@ Fullscreen.args = {
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE, _components.EXTRA_TYPES.NAME_EDIT_TOGGLE]
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE, _components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.SELECTION_TOGGLE]
         }]
       }
     },
@@ -300,7 +300,7 @@ Fullscreen.args = {
         extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE, _components.EXTRA_TYPES.SELECTION_TOGGLE]
         }]
       }
     }

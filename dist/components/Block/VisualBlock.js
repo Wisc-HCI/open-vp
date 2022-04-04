@@ -168,15 +168,17 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     isCollapsed: isCollapsed,
     isSelected: selected,
     isDebugging: isDebugging,
-    setIsEditing: data.ref ? function (v) {
+    setIsEditing: data.dataType === _Constants.DATA_TYPES.REFERENCE || data.dataType === _Constants.DATA_TYPES.CALL ? function (v) {
       return setIsEditing(data.ref, v);
     } : function (v) {
       return setIsEditing(data.id, v);
     },
-    setIsSelected: data.ref ? function (v) {
-      return setIsSelected(data.ref, v);
+    setIsSelected: data.dataType === _Constants.DATA_TYPES.REFERENCE || data.dataType === _Constants.DATA_TYPES.CALL ? function (v) {
+      console.log(data);
+      setIsSelected(data.ref, v);
     } : function (v) {
-      return setIsSelected(data.id, v);
+      console.log(data);
+      setIsSelected(data.id, v);
     },
     setIsCollapsed: setIsCollapsed,
     setIsDebugging: setIsDebugging

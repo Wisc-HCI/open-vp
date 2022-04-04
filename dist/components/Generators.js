@@ -119,7 +119,7 @@ var combinedBlockData = function combinedBlockData(state, staticData, id) {
     referenceBlock: {},
     callBlock: {}
   };
-  var refData = data !== null && data !== void 0 && data.ref ? state.programData[data === null || data === void 0 ? void 0 : data.ref] : {};
+  var refData = data !== null && data !== void 0 && data.ref ? state.programData[data === null || data === void 0 ? void 0 : data.ref] : null;
   var selected = (data === null || data === void 0 ? void 0 : data.selected) || (refData === null || refData === void 0 ? void 0 : refData.selected);
   var editing = (data === null || data === void 0 ? void 0 : data.editing) || (refData === null || refData === void 0 ? void 0 : refData.editing);
   var argumentBlocks = data !== null && data !== void 0 && data.arguments ? data.arguments : refData !== null && refData !== void 0 && refData.arguments ? refData.arguments : [];

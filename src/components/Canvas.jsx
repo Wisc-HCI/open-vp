@@ -15,6 +15,7 @@ import useMeasure from 'react-use-measure';
 
 const CanvasNode = ({ data }) => {
   const { highlightColor, ...rest } = data;
+  console.log(rest)
   return (
     <VisualBlock data={rest} x={0} y={0} typeSpec={rest.typeSpec} onCanvas highlightColor={highlightColor} context={rest.context} />
   )
@@ -35,7 +36,7 @@ export const Canvas = ({ highlightColor, drawerWidth }) => {
               : 'nullBlock'
         const color = state.programSpec.objectTypes[data.type][blockType]?.color;
         const onCanvas = state.programSpec.objectTypes[data.type][blockType]?.onCanvas;
-        const ref = data.ref ? state.programData[data.ref] : {};
+        const ref = data.ref ? state.programData[data.ref] : null;
         const argumentBlocks = data?.arguments ? data.arguments : ref?.arguments ? ref.arguments : [];
         const argumentBlockData = argumentBlocks.map((instanceId) => {
           const inst = state.programData[instanceId];
