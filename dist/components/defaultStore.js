@@ -152,7 +152,18 @@ function deleteSelfBlock(state, data, parentId, fieldInfo) {
     var callReferences = (0, _lodash.pickBy)(state.programData, function (entry) {
       return entry.dataType === _.DATA_TYPES.CALL && entry.refData.id === data.id;
     });
-    var callIds = Object.keys(callReferences); // Find the parent's of the references, and remove the references from them
+    var callIds = Object.keys(callReferences); // Delete the children from the function calls
+
+    callIds.forEach(function (cID) {
+      state = deleteChildren(state, state.programData[cID], parentId, fieldInfo);
+    }); // Clear function arguments if function
+
+    if (data.arguments) {
+      data.arguments.forEach(function (argumentId) {
+        delete state.programData[argumentId];
+      });
+    } // Find the parent's of the references, and remove the references from them
+
 
     Object.keys(state.programData).forEach(function (entryId) {
       var entry = state.programData[entryId];
@@ -222,15 +233,14 @@ function deleteSelfBlock(state, data, parentId, fieldInfo) {
 }
 
 function deleteChildren(state, data, parentId, fieldInfo) {
-  // Clear arguments if function
-  if (data.arguments) {
-    data.arguments.forEach(function (argumentId) {
-      delete state.programData[argumentId];
+  // Clear children and properties (if applicable)
+  if (data.dataType === _.DATA_TYPES.CALL) {
+    state.programData[data.ref].arguments.forEach(function (argument) {
+      if (data.properties[argument] && state.programData[data.properties[argument]]) {
+        state = deleteSelfBlock(state, state.programData[data.properties[argument]], parentId, fieldInfo);
+      }
     });
-  } // Clear children and properties (if applicable)
-
-
-  if (state.programSpec.objectTypes[data.type].properties) {
+  } else if (data.dataType !== _.DATA_TYPES.REFERENCE && state.programSpec.objectTypes[data.type].properties) {
     Object.keys(state.programSpec.objectTypes[data.type].properties).forEach(function (propName) {
       if (propName) {
         var property = state.programSpec.objectTypes[data.type].properties[propName]; // Clearing child fields/references
@@ -247,7 +257,8 @@ function deleteChildren(state, data, parentId, fieldInfo) {
           }
         } else if (property && data.properties[propName]) {
           // Delete Reference to Child
-          delete state.programData[data.properties[propName]];
+          state = deleteChildren(state, state.programData[data.properties[propName]], parentId, fieldInfo);
+          state = deleteSelfBlock(state, state.programData[data.properties[propName]], parentId, fieldInfo);
         }
       }
     });

@@ -168,13 +168,13 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     isCollapsed: isCollapsed,
     isSelected: selected,
     isDebugging: isDebugging,
-    setIsEditing: data.refData ? function (v) {
-      return setIsEditing(data.refData.id, v);
+    setIsEditing: data.ref ? function (v) {
+      return setIsEditing(data.ref, v);
     } : function (v) {
       return setIsEditing(data.id, v);
     },
-    setIsSelected: data.refData ? function (v) {
-      return setIsSelected(data.refData.id, v);
+    setIsSelected: data.ref ? function (v) {
+      return setIsSelected(data.ref, v);
     } : function (v) {
       return setIsSelected(data.id, v);
     },
