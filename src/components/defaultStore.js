@@ -119,6 +119,18 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
     const callReferences = pickBy(state.programData, (entry) => entry.dataType === DATA_TYPES.CALL && entry.refData.id === data.id);
     const callIds = Object.keys(callReferences);
 
+    // Delete the children from the function calls
+    callIds.forEach((cID) => {
+      state = deleteChildren(state, state.programData[cID], parentId, fieldInfo);
+    })
+
+    // Clear function arguments if function
+    if (data.arguments) {
+      data.arguments.forEach((argumentId) => {
+        delete state.programData[argumentId];
+      });
+    }
+
     // Find the parent's of the references, and remove the references from them
     Object.keys(state.programData).forEach((entryId) => {
       const entry = state.programData[entryId];
@@ -177,15 +189,14 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
 }
 
 export function deleteChildren(state, data, parentId, fieldInfo) {
-  // Clear arguments if function
-  if (data.arguments) {
-    data.arguments.forEach((argumentId) => {
-      delete state.programData[argumentId];
-    });
-  }
-
   // Clear children and properties (if applicable)
-  if (state.programSpec.objectTypes[data.type].properties) {
+  if (data.dataType === DATA_TYPES.CALL) {
+    state.programData[data.ref].arguments.forEach((argument) => {
+      if (data.properties[argument] && state.programData[data.properties[argument]]) {
+        state = deleteSelfBlock(state, state.programData[data.properties[argument]], parentId, fieldInfo);
+      }
+    });
+  } else if (data.dataType !== DATA_TYPES.REFERENCE && state.programSpec.objectTypes[data.type].properties) {
     Object.keys(state.programSpec.objectTypes[data.type].properties).forEach((propName) => {
       if (propName) {
         const property = state.programSpec.objectTypes[data.type].properties[propName];
@@ -204,7 +215,8 @@ export function deleteChildren(state, data, parentId, fieldInfo) {
           }
         } else if (property && data.properties[propName]) {
           // Delete Reference to Child
-          delete state.programData[data.properties[propName]];
+            state = deleteChildren(state, state.programData[data.properties[propName]], parentId, fieldInfo);
+            state = deleteSelfBlock(state, state.programData[data.properties[propName]], parentId, fieldInfo);
         }
       }
     });
