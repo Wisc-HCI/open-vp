@@ -1,6 +1,6 @@
 {
   "name": "simple-vp",
-  "version": "0.1.17",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "private": false,
   "files": [
@@ -24,12 +24,12 @@
     "grommet": "^2.20.0",
     "immer": "^9.0.12",
     "rdndmb-html5-to-touch": "^7.0.0-alpha.1",
-    "react": "^17.0.2",
+    "react": "^18.0.0",
     "react-dnd": "^14.0.5",
     "react-dnd-html5-backend": "^14.1.0",
     "react-dnd-multi-backend": "^7.0.0-alpha.4",
-    "react-dom": "^17.0.2",
-    "react-flow-renderer": "^10.0.0-next.39",
+    "react-dom": "^18.0.0",
+    "react-flow-renderer": "^10.1.0",
     "react-icons": "^4.3.1",
     "react-scripts": "5.0.0",
     "react-spring": "^9.4.2",
