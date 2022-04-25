@@ -135,7 +135,7 @@ const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel }) => {
     )
 }
 
-const IndicatorExtra = ({ value, label, inTopLevel }) => {
+const IndicatorTextExtra = ({ value, label, inTopLevel }) => {
 
     if (inTopLevel) {
         return ( <Pill value={value} /> )
@@ -154,6 +154,22 @@ const IndicatorExtra = ({ value, label, inTopLevel }) => {
             />
         )
     }
+}
+
+const IndicatorIconExtra = ({ value, label, inTopLevel }) => {
+
+    return (
+        <Button 
+            size='small'
+            plain 
+            focusIndicator={false}
+            hoverIndicator={false}
+            disabled={true}
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+            icon={value}
+            label={inTopLevel? null : label}
+        />
+    )
 }
 
 const AddArgumentExtra = ({data, argumentType, interactionDisabled, inTopLevel}) => {
@@ -291,8 +307,10 @@ const ButtonSwitch = ({
         return <AddArgumentGroupExtra data={data} allowed={feature?.allowed} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
     } else if (feature?.type === EXTRA_TYPES.FUNCTION_BUTTON) {
         return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
-    } else if (feature?.type === EXTRA_TYPES.INDICATOR) {
-        return <IndicatorExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+    } else if (feature?.type === EXTRA_TYPES.INDICATOR_TEXT) {
+        return <IndicatorTextExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+    } else if (feature?.type === EXTRA_TYPES.INDICATOR_ICON) {
+        return <IndicatorIconExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
     } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT) {
         return <AddArgumentGroupExtra 
             data={data} 

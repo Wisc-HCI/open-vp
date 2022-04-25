@@ -1,8 +1,13 @@
 import React, { useLayoutEffect } from 'react';
 import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES } from '../components';
-import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal, FiLayers, FiFeather } from "react-icons/fi";
+import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal, FiLayers, FiFeather, FiRefreshCw } from "react-icons/fi";
 import { SIMPLE_PROPERTY_TYPES } from '../components/Constants';
 import useMeasure from 'react-use-measure';
+import './rotate.css';
+
+const Synchonizing = () => {
+  return <FiRefreshCw className='rotate'/>
+}
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -47,8 +52,15 @@ Fullscreen.args = {
         icon: FiBriefcase,
         extras: [
           { 
-            type: EXTRA_TYPES.INDICATOR,
+            type: EXTRA_TYPES.INDICATOR_TEXT,
             accessor: (data)=>data.properties.children.length,
+            label: 'Size'
+          },
+          { 
+            type: EXTRA_TYPES.INDICATOR_ICON,
+            accessor: (data)=>{
+              return <Synchonizing/>
+            },
             label: 'Size'
           },
           {
@@ -67,7 +79,7 @@ Fullscreen.args = {
                   EXTRA_TYPES.COLLAPSE_TOGGLE,
                   EXTRA_TYPES.LOCKED_INDICATOR,
                   { 
-                    type: EXTRA_TYPES.INDICATOR,
+                    type: EXTRA_TYPES.INDICATOR_TEXT,
                     accessor: (data)=>data.properties.children.length,
                     label: 'Size'
                   },
@@ -105,7 +117,7 @@ Fullscreen.args = {
         extras: [
           EXTRA_TYPES.COLLAPSE_TOGGLE,
           { 
-            type: EXTRA_TYPES.INDICATOR,
+            type: EXTRA_TYPES.INDICATOR_TEXT,
             accessor: (data)=>data.properties.children.length,
             label: 'Size'
           },

@@ -179,7 +179,7 @@ var DebugToggleExtra = function DebugToggleExtra(_ref7) {
   });
 };
 
-var IndicatorExtra = function IndicatorExtra(_ref8) {
+var IndicatorTextExtra = function IndicatorTextExtra(_ref8) {
   var value = _ref8.value,
       label = _ref8.label,
       inTopLevel = _ref8.inTopLevel;
@@ -205,13 +205,31 @@ var IndicatorExtra = function IndicatorExtra(_ref8) {
   }
 };
 
-var AddArgumentExtra = function AddArgumentExtra(_ref9) {
+var IndicatorIconExtra = function IndicatorIconExtra(_ref9) {
+  var value = _ref9.value,
+      label = _ref9.label,
+      inTopLevel = _ref9.inTopLevel;
+  return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
+    size: "small",
+    plain: true,
+    focusIndicator: false,
+    hoverIndicator: false,
+    disabled: true,
+    style: {
+      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
+    },
+    icon: value,
+    label: inTopLevel ? null : label
+  });
+};
+
+var AddArgumentExtra = function AddArgumentExtra(_ref10) {
   var _typeSpec$referenceBl;
 
-  var data = _ref9.data,
-      argumentType = _ref9.argumentType,
-      interactionDisabled = _ref9.interactionDisabled,
-      inTopLevel = _ref9.inTopLevel;
+  var data = _ref10.data,
+      argumentType = _ref10.argumentType,
+      interactionDisabled = _ref10.interactionDisabled,
+      inTopLevel = _ref10.inTopLevel;
   var typeSpec = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (store) {
     return store.programSpec.objectTypes[argumentType];
   }, [argumentType]));
@@ -236,11 +254,11 @@ var AddArgumentExtra = function AddArgumentExtra(_ref9) {
   });
 };
 
-var AddArgumentGroupExtra = function AddArgumentGroupExtra(_ref10) {
-  var data = _ref10.data,
-      allowed = _ref10.allowed,
-      interactionDisabled = _ref10.interactionDisabled,
-      inTopLevel = _ref10.inTopLevel;
+var AddArgumentGroupExtra = function AddArgumentGroupExtra(_ref11) {
+  var data = _ref11.data,
+      allowed = _ref11.allowed,
+      interactionDisabled = _ref11.interactionDisabled,
+      inTopLevel = _ref11.inTopLevel;
   return /*#__PURE__*/_react.default.createElement(DropdownExtra, {
     icon: _fi.FiPlus,
     label: "Add Argument",
@@ -256,14 +274,14 @@ var AddArgumentGroupExtra = function AddArgumentGroupExtra(_ref10) {
   });
 };
 
-var DeleteExtra = function DeleteExtra(_ref11) {
+var DeleteExtra = function DeleteExtra(_ref12) {
   var _data$refData;
 
-  var data = _ref11.data,
-      inTopLevel = _ref11.inTopLevel,
-      locked = _ref11.locked,
-      fieldInfo = _ref11.fieldInfo,
-      parentId = _ref11.parentId;
+  var data = _ref12.data,
+      inTopLevel = _ref12.inTopLevel,
+      locked = _ref12.locked,
+      fieldInfo = _ref12.fieldInfo,
+      parentId = _ref12.parentId;
   var deleteFunc = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return state.deleteBlock;
   });
@@ -286,24 +304,24 @@ var DeleteExtra = function DeleteExtra(_ref11) {
   });
 };
 
-var DropdownExtra = function DropdownExtra(_ref12) {
-  var icon = _ref12.icon,
-      contents = _ref12.contents,
-      label = _ref12.label,
-      inTopLevel = _ref12.inTopLevel,
-      data = _ref12.data,
-      blockSpec = _ref12.blockSpec,
-      isEditing = _ref12.isEditing,
-      isCollapsed = _ref12.isCollapsed,
-      isSelected = _ref12.isSelected,
-      isDebugging = _ref12.isDebugging,
-      setIsEditing = _ref12.setIsEditing,
-      setIsCollapsed = _ref12.setIsCollapsed,
-      setIsSelected = _ref12.setIsSelected,
-      setIsDebugging = _ref12.setIsDebugging,
-      interactionDisabled = _ref12.interactionDisabled,
-      parentId = _ref12.parentId,
-      fieldInfo = _ref12.fieldInfo;
+var DropdownExtra = function DropdownExtra(_ref13) {
+  var icon = _ref13.icon,
+      contents = _ref13.contents,
+      label = _ref13.label,
+      inTopLevel = _ref13.inTopLevel,
+      data = _ref13.data,
+      blockSpec = _ref13.blockSpec,
+      isEditing = _ref13.isEditing,
+      isCollapsed = _ref13.isCollapsed,
+      isSelected = _ref13.isSelected,
+      isDebugging = _ref13.isDebugging,
+      setIsEditing = _ref13.setIsEditing,
+      setIsCollapsed = _ref13.setIsCollapsed,
+      setIsSelected = _ref13.setIsSelected,
+      setIsDebugging = _ref13.setIsDebugging,
+      interactionDisabled = _ref13.interactionDisabled,
+      parentId = _ref13.parentId,
+      fieldInfo = _ref13.fieldInfo;
   var DropIcon = icon ? icon : _fi.FiMoreHorizontal;
   return /*#__PURE__*/_react.default.createElement(_grommet.DropButton, {
     focusIndicator: false,
@@ -359,22 +377,22 @@ var DropdownExtra = function DropdownExtra(_ref12) {
   }));
 };
 
-var ButtonSwitch = function ButtonSwitch(_ref13) {
-  var data = _ref13.data,
-      blockSpec = _ref13.blockSpec,
-      isEditing = _ref13.isEditing,
-      setIsEditing = _ref13.setIsEditing,
-      isCollapsed = _ref13.isCollapsed,
-      setIsCollapsed = _ref13.setIsCollapsed,
-      isSelected = _ref13.isSelected,
-      setIsSelected = _ref13.setIsSelected,
-      isDebugging = _ref13.isDebugging,
-      setIsDebugging = _ref13.setIsDebugging,
-      interactionDisabled = _ref13.interactionDisabled,
-      inTopLevel = _ref13.inTopLevel,
-      feature = _ref13.feature,
-      fieldInfo = _ref13.fieldInfo,
-      parentId = _ref13.parentId;
+var ButtonSwitch = function ButtonSwitch(_ref14) {
+  var data = _ref14.data,
+      blockSpec = _ref14.blockSpec,
+      isEditing = _ref14.isEditing,
+      setIsEditing = _ref14.setIsEditing,
+      isCollapsed = _ref14.isCollapsed,
+      setIsCollapsed = _ref14.setIsCollapsed,
+      isSelected = _ref14.isSelected,
+      setIsSelected = _ref14.setIsSelected,
+      isDebugging = _ref14.isDebugging,
+      setIsDebugging = _ref14.setIsDebugging,
+      interactionDisabled = _ref14.interactionDisabled,
+      inTopLevel = _ref14.inTopLevel,
+      feature = _ref14.feature,
+      fieldInfo = _ref14.fieldInfo,
+      parentId = _ref14.parentId;
 
   if (feature === _.EXTRA_TYPES.LOCKED_INDICATOR) {
     return /*#__PURE__*/_react.default.createElement(LockIndicatorExtra, {
@@ -441,8 +459,15 @@ var ButtonSwitch = function ButtonSwitch(_ref13) {
       interactionDisabled: interactionDisabled,
       inTopLevel: inTopLevel
     });
-  } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.INDICATOR) {
-    return /*#__PURE__*/_react.default.createElement(IndicatorExtra, {
+  } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.INDICATOR_TEXT) {
+    return /*#__PURE__*/_react.default.createElement(IndicatorTextExtra, {
+      value: feature.accessor(data),
+      label: feature.label,
+      inTopLevel: inTopLevel,
+      interactionDisabled: interactionDisabled
+    });
+  } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.INDICATOR_ICON) {
+    return /*#__PURE__*/_react.default.createElement(IndicatorIconExtra, {
       value: feature.accessor(data),
       label: feature.label,
       inTopLevel: inTopLevel,
@@ -480,22 +505,22 @@ var ButtonSwitch = function ButtonSwitch(_ref13) {
   }
 };
 
-var ExtraBar = function ExtraBar(_ref14) {
+var ExtraBar = function ExtraBar(_ref15) {
   var _blockSpec$extras;
 
-  var data = _ref14.data,
-      blockSpec = _ref14.blockSpec,
-      isEditing = _ref14.isEditing,
-      setIsEditing = _ref14.setIsEditing,
-      isCollapsed = _ref14.isCollapsed,
-      setIsCollapsed = _ref14.setIsCollapsed,
-      isSelected = _ref14.isSelected,
-      setIsSelected = _ref14.setIsSelected,
-      isDebugging = _ref14.isDebugging,
-      setIsDebugging = _ref14.setIsDebugging,
-      interactionDisabled = _ref14.interactionDisabled,
-      fieldInfo = _ref14.fieldInfo,
-      parentId = _ref14.parentId;
+  var data = _ref15.data,
+      blockSpec = _ref15.blockSpec,
+      isEditing = _ref15.isEditing,
+      setIsEditing = _ref15.setIsEditing,
+      isCollapsed = _ref15.isCollapsed,
+      setIsCollapsed = _ref15.setIsCollapsed,
+      isSelected = _ref15.isSelected,
+      setIsSelected = _ref15.setIsSelected,
+      isDebugging = _ref15.isDebugging,
+      setIsDebugging = _ref15.setIsDebugging,
+      interactionDisabled = _ref15.interactionDisabled,
+      fieldInfo = _ref15.fieldInfo,
+      parentId = _ref15.parentId;
   return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     direction: "row",
     margin: {

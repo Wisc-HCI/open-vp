@@ -23,8 +23,17 @@ var _Constants = require("../components/Constants");
 
 var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
 
+require("./rotate.css");
+
 var _excluded = ["drawers", "objectTypes", "programData", "drawerWidth"];
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
+
+var Synchonizing = function Synchonizing() {
+  return /*#__PURE__*/_react.default.createElement(_fi.FiRefreshCw, {
+    className: "rotate"
+  });
+}; // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
+
+
 var _default = {
   title: 'Fullscreen',
   component: _components.Environment
@@ -105,9 +114,15 @@ Fullscreen.args = {
         color: "#3f3f3f",
         icon: _fi.FiBriefcase,
         extras: [{
-          type: _components.EXTRA_TYPES.INDICATOR,
+          type: _components.EXTRA_TYPES.INDICATOR_TEXT,
           accessor: function accessor(data) {
             return data.properties.children.length;
+          },
+          label: 'Size'
+        }, {
+          type: _components.EXTRA_TYPES.INDICATOR_ICON,
+          accessor: function accessor(data) {
+            return /*#__PURE__*/_react.default.createElement(Synchonizing, null);
           },
           label: 'Size'
         }, {
@@ -118,7 +133,7 @@ Fullscreen.args = {
             label: 'More Options',
             type: _components.EXTRA_TYPES.DROPDOWN,
             contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, {
-              type: _components.EXTRA_TYPES.INDICATOR,
+              type: _components.EXTRA_TYPES.INDICATOR_TEXT,
               accessor: function accessor(data) {
                 return data.properties.children.length;
               },
@@ -151,7 +166,7 @@ Fullscreen.args = {
         color: '#7f7f7f',
         icon: _fi.FiLayers,
         extras: [_components.EXTRA_TYPES.COLLAPSE_TOGGLE, {
-          type: _components.EXTRA_TYPES.INDICATOR,
+          type: _components.EXTRA_TYPES.INDICATOR_TEXT,
           accessor: function accessor(data) {
             return data.properties.children.length;
           },

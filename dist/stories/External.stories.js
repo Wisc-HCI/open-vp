@@ -100,7 +100,7 @@ External.args = {
         color: "#3f3f3f",
         icon: _fi.FiBriefcase,
         extras: [{
-          type: _components.EXTRA_TYPES.INDICATOR,
+          type: _components.EXTRA_TYPES.INDICATOR_TEXT,
           accessor: function accessor(data) {
             return data.properties.children.length;
           },
@@ -113,7 +113,7 @@ External.args = {
             label: 'More Options',
             type: _components.EXTRA_TYPES.DROPDOWN,
             contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, {
-              type: _components.EXTRA_TYPES.INDICATOR,
+              type: _components.EXTRA_TYPES.INDICATOR_TEXT,
               accessor: function accessor(data) {
                 return data.properties.children.length;
               },
@@ -146,7 +146,7 @@ External.args = {
         color: '#7f7f7f',
         icon: _fi.FiLayers,
         extras: [_components.EXTRA_TYPES.COLLAPSE_TOGGLE, {
-          type: _components.EXTRA_TYPES.INDICATOR,
+          type: _components.EXTRA_TYPES.INDICATOR_TEXT,
           accessor: function accessor(data) {
             return data.properties.children.length;
           },

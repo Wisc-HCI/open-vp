@@ -54,7 +54,8 @@ A number of useful constants are exported as enums. They are as follows:
 | `SELECTION_TOGGLE`    | Allows the user to select/deselect the block     | `EXTRA_TYPES.SELECTION_TOGGLE` |
 | `COLLAPSE_TOGGLE`     | Allows the user to collapse/expand the block     | `EXTRA_TYPES.COLLAPSE_TOGGLE` |
 | `FUNCTION_BUTTON`     | Allows the user to execute a function in the store from the block | `{type: EXTRA_TYPES.FUNCTION_BUTTON, onClick: 'updateItemBlockColors', label: 'Cycle Color', icon: FiFeather}` |
-| `INDICATOR`           | Pipe simple information into a pill | `{type: EXTRA_TYPES.INDICATOR, accessor: (data)=>data.properties.children.length, label: 'Size' }` |
+| `INDICATOR_TEXT`      | Pipe simple information into a pill | `{type: EXTRA_TYPES.INDICATOR_TEXT, accessor: (data)=>data.properties.children.length, label: 'Size' }` |
+| `INDICATOR_ICON`      | Pipe icon into block | `{type: EXTRA_TYPES.INDICATOR_ICON, accessor: (data)=>data.properties.children.length, label: 'Size' }` |
 | `DROPDOWN`            | Creates a dropdown with nested extras inside (can be nested in other dropdowns) | `{ icon: FiMoreHorizontal, label: 'More Options', type: EXTRA_TYPES.DROPDOWN, contents: [ EXTRA_TYPES.NAME_EDIT_TOGGLE, EXTRA_TYPES.COLLAPSE_TOGGLE ] }` |
 | `DELETE_BUTTON`       | Allows the user to delete the block or instance | `EXTRA_TYPES.DELETE_BUTTON` |
 | `ADD_ARGUMENT`        | Allows the user add an argument to a function definition | `{type: EXTRA_TYPES.ADD_ARGUMENT, argumentType: 'hatType'}` |

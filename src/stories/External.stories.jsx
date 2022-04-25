@@ -67,7 +67,7 @@ External.args = {
         icon: FiBriefcase,
         extras: [
           { 
-            type: EXTRA_TYPES.INDICATOR,
+            type: EXTRA_TYPES.INDICATOR_TEXT,
             accessor: (data)=>data.properties.children.length,
             label: 'Size'
           },
@@ -86,7 +86,7 @@ External.args = {
                   EXTRA_TYPES.COLLAPSE_TOGGLE,
                   EXTRA_TYPES.LOCKED_INDICATOR,
                   { 
-                    type: EXTRA_TYPES.INDICATOR,
+                    type: EXTRA_TYPES.INDICATOR_TEXT,
                     accessor: (data)=>data.properties.children.length,
                     label: 'Size'
                   },
@@ -124,7 +124,7 @@ External.args = {
         extras: [
           EXTRA_TYPES.COLLAPSE_TOGGLE,
           { 
-            type: EXTRA_TYPES.INDICATOR,
+            type: EXTRA_TYPES.INDICATOR_TEXT,
             accessor: (data)=>data.properties.children.length,
             label: 'Size'
           },
