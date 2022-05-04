@@ -29,6 +29,8 @@ var _lodash = require("lodash");
 
 var _Generators = require("./Generators");
 
+var _Timer = require("./Timer");
+
 var randInt8 = function randInt8() {
   return Math.floor(Math.random() * 256);
 };
@@ -278,6 +280,12 @@ var immer = function immer(config) {
 
 var ProgrammingSlice = function ProgrammingSlice(set, get) {
   return {
+    locked: false,
+    setLocked: function setLocked(locked) {
+      return set({
+        locked: locked
+      });
+    },
     activeDrawer: null,
     setActiveDrawer: function setActiveDrawer(activeDrawer) {
       return set({
@@ -286,11 +294,8 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
     },
     programSpec: DEFAULT_PROGRAM_SPEC,
     programData: {},
+    executionData: {},
     transferBlock: function transferBlock(data, sourceInfo, destInfo) {
-      console.log({
-        sourceInfo: sourceInfo,
-        destInfo: destInfo
-      });
       set(function (state) {
         var _sourceInfo$fieldInfo;
 
@@ -433,6 +438,16 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
           }
         });
       });
+    },
+    clock: new _Timer.Timer(),
+    pause: function pause() {
+      get().clock.setTimescale(0);
+    },
+    play: function play(speed) {
+      get().clock.setTimescale(speed ? speed : 1);
+    },
+    reset: function reset(time) {
+      get().clock._elapsed = time ? time * 1000 : 0;
     }
   };
 };

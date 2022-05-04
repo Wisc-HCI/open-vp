@@ -17,12 +17,12 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
-  const { drawers, objectTypes, programData, drawerWidth, ...otherArgs } = args;
+  const { drawers, objectTypes, programData, executionData, drawerWidth, ...otherArgs } = args;
 
   const [ref, bounds] = useMeasure();
   
   useLayoutEffect(()=>{
-    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData});
+    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData});
   })
   return (
     <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:otherArgs.highlightColor}}>
@@ -66,12 +66,14 @@ Fullscreen.args = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
+            label: 'Custom More...',
             contents: [
               EXTRA_TYPES.NAME_EDIT_TOGGLE,
               EXTRA_TYPES.LOCKED_INDICATOR,
               EXTRA_TYPES.SELECTION_TOGGLE,
+              EXTRA_TYPES.DIVIDER,
               {
-                icon: FiMoreHorizontal,
+                // icon: FiMoreHorizontal,
                 label: 'More Options',
                 type: EXTRA_TYPES.DROPDOWN,
                 contents: [
@@ -88,11 +90,19 @@ Fullscreen.args = {
                     onClick: 'updateItemBlockColors',
                     label: 'Cycle Color',
                     icon: FiFeather
-                  }
+                  },
+                  { 
+                    type: EXTRA_TYPES.INDICATOR_ICON,
+                    accessor: (data)=>{
+                      return <Synchonizing/>
+                    },
+                    label: 'Synchronizing'
+                  },
                 ]
               }
             ]
           },
+          EXTRA_TYPES.DIVIDER,
           EXTRA_TYPES.LOCKED_INDICATOR
         ]
       },
@@ -238,7 +248,11 @@ Fullscreen.args = {
           type: SIMPLE_PROPERTY_TYPES.NUMBER,
           default: 1,
           min: 0,
-          max: 2
+          max: 20,
+          step: 0.1,
+          units: 'm/s',
+          visualScaling: 0.1,
+          visualPrecision: 1
         },
         doFunky: {
           name: "Do Funky",
@@ -304,6 +318,11 @@ Fullscreen.args = {
       }
     }
   },
+  executionData: {
+    "45535153s":1,
+    "655sssefs":null,
+    "2dfsessfs":(time)=>Math.sin(time/5000)/2+0.3
+  },
   programData: {
     "45535153s": {
       id: "45535153s",
@@ -317,7 +336,7 @@ Fullscreen.args = {
       canDelete: false,
       canEdit: true,
       selected: false,
-      editing: false,
+      editing: false
     },
     "655sssefs": {
       id: "655sssefs",
@@ -332,7 +351,7 @@ Fullscreen.args = {
       canDelete: true,
       canEdit: true,
       selected: false,
-      editing: false,
+      editing: false
       
     },
     "s3siakawme" : {

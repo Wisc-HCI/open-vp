@@ -16,7 +16,8 @@ var _web = require("@react-spring/web");
 var _reactSpring = require("react-spring");
 
 var ExpandCarrot = function ExpandCarrot(_ref) {
-  var expanded = _ref.expanded;
+  var expanded = _ref.expanded,
+      onClick = _ref.onClick;
   var carrotStyle = (0, _web.useSpring)({
     rotate: expanded ? '90deg' : '0deg',
     config: _reactSpring.config.wobbly,
@@ -24,6 +25,7 @@ var ExpandCarrot = function ExpandCarrot(_ref) {
     width: 20
   });
   return /*#__PURE__*/_react.default.createElement(_web.animated.div, {
+    onClick: onClick,
     style: carrotStyle
   }, /*#__PURE__*/_react.default.createElement(_fi.FiChevronRight, null));
 };

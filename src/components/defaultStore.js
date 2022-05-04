@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { DATA_TYPES, TYPES } from ".";
 import { remove, pickBy } from 'lodash';
 import { instanceTemplateFromSpec } from "./Generators";
+import { Timer } from "./Timer";
 
 const randInt8 = () => {
   return Math.floor((Math.random() * 256));
@@ -237,12 +238,14 @@ const immer = (config) => (set, get, api) =>
   );
 
 export const ProgrammingSlice = (set,get) => ({
+    locked: false,
+    setLocked: (locked) => set({locked}),
     activeDrawer: null,
     setActiveDrawer: (activeDrawer) => set({activeDrawer}),
     programSpec: DEFAULT_PROGRAM_SPEC,
     programData: {},
+    executionData: {},
     transferBlock: (data, sourceInfo, destInfo) => {
-      console.log({sourceInfo,destInfo})
       set((state) => {
         let newSpawn = false;
         let id = data.id;
@@ -383,7 +386,17 @@ export const ProgrammingSlice = (set,get) => ({
         })
         
       })
-    }
+    },
+    clock: new Timer(),
+    pause: () => {
+        get().clock.setTimescale(0)
+    },
+    play: (speed) => {
+        get().clock.setTimescale(speed ? speed : 1)
+    },
+    reset: (time) => {
+        get().clock._elapsed = time ? time * 1000 : 0;
+    },
   })
 
 export const ImmerProgrammingSlice = immer(ProgrammingSlice)

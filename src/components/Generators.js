@@ -68,6 +68,7 @@ export const callTemplateFromSpec = (type, functionReference, objectSpec) => {
 
 export const combinedBlockData = (state,staticData,id) => {
     const data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
+    const progress = state.executionData[id];
     const typeSpec = state.programSpec.objectTypes[data?.type] ? state.programSpec.objectTypes[data?.type] : {instanceBlock:{},referenceBlock:{},callBlock:{}};
     const refData = data?.ref ? state.programData[data?.ref] : null;
     const selected = data?.selected || refData?.selected;
@@ -79,5 +80,5 @@ export const combinedBlockData = (state,staticData,id) => {
         return referenceTemplateFromSpec(inst.type,inst,instType)
     })
     // Package up information on the block, data about the corresponding reference (if applicable), and argument blocks it contains
-    return [{...data,refData,selected,editing,argumentBlockData}, typeSpec]
+    return [{...data,refData,selected,editing,argumentBlockData}, typeSpec, progress]
 }

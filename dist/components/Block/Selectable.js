@@ -11,8 +11,6 @@ exports.Selectable = void 0;
 
 var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/taggedTemplateLiteral"));
 
-var _react = _interopRequireDefault(require("react"));
-
 var _styledComponents = _interopRequireWildcard(require("styled-components"));
 
 var _templateObject, _templateObject2;

@@ -3,7 +3,8 @@ import ReactFlow, {
   MiniMap,
   Controls,
   Background,
-  useReactFlow
+  useReactFlow,
+  ControlButton
 } from "react-flow-renderer";
 import { useDrop } from 'react-dnd';
 import { useProgrammingStore } from "./ProgrammingContext";
@@ -12,21 +13,24 @@ import { VisualBlock } from "./Block";
 import { DATA_TYPES } from "./Constants";
 import { referenceTemplateFromSpec } from "./Generators";
 import useMeasure from 'react-use-measure';
+import { FiLock, FiUnlock } from "react-icons/fi";
 
 const CanvasNode = ({ data }) => {
-  const { highlightColor, ...rest } = data;
-  console.log(rest)
+  const { highlightColor, progress, ...rest } = data;
+  // console.log(rest)
   return (
-    <VisualBlock data={rest} x={0} y={0} typeSpec={rest.typeSpec} onCanvas highlightColor={highlightColor} context={rest.context} />
+    <VisualBlock data={rest} x={0} y={0} typeSpec={rest.typeSpec} onCanvas highlightColor={highlightColor} context={rest.context} progress={progress} />
   )
 };
 
 export const Canvas = ({ highlightColor, drawerWidth }) => {
-
+  const locked = useProgrammingStore(state=>state.locked);
+  const setLocked = useProgrammingStore(state=>state.setLocked);
   const nodes = useProgrammingStore((state) =>
     Object.values(state.programData)
       .map((data) => {
         const typeSpec = state.programSpec.objectTypes[data.type];
+        const progress = state.executionData[data.id];
         const blockType = data.dataType === DATA_TYPES.INSTANCE
           ? 'instanceBlock'
           : data.dataType === DATA_TYPES.CALL
@@ -47,7 +51,8 @@ export const Canvas = ({ highlightColor, drawerWidth }) => {
           id: data.id,
           position: data.position,
           type: 'canvasNode',
-          data: { ...data, highlightColor, ref, typeSpec: { ...typeSpec, color, onCanvas }, context: data.arguments ? data.arguments : [], argumentBlockData }
+          // draggable:!locked,
+          data: { ...data, highlightColor, ref, typeSpec: { ...typeSpec, color, onCanvas }, context: data.arguments ? data.arguments : [], argumentBlockData, progress }
         }
       })
       .filter((data) => data.data.typeSpec?.onCanvas)
@@ -69,7 +74,7 @@ export const Canvas = ({ highlightColor, drawerWidth }) => {
     canDrop: (item) => item.onCanvas,
     drop: (item, monitor) => {
       const clientOffset = monitor.getClientOffset();
-      console.log(monitor)
+      // console.log(monitor)
       // const zoom = getZoom();
       const position = project({
         x: clientOffset.x - bounds.left - 50,
@@ -88,10 +93,10 @@ export const Canvas = ({ highlightColor, drawerWidth }) => {
         ref={drop}
         maxZoom={1.5}
         minZoom={0.5}
+        // panOnDrag={!locked}
         nodesConnectable={false}
         elementsSelectable={false}
         nodesDraggable={true}
-        
         nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}
         nodes={nodes}
         onConnect={(_) => { }}
@@ -117,7 +122,15 @@ export const Canvas = ({ highlightColor, drawerWidth }) => {
           }}
           nodeBorderRadius={3}
         />
-        <Controls />
+        <Controls showInteractive={false}>
+          <ControlButton onClick={()=>setLocked(!locked)}>
+            {locked ? (
+              <FiLock/>
+            ) : (
+              <FiUnlock/>
+            )}
+          </ControlButton>
+        </Controls>
         <Background variant="lines" color="#555" gap={30} />
       </ReactFlow>
     </div>

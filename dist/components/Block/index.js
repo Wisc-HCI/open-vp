@@ -57,10 +57,14 @@ var Block = function Block(_ref) {
   var _useProgrammingStore = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (state) {
     return (0, _Generators.combinedBlockData)(state, staticData, id);
   }, [id, staticData])),
-      _useProgrammingStore2 = (0, _slicedToArray2.default)(_useProgrammingStore, 2),
+      _useProgrammingStore2 = (0, _slicedToArray2.default)(_useProgrammingStore, 3),
       data = _useProgrammingStore2[0],
-      typeSpec = _useProgrammingStore2[1];
+      typeSpec = _useProgrammingStore2[1],
+      progress = _useProgrammingStore2[2];
 
+  var locked = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.locked;
+  });
   var blockContext = data.arguments ? data.arguments : [];
   var wholeContext = [].concat((0, _toConsumableArray2.default)(context), (0, _toConsumableArray2.default)(blockContext));
   var onCanvas = data.dataType === _.DATA_TYPES.REFERENCE ? typeSpec.referenceBlock.onCanvas : data.dataType === _.DATA_TYPES.CALL ? typeSpec.callBlock.onCanvas : data.dataType === _.DATA_TYPES.INSTANCE ? typeSpec.instanceBlock.onCanvas : "null";
@@ -79,7 +83,7 @@ var Block = function Block(_ref) {
           context: wholeContext
         };
       },
-      canDrag: !dragDisabled && !data.editing,
+      canDrag: !dragDisabled && !data.editing && !locked,
       collect: function collect(monitor) {
         return {
           isDragging: monitor.isDragging()
@@ -117,7 +121,8 @@ var Block = function Block(_ref) {
       context: wholeContext,
       interactionDisabled: interactionDisabled,
       fieldInfo: fieldInfo,
-      parentId: parentId
+      parentId: parentId,
+      progress: progress
     })), /*#__PURE__*/_react.default.createElement("div", {
       hidden: hidden,
       style: {

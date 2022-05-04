@@ -61,6 +61,8 @@ A number of useful constants are exported as enums. They are as follows:
 | `ADD_ARGUMENT`        | Allows the user add an argument to a function definition | `{type: EXTRA_TYPES.ADD_ARGUMENT, argumentType: 'hatType'}` |
 | `ADD_ARGUMENT_GROUP`  | A macro for specifying arguments that can be added to a function definition | `{type: EXTRA_TYPES.ADD_ARGUMENT_GROUP, allowed: ['hatType','bootType']}` |
 | `DEBUG_TOGGLE`        | Shows the data for a given block, useful in debugging | `EXTRA_TYPES.DEBUG_TOGGLE` |
+| `DIVIDER`             | Shows a simple divider to separate groups | `EXTRA_TYPES.DIVIDER` |
+| `LABEL`               | Shows a simple, non-interactive label | `{type: EXTRA_TYPES.LABEL}, label: 'Sizes'` |
 
 ### Store Data
 
@@ -171,14 +173,24 @@ const properties = {
     }
     /* A field called 'Speed' that stores a numerical 
     value in each instance's `properties.speed` field. 
-    It must be between 0 and 2, and is by default 1.
+    It must be between 0 and 20, and is by default 1. 
+    It is visually scaled by 0.1, so appears to the user
+    to range between 0 and 2, incrementing by steps of 0.1. 
+    Units are in 'm/s'. Visual Precision indicates the 
+    number of decimal places to use when displaying 
+    the number to the users, so this would show values 
+    to one decimal place.
      */
     speed: {
         name: "Speed",
         type: SIMPLE_PROPERTY_TYPES.NUMBER,
         default: 1,
         min: 0,
-        max: 2
+        max: 20,
+        step: 1,
+        units: 'm/s',
+        visualScaling: 0.1,
+        visualPrecision: 1
     },
     /* A field called 'Do Funky' that stores a boolean 
     value in each instance's `properties.doFunky` field. 

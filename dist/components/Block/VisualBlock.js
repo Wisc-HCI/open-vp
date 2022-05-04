@@ -31,16 +31,18 @@ var _ExtraBar = require("./ExtraBar");
 
 var _Selectable = require("./Selectable");
 
-var _ = require(".");
+var _2 = require(".");
 
 var _lodash = require("lodash");
 
 var _ExpandCarrot = require("./ExpandCarrot");
 
-var _Input = require("./Input");
+var _Progress = require("./Progress");
+
+var _Utility = require("./Utility");
 
 var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
-  var _data$refData, _data$refData2, _data$refData3, _data$refData4, _Object$entries;
+  var _data$refData, _data$refData2, _data$refData3, _data$refData4, _Object$entries, _Object$entries2;
 
   var data = _ref.data,
       x = _ref.x,
@@ -54,7 +56,8 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       context = _ref.context,
       fieldInfo = _ref.fieldInfo,
       parentId = _ref.parentId,
-      style = _ref.style;
+      style = _ref.style,
+      progress = _ref.progress;
   var blockSpec = data.dataType === _Constants.DATA_TYPES.REFERENCE ? typeSpec.referenceBlock : data.dataType === _Constants.DATA_TYPES.CALL ? typeSpec.callBlock : typeSpec.instanceBlock;
   var blockStyle = style ? style : {};
 
@@ -85,6 +88,13 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   var updateItemSimpleProperty = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.updateItemSimpleProperty;
   });
+  var setLocked = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.setLocked;
+  });
+  var locked = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.locked;
+  });
+  var minified = blockSpec.minified && data.dataType === _Constants.DATA_TYPES.INSTANCE;
   var simpleProperties = typeSpec.properties ? (0, _lodash.pickBy)(typeSpec.properties, function (entry) {
     return Object.values(_Constants.SIMPLE_PROPERTY_TYPES).includes(entry.type) && entry.type !== _Constants.SIMPLE_PROPERTY_TYPES.IGNORED;
   }) : {};
@@ -96,6 +106,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
   var editing = data.editing || ((_data$refData2 = data.refData) === null || _data$refData2 === void 0 ? void 0 : _data$refData2.editing);
   var selected = data.selected || ((_data$refData3 = data.refData) === null || _data$refData3 === void 0 ? void 0 : _data$refData3.selected);
   var undraggableArgs = {
+    className: editing || locked ? 'nodrag' : null,
     draggable: false,
     onDragStart: function onDragStart(e) {
       return e.stopPropagation();
@@ -107,27 +118,32 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       return e.stopPropagation();
     }
   };
-  return /*#__PURE__*/_react.default.createElement(_Selectable.Selectable, {
+  return /*#__PURE__*/_react.default.createElement(_Utility.ContextMenu, null, /*#__PURE__*/_react.default.createElement(_Utility.ContextMenuTrigger, {
+    asChild: true
+  }, /*#__PURE__*/_react.default.createElement(_Selectable.Selectable, {
     role: "Handle",
     selected: selected,
     highlightColor: highlightColor,
-    className: onCanvas && blockSpec.onCanvas ? null : "nodrag",
+    className: onCanvas && blockSpec.onCanvas && !editing && !locked ? null : "nodrag",
     ref: ref,
     style: (0, _objectSpread2.default)({
       minWidth: 175,
       width: bounded ? "inherit" : "max-content",
       backgroundColor: blockSpec.color,
       borderRadius: 3,
-      padding: 4,
+      padding: minified ? 0 : 4,
       flex: bounded ? 1 : null,
       transform: "translate(".concat(x ? x : 0, "px, ").concat(y ? y : 0, "px) scale(").concat(scale ? scale : 1, ")"),
       WebkitTransform: "translate(".concat(x ? x : 0, "px, ").concat(y ? y : 0, "px) scale(").concat(scale ? scale : 1, ")")
     }, blockStyle)
-  }, /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+    direction: "row",
+    justify: "between",
+    margin: "".concat(minified ? 1 : 4, "pt"),
+    align: "center",
+    alignContent: "between",
     style: {
-      margin: 4,
-      display: 'flex',
-      alignItems: 'center'
+      display: 'flex'
     }
   }, /*#__PURE__*/_react.default.createElement(_grommet.ThemeContext.Extend, {
     value: {
@@ -148,7 +164,13 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
         }
       }
     }
-  }, /*#__PURE__*/_react.default.createElement(_grommet.TextInput, Object.assign({}, undraggableArgs, {
+  }, !minified && /*#__PURE__*/_react.default.createElement(_grommet.TextInput, Object.assign({}, undraggableArgs, {
+    onMouseEnter: editing ? function (_) {
+      return setLocked(true);
+    } : null,
+    onMouseLeave: editing ? function (_) {
+      return setLocked(false);
+    } : null,
     size: "small",
     icon: /*#__PURE__*/_react.default.createElement(Icon, null),
     value: name,
@@ -158,7 +180,191 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     onChange: function onChange(e) {
       return updateItemName(data.refData ? data.refData.id : data.id, e.target.value);
     }
+  }))), minified && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+    overflow: "scroll",
+    direction: "row",
+    gap: "xxsmall",
+    pad: {
+      top: 'none',
+      bottom: 'none',
+      left: 'xxsmall'
+    },
+    border: "right",
+    alignContent: "center",
+    align: "center"
+  }, (_Object$entries = Object.entries(typeSpec.properties)) === null || _Object$entries === void 0 ? void 0 : _Object$entries.map(function (_ref2) {
+    var _ref3 = (0, _slicedToArray2.default)(_ref2, 2),
+        fieldKey = _ref3[0],
+        fieldInfo = _ref3[1];
+
+    if (Object.values(_Constants.SIMPLE_PROPERTY_TYPES).includes(fieldInfo.type) && fieldInfo.type !== _Constants.SIMPLE_PROPERTY_TYPES.IGNORED) {
+      if (fieldInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.OPTIONS) {
+        var currentText = fieldInfo.options.filter(function (option) {
+          return option.value === data.properties[fieldKey];
+        }).map(function (option) {
+          return option.label;
+        })[0];
+        return /*#__PURE__*/_react.default.createElement(_Utility.DropdownMenu, {
+          key: fieldKey
+        }, /*#__PURE__*/_react.default.createElement(_Utility.DropdownMenuTrigger, {
+          asChild: true
+        }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+          as: "div",
+          style: {
+            minWidth: currentText.length * 12
+          },
+          direction: "row",
+          align: "center",
+          hoverIndicator: "#00000055",
+          focusIndicator: false,
+          onClick: function onClick() {},
+          alignContent: "center",
+          background: "#00000022",
+          round: "xxsmall",
+          margin: "xxsmall",
+          height: "30pt",
+          pad: {
+            left: 'xxsmall',
+            right: 'xxsmall'
+          }
+        }, currentText)), /*#__PURE__*/_react.default.createElement(_Utility.DropdownMenuContent, null, /*#__PURE__*/_react.default.createElement(_Utility.DropdownMenuRadioGroup, {
+          value: data.properties[fieldKey],
+          onValueChange: function onValueChange(value) {
+            return updateItemSimpleProperty(data.id, fieldKey, value);
+          }
+        }, fieldInfo.options.map(function (option, idx) {
+          return /*#__PURE__*/_react.default.createElement(_Utility.DropdownMenuRadioItem, {
+            key: idx,
+            value: option.value,
+            highlightColor: highlightColor,
+            disabled: interactionDisabled
+          }, /*#__PURE__*/_react.default.createElement(_Utility.DropdownMenuItemIndicator, null, /*#__PURE__*/_react.default.createElement(_fi.FiCheck, null)), option.label);
+        }))));
+      } else if (fieldInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.BOOLEAN) {
+        return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+          key: fieldKey,
+          style: {
+            minWidth: 43
+          }
+        }, /*#__PURE__*/_react.default.createElement(_Utility.ToolTip, {
+          key: fieldKey,
+          content: /*#__PURE__*/_react.default.createElement("div", {
+            key: "label",
+            style: {
+              textAlign: 'center'
+            }
+          }, fieldInfo.name)
+        }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+          key: "sliderContainer",
+          style: {
+            minWidth: 43
+          },
+          focusIndicator: false
+        }, /*#__PURE__*/_react.default.createElement(_Utility.Switch, {
+          value: data.properties[fieldKey],
+          onCheckedChange: function onCheckedChange(value) {
+            return updateItemSimpleProperty(data.id, fieldKey, value);
+          },
+          highlightColor: highlightColor,
+          disabled: interactionDisabled
+        }))));
+      } else if (fieldInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.STRING) {
+        var currentValue = data.properties[fieldKey];
+        return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+          key: fieldKey,
+          style: {
+            minWidth: currentValue.length * 11 + 3,
+            maxWidth: currentValue.length * 11 + 5
+          }
+        }, /*#__PURE__*/_react.default.createElement(_Utility.ToolTip, {
+          content: /*#__PURE__*/_react.default.createElement("div", {
+            key: "label",
+            style: {
+              textAlign: 'center'
+            }
+          }, fieldInfo.name)
+        }, /*#__PURE__*/_react.default.createElement(_Utility.Input, {
+          key: fieldKey,
+          placeholder: fieldInfo.name,
+          onMouseEnter: function onMouseEnter(_) {
+            return setLocked(true);
+          },
+          onMouseLeave: function onMouseLeave(_) {
+            return setLocked(false);
+          },
+          css: {
+            fontSize: 14,
+            minWidth: 30,
+            textAlign: 'center',
+            color: '#00000088',
+            backgroundColor: '#efefef50',
+            boxShadow: "0 0 0 1px #efefef"
+          },
+          value: currentValue,
+          disabled: interactionDisabled,
+          onChange: function onChange(e) {
+            return updateItemSimpleProperty(data.id, fieldKey, e.target.value);
+          }
+        })));
+      } else if (fieldInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.NUMBER) {
+        return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+          key: fieldKey,
+          style: {
+            minWidth: 40
+          }
+        }, /*#__PURE__*/_react.default.createElement(_Utility.Slider, {
+          label: fieldInfo.name,
+          min: fieldInfo.min !== undefined ? fieldInfo.min : 0,
+          max: fieldInfo.max !== undefined ? fieldInfo.max : 10,
+          step: fieldInfo.step,
+          units: fieldInfo.units,
+          value: data.properties[fieldKey],
+          disabled: interactionDisabled,
+          visualScaling: fieldInfo.visualScaling,
+          visualPrecision: fieldInfo.visualPrecision,
+          onChange: function onChange(value) {
+            return updateItemSimpleProperty(data.id, fieldKey, value);
+          }
+        }));
+      }
+    } else {
+      // const innerLabel = !fieldInfo.fullWidth ? fieldInfo.name : '';
+      return /*#__PURE__*/_react.default.createElement(_Utility.ToolTip, {
+        key: fieldKey,
+        content: /*#__PURE__*/_react.default.createElement("div", {
+          key: "label",
+          style: {
+            textAlign: 'center'
+          }
+        }, fieldInfo.name)
+      }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+        key: fieldKey,
+        focusIndicator: false
+      }, fieldInfo.isList ? /*#__PURE__*/_react.default.createElement(_List.List, {
+        ids: data.properties[fieldKey],
+        fieldInfo: (0, _objectSpread2.default)((0, _objectSpread2.default)({}, fieldInfo), {}, {
+          value: fieldKey
+        }),
+        parentId: data.id,
+        interactionDisabled: interactionDisabled,
+        highlightColor: highlightColor,
+        context: context
+      }) : /*#__PURE__*/_react.default.createElement(_DropZone.DropZone, {
+        id: data.properties[fieldKey],
+        fieldInfo: (0, _objectSpread2.default)((0, _objectSpread2.default)({}, fieldInfo), {}, {
+          value: fieldKey,
+          name: !fieldInfo.fullWidth ? '' : fieldInfo.name
+        }),
+        parentId: data.id,
+        interactionDisabled: interactionDisabled,
+        highlightColor: highlightColor,
+        context: context
+      })));
+    }
+
+    return null;
   }))), (blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras) && /*#__PURE__*/_react.default.createElement(_ExtraBar.ExtraBar, {
+    highlightColor: highlightColor,
     fieldInfo: fieldInfo,
     parentId: parentId,
     interactionDisabled: interactionDisabled,
@@ -182,7 +388,10 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     },
     setIsCollapsed: setIsCollapsed,
     setIsDebugging: setIsDebugging
-  })), !isCollapsed && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+  })), /*#__PURE__*/_react.default.createElement(_Progress.ProgressBar, {
+    progress: progress,
+    color: highlightColor
+  }), !isCollapsed && !minified && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     animation: ['fadeIn', 'zoomIn']
   }, data.dataType === _Constants.DATA_TYPES.INSTANCE && typeSpec.type === _Constants.TYPES.FUNCTION && data.arguments && Object.keys(data.arguments).length > 0 && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     gap: "xsmall",
@@ -195,7 +404,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       backgroundColor: "rgba(0,0,0,0.2)"
     }
   }, data.argumentBlockData.map(function (argBlockData, argIdx) {
-    return /*#__PURE__*/_react.default.createElement(_.Block, {
+    return /*#__PURE__*/_react.default.createElement(_2.Block, {
       key: argIdx,
       staticData: argBlockData,
       parentId: data.id,
@@ -247,10 +456,10 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     style: {
       width: '100%'
     }
-  }, Object.entries(simpleProperties).map(function (_ref2) {
-    var _ref3 = (0, _slicedToArray2.default)(_ref2, 2),
-        propKey = _ref3[0],
-        propInfo = _ref3[1];
+  }, Object.entries(simpleProperties).map(function (_ref4) {
+    var _ref5 = (0, _slicedToArray2.default)(_ref4, 2),
+        propKey = _ref5[0],
+        propInfo = _ref5[1];
 
     return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       key: propKey,
@@ -267,23 +476,21 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     }, /*#__PURE__*/_react.default.createElement(_grommet.Text, {
       size: "small",
       color: "#00000088"
-    }, propInfo.name), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.BOOLEAN && /*#__PURE__*/_react.default.createElement(_grommet.CheckBox, {
-      size: "small",
-      focusIndicator: false,
-      disabled: interactionDisabled,
-      checked: data.properties[propKey],
-      onChange: function onChange() {
-        return updateItemSimpleProperty(data.id, propKey, !data.properties[propKey]);
-      }
+    }, propInfo.name), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.BOOLEAN && /*#__PURE__*/_react.default.createElement(_Utility.Switch, {
+      value: data.properties[propKey],
+      onCheckedChange: function onCheckedChange(value) {
+        return updateItemSimpleProperty(data.id, propKey, value);
+      },
+      highlightColor: highlightColor,
+      disabled: interactionDisabled
     }), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.NUMBER && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       width: "xsmall"
-    }, /*#__PURE__*/_react.default.createElement(_Input.NumberInput, {
-      size: "xsmall",
-      style: {
-        color: '#00000088'
-      },
+    }, /*#__PURE__*/_react.default.createElement(_Utility.Slider, {
+      label: null,
       min: propInfo.min !== undefined ? propInfo.min : 0,
       max: propInfo.max !== undefined ? propInfo.max : 10,
+      step: propInfo.step,
+      units: propInfo.units,
       value: data.properties[propKey],
       disabled: interactionDisabled,
       visualScaling: propInfo.visualScaling,
@@ -293,6 +500,12 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     })), propInfo.type === _Constants.SIMPLE_PROPERTY_TYPES.STRING && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       width: "xsmall"
     }, /*#__PURE__*/_react.default.createElement(_grommet.TextInput, {
+      onMouseEnter: function onMouseEnter(_) {
+        return setLocked(true);
+      },
+      onMouseLeave: function onMouseLeave(_) {
+        return setLocked(false);
+      },
       size: "xsmall",
       textAlign: "center",
       style: {
@@ -344,10 +557,10 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
       highlightColor: highlightColor,
       context: context
     }));
-  }), data.dataType === _Constants.DATA_TYPES.INSTANCE && ((_Object$entries = Object.entries(standardProperties)) === null || _Object$entries === void 0 ? void 0 : _Object$entries.map(function (_ref4) {
-    var _ref5 = (0, _slicedToArray2.default)(_ref4, 2),
-        fieldKey = _ref5[0],
-        fieldInfo = _ref5[1];
+  }), data.dataType === _Constants.DATA_TYPES.INSTANCE && ((_Object$entries2 = Object.entries(standardProperties)) === null || _Object$entries2 === void 0 ? void 0 : _Object$entries2.map(function (_ref6) {
+    var _ref7 = (0, _slicedToArray2.default)(_ref6, 2),
+        fieldKey = _ref7[0],
+        fieldInfo = _ref7[1];
 
     var innerLabel = !fieldInfo.fullWidth ? fieldInfo.name : '';
     return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
@@ -395,6 +608,31 @@ var VisualBlock = /*#__PURE__*/(0, _react.forwardRef)(function (_ref, ref) {
     }
   }, JSON.stringify((0, _objectSpread2.default)((0, _objectSpread2.default)({}, data), {}, {
     interactionDisabled: interactionDisabled ? true : false
-  }), null, "  ")));
+  }), null, "  ")))), /*#__PURE__*/_react.default.createElement(_Utility.ContextMenuContent, null, /*#__PURE__*/_react.default.createElement(_ExtraBar.RightClickMenu, {
+    highlightColor: highlightColor,
+    fieldInfo: fieldInfo,
+    parentId: parentId,
+    interactionDisabled: interactionDisabled,
+    data: data,
+    blockSpec: blockSpec,
+    isEditing: editing,
+    isCollapsed: isCollapsed,
+    isSelected: selected,
+    isDebugging: isDebugging,
+    setIsEditing: data.dataType === _Constants.DATA_TYPES.REFERENCE || data.dataType === _Constants.DATA_TYPES.CALL ? function (v) {
+      return setIsEditing(data.ref, v);
+    } : function (v) {
+      return setIsEditing(data.id, v);
+    },
+    setIsSelected: data.dataType === _Constants.DATA_TYPES.REFERENCE || data.dataType === _Constants.DATA_TYPES.CALL ? function (v) {
+      console.log(data);
+      setIsSelected(data.ref, v);
+    } : function (v) {
+      console.log(data);
+      setIsSelected(data.id, v);
+    },
+    setIsCollapsed: setIsCollapsed,
+    setIsDebugging: setIsDebugging
+  })));
 });
 exports.VisualBlock = VisualBlock;

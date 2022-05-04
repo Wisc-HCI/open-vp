@@ -21,12 +21,14 @@ const Block = ({
   context,
   interactionDisabled
 }) => {
-  const [data, typeSpec] = useProgrammingStore(
+  const [data, typeSpec, progress] = useProgrammingStore(
     useCallback(
       (state) => combinedBlockData(state,staticData,id),
       [id, staticData]
     )
   );
+
+  const locked = useProgrammingStore(state=>state.locked);
 
   const blockContext = data.arguments ? data.arguments : [];
   const wholeContext = [...context,...blockContext];
@@ -45,7 +47,7 @@ const Block = ({
       item: () => {
         return { data, typeSpec, parentId, fieldInfo, idx, onCanvas, context:wholeContext };
       },
-      canDrag: !dragDisabled && !data.editing,
+      canDrag: !dragDisabled && !data.editing && !locked,
       collect: (monitor) => ({ isDragging: monitor.isDragging() })
     }),
     [data, typeSpec, parentId, fieldInfo, idx, dragDisabled]
@@ -64,7 +66,7 @@ const Block = ({
       <>
         {/* Hide the visual block if it is not coming from a spawner. The "after" is also hidden, if applicable */}
         <div hidden={hidden} style={{flex:1,display:hidden?'none':'flex'}}>
-          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext} interactionDisabled={interactionDisabled} fieldInfo={fieldInfo} parentId={parentId}/>
+          <VisualBlock data={data} ref={drag} typeSpec={typeSpec} bounded={bounded} highlightColor={highlightColor} context={wholeContext} interactionDisabled={interactionDisabled} fieldInfo={fieldInfo} parentId={parentId} progress={progress}/>
         </div>
         <div hidden={hidden} style={{display:hidden?'none':'flex'}}>
           {/* 'after' is usually a drop region in the case of lists */}

@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from 'react';
-import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES } from '../components';
+import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES, SIMPLE_PROPERTY_TYPES } from '../components';
 import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiMoreHorizontal } from "react-icons/fi";
 import useMeasure from 'react-use-measure';
 
@@ -35,6 +35,7 @@ TAP.args = {
     { title: "Actions", dataType: DATA_TYPES.REFERENCE, objectType: 'actionType', icon: FiBox },
     { title: "States", dataType: DATA_TYPES.REFERENCE, objectType: 'stateType', icon: FiGrid },
     { title: "Events", dataType: DATA_TYPES.REFERENCE, objectType: 'eventType', icon: FiGrid },
+    { title: "State Operations", dataType: DATA_TYPES.INSTANCE, objectTypes: ['notStateType'], icon: FiGrid}
     // { title: "Action Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: [], icon: FiClipboard },
     // { title: "State Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: ["notStateType", "isConstantStateType", "andStateType", "orStateType", "toStateType", "constantStateType"], icon: FiClipboard },
     // { title: "Event Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: ["notEventType", "isConstantEventType", "orEventType", "toEventType", "constantEventType", "emptyEventType"], icon: FiClipboard },
@@ -215,6 +216,65 @@ TAP.args = {
         ]
       }
     },
+    notStateType: {
+      name: 'Not-State',
+      type: TYPES.OBJECT,
+      instanceBlock: {
+        onCanvas: false,
+        minified: true,
+        color: "#89b18d",
+        icon: FiGrid,
+        extras: [
+          {
+            icon: FiMoreHorizontal,
+            type: EXTRA_TYPES.DROPDOWN,
+            contents: [
+              EXTRA_TYPES.DELETE_BUTTON,
+              EXTRA_TYPES.NAME_EDIT_TOGGLE,
+              EXTRA_TYPES.DEBUG_TOGGLE
+            ]
+          }
+        ]
+      },
+      referenceBlock: null,
+      properties: {
+        expressionType: {
+          name: "Type",
+          type: SIMPLE_PROPERTY_TYPES.OPTIONS,
+          options: [{value:'not',label:'Not'},{value:'is',label:'Is'}],
+          default: 'not'
+        },
+        doFunky: {
+          name: "Do Funky",
+          type: SIMPLE_PROPERTY_TYPES.BOOLEAN,
+          default: false
+        },
+        speed: {
+          name: "Speed",
+          type: SIMPLE_PROPERTY_TYPES.NUMBER,
+          default: 1,
+          min: -2,
+          max: 2,
+          step: 0.1,
+          units: 'm/s',
+          visualScaling: 0.1,
+          visualPrecision: 1
+        },
+        hat: {
+          name: "Hat",
+          type: SIMPLE_PROPERTY_TYPES.STRING,
+          default: 'Funny'
+        },
+        stateExpression: {
+          name: 'State',
+          accepts: ['stateType', "notStateType", "isConstantStateType", "andStateType", "orStateType", "toStateType", "constantStateType"],
+          default: null,
+          isList: false,
+          fullWidth: false
+        },
+        
+      }
+    }
   },
   programData: {
     "6dewwwwww": {

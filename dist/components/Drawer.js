@@ -33,6 +33,58 @@ var _Generators = require("./Generators");
 
 var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
 
+var ScrollArea = _interopRequireWildcard(require("@radix-ui/react-scroll-area"));
+
+var _react2 = require("@stitches/react");
+
+var StyledScrollArea = (0, _react2.styled)(ScrollArea.Root, {
+  overflow: "hidden"
+});
+var StyledViewport = (0, _react2.styled)(ScrollArea.Viewport, {
+  width: "100%",
+  height: "100%",
+  borderRadius: "inherit",
+  padding: '4pt'
+});
+var StyledScrollbar = (0, _react2.styled)(ScrollArea.Scrollbar, {
+  display: "flex",
+  // ensures no selection
+  userSelect: "none",
+  // disable browser handling of all panning and zooming gestures on touch devices
+  touchAction: "none",
+  padding: 2,
+  background: '#55555525',
+  transition: "background 160ms ease-out",
+  "&:hover": {
+    background: '#45454540'
+  },
+  '&[data-orientation="vertical"]': {
+    width: 8
+  },
+  '&[data-orientation="horizontal"]': {
+    flexDirection: "column",
+    height: 8
+  }
+});
+var StyledThumb = (0, _react2.styled)(ScrollArea.Thumb, {
+  flex: 1,
+  background: "#eeeeee66",
+  borderRadius: 8 // increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html
+  // position: "relative",
+  // "&::before": {
+  //   content: '""',
+  //   position: "absolute",
+  //   top: "50%",
+  //   left: "50%",
+  //   transform: "translate(-50%, -50%)",
+  //   width: "100%",
+  //   height: "100%",
+  //   minWidth: 44,
+  //   minHeight: 44
+  // }
+
+});
+
 var TipContent = function TipContent(_ref) {
   var message = _ref.message;
   return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
@@ -128,7 +180,7 @@ var Drawer = function Drawer(_ref2) {
   });
   return /*#__PURE__*/_react.default.createElement(_web.animated.div, {
     style: (0, _objectSpread2.default)({
-      backgroundColor: "black",
+      // backgroundColor: "black",
       display: 'flex',
       padding: 0
     }, sidebarStyle)
@@ -216,25 +268,17 @@ var Drawer = function Drawer(_ref2) {
     onChange: function onChange(e) {
       return setSearchTerm(e.target.value);
     }
-  })), /*#__PURE__*/_react.default.createElement(_grommet.Box, {
-    style: {
+  })), /*#__PURE__*/_react.default.createElement(StyledScrollArea, {
+    css: {
       height: drawerBounds.height - headerBounds.height,
-      overflowY: 'scroll'
+      width: drawerWidth
     }
-  }, /*#__PURE__*/_react.default.createElement(_grommet.List, {
-    data: blocks,
-    border: false,
-    style: {
-      padding: 5
-    },
-    margin: "none",
-    pad: "none"
-  }, function (block, idx) {
+  }, /*#__PURE__*/_react.default.createElement(StyledViewport, null, blocks.map(function (block, idx) {
     return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
       key: idx,
       animation: {
         type: 'fadeIn',
-        delay: idx * 100
+        delay: idx * 30
       },
       style: {
         marginBottom: 5,
@@ -254,7 +298,11 @@ var Drawer = function Drawer(_ref2) {
         isSpawner: true
       }
     }));
-  })))));
+  })), /*#__PURE__*/_react.default.createElement(StyledScrollbar, {
+    orientation: "horizontal"
+  }, /*#__PURE__*/_react.default.createElement(StyledThumb, null)), /*#__PURE__*/_react.default.createElement(StyledScrollbar, {
+    orientation: "vertical"
+  }, /*#__PURE__*/_react.default.createElement(StyledThumb, null)), /*#__PURE__*/_react.default.createElement(ScrollArea.Corner, null)))));
 };
 
 exports.Drawer = Drawer;

@@ -31,13 +31,16 @@ var _Generators = require("./Generators");
 
 var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
 
-var _excluded = ["highlightColor"];
+var _fi = require("react-icons/fi");
+
+var _excluded = ["highlightColor", "progress"];
 
 var CanvasNode = function CanvasNode(_ref) {
   var data = _ref.data;
   var highlightColor = data.highlightColor,
-      rest = (0, _objectWithoutProperties2.default)(data, _excluded);
-  console.log(rest);
+      progress = data.progress,
+      rest = (0, _objectWithoutProperties2.default)(data, _excluded); // console.log(rest)
+
   return /*#__PURE__*/_react.default.createElement(_Block.VisualBlock, {
     data: rest,
     x: 0,
@@ -45,18 +48,26 @@ var CanvasNode = function CanvasNode(_ref) {
     typeSpec: rest.typeSpec,
     onCanvas: true,
     highlightColor: highlightColor,
-    context: rest.context
+    context: rest.context,
+    progress: progress
   });
 };
 
 var Canvas = function Canvas(_ref2) {
   var highlightColor = _ref2.highlightColor,
       drawerWidth = _ref2.drawerWidth;
+  var locked = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.locked;
+  });
+  var setLocked = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.setLocked;
+  });
   var nodes = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return Object.values(state.programData).map(function (data) {
       var _state$programSpec$ob, _state$programSpec$ob2;
 
       var typeSpec = state.programSpec.objectTypes[data.type];
+      var progress = state.executionData[data.id];
       var blockType = data.dataType === _Constants.DATA_TYPES.INSTANCE ? 'instanceBlock' : data.dataType === _Constants.DATA_TYPES.CALL ? 'callBlock' : data.dataType === _Constants.DATA_TYPES.REFERENCE ? 'referenceBlock' : 'nullBlock';
       var color = (_state$programSpec$ob = state.programSpec.objectTypes[data.type][blockType]) === null || _state$programSpec$ob === void 0 ? void 0 : _state$programSpec$ob.color;
       var onCanvas = (_state$programSpec$ob2 = state.programSpec.objectTypes[data.type][blockType]) === null || _state$programSpec$ob2 === void 0 ? void 0 : _state$programSpec$ob2.onCanvas;
@@ -71,6 +82,7 @@ var Canvas = function Canvas(_ref2) {
         id: data.id,
         position: data.position,
         type: 'canvasNode',
+        // draggable:!locked,
         data: (0, _objectSpread2.default)((0, _objectSpread2.default)({}, data), {}, {
           highlightColor: highlightColor,
           ref: ref,
@@ -79,7 +91,8 @@ var Canvas = function Canvas(_ref2) {
             onCanvas: onCanvas
           }),
           context: data.arguments ? data.arguments : [],
-          argumentBlockData: argumentBlockData
+          argumentBlockData: argumentBlockData,
+          progress: progress
         })
       };
     }).filter(function (data) {
@@ -125,8 +138,8 @@ var Canvas = function Canvas(_ref2) {
       return item.onCanvas;
     },
     drop: function drop(item, monitor) {
-      var clientOffset = monitor.getClientOffset();
-      console.log(monitor); // const zoom = getZoom();
+      var clientOffset = monitor.getClientOffset(); // console.log(monitor)
+      // const zoom = getZoom();
 
       var position = project({
         x: clientOffset.x - bounds.left - 50,
@@ -145,7 +158,8 @@ var Canvas = function Canvas(_ref2) {
   }, /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.default, {
     ref: drop,
     maxZoom: 1.5,
-    minZoom: 0.5,
+    minZoom: 0.5 // panOnDrag={!locked}
+    ,
     nodesConnectable: false,
     elementsSelectable: false,
     nodesDraggable: true,
@@ -178,7 +192,13 @@ var Canvas = function Canvas(_ref2) {
       return "#fff";
     },
     nodeBorderRadius: 3
-  }), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.Controls, null), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.Background, {
+  }), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.Controls, {
+    showInteractive: false
+  }, /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.ControlButton, {
+    onClick: function onClick() {
+      return setLocked(!locked);
+    }
+  }, locked ? /*#__PURE__*/_react.default.createElement(_fi.FiLock, null) : /*#__PURE__*/_react.default.createElement(_fi.FiUnlock, null))), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.Background, {
     variant: "lines",
     color: "#555",
     gap: 30

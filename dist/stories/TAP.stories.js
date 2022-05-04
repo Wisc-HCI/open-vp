@@ -93,6 +93,11 @@ TAP.args = {
     dataType: _components.DATA_TYPES.REFERENCE,
     objectType: 'eventType',
     icon: _fi.FiGrid
+  }, {
+    title: "State Operations",
+    dataType: _components.DATA_TYPES.INSTANCE,
+    objectTypes: ['notStateType'],
+    icon: _fi.FiGrid
   } // { title: "Action Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: [], icon: FiClipboard },
   // { title: "State Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: ["notStateType", "isConstantStateType", "andStateType", "orStateType", "toStateType", "constantStateType"], icon: FiClipboard },
   // { title: "Event Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: ["notEventType", "isConstantEventType", "orEventType", "toEventType", "constantEventType", "emptyEventType"], icon: FiClipboard },
@@ -238,6 +243,64 @@ TAP.args = {
           type: _components.EXTRA_TYPES.DROPDOWN,
           contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.DEBUG_TOGGLE]
         }]
+      }
+    },
+    notStateType: {
+      name: 'Not-State',
+      type: _components.TYPES.OBJECT,
+      instanceBlock: {
+        onCanvas: false,
+        minified: true,
+        color: "#89b18d",
+        icon: _fi.FiGrid,
+        extras: [{
+          icon: _fi.FiMoreHorizontal,
+          type: _components.EXTRA_TYPES.DROPDOWN,
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.DEBUG_TOGGLE]
+        }]
+      },
+      referenceBlock: null,
+      properties: {
+        expressionType: {
+          name: "Type",
+          type: _components.SIMPLE_PROPERTY_TYPES.OPTIONS,
+          options: [{
+            value: 'not',
+            label: 'Not'
+          }, {
+            value: 'is',
+            label: 'Is'
+          }],
+          default: 'not'
+        },
+        doFunky: {
+          name: "Do Funky",
+          type: _components.SIMPLE_PROPERTY_TYPES.BOOLEAN,
+          default: false
+        },
+        speed: {
+          name: "Speed",
+          type: _components.SIMPLE_PROPERTY_TYPES.NUMBER,
+          default: 1,
+          min: -2,
+          max: 2,
+          step: 0.1,
+          units: 'm/s',
+          visualScaling: 0.1,
+          visualPrecision: 1
+        },
+        hat: {
+          name: "Hat",
+          type: _components.SIMPLE_PROPERTY_TYPES.STRING,
+          default: 'Funny'
+        },
+        stateExpression: {
+          name: 'State',
+          accepts: ['stateType', "notStateType", "isConstantStateType", "andStateType", "orStateType", "toStateType", "constantStateType"],
+          default: null,
+          isList: false,
+          fullWidth: false
+        }
       }
     }
   },

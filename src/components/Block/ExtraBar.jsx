@@ -1,25 +1,33 @@
 import React from 'react';
 import { useCallback } from "react";
 import { FiLock, FiUnlock, FiMoreHorizontal, FiCircle, FiEdit3, FiSave, FiEye, FiEyeOff, FiTrash2, FiZap, FiZapOff, FiPlus } from "react-icons/fi";
-import { Box, DropButton, Button } from "grommet";
+import { FiChevronRight, FiChevronDown } from "react-icons/fi";
+import { Box, Button } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { DATA_TYPES, EXTRA_TYPES } from "..";
 import { ExpandCarrot } from "./ExpandCarrot";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuItemIndicator, DropdownMenuCheckboxItem, DropdownMenuTriggerItem, RightSlot, DropdownMenuSeparator, OtherStyledSeparator, ContextMenuTriggerItem, ContextMenuSeparator, ContextMenuCheckboxItem, ContextMenuItemIndicator, ContextMenuContent, ContextMenu, ContextMenuLabel, DropdownMenuLabel } from './Utility';
 
-const Pill = ({value}) => {
+
+const MENU_TYPES = {
+    DROPDOWN: 'DROPDOWN',
+    CONTEXT: 'CONTEXT'
+}
+
+const Pill = ({ value }) => {
     return (
         <div
             style={{
-                borderRadius:20,
-                minWidth:9,
+                borderRadius: 20,
+                minWidth: 6,
                 backgroundColor: "#00000022",
-                paddingLeft:7,
-                paddingRight:7,
-                borderStyle:'solid',
-                borderColor:'#00000088',
+                paddingLeft: 7,
+                paddingRight: 7,
+                borderStyle: 'solid',
+                borderColor: '#00000088',
                 borderWidth: 1,
-                textAlign:'center',
-                fontSize:10
+                textAlign: 'center',
+                fontSize: 10
             }}
         >
             {value}
@@ -27,7 +35,7 @@ const Pill = ({value}) => {
     )
 }
 
-const FunctionButtonExtra = ({ actionInfo, data, blockSpec, inTopLevel, interactionDisabled }) => {
+const FunctionButtonExtra = ({ actionInfo, data, blockSpec, inTopLevel, interactionDisabled, highlightColor, menuType }) => {
     const onClick = useProgrammingStore(useCallback(state => {
         if (typeof actionInfo.onClick === 'function') {
             return actionInfo.onClick
@@ -36,26 +44,69 @@ const FunctionButtonExtra = ({ actionInfo, data, blockSpec, inTopLevel, interact
         }
     }, [actionInfo]))
 
-    const ExtraActionIcon = actionInfo.icon ? actionInfo.icon : FiCircle;
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
 
-    return (
-        <Button
-            size='small'
-            focusIndicator={false}
-            hoverIndicator={false}
-            disabled={interactionDisabled}
-            plain
-            style={{ padding: inTopLevel ? null : '5pt 10pt 5pt 10pt' }}
-            icon={<ExtraActionIcon />}
-            label={inTopLevel ? null : actionInfo.label}
-            onClick={() => onClick(data, blockSpec)}
-        />
-    )
+    const ExtraActionIcon = actionInfo.icon ? actionInfo.icon : FiCircle;
+    const inner = <Button
+        size='small'
+        focusIndicator={false}
+        hoverIndicator={false}
+        disabled={interactionDisabled}
+        plain
+        style={{ padding: inTopLevel ? null : '5pt 10pt 5pt 10pt' }}
+        icon={inTopLevel ? <ExtraActionIcon /> : null}
+        label={inTopLevel ? null : actionInfo.label}
+        onClick={() => onClick(data, blockSpec)}
+    />
+
+    if (inTopLevel) {
+        return inner
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor} disabled={interactionDisabled} onSelect={() => onClick(data, blockSpec)}>
+                <Indicator>
+                    <ExtraActionIcon />
+                </Indicator>
+                {inner}
+            </Wrapper>
+        )
+    }
 }
 
-const LockIndicatorExtra = ({ locked, inTopLevel }) => {
+const LabelExtra = ({ inTopLevel, menuType, label }) => {
+
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuLabel : ContextMenuLabel;
+
+    if (inTopLevel) {
+        return (
+            <Button
+                size='small'
+                plain
+                focusIndicator={false}
+                hoverIndicator={false}
+                disabled
+                style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+                label={label}
+            />
+        )
+    } else {
+        return (
+            <Wrapper>
+                {label}
+            </Wrapper>
+        )
+    }
+
+}
+
+const LockIndicatorExtra = ({ locked, inTopLevel, highlightColor, menuType }) => {
     const Icon = locked ? FiLock : FiUnlock;
-    return (
+
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+
+    const inner = (
         <Button
             size='small'
             plain
@@ -63,33 +114,65 @@ const LockIndicatorExtra = ({ locked, inTopLevel }) => {
             hoverIndicator={false}
             disabled
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-            icon={<Icon />}
+            icon={inTopLevel ? <Icon /> : null}
             label={inTopLevel ? null : locked ? 'Locked' : 'Unlocked'}
         />
     )
+
+    if (inTopLevel) {
+        return inner
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor} disabled>
+                <Indicator>
+                    <Icon />
+                </Indicator>
+                {inner}
+            </Wrapper>
+        )
+    }
+
 }
 
-const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, inTopLevel }) => {
+const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, interactionDisabled, inTopLevel, highlightColor, menuType }) => {
     const Icon = isEditing ? FiSave : FiEdit3;
-    return (
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+    const inner = (
         <Button
             size='small'
             plain
             focusIndicator={false}
             hoverIndicator={false}
-            disabled={locked}
+            disabled={locked || interactionDisabled}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-            icon={<Icon />}
+            icon={inTopLevel ? <Icon /> : null}
             label={inTopLevel ? null : isEditing ? 'Save' : 'Edit Name'}
             onClick={() => setIsEditing(!isEditing)}
         />
     )
+
+    if (inTopLevel) {
+        return inner
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor} disabled={locked || interactionDisabled} onSelect={() => setIsEditing(!isEditing)}>
+                <Indicator>
+                    <Icon />
+                </Indicator>
+                {inner}
+            </Wrapper>
+        )
+    }
 }
 
-const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel, data, locked }) => {
+const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel, data, locked, highlightColor, menuType }) => {
     const Icon = isSelected ? FiEyeOff : FiEye;
     const disabled = data.dataType === DATA_TYPES.INSTANCE && locked;
-    return (
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+
+    const inner = (
         <Button
             plain
             disabled={disabled}
@@ -97,88 +180,145 @@ const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel, data, loc
             hoverIndicator={false}
             size='small'
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-            icon={<Icon />}
+            icon={inTopLevel ? <Icon /> : null}
             label={inTopLevel ? null : isSelected ? 'Deselect' : 'Select'}
             onClick={() => setIsSelected(!isSelected)}
         />
     )
-}
-
-const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
-    return (
-        <Button
-            plain
-            focusIndicator={false}
-            hoverIndicator={false}
-            size='small'
-            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-            icon={<ExpandCarrot expanded={!isCollapsed} />}
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            label={inTopLevel ? null : isCollapsed ? "Expand" : "Collapse"}
-        />
-    )
-}
-
-const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel }) => {
-    const Icon = isDebugging ? FiZapOff : FiZap;
-    return (
-        <Button
-            plain
-            focusIndicator={false}
-            hoverIndicator={false}
-            size='small'
-            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-            icon={<Icon />}
-            onClick={() => setIsDebugging(!isDebugging)}
-            label={inTopLevel ? null : isDebugging ? "Cancel Debug" : "Debug"}
-        />
-    )
-}
-
-const IndicatorTextExtra = ({ value, label, inTopLevel }) => {
-
     if (inTopLevel) {
-        return ( <Pill value={value} /> )
+        return inner
     } else {
         return (
-            <Button
-                size='small'
-                plain
-                focusIndicator={false}
-                hoverIndicator={false}
-                style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-                icon={
-                    <Pill value={value} />
-                }
-                label={label}
-            />
+            <Wrapper checked highlightColor={highlightColor} disabled={disabled} onSelect={() => setIsSelected(!isSelected)}>
+                <Indicator>
+                    <Icon />
+                </Indicator>
+                {inner}
+            </Wrapper>
         )
     }
 }
 
-const IndicatorIconExtra = ({ value, label, inTopLevel }) => {
-
-    return (
-        <Button 
+const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel, highlightColor, menuType }) => {
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+    const inner = (
+        <Button
+            plain
+            focusIndicator={false}
+            hoverIndicator={false}
             size='small'
-            plain 
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+            icon={inTopLevel ? <ExpandCarrot expanded={!isCollapsed} /> : null}
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            label={inTopLevel ? null : isCollapsed ? "Expand" : "Collapse"}
+        />
+    )
+    if (inTopLevel) {
+        return inner
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor} onSelect={() => setIsCollapsed(!isCollapsed)}>
+                <Indicator>
+                    {isCollapsed ? <FiChevronDown /> : <FiChevronRight />}
+                </Indicator>
+                {inner}
+            </Wrapper>
+        )
+    }
+}
+
+const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel, highlightColor, menuType }) => {
+    const Icon = isDebugging ? FiZapOff : FiZap;
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+    const inner = (
+        <Button
+            plain
+            focusIndicator={false}
+            hoverIndicator={false}
+            size='small'
+            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+            icon={inTopLevel ? <Icon /> : null}
+            onClick={() => setIsDebugging(!isDebugging)}
+            label={inTopLevel ? null : isDebugging ? "Cancel Debug" : "Debug"}
+        />
+    )
+    if (inTopLevel) {
+        return inner
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor} onSelect={() => setIsDebugging(!isDebugging)}>
+                <Indicator>
+                    <Icon />
+                </Indicator>
+                {inner}
+            </Wrapper>
+        )
+    }
+}
+
+const IndicatorTextExtra = ({ value, label, inTopLevel, highlightColor, menuType }) => {
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+    if (inTopLevel) {
+        return (<Pill value={value} />)
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor}>
+                <Indicator>
+                    <Pill value={value} />
+                </Indicator>
+                <Button
+                    size='small'
+                    plain
+                    focusIndicator={false}
+                    hoverIndicator={false}
+                    style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+                    label={label}
+                />
+            </Wrapper>
+        )
+    }
+}
+
+const IndicatorIconExtra = ({ value, label, inTopLevel, highlightColor, menuType }) => {
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+    const inner = (
+        <Button
+            size='small'
+            plain
             focusIndicator={false}
             hoverIndicator={false}
             disabled={true}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-            icon={value}
-            label={inTopLevel? null : label}
+            icon={inTopLevel ? value : null}
+            label={inTopLevel ? null : label}
         />
     )
+    if (inTopLevel) {
+        return inner
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor}>
+                <Indicator>
+                    {value}
+                </Indicator>
+                {inner}
+            </Wrapper>
+        )
+    }
 }
 
-const AddArgumentExtra = ({data, argumentType, interactionDisabled, inTopLevel}) => {
-
-    const typeSpec = useProgrammingStore(useCallback(store=>store.programSpec.objectTypes[argumentType],[argumentType]))
+const AddArgumentExtra = ({ data, argumentType, interactionDisabled, inTopLevel, highlightColor, menuType }) => {
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+    const typeSpec = useProgrammingStore(useCallback(store => store.programSpec.objectTypes[argumentType], [argumentType]))
     const Icon = typeSpec?.referenceBlock?.icon ? typeSpec.referenceBlock.icon : FiPlus;
-    const addArgument = useProgrammingStore(store=>store.addArgument);
+    const addArgument = useProgrammingStore(store => store.addArgument);
 
-    return (
+    const inner = (
         <Button
             size='small'
             plain
@@ -186,177 +326,427 @@ const AddArgumentExtra = ({data, argumentType, interactionDisabled, inTopLevel})
             hoverIndicator={false}
             disabled={interactionDisabled}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-            icon={<Icon/>}
-            onClick={()=>addArgument(data.id,argumentType)}
+            icon={inTopLevel ? <Icon /> : null}
+            onClick={() => addArgument(data.id, argumentType)}
             label={inTopLevel ? null : `Add ${typeSpec.name} Argument`}
         />
     )
+    if (inTopLevel) {
+        return inner
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor} disabled={interactionDisabled} onSelect={() => addArgument(data.id, argumentType)}>
+                <Indicator>
+                    <Icon />
+                </Indicator>
+                {inner}
+            </Wrapper>
+        )
+    }
 }
 
-const AddArgumentGroupExtra = ({data, allowed, interactionDisabled, inTopLevel}) => {
-    
+const AddArgumentGroupExtra = ({ data, allowed, interactionDisabled, inTopLevel, highlightColor, menuType }) => {
+
     return (
         <DropdownExtra
             icon={FiPlus}
             label='Add Argument'
-            contents={allowed.map(argumentType=>({type:EXTRA_TYPES.ADD_ARGUMENT,argumentType}))}
+            contents={allowed.map(argumentType => ({ type: EXTRA_TYPES.ADD_ARGUMENT, argumentType }))}
             inTopLevel={inTopLevel}
             data={data}
             interactionDisabled={interactionDisabled}
+            highlightColor={highlightColor}
+            menuType={menuType}
         />
     )
 }
 
-const DeleteExtra = ({data, inTopLevel, locked, fieldInfo, parentId}) => {
+const DeleteExtra = ({ data, inTopLevel, locked, fieldInfo, parentId, highlightColor, menuType }) => {
     const deleteFunc = useProgrammingStore(state => state.deleteBlock);
     const canDeleteInstance = parentId === 'spawner' && data.dataType === DATA_TYPES.REFERENCE && data.refData?.canDelete;
     const canDelete = (!locked && data.canDelete) || canDeleteInstance;
-
-    return (
-        <Button 
+    const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
+    const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+    const inner = (
+        <Button
             size='small'
-            plain 
+            plain
             focusIndicator={false}
             hoverIndicator={false}
             disabled={!canDelete}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-            icon={<FiTrash2/>} 
-            label={inTopLevel? null : 'Delete'}
-            onClick={()=>deleteFunc(data, parentId, fieldInfo)}
+            icon={inTopLevel ? <FiTrash2 /> : null}
+            label={inTopLevel ? null : 'Delete'}
+            onClick={() => deleteFunc(data, parentId, fieldInfo)}
         />
     )
+    if (inTopLevel) {
+        return inner
+    } else {
+        return (
+            <Wrapper checked highlightColor={highlightColor} disabled={!canDelete} onSelect={() => deleteFunc(data, parentId, fieldInfo)}>
+                <Indicator>
+                    <FiTrash2 />
+                </Indicator>
+                {inner}
+            </Wrapper>
+        )
+    }
 }
 
-const DropdownExtra = ({ 
-    icon, contents, label, inTopLevel, data, blockSpec, 
+const DropdownExtra = ({
+    icon, contents, label, inTopLevel, data, blockSpec,
     isEditing, isCollapsed, isSelected, isDebugging,
     setIsEditing, setIsCollapsed, setIsSelected, setIsDebugging,
-    interactionDisabled, parentId, fieldInfo }) => {
+    interactionDisabled, parentId, fieldInfo, highlightColor, menuType }) => {
 
-    const DropIcon = icon ? icon : FiMoreHorizontal;
+    const DropIcon = icon ? icon : inTopLevel ? FiMoreHorizontal : FiChevronRight;
+    const TriggerComponent = menuType === MENU_TYPES.CONTEXT ? ContextMenuTriggerItem : inTopLevel ? DropdownMenuTrigger : DropdownMenuTriggerItem;
+    const ContentComponent = menuType === MENU_TYPES.CONTEXT ? ContextMenuContent : DropdownMenuContent;
+    const MenuComponent = menuType === MENU_TYPES.CONTEXT ? ContextMenu : DropdownMenu;
+    const usedLabel = label ? label : 'More Options'
 
     return (
-        <DropButton
-            focusIndicator={false}
-            hoverIndicator={false}
-            dropContent={
-                <Box round='xsmall' background='grey' direction="column" align='start' border={{color:'lightgrey'}}>
-                    {contents?.map((feature, featureIdx) => {
-                        return (
-                            <ButtonSwitch
-                                key={featureIdx}
-                                feature={feature}
-                                data={data}
-                                blockSpec={blockSpec}
-                                inTopLevel={false}
-                                isEditing={isEditing}
-                                isCollapsed={isCollapsed}
-                                isSelected={isSelected}
-                                isDebugging={isDebugging}
-                                setIsEditing={setIsEditing}
-                                setIsCollapsed={setIsCollapsed}
-                                setIsSelected={setIsSelected}
-                                setIsDebugging={setIsDebugging}
-                                interactionDisabled={interactionDisabled}
-                                fieldInfo={fieldInfo}
-                                parentId={parentId}
-                            />)
-                    })}
-                </Box>
-            }
-            dropProps={{ align: inTopLevel ? { top: 'bottom' } : { left: 'right' }, elevation: 'none', background: 'none' }}
-        >
-            <Button
-                size='small'
-                as='div'
-                focusIndicator={false}
-                hoverIndicator={false}
-                plain
-                style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
-                icon={<DropIcon />}
-                label={inTopLevel ? null : label}
-            />
-        </DropButton>
+        <MenuComponent>
+            <TriggerComponent asChild={inTopLevel} highlightColor={highlightColor}>
+                {inTopLevel ? (
+                    <Button
+                        size='small'
+                        as='div'
+                        focusIndicator={false}
+                        hoverIndicator={false}
+                        plain
+                        style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+                        icon={inTopLevel ? <DropIcon /> : null}
+                        label={inTopLevel ? null : usedLabel}
+                    />
+                ) : (
+                    <>
+                        <Button
+                            size='small'
+                            as='div'
+                            focusIndicator={false}
+                            hoverIndicator={false}
+                            plain
+                            style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
+                            icon={inTopLevel ? <DropIcon /> : null}
+                            label={inTopLevel ? null : usedLabel}
+                        />
+                        <RightSlot>
+                            <DropIcon />
+                        </RightSlot>
+                    </>
+                )}
+            </TriggerComponent>
+            <ContentComponent>
+                {contents?.map((feature, featureIdx) => {
+                    return (
+                        <ButtonSwitch
+                            key={featureIdx}
+                            feature={feature}
+                            data={data}
+                            blockSpec={blockSpec}
+                            inTopLevel={false}
+                            isEditing={isEditing}
+                            isCollapsed={isCollapsed}
+                            isSelected={isSelected}
+                            isDebugging={isDebugging}
+                            setIsEditing={setIsEditing}
+                            setIsCollapsed={setIsCollapsed}
+                            setIsSelected={setIsSelected}
+                            setIsDebugging={setIsDebugging}
+                            interactionDisabled={interactionDisabled}
+                            fieldInfo={fieldInfo}
+                            parentId={parentId}
+                            highlightColor={highlightColor}
+                            menuType={menuType}
+                        />)
+                })}
+            </ContentComponent>
+        </MenuComponent>
     )
 }
 
-const ButtonSwitch = ({ 
-    data, blockSpec, 
-    isEditing, setIsEditing, 
-    isCollapsed, setIsCollapsed, 
+const ButtonSwitch = ({
+    data, blockSpec, highlightColor,
+    isEditing, setIsEditing,
+    isCollapsed, setIsCollapsed,
     isSelected, setIsSelected,
     isDebugging, setIsDebugging,
-    interactionDisabled, inTopLevel, 
-    feature, fieldInfo, parentId }) => {
+    interactionDisabled, inTopLevel,
+    feature, fieldInfo, parentId, menuType }) => {
+    // console.log(highlightColor)
+    let inner = null;
 
     if (feature === EXTRA_TYPES.LOCKED_INDICATOR) {
-        return <LockIndicatorExtra locked={!data.canEdit} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+        inner = (
+            <LockIndicatorExtra
+                highlightColor={highlightColor}
+                locked={!data.canEdit}
+                inTopLevel={inTopLevel}
+                interactionDisabled={interactionDisabled}
+                menuType={menuType}
+            />
+        )
     } else if (feature === EXTRA_TYPES.NAME_EDIT_TOGGLE) {
-        return <NameEditToggleExtra isEditing={isEditing} setIsEditing={setIsEditing} locked={!data.canEdit} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+        inner = (
+            <NameEditToggleExtra
+                highlightColor={highlightColor}
+                isEditing={isEditing}
+                setIsEditing={setIsEditing}
+                locked={!data.canEdit}
+                inTopLevel={inTopLevel}
+                interactionDisabled={interactionDisabled}
+                menuType={menuType}
+            />
+        )
     } else if (feature === EXTRA_TYPES.COLLAPSE_TOGGLE) {
-        return <CollapseToggleExtra isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+        inner = (
+            <CollapseToggleExtra
+                highlightColor={highlightColor}
+                isCollapsed={isCollapsed}
+                setIsCollapsed={setIsCollapsed}
+                inTopLevel={inTopLevel}
+                interactionDisabled={interactionDisabled}
+                menuType={menuType}
+            />)
     } else if (feature === EXTRA_TYPES.SELECTION_TOGGLE) {
-        return <SelectionToggleExtra locked={interactionDisabled} data={data} isSelected={isSelected} setIsSelected={setIsSelected} inTopLevel={inTopLevel} />
+        inner = (
+            <SelectionToggleExtra
+                highlightColor={highlightColor}
+                locked={interactionDisabled}
+                data={data}
+                isSelected={isSelected}
+                setIsSelected={setIsSelected}
+                inTopLevel={inTopLevel}
+                menuType={menuType}
+            />
+        )
     } else if (feature === EXTRA_TYPES.DEBUG_TOGGLE) {
-        return <DebugToggleExtra isDebugging={isDebugging} setIsDebugging={setIsDebugging} inTopLevel={inTopLevel} />
+        inner = (
+            <DebugToggleExtra
+                highlightColor={highlightColor}
+                isDebugging={isDebugging}
+                setIsDebugging={setIsDebugging}
+                inTopLevel={inTopLevel}
+                menuType={menuType}
+            />
+        )
     } else if (feature === EXTRA_TYPES.DELETE_BUTTON) {
-        return <DeleteExtra data={data} inTopLevel={inTopLevel} locked={interactionDisabled} fieldInfo={fieldInfo} parentId={parentId} />
+        inner = (
+            <DeleteExtra
+                highlightColor={highlightColor}
+                data={data}
+                inTopLevel={inTopLevel}
+                locked={interactionDisabled}
+                fieldInfo={fieldInfo}
+                parentId={parentId}
+                menuType={menuType}
+            />
+        )
+    } else if (feature?.type === EXTRA_TYPES.LABEL) {
+        inner = (
+            <LabelExtra
+                inTopLevel={inTopLevel}
+                label={feature.label}
+                menuType={menuType}
+            />
+        )
     } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT) {
-        return <AddArgumentExtra data={data} argumentType={feature?.argumentType} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
+        inner = (
+            <AddArgumentExtra
+                highlightColor={highlightColor}
+                data={data}
+                argumentType={feature?.argumentType}
+                interactionDisabled={interactionDisabled}
+                inTopLevel={inTopLevel}
+                menuType={menuType}
+            />
+        )
     } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT_GROUP) {
-        return <AddArgumentGroupExtra data={data} allowed={feature?.allowed} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
+        inner = (
+            <AddArgumentGroupExtra
+                highlightColor={highlightColor}
+                data={data}
+                allowed={feature?.allowed}
+                interactionDisabled={interactionDisabled}
+                inTopLevel={inTopLevel}
+                menuType={menuType}
+            />
+        )
     } else if (feature?.type === EXTRA_TYPES.FUNCTION_BUTTON) {
-        return <FunctionButtonExtra actionInfo={feature} data={data} blockSpec={blockSpec} interactionDisabled={interactionDisabled} inTopLevel={inTopLevel}/>
+        inner = (
+            <FunctionButtonExtra
+                highlightColor={highlightColor}
+                actionInfo={feature}
+                data={data}
+                blockSpec={blockSpec}
+                interactionDisabled={interactionDisabled}
+                inTopLevel={inTopLevel}
+                menuType={menuType}
+            />
+        )
     } else if (feature?.type === EXTRA_TYPES.INDICATOR_TEXT) {
-        return <IndicatorTextExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+        inner = (
+            <IndicatorTextExtra
+                highlightColor={highlightColor}
+                value={feature.accessor(data)}
+                label={feature.label}
+                inTopLevel={inTopLevel}
+                interactionDisabled={interactionDisabled}
+                menuType={menuType}
+            />
+        )
     } else if (feature?.type === EXTRA_TYPES.INDICATOR_ICON) {
-        return <IndicatorIconExtra value={feature.accessor(data)} label={feature.label} inTopLevel={inTopLevel} interactionDisabled={interactionDisabled} />
+        inner = (
+            <IndicatorIconExtra
+                highlightColor={highlightColor}
+                value={feature.accessor(data)}
+                label={feature.label}
+                inTopLevel={inTopLevel}
+                interactionDisabled={interactionDisabled}
+                menuType={menuType}
+            />
+        )
     } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT) {
-        return <AddArgumentGroupExtra 
-            data={data} 
-            allowed={feature?.allowed} 
-            interactionDisabled={interactionDisabled} 
-            inTopLevel={inTopLevel}
-        />
+        inner = (
+            <AddArgumentGroupExtra
+                data={data}
+                allowed={feature?.allowed}
+                interactionDisabled={interactionDisabled}
+                inTopLevel={inTopLevel}
+                highlightColor={highlightColor}
+                menuType={menuType}
+            />
+        )
     } else if (feature?.type === EXTRA_TYPES.DROPDOWN) {
-        return <DropdownExtra
-            data={data}
-            blockSpec={blockSpec}
-            icon={feature?.icon}
-            contents={feature?.contents}
-            label={feature?.label}
-            inTopLevel={inTopLevel}
-            isEditing={isEditing}
-            isCollapsed={isCollapsed}
-            isSelected={isSelected}
-            isDebugging={isDebugging}
-            setIsEditing={setIsEditing}
-            setIsCollapsed={setIsCollapsed}
-            setIsSelected={setIsSelected}
-            setIsDebugging={setIsDebugging}
-            interactionDisabled={interactionDisabled}
-            parentId={parentId}
-            fieldInfo={fieldInfo}
-        />
-    } else { return null }
+        inner = (
+            <DropdownExtra
+                data={data}
+                blockSpec={blockSpec}
+                icon={feature?.icon}
+                contents={feature?.contents}
+                label={feature?.label}
+                inTopLevel={inTopLevel}
+                isEditing={isEditing}
+                isCollapsed={isCollapsed}
+                isSelected={isSelected}
+                isDebugging={isDebugging}
+                setIsEditing={setIsEditing}
+                setIsCollapsed={setIsCollapsed}
+                setIsSelected={setIsSelected}
+                setIsDebugging={setIsDebugging}
+                interactionDisabled={interactionDisabled}
+                parentId={parentId}
+                fieldInfo={fieldInfo}
+                highlightColor={highlightColor}
+                menuType={menuType}
+            />)
+    } else if (feature === EXTRA_TYPES.DIVIDER && !inTopLevel) {
+        inner = menuType === MENU_TYPES.DROPDOWN ? <DropdownMenuSeparator /> : <ContextMenuSeparator />
+    } else if (feature === EXTRA_TYPES.DIVIDER && inTopLevel) {
+        inner = <OtherStyledSeparator decorative orientation='vertical' css={{ margin: '4px', '&[data-orientation=vertical]': { height: '15pt', width: 1 } }} />
+    }
+    return inner
 }
 
-export const ExtraBar = ({ 
-    data, blockSpec, 
-    isEditing, setIsEditing, 
-    isCollapsed, setIsCollapsed, 
-    isSelected, setIsSelected, 
+export const ExtraBar = ({
+    data, blockSpec, highlightColor,
+    isEditing, setIsEditing,
+    isCollapsed, setIsCollapsed,
+    isSelected, setIsSelected,
     isDebugging, setIsDebugging,
     interactionDisabled, fieldInfo, parentId }) => {
 
     return (
         <Box direction='row' margin={{ left: 'xsmall' }} gap='none' align='center' alignContent='center' justify='between' flex={false}>
-            {blockSpec?.extras?.map((extra, extraIdx) => (
+            <DropdownMenu>
+                {blockSpec?.extras?.map((extra, extraIdx) => (
+                    <ButtonSwitch
+                        key={extraIdx}
+                        data={data}
+                        blockSpec={blockSpec}
+                        inTopLevel={true}
+                        isEditing={isEditing}
+                        isCollapsed={isCollapsed}
+                        isSelected={isSelected}
+                        isDebugging={isDebugging}
+                        setIsEditing={setIsEditing}
+                        setIsCollapsed={setIsCollapsed}
+                        setIsSelected={setIsSelected}
+                        setIsDebugging={setIsDebugging}
+                        interactionDisabled={interactionDisabled}
+                        feature={extra}
+                        fieldInfo={fieldInfo}
+                        parentId={parentId}
+                        highlightColor={highlightColor}
+                        menuType={MENU_TYPES.DROPDOWN}
+                    />
+                ))}
+            </DropdownMenu>
+
+        </Box>
+    )
+
+}
+
+const flattenMenuOnce = (extras) => {
+    let pancaked = [];
+    extras.forEach(extra => {
+        if (extra.type === EXTRA_TYPES.DROPDOWN) {
+            if (pancaked[pancaked.length - 1] !== EXTRA_TYPES.DIVIDER) {
+                pancaked.push(EXTRA_TYPES.DIVIDER)
+            }
+            if (extra.label) {
+                // console.log('creating label',extra.label)
+                pancaked.push({ label: extra.label, type: EXTRA_TYPES.LABEL })
+            }
+            extra.contents.forEach(child => {
+                if (child === EXTRA_TYPES.DIVIDER) {
+                    if (pancaked[pancaked.length - 1] !== EXTRA_TYPES.DIVIDER) {
+                        pancaked.push(EXTRA_TYPES.DIVIDER)
+                    }
+                } else {
+                    pancaked.push(child);
+                }
+            })
+            if (pancaked[pancaked.length - 1] !== EXTRA_TYPES.DIVIDER) {
+                pancaked.push(EXTRA_TYPES.DIVIDER)
+            }
+        } else if (extra === EXTRA_TYPES.DIVIDER) {
+            if (pancaked[pancaked.length - 1] !== EXTRA_TYPES.DIVIDER) {
+                pancaked.push(EXTRA_TYPES.DIVIDER)
+            }
+        } else {
+            pancaked.push(extra)
+        }
+    })
+    if (pancaked[pancaked.length-1] === EXTRA_TYPES.DIVIDER) {
+        pancaked.pop();
+    }
+    if (pancaked.length > 0 && pancaked[0] === EXTRA_TYPES.DIVIDER) {
+        pancaked.shift();
+    }
+    // console.log(pancaked)
+    return pancaked
+}
+
+export const RightClickMenu = ({
+    data, blockSpec, highlightColor,
+    isEditing, setIsEditing,
+    isCollapsed, setIsCollapsed,
+    isSelected, setIsSelected,
+    isDebugging, setIsDebugging,
+    interactionDisabled, fieldInfo, parentId }) => {
+    const flattenedExtras = flattenMenuOnce(blockSpec?.extras);
+    return (
+        <>
+            {flattenedExtras.map((extra, extraIdx) => (
                 <ButtonSwitch
                     key={extraIdx}
                     data={data}
                     blockSpec={blockSpec}
-                    inTopLevel={true}
+                    inTopLevel={false}
                     isEditing={isEditing}
                     isCollapsed={isCollapsed}
                     isSelected={isSelected}
@@ -369,9 +759,10 @@ export const ExtraBar = ({
                     feature={extra}
                     fieldInfo={fieldInfo}
                     parentId={parentId}
-                    />
+                    highlightColor={highlightColor}
+                    menuType={MENU_TYPES.CONTEXT}
+                />
             ))}
-        </Box>
+        </>
     )
-
 }

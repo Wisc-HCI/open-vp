@@ -25,7 +25,7 @@ var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
 
 require("./rotate.css");
 
-var _excluded = ["drawers", "objectTypes", "programData", "drawerWidth"];
+var _excluded = ["drawers", "objectTypes", "programData", "executionData", "drawerWidth"];
 
 var Synchonizing = function Synchonizing() {
   return /*#__PURE__*/_react.default.createElement(_fi.FiRefreshCw, {
@@ -45,6 +45,7 @@ var Template = function Template(args) {
   var drawers = args.drawers,
       objectTypes = args.objectTypes,
       programData = args.programData,
+      executionData = args.executionData,
       drawerWidth = args.drawerWidth,
       otherArgs = (0, _objectWithoutProperties2.default)(args, _excluded);
 
@@ -59,7 +60,8 @@ var Template = function Template(args) {
         drawers: drawers,
         objectTypes: objectTypes
       },
-      programData: programData
+      programData: programData,
+      executionData: executionData
     });
   });
   return /*#__PURE__*/_react.default.createElement("div", {
@@ -128,8 +130,9 @@ Fullscreen.args = {
         }, {
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, _components.EXTRA_TYPES.SELECTION_TOGGLE, {
-            icon: _fi.FiMoreHorizontal,
+          label: 'Custom More...',
+          contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, _components.EXTRA_TYPES.SELECTION_TOGGLE, _components.EXTRA_TYPES.DIVIDER, {
+            // icon: FiMoreHorizontal,
             label: 'More Options',
             type: _components.EXTRA_TYPES.DROPDOWN,
             contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, {
@@ -143,9 +146,15 @@ Fullscreen.args = {
               onClick: 'updateItemBlockColors',
               label: 'Cycle Color',
               icon: _fi.FiFeather
+            }, {
+              type: _components.EXTRA_TYPES.INDICATOR_ICON,
+              accessor: function accessor(data) {
+                return /*#__PURE__*/_react.default.createElement(Synchonizing, null);
+              },
+              label: 'Synchronizing'
             }]
           }]
-        }, _components.EXTRA_TYPES.LOCKED_INDICATOR]
+        }, _components.EXTRA_TYPES.DIVIDER, _components.EXTRA_TYPES.LOCKED_INDICATOR]
       },
       referenceBlock: null,
       properties: {
@@ -263,7 +272,11 @@ Fullscreen.args = {
           type: _Constants.SIMPLE_PROPERTY_TYPES.NUMBER,
           default: 1,
           min: 0,
-          max: 2
+          max: 20,
+          step: 0.1,
+          units: 'm/s',
+          visualScaling: 0.1,
+          visualPrecision: 1
         },
         doFunky: {
           name: "Do Funky",
@@ -318,6 +331,13 @@ Fullscreen.args = {
           contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE, _components.EXTRA_TYPES.SELECTION_TOGGLE]
         }]
       }
+    }
+  },
+  executionData: {
+    "45535153s": 1,
+    "655sssefs": null,
+    "2dfsessfs": function dfsessfs(time) {
+      return Math.sin(time / 5000) / 2 + 0.3;
     }
   },
   programData: {

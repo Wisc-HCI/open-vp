@@ -3,7 +3,7 @@ import { FiChevronRight } from "react-icons/fi";
 import { useSpring, animated } from '@react-spring/web';
 import { config } from 'react-spring';
 
-export const ExpandCarrot = ({expanded}) => {
+export const ExpandCarrot = ({expanded, onClick}) => {
 
     const carrotStyle = useSpring({
         rotate: expanded ? '90deg' : '0deg',
@@ -12,5 +12,5 @@ export const ExpandCarrot = ({expanded}) => {
         width: 20
     });
 
-    return <animated.div style={carrotStyle}><FiChevronRight/></animated.div>
+    return <animated.div onClick={onClick} style={carrotStyle}><FiChevronRight/></animated.div>
 }

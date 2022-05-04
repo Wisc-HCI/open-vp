@@ -114,6 +114,7 @@ exports.callTemplateFromSpec = callTemplateFromSpec;
 
 var combinedBlockData = function combinedBlockData(state, staticData, id) {
   var data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
+  var progress = state.executionData[id];
   var typeSpec = state.programSpec.objectTypes[data === null || data === void 0 ? void 0 : data.type] ? state.programSpec.objectTypes[data === null || data === void 0 ? void 0 : data.type] : {
     instanceBlock: {},
     referenceBlock: {},
@@ -134,7 +135,7 @@ var combinedBlockData = function combinedBlockData(state, staticData, id) {
     selected: selected,
     editing: editing,
     argumentBlockData: argumentBlockData
-  }), typeSpec];
+  }), typeSpec, progress];
 };
 
 exports.combinedBlockData = combinedBlockData;
