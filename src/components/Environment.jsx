@@ -11,7 +11,7 @@ import { Grommet } from "grommet";
 import {ReactFlowProvider} from "react-flow-renderer";
 import { getTheme } from './theme';
 
-export default function Environment({ store, highlightColor, height, width, drawerWidth }) {
+export default function Environment({ store, highlightColor, height, width, drawerWidth, snapToGrid }) {
 
   const theme = getTheme(highlightColor);
   
@@ -30,7 +30,7 @@ export default function Environment({ store, highlightColor, height, width, draw
           >
             <Drawer highlightColor={highlightColor} drawerWidth={drawerWidth ? drawerWidth : 235}/>
             <ReactFlowProvider>
-              <Canvas highlightColor={highlightColor} drawerWidth={drawerWidth ? drawerWidth : 235}/>
+              <Canvas highlightColor={highlightColor} snapToGrid={snapToGrid}/>
             </ReactFlowProvider>
           </div>
           <DragLayer highlightColor={highlightColor}/>

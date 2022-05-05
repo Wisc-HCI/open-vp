@@ -55,7 +55,7 @@ var CanvasNode = function CanvasNode(_ref) {
 
 var Canvas = function Canvas(_ref2) {
   var highlightColor = _ref2.highlightColor,
-      drawerWidth = _ref2.drawerWidth;
+      snapToGrid = _ref2.snapToGrid;
   var locked = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return state.locked;
   });
@@ -173,7 +173,7 @@ var Canvas = function Canvas(_ref2) {
     onNodesChange: moveNode,
     defaultZoom: 1,
     fitView: true,
-    snapToGrid: true,
+    snapToGrid: snapToGrid,
     snapGrid: [30, 30]
   }, /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.MiniMap, {
     maskColor: "#1a192b44",

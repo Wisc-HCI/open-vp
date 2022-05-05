@@ -35,7 +35,8 @@ function Environment(_ref) {
       highlightColor = _ref.highlightColor,
       height = _ref.height,
       width = _ref.width,
-      drawerWidth = _ref.drawerWidth;
+      drawerWidth = _ref.drawerWidth,
+      snapToGrid = _ref.snapToGrid;
   var theme = (0, _theme.getTheme)(highlightColor);
   return /*#__PURE__*/_react.default.createElement(_grommet.Grommet, {
     theme: theme
@@ -57,7 +58,7 @@ function Environment(_ref) {
     drawerWidth: drawerWidth ? drawerWidth : 235
   }), /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.ReactFlowProvider, null, /*#__PURE__*/_react.default.createElement(_Canvas.Canvas, {
     highlightColor: highlightColor,
-    drawerWidth: drawerWidth ? drawerWidth : 235
+    snapToGrid: snapToGrid
   }))), /*#__PURE__*/_react.default.createElement(_DragLayer.DragLayer, {
     highlightColor: highlightColor
   }))));

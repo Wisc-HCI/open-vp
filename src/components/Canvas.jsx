@@ -23,7 +23,7 @@ const CanvasNode = ({ data }) => {
   )
 };
 
-export const Canvas = ({ highlightColor, drawerWidth }) => {
+export const Canvas = ({ highlightColor, snapToGrid }) => {
   const locked = useProgrammingStore(state=>state.locked);
   const setLocked = useProgrammingStore(state=>state.setLocked);
   const nodes = useProgrammingStore((state) =>
@@ -103,7 +103,7 @@ export const Canvas = ({ highlightColor, drawerWidth }) => {
         onNodesChange={moveNode}
         defaultZoom={1}
         fitView
-        snapToGrid={true}
+        snapToGrid={snapToGrid}
         snapGrid={[30, 30]}
       >
         <MiniMap

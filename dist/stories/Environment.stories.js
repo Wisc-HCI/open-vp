@@ -86,6 +86,7 @@ exports.Fullscreen = Fullscreen;
 Fullscreen.args = {
   highlightColor: '#ff00ff',
   drawerWidth: 235,
+  snapToGrid: true,
   drawers: [{
     title: "Structures",
     dataType: _components.DATA_TYPES.INSTANCE,

@@ -36,6 +36,7 @@ export const Fullscreen = Template.bind({});
 Fullscreen.args = {
   highlightColor: '#ff00ff',
   drawerWidth: 235,
+  snapToGrid: true,
   drawers: [
     { title: "Structures", dataType: DATA_TYPES.INSTANCE, objectTypes: ["functionType", "operationType", "blockType"], icon: FiClipboard },
     { title: "Functions", dataType: DATA_TYPES.CALL, objectType: 'functionType', icon: FiLogOut },
