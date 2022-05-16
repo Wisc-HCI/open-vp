@@ -407,7 +407,7 @@ var AddArgumentExtra = function AddArgumentExtra(_ref11) {
     },
     icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(Icon, null) : null,
     onClick: function onClick() {
-      return addArgument(data.id, argumentType);
+      return inTopLevel ? addArgument(data.id, argumentType) : {};
     },
     label: inTopLevel ? null : "Add ".concat(typeSpec.name, " Argument")
   });
