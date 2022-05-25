@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import { useProgrammingStore } from "../ProgrammingContext";
 import { useDrag } from "react-dnd";
 import { useCallback, useEffect } from "react";
@@ -8,7 +8,7 @@ import { VisualBlock } from "./VisualBlock";
 import { DATA_TYPES } from "..";
 import { combinedBlockData } from "../Generators";
 
-const Block = ({
+const Block = memo(({
   id,
   staticData,
   parentId,
@@ -76,6 +76,6 @@ const Block = ({
       
     );
   }
-};
+});
 
 export { Block, VisualBlock, PreviewBlock }

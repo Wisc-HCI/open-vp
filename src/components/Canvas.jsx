@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -62,7 +62,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     .filter(([_, objectType]) => objectType.instanceBlock?.onCanvas || objectType.referenceBlock?.onCanvas || objectType.callBlock?.onCanvas)
     .map(([objectKey]) => objectKey))
 
-  const moveNode = useProgrammingStore((state) => state.moveBlock);
+  const moveNodes = useProgrammingStore((state) => state.moveBlocks);
   const createPlacedNode = useProgrammingStore((state) => state.createPlacedBlock);
 
   const { project } = useReactFlow();
@@ -84,8 +84,6 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     }
   })[1]
 
-  
-
   return (
 
     <div ref={ref} style={{ backgroundColor: "black", display: 'flex', flex: 1 }}>
@@ -96,12 +94,10 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         // panOnDrag={!locked}
         nodesConnectable={false}
         elementsSelectable={false}
-        nodesDraggable={true}
-        nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}
+        nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [CanvasNode])}
         nodes={nodes}
         onConnect={(_) => { }}
-        onNodesChange={moveNode}
-        defaultZoom={1}
+        onNodesChange={moveNodes}
         fitView
         snapToGrid={snapToGrid}
         snapGrid={[30, 30]}
@@ -109,6 +105,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         <MiniMap
           maskColor="#1a192b44"
           nodeStrokeColor={(n) => {
+            // if (n.type==='input') return 'black';
             if (n.style?.background) return n.style.background;
             if (n.data.typeSpec.color !== null) return n.data.typeSpec.color;
 

@@ -134,17 +134,18 @@ const LockIndicatorExtra = ({ locked, inTopLevel, highlightColor, menuType }) =>
 
 }
 
-const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, interactionDisabled, inTopLevel, highlightColor, menuType }) => {
+const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, interactionDisabled, inTopLevel, highlightColor, menuType, data }) => {
     const Icon = isEditing ? FiSave : FiEdit3;
     const Wrapper = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuCheckboxItem : ContextMenuCheckboxItem;
     const Indicator = menuType === MENU_TYPES.DROPDOWN ? DropdownMenuItemIndicator : ContextMenuItemIndicator;
+    const disabled = locked || (interactionDisabled && data.dataType !== DATA_TYPES.REFERENCE);
     const inner = (
         <Button
             size='small'
             plain
             focusIndicator={false}
             hoverIndicator={false}
-            disabled={locked || interactionDisabled}
+            disabled={disabled}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={inTopLevel ? <Icon /> : null}
             label={inTopLevel ? null : isEditing ? 'Save' : 'Edit Name'}
@@ -156,7 +157,7 @@ const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, interactionDisab
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} disabled={locked || interactionDisabled} onSelect={() => setIsEditing(!isEditing)}>
+            <Wrapper checked highlightColor={highlightColor} disabled={disabled} onSelect={() => setIsEditing(!isEditing)}>
                 <Indicator>
                     <Icon />
                 </Indicator>
@@ -498,6 +499,7 @@ const ButtonSwitch = ({
                 inTopLevel={inTopLevel}
                 interactionDisabled={interactionDisabled}
                 menuType={menuType}
+                data={data}
             />
         )
     } else if (feature === EXTRA_TYPES.COLLAPSE_TOGGLE) {

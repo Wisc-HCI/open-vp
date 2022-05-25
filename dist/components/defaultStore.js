@@ -330,16 +330,16 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
             // Insert at the right location
             state.programData[sourceInfo.parentId].properties[destInfo.fieldInfo.value].splice(sourceInfo.idx, 1);
           } else if (!newSpawn && !sourceIsList) {
-            console.log('removing from previous by setting to null');
+            console.log("removing from previous by setting to null");
             state.programData[sourceInfo.parentId].properties[sourceInfo.fieldInfo.value] = null;
           }
         }
       });
     },
-    moveBlock: function moveBlock(changes) {
+    moveBlocks: function moveBlocks(changes) {
       return set(function (state) {
         changes.forEach(function (change) {
-          if (change.dragging && state.programData[change.id]) {
+          if (change.type === "position" && state.programData[change.id]) {
             state.programData[change.id].position = change.position;
           }
         });
@@ -398,7 +398,7 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
         var id = generateUuid(argumentType);
         var template = (0, _objectSpread2.default)((0, _objectSpread2.default)({}, (0, _Generators.instanceTemplateFromSpec)(argumentType, state.programSpec.objectTypes[argumentType], true)), {}, {
           id: id,
-          dataType: _.DATA_TYPES.REFERENCE
+          dataType: _.DATA_TYPES.ARGUMENT
         });
         state.programData[id] = template;
         state.programData[parentFunctionId].arguments.push(id);
@@ -432,7 +432,7 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
     updateItemBlockColors: function updateItemBlockColors(data) {
       set(function (state) {
         var color = randomColor();
-        ['instanceBlock', 'referenceBlock', 'callBlock'].forEach(function (blockType) {
+        ["instanceBlock", "referenceBlock", "callBlock"].forEach(function (blockType) {
           if (state.programSpec.objectTypes[data.type][blockType]) {
             state.programSpec.objectTypes[data.type][blockType].color = color;
           }

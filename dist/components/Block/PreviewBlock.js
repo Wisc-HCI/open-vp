@@ -21,7 +21,7 @@ var _VisualBlock = require("./VisualBlock");
 
 var _Generators = require("../Generators");
 
-var PreviewBlock = function PreviewBlock(_ref) {
+var PreviewBlock = /*#__PURE__*/(0, _react.memo)(function (_ref) {
   var id = _ref.id,
       staticData = _ref.staticData,
       bounded = _ref.bounded,
@@ -52,6 +52,5 @@ var PreviewBlock = function PreviewBlock(_ref) {
       style: style
     });
   }
-};
-
+});
 exports.PreviewBlock = PreviewBlock;

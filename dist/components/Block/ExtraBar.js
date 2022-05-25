@@ -158,17 +158,19 @@ var NameEditToggleExtra = function NameEditToggleExtra(_ref5) {
       interactionDisabled = _ref5.interactionDisabled,
       inTopLevel = _ref5.inTopLevel,
       highlightColor = _ref5.highlightColor,
-      menuType = _ref5.menuType;
+      menuType = _ref5.menuType,
+      data = _ref5.data;
   var Icon = isEditing ? _fi.FiSave : _fi.FiEdit3;
   var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
   var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
+  var disabled = locked || interactionDisabled && data.dataType !== _.DATA_TYPES.REFERENCE;
 
   var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     plain: true,
     focusIndicator: false,
     hoverIndicator: false,
-    disabled: locked || interactionDisabled,
+    disabled: disabled,
     style: {
       padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
     },
@@ -185,7 +187,7 @@ var NameEditToggleExtra = function NameEditToggleExtra(_ref5) {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
       highlightColor: highlightColor,
-      disabled: locked || interactionDisabled,
+      disabled: disabled,
       onSelect: function onSelect() {
         return setIsEditing(!isEditing);
       }
@@ -609,7 +611,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       locked: !data.canEdit,
       inTopLevel: inTopLevel,
       interactionDisabled: interactionDisabled,
-      menuType: menuType
+      menuType: menuType,
+      data: data
     });
   } else if (feature === _.EXTRA_TYPES.COLLAPSE_TOGGLE) {
     inner = /*#__PURE__*/_react.default.createElement(CollapseToggleExtra, {

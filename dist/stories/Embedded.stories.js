@@ -23,6 +23,8 @@ var _Constants = require("../components/Constants");
 
 var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
 
+var _Utility = require("../components/Block/Utility");
+
 var _excluded = ["drawers", "objectTypes", "programData", "drawerWidth"];
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 var _default = {
@@ -65,7 +67,12 @@ var Template = function Template(args) {
       flex: 1,
       backgroundColor: 'darkgray'
     }
-  }), /*#__PURE__*/_react.default.createElement("div", {
+  }, /*#__PURE__*/_react.default.createElement(_Utility.Input, {
+    onChange: function onChange(e) {
+      return console.log(e);
+    },
+    defaultValue: "horse"
+  })), /*#__PURE__*/_react.default.createElement("div", {
     ref: ref,
     style: {
       flex: 1,

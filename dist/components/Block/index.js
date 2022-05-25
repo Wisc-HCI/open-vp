@@ -41,7 +41,7 @@ var _ = require("..");
 
 var _Generators = require("../Generators");
 
-var Block = function Block(_ref) {
+var Block = /*#__PURE__*/(0, _react.memo)(function (_ref) {
   var id = _ref.id,
       staticData = _ref.staticData,
       parentId = _ref.parentId,
@@ -130,6 +130,5 @@ var Block = function Block(_ref) {
       }
     }, after));
   }
-};
-
+});
 exports.Block = Block;

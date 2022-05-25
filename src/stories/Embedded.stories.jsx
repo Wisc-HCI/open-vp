@@ -3,6 +3,7 @@ import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES 
 import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal, FiLayers, FiFeather } from "react-icons/fi";
 import { SIMPLE_PROPERTY_TYPES } from '../components/Constants';
 import useMeasure from 'react-use-measure';
+import { Input } from '../components/Block/Utility';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -19,10 +20,11 @@ const Template = (args) => {
   useLayoutEffect(()=>{
     useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData});
   })
+  
   return (
     <div style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:otherArgs.highlightColor}}>
       <div style={{flex:1,backgroundColor:'darkgray'}}>
-      
+      <Input onChange={(e)=>console.log(e)} defaultValue='horse'/>
       </div>
     <div ref={ref} style={{flex:1,margin:10}}>
       <Environment {...otherArgs} store={useDefaultProgrammingStore} height={bounds.height} width={bounds.width} drawerWidth={drawerWidth}/>

@@ -18,7 +18,10 @@ export default function Environment({ store, highlightColor, height, width, draw
   return (
     <Grommet theme={theme}>
       <ProgrammingProvider store={store}>
-        <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+        <DndProvider 
+          backend={MultiBackend} 
+          options={HTML5toTouch}
+          >
           <div
             style={{
               padding: 0,

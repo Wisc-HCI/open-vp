@@ -7,7 +7,7 @@ var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWild
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = exports.TAP = void 0;
+exports.default = exports.SOBORO = void 0;
 
 var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/slicedToArray"));
 
@@ -24,7 +24,7 @@ var _reactUseMeasure = _interopRequireDefault(require("react-use-measure"));
 var _excluded = ["drawers", "objectTypes", "programData", "drawerWidth"];
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 var _default = {
-  title: 'TAP',
+  title: 'SOBORO',
   component: _components.Environment
 }; // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 
@@ -67,38 +67,49 @@ var Template = function Template(args) {
   })));
 };
 
-var TAP = Template.bind({}); // More on args: https://storybook.js.org/docs/react/writing-stories/args
+var STATE_EXPRESSIONS = ['notStateExprType', 'allStateExprType', 'anyStateExprType'];
+var EVENT_EXPRESSIONS = [];
+var RETURNS_EVENT = [];
+var RETURNS_STATE = ['stateType'].concat(STATE_EXPRESSIONS);
+var RETURNS_ACTION = [];
+var RETURNS_CONTROLLER = [];
+var SOBORO = Template.bind({}); // More on args: https://storybook.js.org/docs/react/writing-stories/args
 
-exports.TAP = TAP;
-TAP.args = {
+exports.SOBORO = SOBORO;
+SOBORO.args = {
   highlightColor: '#ff00ff',
   drawerWidth: 235,
-  drawers: [{
+  drawers: [// Rules
+  {
     title: "Rules",
     dataType: _components.DATA_TYPES.INSTANCE,
-    objectTypes: ["whenType", "wheneverType", "whileType"],
+    objectTypes: ["whenType", "whileType"],
     icon: _fi.FiClipboard
-  }, {
+  }, // Action Expressions
+  {
     title: "Actions",
     dataType: _components.DATA_TYPES.REFERENCE,
     objectType: 'actionType',
     icon: _fi.FiBox
-  }, {
+  }, // { title: "Action Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: ['notStateType'], icon: FiGrid},
+  // State Expressions
+  {
     title: "States",
     dataType: _components.DATA_TYPES.REFERENCE,
     objectType: 'stateType',
+    icon: _fi.FiGrid
+  }, {
+    title: "State Expressions",
+    dataType: _components.DATA_TYPES.INSTANCE,
+    objectTypes: STATE_EXPRESSIONS,
     icon: _fi.FiGrid
   }, {
     title: "Events",
     dataType: _components.DATA_TYPES.REFERENCE,
     objectType: 'eventType',
     icon: _fi.FiGrid
-  }, {
-    title: "State Operations",
-    dataType: _components.DATA_TYPES.INSTANCE,
-    objectTypes: ['notStateType'],
-    icon: _fi.FiGrid
-  } // { title: "Action Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: [], icon: FiClipboard },
+  } // { title: "Event Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: ['notStateType'], icon: FiGrid},
+  // { title: "Action Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: [], icon: FiClipboard },
   // { title: "State Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: ["notStateType", "isConstantStateType", "andStateType", "orStateType", "toStateType", "constantStateType"], icon: FiClipboard },
   // { title: "Event Expressions", dataType: DATA_TYPES.INSTANCE, objectTypes: ["notEventType", "isConstantEventType", "orEventType", "toEventType", "constantEventType", "emptyEventType"], icon: FiClipboard },
   // { title: "Controllers", dataType: DATA_TYPES.INSTANCE, objectTypes: ["negationControllerType","sinControllerType","cosControllerType","addControllerType","subtractControllerType"], icon: FiClipboard },
@@ -115,46 +126,26 @@ TAP.args = {
         extras: [{
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE]
+          contents: [_components.EXTRA_TYPES.SELECTION_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE]
         }]
       },
       referenceBlock: null,
       properties: {
+        listenFor: {
+          name: 'Listen For',
+          type: _components.SIMPLE_PROPERTY_TYPES.OPTIONS,
+          options: [{
+            value: 'first',
+            label: 'First Occurance'
+          }, {
+            value: 'all',
+            label: 'All Occurances'
+          }],
+          default: 'first'
+        },
         eventExpression: {
           name: 'When',
           accepts: ['eventType', "notEventType", "isConstantEventType", "orEventType", "toEventType", "constantEventType", "emptyEventType"],
-          default: null,
-          isList: false,
-          fullWidth: false
-        },
-        actionExpression: {
-          name: 'Do',
-          accepts: ['actionType'],
-          default: null,
-          isList: false,
-          fullWidth: false
-        }
-      }
-    },
-    wheneverType: {
-      name: 'Whenever',
-      type: _components.TYPES.OBJECT,
-      instanceBlock: {
-        onCanvas: true,
-        color: "#a3879e",
-        icon: _fi.FiBriefcase,
-        hideNewPrefix: true,
-        extras: [{
-          icon: _fi.FiMoreHorizontal,
-          type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE]
-        }]
-      },
-      referenceBlock: null,
-      properties: {
-        stateExpression: {
-          name: 'Whenever',
-          accepts: ['stateType', "notStateType", "isConstantStateType", "andStateType", "orStateType", "toStateType", "constantStateType"],
           default: null,
           isList: false,
           fullWidth: false
@@ -179,14 +170,14 @@ TAP.args = {
         extras: [{
           icon: _fi.FiMoreHorizontal,
           type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE]
+          contents: [_components.EXTRA_TYPES.SELECTION_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE]
         }]
       },
       referenceBlock: null,
       properties: {
         stateExpression: {
           name: 'While',
-          accepts: ['stateType', "notStateType", "isConstantStateType", "andStateType", "orStateType", "toStateType", "constantStateType"],
+          accepts: RETURNS_STATE,
           default: null,
           isList: false,
           fullWidth: false
@@ -245,13 +236,96 @@ TAP.args = {
         }]
       }
     },
-    notStateType: {
+    notStateExprType: {
       name: 'Not-State',
       type: _components.TYPES.OBJECT,
       instanceBlock: {
         onCanvas: false,
         minified: true,
-        color: "#89b18d",
+        color: "#677a69",
+        icon: _fi.FiGrid,
+        extras: [{
+          icon: _fi.FiMoreHorizontal,
+          type: _components.EXTRA_TYPES.DROPDOWN,
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.DEBUG_TOGGLE]
+        }]
+      },
+      referenceBlock: null,
+      properties: {
+        stateExpression: {
+          name: 'Not',
+          accepts: ['stateType', "notStateType", "isConstantStateType", "notStateExprType", "anyStateExprType", "toStateType", "constantStateType"],
+          default: null,
+          isList: false,
+          fullWidth: false
+        }
+      }
+    },
+    allStateExprType: {
+      name: 'Not-State',
+      type: _components.TYPES.OBJECT,
+      instanceBlock: {
+        onCanvas: false,
+        minified: true,
+        color: "#677a69",
+        icon: _fi.FiGrid,
+        extras: [{
+          icon: _fi.FiMoreHorizontal,
+          type: _components.EXTRA_TYPES.DROPDOWN,
+          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.DEBUG_TOGGLE]
+        }]
+      },
+      referenceBlock: null,
+      properties: {
+        expressionType: {
+          name: "Type",
+          type: _components.SIMPLE_PROPERTY_TYPES.OPTIONS,
+          options: [{
+            value: 'not',
+            label: 'Not'
+          }, {
+            value: 'is',
+            label: 'Is'
+          }],
+          default: 'not'
+        },
+        doFunky: {
+          name: "Do Funky",
+          type: _components.SIMPLE_PROPERTY_TYPES.BOOLEAN,
+          default: false
+        },
+        speed: {
+          name: "Speed",
+          type: _components.SIMPLE_PROPERTY_TYPES.NUMBER,
+          default: 1,
+          min: -2,
+          max: 2,
+          step: 0.1,
+          units: 'm/s',
+          visualScaling: 0.1,
+          visualPrecision: 1
+        },
+        hat: {
+          name: "Hat",
+          type: _components.SIMPLE_PROPERTY_TYPES.STRING,
+          default: 'Funny'
+        },
+        stateExpression: {
+          name: 'State',
+          accepts: ['stateType', "notStateType", "isConstantStateType", "andStateType", "orStateType", "toStateType", "constantStateType"],
+          default: null,
+          isList: false,
+          fullWidth: false
+        }
+      }
+    },
+    anyStateExprType: {
+      name: 'Not-State',
+      type: _components.TYPES.OBJECT,
+      instanceBlock: {
+        onCanvas: false,
+        minified: true,
+        color: "#677a69",
         icon: _fi.FiGrid,
         extras: [{
           icon: _fi.FiMoreHorizontal,

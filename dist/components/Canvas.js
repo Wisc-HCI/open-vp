@@ -117,8 +117,8 @@ var Canvas = function Canvas(_ref2) {
       return objectKey;
     });
   });
-  var moveNode = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
-    return state.moveBlock;
+  var moveNodes = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.moveBlocks;
   });
   var createPlacedNode = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return state.createPlacedBlock;
@@ -162,16 +162,14 @@ var Canvas = function Canvas(_ref2) {
     ,
     nodesConnectable: false,
     elementsSelectable: false,
-    nodesDraggable: true,
     nodeTypes: (0, _react.useMemo)(function () {
       return {
         canvasNode: CanvasNode
       };
-    }, []),
+    }, [CanvasNode]),
     nodes: nodes,
     onConnect: function onConnect(_) {},
-    onNodesChange: moveNode,
-    defaultZoom: 1,
+    onNodesChange: moveNodes,
     fitView: true,
     snapToGrid: snapToGrid,
     snapGrid: [30, 30]
@@ -180,6 +178,7 @@ var Canvas = function Canvas(_ref2) {
     nodeStrokeColor: function nodeStrokeColor(n) {
       var _n$style;
 
+      // if (n.type==='input') return 'black';
       if ((_n$style = n.style) !== null && _n$style !== void 0 && _n$style.background) return n.style.background;
       if (n.data.typeSpec.color !== null) return n.data.typeSpec.color;
       return "#eee";

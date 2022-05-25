@@ -9,55 +9,7 @@ import { FiPlus, FiSearch } from "react-icons/fi";
 import { DATA_TYPES } from './Constants';
 import { instanceTemplateFromSpec, referenceTemplateFromSpec, callTemplateFromSpec } from './Generators';
 import useMeasure from 'react-use-measure';
-import * as ScrollArea from '@radix-ui/react-scroll-area';
-import { styled } from "@stitches/react";
-
-const StyledScrollArea = styled(ScrollArea.Root, {
-    overflow: "hidden"
-  });
-
-const StyledViewport = styled(ScrollArea.Viewport, {
-    width: "100%",
-    height: "100%",
-    borderRadius: "inherit",
-    padding: '4pt'
-});
-
-const StyledScrollbar = styled(ScrollArea.Scrollbar, {
-    display: "flex",
-    // ensures no selection
-    userSelect: "none",
-    // disable browser handling of all panning and zooming gestures on touch devices
-    touchAction: "none",
-    padding: 2,
-    background: '#55555525',
-    transition: "background 160ms ease-out",
-    "&:hover": { background: '#45454540' },
-    '&[data-orientation="vertical"]': { width: 8 },
-    '&[data-orientation="horizontal"]': {
-      flexDirection: "column",
-      height: 8
-    }
-  });
-  
-  const StyledThumb = styled(ScrollArea.Thumb, {
-    flex: 1,
-    background: "#eeeeee66",
-    borderRadius: 8,
-    // increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html
-    // position: "relative",
-    // "&::before": {
-    //   content: '""',
-    //   position: "absolute",
-    //   top: "50%",
-    //   left: "50%",
-    //   transform: "translate(-50%, -50%)",
-    //   width: "100%",
-    //   height: "100%",
-    //   minWidth: 44,
-    //   minHeight: 44
-    // }
-  });
+import { ScrollRegion } from './Block/Utility';
 
 const TipContent = ({ message }) => (
     <Box direction="row" align="center">
@@ -188,22 +140,13 @@ export const Drawer = ({ highlightColor, drawerWidth }) => {
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
                         </Box>
-                        <StyledScrollArea css={{height:drawerBounds.height-headerBounds.height,width:drawerWidth}}>
-                            <StyledViewport>
-                                {blocks.map((block, idx) => (
+                        <ScrollRegion height={drawerBounds.height-headerBounds.height} width={drawerWidth} vertical>
+                        {blocks.map((block, idx) => (
                                     <Box key={idx} animation={{ type: 'fadeIn', delay: idx * 30 }} style={{ marginBottom: 5, width: drawerWidth - 10 }}>
                                         <Block staticData={block} parentId="spawner" bounded highlightColor={highlightColor} context={[]} interactionDisabled fieldInfo={{ name: '', value: null, accepts: [], isSpawner: true }} />
                                     </Box>
                                 ))}
-                            </StyledViewport>
-                            <StyledScrollbar orientation="horizontal">
-                                <StyledThumb/>
-                            </StyledScrollbar>
-                            <StyledScrollbar orientation="vertical">
-                                <StyledThumb/>
-                            </StyledScrollbar>
-                            <ScrollArea.Corner />
-                        </StyledScrollArea>
+                        </ScrollRegion>
 
                         {/* <Box style={{height:drawerBounds.height-headerBounds.height, overflowY:'scroll'}}>
                                 
