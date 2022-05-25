@@ -1,0 +1,45 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TYPES = exports.SIMPLE_PROPERTY_TYPES = exports.EXTRA_TYPES = exports.DATA_TYPES = void 0;
+// DATA_TYPES are the sub-types of each user-defined type. For example, you may have an INSTANCE and REFERENCE to some newType
+var DATA_TYPES = {
+  INSTANCE: 'INSTANCE',
+  REFERENCE: 'REFERENCE',
+  CALL: 'CALL',
+  ARGUMENT: 'ARGUMENT'
+}; // The high-level type that each objectType belongs to (either object or function)
+
+exports.DATA_TYPES = DATA_TYPES;
+var TYPES = {
+  OBJECT: 'OBJECT',
+  FUNCTION: 'FUNCTION'
+};
+exports.TYPES = TYPES;
+var EXTRA_TYPES = {
+  LOCKED_INDICATOR: 'LOCKED_INDICATOR',
+  NAME_EDIT_TOGGLE: 'NAME_EDIT_TOGGLE',
+  SELECTION_TOGGLE: 'SELECTION_TOGGLE',
+  COLLAPSE_TOGGLE: 'COLLAPSE_TOGGLE',
+  FUNCTION_BUTTON: 'FUNCTION_BUTTON',
+  DROPDOWN: 'DROPDOWN',
+  DELETE_BUTTON: 'DELETE_BUTTON',
+  ADD_ARGUMENT: 'ADD_ARGUMENT',
+  ADD_ARGUMENT_GROUP: 'ADD_ARGUMENT_GROUP',
+  DEBUG_TOGGLE: 'DEBUG_TOGGLE',
+  INDICATOR_TEXT: 'INDICATOR_TEXT',
+  INDICATOR_ICON: 'INDICATOR_ICON',
+  DIVIDER: 'DIVIDER',
+  LABEL: 'LABEL'
+};
+exports.EXTRA_TYPES = EXTRA_TYPES;
+var SIMPLE_PROPERTY_TYPES = {
+  BOOLEAN: 'BOOLEAN',
+  NUMBER: 'NUMBER',
+  STRING: 'STRING',
+  OPTIONS: 'OPTIONS',
+  IGNORED: 'IGNORED'
+};
+exports.SIMPLE_PROPERTY_TYPES = SIMPLE_PROPERTY_TYPES;
