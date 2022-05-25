@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { styled, keyframes } from "@stitches/react";
+import { createGlobalStyle } from "styled-components";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
@@ -11,7 +12,14 @@ import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import { times, divide, plus } from "number-precision";
 import { round, isNumber, isNaN } from "lodash";
-import "./Utility.css";
+
+const GlobalSpinnerStyle = createGlobalStyle`
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+`;
 
 const slideUpAndFade = keyframes({
   "0%": { opacity: 0, transform: "translateY(2px)" },
@@ -684,32 +692,35 @@ export const NumberInput = ({
   }, [storedValue, value, visualScaling]);
 
   return (
-    <InputContainer
-      {...otherProps}
-      css={{ ...style, backgroundColor: valid ? null : "red" }}
-    >
-      <InnerInputField className="nodrag">{prefix}</InnerInputField>
-      <BasicInput
-        type="text"
-        className="nodrag"
-        // min={min * visualScaling}
-        // max={max}
-        // step={step * visualScaling}
-        value={storedValue}
-        onChange={setNewFromInput}
-        css={innerStyle}
-        disabled={disabled}
-      />
-
-      <InnerInputField className="nodrag">{suffix}</InnerInputField>
-      <InnerInputField className="nodrag" css={{ marginLeft: 2 }}>
-        <Spinner
+    <>
+      <GlobalSpinnerStyle />
+      <InputContainer
+        {...otherProps}
+        css={{ ...style, backgroundColor: valid ? null : "red" }}
+      >
+        <InnerInputField className="nodrag">{prefix}</InnerInputField>
+        <BasicInput
+          type="text"
+          className="nodrag"
+          // min={min * visualScaling}
+          // max={max}
+          // step={step * visualScaling}
+          value={storedValue}
+          onChange={setNewFromInput}
+          css={innerStyle}
           disabled={disabled}
-          onClickDown={(e) => setNewFromButton(-1 * step)}
-          onClickUp={(e) => setNewFromButton(step)}
         />
-      </InnerInputField>
-    </InputContainer>
+
+        <InnerInputField className="nodrag">{suffix}</InnerInputField>
+        <InnerInputField className="nodrag" css={{ marginLeft: 2 }}>
+          <Spinner
+            disabled={disabled}
+            onClickDown={(e) => setNewFromButton(-1 * step)}
+            onClickUp={(e) => setNewFromButton(step)}
+          />
+        </InnerInputField>
+      </InputContainer>
+    </>
   );
 };
 

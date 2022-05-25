@@ -1,9 +1,3 @@
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 .rotate{
     -webkit-animation: rotation infinite 3s linear;
             animation: rotation infinite 3s linear;
@@ -33,4 +27,4 @@ input[type="number"]::-webkit-outer-spin-button {
     }
   }
 
-/*# sourceMappingURL=main.8d7debc4.css.map*/
+/*# sourceMappingURL=main.6199a426.css.map*/

@@ -326,7 +326,9 @@ var VisualBlock = /*#__PURE__*/(0, _react.memo)( /*#__PURE__*/(0, _react.forward
               textAlign: "center"
             }
           }, fieldInfo.name)
-        }, /*#__PURE__*/_react.default.createElement(_grommet.Box, null, /*#__PURE__*/_react.default.createElement(_Utility.NumberInput, {
+        }, /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+          focusIndicator: false
+        }, /*#__PURE__*/_react.default.createElement(_Utility.NumberInput, {
           onMouseEnter: function onMouseEnter(_) {
             return setLocked(true);
           },

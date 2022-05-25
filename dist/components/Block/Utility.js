@@ -15,9 +15,13 @@ var _objectWithoutProperties2 = _interopRequireDefault(require("@babel/runtime/h
 
 var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectSpread2"));
 
+var _taggedTemplateLiteral2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/taggedTemplateLiteral"));
+
 var _react = _interopRequireWildcard(require("react"));
 
 var _react2 = require("@stitches/react");
+
+var _styledComponents = require("styled-components");
 
 var DropdownMenuPrimitive = _interopRequireWildcard(require("@radix-ui/react-dropdown-menu"));
 
@@ -41,8 +45,6 @@ var _numberPrecision = require("number-precision");
 
 var _lodash = require("lodash");
 
-require("./Utility.css");
-
 var _excluded = ["highlightColor"],
     _excluded2 = ["highlightColor"],
     _excluded3 = ["highlightColor"],
@@ -53,6 +55,10 @@ var _excluded = ["highlightColor"],
     _excluded8 = ["highlightColor"],
     _excluded9 = ["highlightColor", "disabled"],
     _excluded10 = ["prefix", "suffix", "style", "innerStyle", "step", "onChange", "min", "max", "value", "visualScaling", "disabled"];
+
+var _templateObject;
+
+var GlobalSpinnerStyle = (0, _styledComponents.createGlobalStyle)(_templateObject || (_templateObject = (0, _taggedTemplateLiteral2.default)(["\ninput[type=\"number\"]::-webkit-inner-spin-button,\ninput[type=\"number\"]::-webkit-outer-spin-button {\n  -webkit-appearance: none;\n  margin: 0;\n}\n"])));
 var slideUpAndFade = (0, _react2.keyframes)({
   "0%": {
     opacity: 0,
@@ -783,7 +789,7 @@ var NumberInput = function NumberInput(_ref14) {
       setStoredValue((0, _numberPrecision.times)(value, visualScaling));
     }
   }, [storedValue, value, visualScaling]);
-  return /*#__PURE__*/_react.default.createElement(InputContainer, Object.assign({}, otherProps, {
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(GlobalSpinnerStyle, null), /*#__PURE__*/_react.default.createElement(InputContainer, Object.assign({}, otherProps, {
     css: (0, _objectSpread2.default)((0, _objectSpread2.default)({}, style), {}, {
       backgroundColor: valid ? null : "red"
     })
@@ -814,7 +820,7 @@ var NumberInput = function NumberInput(_ref14) {
     onClickUp: function onClickUp(e) {
       return setNewFromButton(step);
     }
-  })));
+  }))));
 };
 
 exports.NumberInput = NumberInput;

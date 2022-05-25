@@ -396,7 +396,7 @@ export const VisualBlock = memo(
                                       }
                                     >
                                       
-                                      <Box>
+                                      <Box focusIndicator={false}>
                                         <NumberInput
                                           onMouseEnter={(_) => setLocked(true)}
                                           onMouseLeave={(_) => setLocked(false)}
