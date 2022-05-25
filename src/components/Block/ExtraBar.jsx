@@ -328,7 +328,7 @@ const AddArgumentExtra = ({ data, argumentType, interactionDisabled, inTopLevel,
             disabled={interactionDisabled}
             style={{ padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt' }}
             icon={inTopLevel ? <Icon /> : null}
-            onClick={() => addArgument(data.id, argumentType)}
+            onClick={() => inTopLevel ? addArgument(data.id, argumentType) : {}}
             label={inTopLevel ? null : `Add ${typeSpec.name} Argument`}
         />
     )
