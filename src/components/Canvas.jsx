@@ -1,4 +1,4 @@
-import React, {memo} from 'react';
+import React from 'react';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -94,7 +94,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         // panOnDrag={!locked}
         nodesConnectable={false}
         elementsSelectable={false}
-        nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [CanvasNode])}
+        nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }),[])}
         nodes={nodes}
         onConnect={(_) => { }}
         onNodesChange={moveNodes}

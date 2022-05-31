@@ -26,11 +26,11 @@ const Template = (args) => {
 };
 
 const STATE_EXPRESSIONS = ['notStateExprType','allStateExprType','anyStateExprType'];
-const EVENT_EXPRESSIONS = [];
-const RETURNS_EVENT = [];
+// const EVENT_EXPRESSIONS = [];
+// const RETURNS_EVENT = [];
 const RETURNS_STATE = ['stateType',...STATE_EXPRESSIONS];
-const RETURNS_ACTION = [];
-const RETURNS_CONTROLLER = [];
+// const RETURNS_ACTION = [];
+// const RETURNS_CONTROLLER = [];
 
 export const SOBORO = Template.bind({});
 // More on args: https://storybook.js.org/docs/react/writing-stories/args

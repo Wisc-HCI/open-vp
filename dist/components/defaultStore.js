@@ -107,18 +107,14 @@ function deleteFromChildren(state, idsToDelete, parentData) {
             parentData.properties[propName].forEach(function (child) {
               state = deleteFromChildren(state, idsToDelete, state.programData[child]);
             });
-
-            var _loop = function _loop(_i) {
-              (0, _lodash.remove)(state.programData[parentData.id].properties[propName], function (field) {
+            idsToDelete.forEach(function (idToDelete) {
+              var newList = state.programData[parentData.id].properties[propName].filter(function (field) {
                 var _state$programData$fi;
 
-                return ((_state$programData$fi = state.programData[field]) === null || _state$programData$fi === void 0 ? void 0 : _state$programData$fi.ref) === idsToDelete[_i];
+                return ((_state$programData$fi = state.programData[field]) === null || _state$programData$fi === void 0 ? void 0 : _state$programData$fi.ref) !== idToDelete;
               });
-            };
-
-            for (var _i = 0; _i < idsToDelete.length; _i++) {
-              _loop(_i);
-            }
+              state.programData[parentData.id].properties[propName] = newList;
+            });
           } else if (property && parentData.properties[propName] && idsToDelete.includes((_state$programData$pa2 = state.programData[parentData.properties[propName]]) === null || _state$programData$pa2 === void 0 ? void 0 : _state$programData$pa2.ref)) {
             // Delete Reference to Child
             delete state.programData[parentData.properties[propName]]; // entry.properties[propName] = null;
@@ -178,7 +174,7 @@ function deleteSelfBlock(state, data, parentId, fieldInfo) {
 
             if (property && (property.type || property.type === _.TYPES.OBJECT)) {// Ignore SIMPLE types.
             } else if (property && property.isList) {
-              var _loop2 = function _loop2(i) {
+              var _loop = function _loop(i) {
                 var _entry$properties$pro;
 
                 if ((_entry$properties$pro = entry.properties[propName]) !== null && _entry$properties$pro !== void 0 && _entry$properties$pro.includes(callIds[i])) {
@@ -190,7 +186,7 @@ function deleteSelfBlock(state, data, parentId, fieldInfo) {
 
               // Iterate through property list and remove all applicable references
               for (var i = 0; i < callIds.length; i++) {
-                _loop2(i);
+                _loop(i);
               }
             } else if (property && entry.properties[propName]) {
               // Delete reference from property
@@ -339,7 +335,7 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
     moveBlocks: function moveBlocks(changes) {
       return set(function (state) {
         changes.forEach(function (change) {
-          if (change.type === "position" && state.programData[change.id]) {
+          if (change.type === "position" && state.programData[change.id] && change.position) {
             state.programData[change.id].position = change.position;
           }
         });

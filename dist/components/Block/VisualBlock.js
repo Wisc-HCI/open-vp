@@ -153,15 +153,17 @@ var VisualBlock = /*#__PURE__*/(0, _react.memo)( /*#__PURE__*/(0, _react.forward
     align: "center",
     direction: "row",
     gap: "xsmall"
-  }, /*#__PURE__*/_react.default.createElement(Icon, Object.assign({}, stopPropArgs, {
+  }, /*#__PURE__*/_react.default.createElement("div", Object.assign({}, stopPropArgs, {
     style: {
       backgroundColor: "#22222299",
       color: "white",
       padding: 9,
       borderRadius: 5,
-      boxShadow: "0 0 0 1px #222222"
+      boxShadow: "0 0 0 1px #222222",
+      height: 17,
+      width: 17
     }
-  })), /*#__PURE__*/_react.default.createElement(_grommet.Box, {
+  }), /*#__PURE__*/_react.default.createElement(Icon, null)), /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     flex: true
   }, /*#__PURE__*/_react.default.createElement(_Utility.Input, {
     className: canDragBlockRFR ? null : "nodrag",

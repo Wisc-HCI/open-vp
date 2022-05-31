@@ -67,12 +67,12 @@ var Template = function Template(args) {
   })));
 };
 
-var STATE_EXPRESSIONS = ['notStateExprType', 'allStateExprType', 'anyStateExprType'];
-var EVENT_EXPRESSIONS = [];
-var RETURNS_EVENT = [];
-var RETURNS_STATE = ['stateType'].concat(STATE_EXPRESSIONS);
-var RETURNS_ACTION = [];
-var RETURNS_CONTROLLER = [];
+var STATE_EXPRESSIONS = ['notStateExprType', 'allStateExprType', 'anyStateExprType']; // const EVENT_EXPRESSIONS = [];
+// const RETURNS_EVENT = [];
+
+var RETURNS_STATE = ['stateType'].concat(STATE_EXPRESSIONS); // const RETURNS_ACTION = [];
+// const RETURNS_CONTROLLER = [];
+
 var SOBORO = Template.bind({}); // More on args: https://storybook.js.org/docs/react/writing-stories/args
 
 exports.SOBORO = SOBORO;

@@ -95,13 +95,10 @@ export function deleteFromChildren(state, idsToDelete, parentData) {
                 state.programData[child]
               );
             });
-
-            for (let i = 0; i < idsToDelete.length; i++) {
-              remove(
-                state.programData[parentData.id].properties[propName],
-                (field) => state.programData[field]?.ref === idsToDelete[i]
-              );
-            }
+            idsToDelete.forEach(idToDelete=>{
+              const newList = state.programData[parentData.id].properties[propName].filter((field) => state.programData[field]?.ref !== idToDelete)
+              state.programData[parentData.id].properties[propName] = newList
+            })
           } else if (
             property &&
             parentData.properties[propName] &&
@@ -389,7 +386,7 @@ export const ProgrammingSlice = (set, get) => ({
   moveBlocks: (changes) =>
     set((state) => {
       changes.forEach((change) => {
-        if (change.type === "position" && state.programData[change.id]) {
+        if (change.type === "position" && state.programData[change.id] && change.position) {
           state.programData[change.id].position = change.position;
         }
       });

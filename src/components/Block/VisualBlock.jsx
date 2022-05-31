@@ -5,7 +5,7 @@ import { List } from "./List";
 import { forwardRef } from "react";
 import { DATA_TYPES, TYPES, SIMPLE_PROPERTY_TYPES } from "../Constants";
 import { FiCheck, FiSquare } from "react-icons/fi";
-import { TextInput, Box, Button, Text, RadioButtonGroup } from "grommet";
+import { Box, Button, Text, RadioButtonGroup } from "grommet";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { ExtraBar, RightClickMenu } from "./ExtraBar";
 import { Selectable } from "./Selectable";
@@ -162,16 +162,19 @@ export const VisualBlock = memo(
                 {/* The header, includes the name/text field and the extra bar */}
                 {!minified && (
                   <Box flex align="center" direction="row" gap="xsmall">
-                    <Icon
-                      {...stopPropArgs}
+                    <div {...stopPropArgs}
                       style={{
                         backgroundColor: "#22222299",
                         color: "white",
                         padding: 9,
                         borderRadius: 5,
                         boxShadow: `0 0 0 1px #222222`,
-                      }}
-                    />
+                        height: 17,
+                        width: 17
+                      }}>
+                        <Icon/>
+                    </div>
+                    
 
                     <Box flex>
                       <Input

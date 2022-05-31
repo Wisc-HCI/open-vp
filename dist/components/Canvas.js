@@ -166,7 +166,7 @@ var Canvas = function Canvas(_ref2) {
       return {
         canvasNode: CanvasNode
       };
-    }, [CanvasNode]),
+    }, []),
     nodes: nodes,
     onConnect: function onConnect(_) {},
     onNodesChange: moveNodes,
