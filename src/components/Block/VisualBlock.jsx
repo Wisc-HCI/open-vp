@@ -185,7 +185,8 @@ export const VisualBlock = memo(
                         // textAlign='start'
                         // focusIndicator={false}
                         disabled={!data.editing && !data.refData?.editing}
-                        css={{
+                        highlightColor={highlightColor}
+                        style={{
                           boxShadow: editing
                             ? `0 0 0 1px ${highlightColor}`
                             : `0 0 0 1px #222222`,
@@ -362,14 +363,6 @@ export const VisualBlock = memo(
                                         placeholder={fieldInfo.name}
                                         onMouseEnter={(_) => setLocked(true)}
                                         onMouseLeave={(_) => setLocked(false)}
-                                        // css={{
-                                        //   fontSize: 14,
-                                        //   minWidth: 30,
-                                        //   textAlign: "center",
-                                        //   color: "#00000088",
-                                        //   backgroundColor: "#efefef50",
-                                        //   boxShadow: `0 0 0 1px #efefef`,
-                                        // }}
                                         value={currentValue}
                                         disabled={interactionDisabled}
                                         onChange={(e) =>

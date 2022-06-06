@@ -1,447 +1,321 @@
 import React, { useState, useEffect } from "react";
-import { styled, keyframes } from "@stitches/react";
-import { createGlobalStyle } from "styled-components";
+// import { styled, keyframes } from "@stitches/react";
+import styled, { keyframes, css, createGlobalStyle } from "styled-components";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import * as SwitchPrimitive from "@radix-ui/react-switch";
 import * as LabelPrimitive from "@radix-ui/react-label";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-import * as SliderPrimitive from "@radix-ui/react-slider";
+// import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import { times, divide, plus } from "number-precision";
-import { round, isNumber, isNaN } from "lodash";
+import { isNumber, isNaN } from "lodash";
 
 const GlobalSpinnerStyle = createGlobalStyle`
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-`;
+}`;
 
-const slideUpAndFade = keyframes({
-  "0%": { opacity: 0, transform: "translateY(2px)" },
-  "100%": { opacity: 1, transform: "translateY(0)" },
-});
+const slideUpAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0)
+  }
+`
 
-const slideRightAndFade = keyframes({
-  "0%": { opacity: 0, transform: "translateX(-2px)" },
-  "100%": { opacity: 1, transform: "translateX(0)" },
-});
+const slideRightAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0)
+  }
+`
 
-const slideDownAndFade = keyframes({
-  "0%": { opacity: 0, transform: "translateY(-2px)" },
-  "100%": { opacity: 1, transform: "translateY(0)" },
-});
+const slideDownAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0)
+  }
+`
 
-const slideLeftAndFade = keyframes({
-  "0%": { opacity: 0, transform: "translateX(2px)" },
-  "100%": { opacity: 1, transform: "translateX(0)" },
-});
-
-const StyledScrollArea = styled(ScrollArea.Root, {
-  overflow: "hidden",
-});
-
-const StyledViewport = styled(ScrollArea.Viewport, {
-  width: "100%",
-  height: "100%",
-  borderRadius: "inherit",
-  padding: "4pt",
-});
-
-const StyledScrollbar = styled(ScrollArea.Scrollbar, {
-  display: "flex",
-  // ensures no selection
-  userSelect: "none",
-  // disable browser handling of all panning and zooming gestures on touch devices
-  touchAction: "none",
-  padding: 2,
-  background: "#55555525",
-  transition: "background 160ms ease-out",
-  "&:hover": { background: "#45454540" },
-  '&[data-orientation="vertical"]': { width: 8 },
-  '&[data-orientation="horizontal"]': {
-    flexDirection: "column",
-    height: 8,
-  },
-});
-
-const StyledScrollThumb = styled(ScrollArea.Thumb, {
-  flex: 1,
-  background: "#eeeeee66",
-  borderRadius: 8,
-  // increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html
-  // position: "relative",
-  // "&::before": {
-  //   content: '""',
-  //   position: "absolute",
-  //   top: "50%",
-  //   left: "50%",
-  //   transform: "translate(-50%, -50%)",
-  //   width: "100%",
-  //   height: "100%",
-  //   minWidth: 44,
-  //   minHeight: 44
-  // }
-});
-
-export const OtherStyledSeparator = styled(SeparatorPrimitive.Root, {
-  backgroundColor: "#efefef",
-  "&[data-orientation=horizontal]": { height: 1, width: "100%" },
-  "&[data-orientation=vertical]": { height: "100%", width: 1 },
-});
+const slideLeftAndFade = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0)
+  }
+`
 
 const contentStyle = {
-  fontFamily: "Helvetica",
-  minWidth: 100,
-  backgroundColor: "#303030f5",
-  color: "#efefef",
-  borderRadius: 6,
-  padding: 5,
-  boxShadow:
-    "0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)",
-  "@media (prefers-reduced-motion: no-preference)": {
-    animationDuration: "400ms",
-    animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-    animationFillMode: "forwards",
-    willChange: "transform, opacity",
-    '&[data-state="open"]': {
-      '&[data-side="top"]': { animationName: slideDownAndFade },
-      '&[data-side="right"]': { animationName: slideLeftAndFade },
-      '&[data-side="bottom"]': { animationName: slideUpAndFade },
-      '&[data-side="left"]': { animationName: slideRightAndFade },
+  fontFamily: 'Helvetica',
+  minWidth: '100px',
+  backgroundColor: '#303030f5',
+  color: '#efefef',
+  borderRadius: '6px',
+  padding: '5px',
+  boxShadow: '0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)',
+  animationFillMode: 'forwards',
+  willChange: 'transform, opacity',
+  '&[data-state="open"]': {
+    '&[data-side="top"]': { 
+      animation: css`${slideDownAndFade} 400ms cubic-bezier(0.16, 1, 0.3, 1)`
     },
-  },
-};
+    '&[data-side="right"]': { 
+      animation: css`${slideLeftAndFade} 400ms cubic-bezier(0.16, 1, 0.3, 1)`
+    },
+    '&[data-side="bottom"]': { 
+      animation: css`${slideUpAndFade} 400ms cubic-bezier(0.16, 1, 0.3, 1)`
+    },
+    '&[data-side="left"]': { 
+      animation: css`${slideRightAndFade} 400ms cubic-bezier(0.16, 1, 0.3, 1)`
+    }
+  }
+}
 
-const StyledDropdownContent = styled(
-  DropdownMenuPrimitive.Content,
-  contentStyle
-);
-const StyledContextContent = styled(ContextMenuPrimitive.Content, contentStyle);
-const StyledTooltipContent = styled(TooltipPrimitive.Content, contentStyle);
-
-const itemStyles = {
-  all: "unset",
-  fontSize: 13,
+const itemStyle = props=>({
+  all: 'unset',
+  fontSize: '12px',
   lineHeight: 1,
-  color: "#efefef",
-  borderRadius: 3,
-  display: "flex",
-  alignItems: "center",
-  height: 25,
-  padding: "0 5px",
-  position: "relative",
-  paddingLeft: 25,
-  userSelect: "none",
-
-  "&[data-disabled]": {
-    color: "#dedede",
-    pointerEvents: "none",
+  color: '#efefef',
+  borderRadius: '3px',
+  display: 'flex',
+  alignItems: 'center',
+  height: '25px',
+  padding: '0 5px',
+  position: 'relative',
+  paddingLeft: '25px',
+  userSelect: 'none',
+  '&[data-disabled]': {
+    color: '#dedede',
+    pointerEvents: 'none',
   },
 
-  "&:focus": {
-    backgroundColor: "#efefef",
-    color: "cyan",
-  },
-};
-
-const StyledDropdownItem = styled(DropdownMenuPrimitive.Item, {
-  ...itemStyles,
-});
-const StyledDropdownCheckboxItem = styled(DropdownMenuPrimitive.CheckboxItem, {
-  ...itemStyles,
-});
-const StyledDropdownRadioItem = styled(DropdownMenuPrimitive.RadioItem, {
-  ...itemStyles,
-});
-const StyledDropdownTriggerItem = styled(DropdownMenuPrimitive.TriggerItem, {
   '&[data-state="open"]': {
-    backgroundColor: "#efefef",
-    color: "cyan",
+    
+    background: `${props.$highlightColor}77`,
+    color: '#efefef',
   },
-  ...itemStyles,
-});
 
-const StyledContextItem = styled(ContextMenuPrimitive.Item, { ...itemStyles });
-const StyledContextCheckboxItem = styled(ContextMenuPrimitive.CheckboxItem, {
-  ...itemStyles,
-});
-const StyledContextRadioItem = styled(ContextMenuPrimitive.RadioItem, {
-  ...itemStyles,
-});
-const StyledContextTriggerItem = styled(ContextMenuPrimitive.TriggerItem, {
-  '&[data-state="open"]': {
-    backgroundColor: "#efefef",
-    color: "cyan",
+  '&:focus': {
+    background: props.$highlightColor,
+    color: '#efefef',
   },
-  ...itemStyles,
-});
 
-const HoverDropdownItem = ({ highlightColor, ...other }) => (
-  <StyledDropdownItem
-    css={{ "&:focus": { color: "#efefef", backgroundColor: highlightColor } }}
-    {...other}
-  />
-);
-const HoverDropdownCheckboxItem = ({ highlightColor, ...other }) => (
-  <StyledDropdownCheckboxItem
-    css={{ "&:focus": { color: "#efefef", backgroundColor: highlightColor } }}
-    {...other}
-  />
-);
-const HoverDropdownRadioItem = ({ highlightColor, ...other }) => (
-  <StyledDropdownRadioItem
-    css={{ "&:focus": { color: "#efefef", backgroundColor: highlightColor } }}
-    {...other}
-  />
-);
-const HoverDropdownTriggerItem = ({ highlightColor, ...other }) => (
-  <StyledDropdownTriggerItem
-    css={{
-      '&[data-state="open"]': { color: highlightColor },
-      "&:focus": { color: "#efefef", backgroundColor: highlightColor },
-    }}
-    {...other}
-  />
-);
+  '&:hover': {
+    background: props.$highlightColor,
+    color: '#efefef',
+  }
 
-const HoverContextItem = ({ highlightColor, ...other }) => (
-  <StyledContextItem
-    css={{ "&:focus": { color: "#efefef", backgroundColor: highlightColor } }}
-    {...other}
-  />
-);
-const HoverContextCheckboxItem = ({ highlightColor, ...other }) => (
-  <StyledContextCheckboxItem
-    css={{ "&:focus": { color: "#efefef", backgroundColor: highlightColor } }}
-    {...other}
-  />
-);
-const HoverContextRadioItem = ({ highlightColor, ...other }) => (
-  <StyledContextRadioItem
-    css={{ "&:focus": { color: "#efefef", backgroundColor: highlightColor } }}
-    {...other}
-  />
-);
-const HoverContextTriggerItem = ({ highlightColor, ...other }) => (
-  <StyledContextTriggerItem
-    css={{
-      '&[data-state="open"]': { color: highlightColor },
-      "&:focus": { color: "#efefef", backgroundColor: highlightColor },
-    }}
-    {...other}
-  />
-);
+})
 
-const labelStyle = {
-  paddingLeft: 25,
-  fontSize: 12,
-  lineHeight: "25px",
-  color: "#a0a0a0",
-};
+// css`
+//   all: unset;
+//   font-size: 12px;
+//   line-height: 1;
+//   color: #efefef;
+//   border-radius: 3px;
+//   display: flex;
+//   align-items: center;
+//   height: 25px;
+//   padding: 0 5px;
+//   position: relative;
+//   padding-left: 25px;
+//   user-select: none;
 
-const separatorStyle = {
-  height: 1,
-  backgroundColor: "#efefef",
-  margin: 5,
-};
+//   &[data-disabled]: {
+//     color: #dedede;
+//     pointer-events: none;
+//   }
 
-const itemIndicatorStyle = {
-  position: "absolute",
-  left: 0,
-  width: 25,
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-};
+//   &[data-state="open"]: {
+//     background-color: #efefef;
+//     color: ${props=>props.$highlightColor};
+//   }
 
-const StyledDropdownLabel = styled(DropdownMenuPrimitive.Label, labelStyle);
-const StyledContextLabel = styled(ContextMenuPrimitive.Label, labelStyle);
+//   &:focus: {
+//     background-color: ${props=>props.$highlightColor};
+//     color: #efefef;
+//   }
 
-const StyledDropdownSeparator = styled(
-  DropdownMenuPrimitive.Separator,
-  separatorStyle
-);
-const StyledContextSeparator = styled(
-  ContextMenuPrimitive.Separator,
-  separatorStyle
-);
+//   &:hover: {
+//     background-color: ${props=>props.$highlightColor};
+//     color: #efefef;
+//   }
+// `
 
-const StyledDropdownItemIndicator = styled(
-  DropdownMenuPrimitive.ItemIndicator,
-  itemIndicatorStyle
-);
-const StyledContextItemIndicator = styled(
-  ContextMenuPrimitive.ItemIndicator,
-  itemIndicatorStyle
-);
+const StyledScrollArea = styled(ScrollArea.Root)`
+  overflow: hidden;
+  height: ${props=>props.$containerHeight ? `${props.$containerHeight}px` : '100%'};
+  width: ${props=>props.$containerWidth ? `${props.$containerWidth}px` : '100%'};
+`;
+
+const StyledViewport = styled(ScrollArea.Viewport)`
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  padding: 4px;
+`;
+
+const StyledScrollbar = styled(ScrollArea.Scrollbar)`
+  display: flex;
+  user-select: none;
+  touch-action: none;
+  padding: 2px;
+  background: #55555525;
+  transition: background 160ms ease-out;
+  &:hover: { 
+    background: #45454540 
+  };
+`;
+
+const VerticalScrollBar = styled(StyledScrollbar)`
+  width: 8px;
+`
+
+const HorizontalScrollBar = styled(StyledScrollbar)`
+  height: 8px;
+  flex-direction: column;
+`
+
+const StyledScrollThumb = styled(ScrollArea.Thumb)`
+  flex: 1;
+  background: #eeeeee66;
+  border-radius: 8px;
+`;
+
+export const OtherStyledSeparator = styled(SeparatorPrimitive.Root)(props => ({
+  background: '#efefef',
+  backgroundColor: '#efefef',
+  height: props.orientation === 'horizontal' ? '1px' : props.$height ? props.$height : '100%',
+  width: props.orientation === 'vertical' ? '1px' : props.$width ? props.$width : '100%',
+}));
+
+const StyledDropdownContent = styled(DropdownMenuPrimitive.Content)(contentStyle);
+
+const StyledContextContent = styled(ContextMenuPrimitive.Content)(contentStyle);
+
+const StyledTooltipContent = styled(TooltipPrimitive.Content)(contentStyle);
+
+const HoverDropdownItem = styled(DropdownMenuPrimitive.Item)(itemStyle);
+
+const HoverDropdownCheckboxItem = styled(DropdownMenuPrimitive.CheckboxItem)(itemStyle);
+
+const HoverDropdownRadioItem = styled(DropdownMenuPrimitive.RadioItem)(itemStyle);
+
+const HoverDropdownTriggerItem = styled(DropdownMenuPrimitive.TriggerItem)(itemStyle);
+
+const HoverContextItem = styled(ContextMenuPrimitive.Item)(itemStyle);
+
+const HoverContextCheckboxItem = styled(ContextMenuPrimitive.CheckboxItem)(itemStyle);
+
+const HoverContextRadioItem = styled(ContextMenuPrimitive.RadioItem)(itemStyle);
+
+const HoverContextTriggerItem = styled(ContextMenuPrimitive.TriggerItem)(itemStyle);
+
+const StyledDropdownLabel = styled(DropdownMenuPrimitive.Label)`
+  padding-left: 25px;
+  font-size: 12px;
+  line-height: 25px;
+  color: #a0a0a0;
+`;
+
+const StyledContextLabel = styled(ContextMenuPrimitive.Label)`
+padding-left: 25px;
+font-size: 12px;
+line-height: 25px;
+color: #a0a0a0;
+`;
+
+const StyledDropdownSeparator = styled(DropdownMenuPrimitive.Separator)`
+  height: 1px;
+  background-color: #efefef;
+  margin: 5px;
+`;
+const StyledContextSeparator = styled(ContextMenuPrimitive.Separator)`
+  height: 1px;
+  background-color: #efefef;
+  margin: 5px;
+`;
+
+const StyledDropdownItemIndicator = styled(DropdownMenuPrimitive.ItemIndicator)`
+  position: absolute;
+  left: 0px;
+  width: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+`;
+const StyledContextItemIndicator = styled(ContextMenuPrimitive.ItemIndicator)`
+  position: absolute;
+  left: 0px;
+  width: 25px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Tooltip = TooltipPrimitive.Root;
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
-export const RightSlot = styled("div", {
-  marginLeft: "auto",
-  paddingLeft: 20,
-  color: "#efefef",
-  ":focus > &": { color: "white" },
-  "[data-disabled] &": { color: "#efefef" },
-});
+export const RightSlot = styled.div`
+  margin-left: auto;
+  padding-left: 20px;
+  color: #efefef;
+  :focus > &: { color: white };
+  [data-disabled] &: { color: #efefef };
+`;
 
-const StyledSwitch = styled(SwitchPrimitive.Root, {
-  all: "unset",
-  width: 42,
-  height: 25,
-  backgroundColor: "#111111",
-  borderRadius: "9999px",
-  position: "relative",
-  boxShadow: "inset 0.5pt 0.5pt 0pt 0pt rgba(55,55,55,0.25)",
-  WebkitTapHighlightColor: "rgba(0, 0, 0, 0)",
-  // '&:focus': { boxShadow: `0 0 0 2px black` },
-  '&[data-state="checked"]': { backgroundColor: "black" },
-});
+const StyledSwitch = styled(SwitchPrimitive.Root)`
+  all: unset;
+  width: 42px;
+  height: 25px;
+  opacity: ${props=>props.disabled ? 0.7 : 1};
+  background-color: ${props=>props.checked ? props.$highlightColor : '#111111'};
+  border-radius: 9999px;
+  position: relative;
+  box-shadow: inset 0.5px 0.5px 0px 0px rgba(55,55,55,0.25);
+  WebkitTapHighlightColor: rgba(0, 0, 0, 0);
+`;
 
-const StyledThumb = styled(SwitchPrimitive.Thumb, {
-  display: "block",
-  width: 21,
-  height: 21,
-  backgroundColor: "white",
-  borderRadius: "9999px",
-  boxShadow: "0.5pt 0.5pt 0pt 0pt rgba(55,55,55,0.25)",
-  transition: "transform 100ms",
-  transform: "translateX(2px)",
-  willChange: "transform",
-  '&[data-state="checked"]': { transform: "translateX(19px)" },
-});
+const StyledThumb = styled(SwitchPrimitive.Thumb)`
+  display: block;
+  width: 21px;
+  height: 21px;
+  background-color: white;
+  border-radius: 9999px;
+  box-shadow: 0.5px 0.5px 0px 0px rgba(55,55,55,0.25);
+  transition: transform 100ms;
+  transform: ${props=>props.checked ? 'translateX(19px)' : 'translateX(2px)'};
+  will-change: transform;
+`;
 
-// Exports
-const SwitchWrapper = ({ highlightColor, disabled, ...other }) => (
-  <StyledSwitch
-    disabled={disabled}
-    css={{
-      opacity: disabled ? 0.7 : 1,
-      '&[data-state="checked"]': { backgroundColor: highlightColor },
-    }}
-    {...other}
-  />
-);
 const SwitchThumb = StyledThumb;
-const Label = styled(LabelPrimitive.Root, {
-  fontSize: 15,
-  fontWeight: 500,
-  color: "white",
-  userSelect: "none",
-});
+const Label = styled(LabelPrimitive.Root)`
+  font-size: 12px;
+  font-weight: 500px;
+  color: white;
+  user-select: none;
+`;
 
-const StyledArrow = styled(TooltipPrimitive.Arrow, {
-  fill: "#303030f5",
-});
-
-const StyledSlider = styled(SliderPrimitive.Root, {
-  position: "relative",
-  display: "flex",
-  alignItems: "center",
-  userSelect: "none",
-  touchAction: "none",
-  width: "100%",
-
-  '&[data-orientation="horizontal"]': {
-    height: 20,
-  },
-
-  '&[data-orientation="vertical"]': {
-    flexDirection: "column",
-    width: 20,
-    height: 100,
-  },
-});
-
-const StyledTrack = styled(SliderPrimitive.Track, {
-  backgroundColor: "hsla(0, 0%, 0%, 0.478)",
-  position: "relative",
-  flexGrow: 1,
-  borderRadius: "9999px",
-
-  '&[data-orientation="horizontal"]': { height: 3 },
-  '&[data-orientation="vertical"]': { width: 3 },
-});
-
-const StyledRange = styled(SliderPrimitive.Range, {
-  position: "absolute",
-  backgroundColor: "white",
-  borderRadius: "9999px",
-  height: "100%",
-});
-
-const StyledSliderThumb = styled(SliderPrimitive.Thumb, {
-  all: "unset",
-  display: "block",
-  padding: 2,
-  minWidth: 20,
-  height: 20,
-  fontSize: 15,
-  alignContent: "center",
-  alignItems: "center",
-  textAlign: "center",
-  backgroundColor: "white",
-  boxShadow: `0 2px 10px hsla(0, 0%, 0%, 0.141)`,
-  borderRadius: 20,
-  "&:hover": { backgroundColor: "#f0f0f0" },
-  "&:focus": { boxShadow: `0 0 0 5px hsla(0, 0%, 0%, 0.220)` },
-});
-
-export const Slider = ({
-  value,
-  onChange,
-  label,
-  min = 0,
-  max = 10,
-  step = 1,
-  units,
-  visualScaling = 1,
-  visualPrecision = 1,
-  disabled,
-}) => {
-  const visualValue = round(value * visualScaling, visualPrecision);
-  const labelText =
-    label && units
-      ? `${label}: ${visualValue} ${units}`
-      : label
-      ? `${label}: ${visualValue}`
-      : units
-      ? `${visualValue} ${units}`
-      : `${visualValue}`;
-
-  return (
-    <ToolTip
-      hideArrow
-      content={
-        <div key="label" style={{ textAlign: "center" }}>
-          {labelText}
-        </div>
-      }
-    >
-      <StyledSlider
-        disabled={disabled}
-        value={[value * visualScaling]}
-        min={min * visualScaling}
-        max={max * visualScaling}
-        step={step * visualScaling}
-        aria-label={label}
-        onValueChange={(v) => onChange(v[0] / visualScaling)}
-      >
-        <StyledTrack>
-          <StyledRange />
-        </StyledTrack>
-
-        <StyledSliderThumb />
-      </StyledSlider>
-    </ToolTip>
-  );
-};
+const StyledArrow = styled(TooltipPrimitive.Arrow)`fill: #303030f5`;
 
 export const Switch = ({
   onCheckedChange,
@@ -452,18 +326,18 @@ export const Switch = ({
 }) => {
   return (
     <>
-      <Label htmlFor={`switch-${label}`} css={{ paddingRight: 5 }}>
+      <Label htmlFor={`switch-${label}`} style={{ paddingRight: 5 }}>
         {label}
       </Label>
-      <SwitchWrapper
+      <StyledSwitch
         id={`switch-${label}`}
         checked={value}
         disabled={disabled}
-        highlightColor={highlightColor}
+        $highlightColor={highlightColor}
         onCheckedChange={onCheckedChange}
       >
-        <SwitchThumb />
-      </SwitchWrapper>
+        <SwitchThumb checked={value}/>
+      </StyledSwitch>
     </>
   );
 };
@@ -482,22 +356,22 @@ export const ToolTip = ({ children, content, hideArrow }) => {
   );
 };
 
-export const Input = styled("input", {
-  borderWidth: 0,
-  outline: "none",
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  borderRadius: 4,
-  padding: "0 10px",
-  height: 35,
-  fontSize: 15,
-  lineHeight: 1,
-  color: "white",
-  backgroundColor: "#22222299",
-  boxShadow: `0 0 0 1px #222222`,
-  "&:focus": { boxShadow: `0 0 0 2px #222222` },
-});
+export const Input = styled.input`
+  border-width: 0;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0 10px;
+  height: 35px;
+  font-size: 12px;
+  line-height: 1;
+  color: white;
+  background-color: #22222299;
+  box-shadow: 0 0 0 1px #222222;
+  &:focus: { box-shadow: 0 0 0 2px #222222 };
+`;
 
 const VALID_CHARS = [
   "0",
@@ -514,54 +388,54 @@ const VALID_CHARS = [
   "-",
 ];
 
-const BasicInput = styled("input", {
-  // Disabling this fixes functionality, but breaks styling
-  borderWidth: 0,
-  width: 40,
-  outline: "none",
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  borderRadius: 0,
-  padding: "0 5px",
-  height: 35,
-  fontSize: 15,
-  lineHeight: 1,
-  color: "white",
-  backgroundColor: "transparent",
-  // boxShadow: `0 0 0 1px #222222`,
-  // "&:focus": { boxShadow: `0 0 0 2px #222222` }
-});
+const BasicInput = styled.input`
+  border-width: 0;
+  width: 40px;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0px;
+  padding: 0 5px;
+  height: 35px;
+  font-size: 12px;
+  line-height: 1;
+  color: white;
+  background-color: transparent;
+`;
 
-const InputContainer = styled("div", {
-  padding: "0 5px 0 10px",
-  color: "white",
-  borderRadius: 4,
-  display: "inline-flex",
-  alignItems: "center",
-  alignContent: "center",
-  justifyContent: "center",
-  backgroundColor: "#22222299",
-  verticalAlign: "center",
-  boxShadow: `0 0 0 1px #222222`,
-  "&:focus": { boxShadow: `0 0 0 2px #222222` },
-});
+const InputContainer = styled.div`
+  padding: 0 5px 0 10px;
+  color: white;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  background-color: #22222299;
+  vertical-align: center;
+  box-shadow: 0 0 0 1px #222222;
+  &:focus: { box-shadow: 0 0 0 2px #222222 };
+`;
 
-const SpinnerButton = styled("button", {
-  all: "unset",
-  display: "flex",
-  flexDirection: "column",
-  padding: 2,
-  margin: 0,
-  alignItems: "center",
-  justifyContent: "center",
-  borderRadius: 4,
-  // fontSize: 14,
+const SpinnerButton = styled.button({
+  all: 'unset',
+  display: 'flex',
+  flexDirection: 'column',
+  padding: '2px',
+  margin: '0px',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '4px',
   lineHeight: 1,
-  height: 10,
-  // backgroundColor: "blue"
-  "&:focus": { backgroundColor: `#222222` },
-  "&:hover": { backgroundColor: `#222222` },
+  height: '10px',
+  background: '#22222299',
+  '&:focus': { 
+    background: '#222222' 
+  },
+  '&:hover': { 
+    background: '#222222'
+  },
 });
 
 const Spinner = ({ onClickUp, onClickDown, disabled }) => {
@@ -572,7 +446,6 @@ const Spinner = ({ onClickUp, onClickDown, disabled }) => {
         display: "inline-flex",
         flexDirection: "column",
         borderRadius: 3,
-        backgroundColor: "#22222299",
         justifyContent: "center",
         alignItems: "center",
       }}
@@ -580,14 +453,14 @@ const Spinner = ({ onClickUp, onClickDown, disabled }) => {
       <SpinnerButton
         disabled={disabled}
         onClick={onClickUp}
-        css={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
+        style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
       >
         <FiChevronUp />
       </SpinnerButton>
       <SpinnerButton
         disabled={disabled}
         onClick={onClickDown}
-        css={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+        style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
       >
         <FiChevronDown />
       </SpinnerButton>
@@ -595,9 +468,10 @@ const Spinner = ({ onClickUp, onClickDown, disabled }) => {
   );
 };
 
-const InnerInputField = styled("div", {
-  display: "inline-flex",
-});
+const InnerInputField = styled.div`
+  display: inline-flex;
+  font-size: 12pt;
+`;
 
 export const NumberInput = ({
   prefix = "",
@@ -696,7 +570,7 @@ export const NumberInput = ({
       <GlobalSpinnerStyle />
       <InputContainer
         {...otherProps}
-        css={{ ...style, backgroundColor: valid ? null : "red" }}
+        style={{ ...style, backgroundColor: valid ? null : "red" }}
       >
         <InnerInputField className="nodrag">{prefix}</InnerInputField>
         <BasicInput
@@ -707,12 +581,12 @@ export const NumberInput = ({
           // step={step * visualScaling}
           value={storedValue}
           onChange={setNewFromInput}
-          css={innerStyle}
+          style={innerStyle}
           disabled={disabled}
         />
 
         <InnerInputField className="nodrag">{suffix}</InnerInputField>
-        <InnerInputField className="nodrag" css={{ marginLeft: 2 }}>
+        <InnerInputField className="nodrag" style={{ marginLeft: 2 }}>
           <Spinner
             disabled={disabled}
             onClickDown={(e) => setNewFromButton(-1 * step)}
@@ -731,17 +605,17 @@ export const ScrollRegion = ({
   height,
   width,
 }) => (
-  <StyledScrollArea css={{ height, width }}>
+  <StyledScrollArea $containerHeight={height} $containerWidth={width}>
     <StyledViewport>{children}</StyledViewport>
     {horizontal && (
-      <StyledScrollbar orientation="horizontal">
+      <HorizontalScrollBar orientation="horizontal">
         <StyledScrollThumb />
-      </StyledScrollbar>
+      </HorizontalScrollBar>
     )}
     {vertical && (
-      <StyledScrollbar orientation="vertical">
+      <VerticalScrollBar orientation="vertical">
         <StyledScrollThumb />
-      </StyledScrollbar>
+      </VerticalScrollBar>
     )}
     <ScrollArea.Corner />
   </StyledScrollArea>

@@ -177,7 +177,8 @@ var VisualBlock = /*#__PURE__*/(0, _react.memo)( /*#__PURE__*/(0, _react.forward
     // focusIndicator={false}
     ,
     disabled: !data.editing && !((_data$refData4 = data.refData) !== null && _data$refData4 !== void 0 && _data$refData4.editing),
-    css: {
+    highlightColor: highlightColor,
+    style: {
       boxShadow: editing ? "0 0 0 1px ".concat(highlightColor) : "0 0 0 1px #222222",
       "&:focus": {
         boxShadow: "0 0 0 2px ".concat(highlightColor)
@@ -300,15 +301,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.memo)( /*#__PURE__*/(0, _react.forward
           },
           onMouseLeave: function onMouseLeave(_) {
             return setLocked(false);
-          } // css={{
-          //   fontSize: 14,
-          //   minWidth: 30,
-          //   textAlign: "center",
-          //   color: "#00000088",
-          //   backgroundColor: "#efefef50",
-          //   boxShadow: `0 0 0 1px #efefef`,
-          // }}
-          ,
+          },
           value: currentValue,
           disabled: interactionDisabled,
           onChange: function onChange(e) {

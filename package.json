@@ -1,6 +1,6 @@
 {
   "name": "simple-vp",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "main": "dist/index.js",
   "private": false,
   "files": [
@@ -29,7 +29,6 @@
     "@radix-ui/react-toggle": "^0.1.4",
     "@radix-ui/react-tooltip": "^0.1.7",
     "@react-spring/web": "^9.4.2",
-    "@stitches/react": "^1.2.8",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -43,7 +42,7 @@
     "react-dnd-html5-backend": "^14.1.0",
     "react-dnd-multi-backend": "^7.0.0-alpha.4",
     "react-dom": "^18.1.0",
-    "react-flow-renderer": "^10.3.4",
+    "react-flow-renderer": "^10.3.5",
     "react-icons": "^4.3.1",
     "react-scripts": "5.0.0",
     "react-spring": "^9.4.2",
@@ -101,14 +100,14 @@
     ]
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.5.0-beta.5",
-    "@storybook/addon-essentials": "^6.5.0-beta.5",
-    "@storybook/addon-links": "^6.5.0-beta.5",
-    "@storybook/builder-webpack5": "^6.5.0-beta.5",
-    "@storybook/manager-webpack5": "^6.5.0-beta.5",
-    "@storybook/node-logger": "^6.5.0-beta.5",
-    "@storybook/preset-create-react-app": "^4.1.0",
-    "@storybook/react": "^6.5.0-beta.5",
+    "@storybook/addon-actions": "^6.5.7",
+    "@storybook/addon-essentials": "^6.5.7",
+    "@storybook/addon-links": "^6.5.7",
+    "@storybook/builder-webpack5": "^6.5.7",
+    "@storybook/manager-webpack5": "^6.5.7",
+    "@storybook/node-logger": "^6.5.7",
+    "@storybook/preset-create-react-app": "^4.1.2",
+    "@storybook/react": "^6.5.7",
     "cross-env": "^7.0.3",
     "webpack": "^5.72.1"
   }

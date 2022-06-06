@@ -64,7 +64,7 @@ const FunctionButtonExtra = ({ actionInfo, data, blockSpec, inTopLevel, interact
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} disabled={interactionDisabled} onSelect={() => onClick(data, blockSpec)}>
+            <Wrapper checked $highlightColor={highlightColor} disabled={interactionDisabled} onSelect={() => onClick(data, blockSpec)}>
                 <Indicator>
                     <ExtraActionIcon />
                 </Indicator>
@@ -123,7 +123,7 @@ const LockIndicatorExtra = ({ locked, inTopLevel, highlightColor, menuType }) =>
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} disabled>
+            <Wrapper checked $highlightColor={highlightColor} disabled>
                 <Indicator>
                     <Icon />
                 </Indicator>
@@ -157,7 +157,7 @@ const NameEditToggleExtra = ({ isEditing, setIsEditing, locked, interactionDisab
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} disabled={disabled} onSelect={() => setIsEditing(!isEditing)}>
+            <Wrapper checked $highlightColor={highlightColor} disabled={disabled} onSelect={() => setIsEditing(!isEditing)}>
                 <Indicator>
                     <Icon />
                 </Indicator>
@@ -190,7 +190,7 @@ const SelectionToggleExtra = ({ isSelected, setIsSelected, inTopLevel, data, loc
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} disabled={disabled} onSelect={() => setIsSelected(!isSelected)}>
+            <Wrapper checked $highlightColor={highlightColor} disabled={disabled} onSelect={() => setIsSelected(!isSelected)}>
                 <Indicator>
                     <Icon />
                 </Indicator>
@@ -219,7 +219,7 @@ const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel, highligh
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} onSelect={() => setIsCollapsed(!isCollapsed)}>
+            <Wrapper checked $highlightColor={highlightColor} onSelect={() => setIsCollapsed(!isCollapsed)}>
                 <Indicator>
                     {isCollapsed ? <FiChevronDown /> : <FiChevronRight />}
                 </Indicator>
@@ -249,7 +249,7 @@ const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel, highlightCo
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} onSelect={() => setIsDebugging(!isDebugging)}>
+            <Wrapper checked $highlightColor={highlightColor} onSelect={() => setIsDebugging(!isDebugging)}>
                 <Indicator>
                     <Icon />
                 </Indicator>
@@ -266,7 +266,7 @@ const IndicatorTextExtra = ({ value, label, inTopLevel, highlightColor, menuType
         return (<Pill value={value} />)
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor}>
+            <Wrapper checked $highlightColor={highlightColor}>
                 <Indicator>
                     <Pill value={value} />
                 </Indicator>
@@ -302,7 +302,7 @@ const IndicatorIconExtra = ({ value, label, inTopLevel, highlightColor, menuType
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor}>
+            <Wrapper checked $highlightColor={highlightColor}>
                 <Indicator>
                     {value}
                 </Indicator>
@@ -336,7 +336,7 @@ const AddArgumentExtra = ({ data, argumentType, interactionDisabled, inTopLevel,
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} disabled={interactionDisabled} onSelect={() => addArgument(data.id, argumentType)}>
+            <Wrapper checked $highlightColor={highlightColor} disabled={interactionDisabled} onSelect={() => addArgument(data.id, argumentType)}>
                 <Indicator>
                     <Icon />
                 </Indicator>
@@ -385,7 +385,7 @@ const DeleteExtra = ({ data, inTopLevel, locked, fieldInfo, parentId, highlightC
         return inner
     } else {
         return (
-            <Wrapper checked highlightColor={highlightColor} disabled={!canDelete} onSelect={() => deleteFunc(data, parentId, fieldInfo)}>
+            <Wrapper checked $highlightColor={highlightColor} disabled={!canDelete} onSelect={() => deleteFunc(data, parentId, fieldInfo)}>
                 <Indicator>
                     <FiTrash2 />
                 </Indicator>
@@ -409,7 +409,7 @@ const DropdownExtra = ({
 
     return (
         <MenuComponent>
-            <TriggerComponent asChild={inTopLevel} highlightColor={highlightColor}>
+            <TriggerComponent asChild={inTopLevel} $highlightColor={highlightColor}>
                 {inTopLevel ? (
                     <Button
                         size='small'
@@ -647,7 +647,7 @@ const ButtonSwitch = ({
     } else if (feature === EXTRA_TYPES.DIVIDER && !inTopLevel) {
         inner = menuType === MENU_TYPES.DROPDOWN ? <DropdownMenuSeparator /> : <ContextMenuSeparator />
     } else if (feature === EXTRA_TYPES.DIVIDER && inTopLevel) {
-        inner = <OtherStyledSeparator decorative orientation='vertical' css={{ margin: '4px', '&[data-orientation=vertical]': { height: '15pt', width: 1 } }} />
+        inner = <OtherStyledSeparator decorative orientation='vertical' $height='15px'/>
     }
     return inner
 }

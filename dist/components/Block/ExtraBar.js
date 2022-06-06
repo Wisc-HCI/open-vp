@@ -86,7 +86,7 @@ var FunctionButtonExtra = function FunctionButtonExtra(_ref2) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor,
+      $highlightColor: highlightColor,
       disabled: interactionDisabled,
       onSelect: function onSelect() {
         return _onClick(data, blockSpec);
@@ -145,7 +145,7 @@ var LockIndicatorExtra = function LockIndicatorExtra(_ref4) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor,
+      $highlightColor: highlightColor,
       disabled: true
     }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(Icon, null)), inner);
   }
@@ -186,7 +186,7 @@ var NameEditToggleExtra = function NameEditToggleExtra(_ref5) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor,
+      $highlightColor: highlightColor,
       disabled: disabled,
       onSelect: function onSelect() {
         return setIsEditing(!isEditing);
@@ -229,7 +229,7 @@ var SelectionToggleExtra = function SelectionToggleExtra(_ref6) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor,
+      $highlightColor: highlightColor,
       disabled: disabled,
       onSelect: function onSelect() {
         return setIsSelected(!isSelected);
@@ -269,7 +269,7 @@ var CollapseToggleExtra = function CollapseToggleExtra(_ref7) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor,
+      $highlightColor: highlightColor,
       onSelect: function onSelect() {
         return setIsCollapsed(!isCollapsed);
       }
@@ -307,7 +307,7 @@ var DebugToggleExtra = function DebugToggleExtra(_ref8) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor,
+      $highlightColor: highlightColor,
       onSelect: function onSelect() {
         return setIsDebugging(!isDebugging);
       }
@@ -331,7 +331,7 @@ var IndicatorTextExtra = function IndicatorTextExtra(_ref9) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor
+      $highlightColor: highlightColor
     }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(Pill, {
       value: value
     })), /*#__PURE__*/_react.default.createElement(_grommet.Button, {
@@ -374,7 +374,7 @@ var IndicatorIconExtra = function IndicatorIconExtra(_ref10) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor
+      $highlightColor: highlightColor
     }, /*#__PURE__*/_react.default.createElement(Indicator, null, value), inner);
   }
 };
@@ -419,7 +419,7 @@ var AddArgumentExtra = function AddArgumentExtra(_ref11) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor,
+      $highlightColor: highlightColor,
       disabled: interactionDisabled,
       onSelect: function onSelect() {
         return addArgument(data.id, argumentType);
@@ -491,7 +491,7 @@ var DeleteExtra = function DeleteExtra(_ref13) {
   } else {
     return /*#__PURE__*/_react.default.createElement(Wrapper, {
       checked: true,
-      highlightColor: highlightColor,
+      $highlightColor: highlightColor,
       disabled: !canDelete,
       onSelect: function onSelect() {
         return deleteFunc(data, parentId, fieldInfo);
@@ -527,7 +527,7 @@ var DropdownExtra = function DropdownExtra(_ref14) {
   var usedLabel = label ? label : 'More Options';
   return /*#__PURE__*/_react.default.createElement(MenuComponent, null, /*#__PURE__*/_react.default.createElement(TriggerComponent, {
     asChild: inTopLevel,
-    highlightColor: highlightColor
+    $highlightColor: highlightColor
   }, inTopLevel ? /*#__PURE__*/_react.default.createElement(_grommet.Button, {
     size: "small",
     as: "div",
@@ -740,13 +740,7 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
     inner = /*#__PURE__*/_react.default.createElement(_Utility.OtherStyledSeparator, {
       decorative: true,
       orientation: "vertical",
-      css: {
-        margin: '4px',
-        '&[data-orientation=vertical]': {
-          height: '15pt',
-          width: 1
-        }
-      }
+      $height: "15px"
     });
   }
 
