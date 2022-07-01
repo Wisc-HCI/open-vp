@@ -486,6 +486,7 @@ export const ProgrammingSlice = (set, get) => ({
     });
   },
   updateItemSimpleProperty: (id, property, value) => {
+    // console.log({id,property,value})
     set((state) => {
       state.programData[id].properties[property] = value;
     });

@@ -1,7 +1,5 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -12,6 +10,8 @@ var _react = _interopRequireDefault(require("react"));
 var _reactDnd = require("react-dnd");
 
 var _Block = require("./Block");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var DragLayer = function DragLayer(_ref) {
   var highlightColor = _ref.highlightColor;
@@ -45,7 +45,8 @@ var DragLayer = function DragLayer(_ref) {
     isDragging: isDragging,
     typeSpec: item.typeSpec,
     highlightColor: highlightColor,
-    context: item.context
+    context: item.context,
+    interactionDisabled: true
   }));
 };
 

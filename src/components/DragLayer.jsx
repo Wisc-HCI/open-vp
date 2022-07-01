@@ -31,6 +31,7 @@ export const DragLayer = ({highlightColor}) => {
           typeSpec={item.typeSpec}
           highlightColor={highlightColor}
           context={item.context}
+          interactionDisabled
         />
       )}
     </div>

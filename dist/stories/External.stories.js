@@ -1,6 +1,6 @@
 "use strict";
 
-var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -11,7 +11,21 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _components = require("../components");
 
-var _fi = require("react-icons/fi");
+var _basicConfig = _interopRequireDefault(require("./assets/basicConfig"));
+
+var _basicStarter = _interopRequireDefault(require("./assets/basicStarter"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 var _default = {
@@ -36,8 +50,6 @@ var Template = function Template(args) {
     });
   });
   var instRef = (0, _components.referenceTemplateFromSpec)('hatType', programData['6dewwwwww'], objectTypes.hatType);
-  console.log(instRef);
-  console.log(programData['2dfsessfs']);
   return /*#__PURE__*/_react.default.createElement("div", {
     style: {
       width: 300,
@@ -67,316 +79,7 @@ var Template = function Template(args) {
 var External = Template.bind({}); // More on args: https://storybook.js.org/docs/react/writing-stories/args
 
 exports.External = External;
-External.args = {
+External.args = _objectSpread(_objectSpread({
   highlightColor: '#ff00ff',
-  drawerWidth: 235,
-  drawers: [{
-    title: "Structures",
-    dataType: _components.DATA_TYPES.INSTANCE,
-    objectTypes: ["functionType", "operationType", "blockType"],
-    icon: _fi.FiClipboard
-  }, {
-    title: "Functions",
-    dataType: _components.DATA_TYPES.CALL,
-    objectType: 'functionType',
-    icon: _fi.FiLogOut
-  }, {
-    title: "Hats",
-    dataType: _components.DATA_TYPES.REFERENCE,
-    objectType: 'hatType',
-    icon: _fi.FiGrid
-  }, {
-    title: "Boots",
-    dataType: _components.DATA_TYPES.REFERENCE,
-    objectType: 'bootType',
-    icon: _fi.FiBox
-  }],
-  objectTypes: {
-    programType: {
-      name: 'Program',
-      type: _components.TYPES.OBJECT,
-      instanceBlock: {
-        onCanvas: true,
-        color: "#3f3f3f",
-        icon: _fi.FiBriefcase,
-        extras: [{
-          type: _components.EXTRA_TYPES.INDICATOR_TEXT,
-          accessor: function accessor(data) {
-            return data.properties.children.length;
-          },
-          label: 'Size'
-        }, {
-          icon: _fi.FiMoreHorizontal,
-          type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, {
-            icon: _fi.FiMoreHorizontal,
-            label: 'More Options',
-            type: _components.EXTRA_TYPES.DROPDOWN,
-            contents: [_components.EXTRA_TYPES.NAME_EDIT_TOGGLE, _components.EXTRA_TYPES.COLLAPSE_TOGGLE, _components.EXTRA_TYPES.LOCKED_INDICATOR, {
-              type: _components.EXTRA_TYPES.INDICATOR_TEXT,
-              accessor: function accessor(data) {
-                return data.properties.children.length;
-              },
-              label: 'Size'
-            }, {
-              type: _components.EXTRA_TYPES.FUNCTION_BUTTON,
-              onClick: 'updateItemBlockColors',
-              label: 'Cycle Color',
-              icon: _fi.FiFeather
-            }]
-          }]
-        }, _components.EXTRA_TYPES.LOCKED_INDICATOR]
-      },
-      referenceBlock: null,
-      properties: {
-        children: {
-          name: 'Children',
-          accepts: ['operationType', 'functionType', 'blockType'],
-          default: [],
-          isList: true,
-          fullWidth: true
-        }
-      }
-    },
-    blockType: {
-      name: "Block",
-      type: _components.TYPES.OBJECT,
-      instanceBlock: {
-        onCanvas: false,
-        color: '#7f7f7f',
-        icon: _fi.FiLayers,
-        extras: [_components.EXTRA_TYPES.COLLAPSE_TOGGLE, {
-          type: _components.EXTRA_TYPES.INDICATOR_TEXT,
-          accessor: function accessor(data) {
-            return data.properties.children.length;
-          },
-          label: 'Size'
-        }, {
-          type: _components.EXTRA_TYPES.FUNCTION_BUTTON,
-          onClick: 'updateItemBlockColors',
-          label: 'Cycle Color',
-          icon: _fi.FiFeather
-        }, _components.EXTRA_TYPES.LOCKED_INDICATOR]
-      },
-      referenceBlock: null,
-      properties: {
-        children: {
-          name: 'Children',
-          accepts: ['operationType', 'functionType', 'blockType'],
-          default: [],
-          isList: true,
-          fullWidth: true
-        }
-      }
-    },
-    functionType: {
-      name: 'Function',
-      type: _components.TYPES.FUNCTION,
-      instanceBlock: {
-        onCanvas: true,
-        color: "#62869e",
-        icon: _fi.FiLogOut,
-        extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
-          icon: _fi.FiMoreHorizontal,
-          type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.SELECTION_TOGGLE, _components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.LOCKED_INDICATOR, _components.EXTRA_TYPES.DEBUG_TOGGLE, {
-            type: _components.EXTRA_TYPES.ADD_ARGUMENT_GROUP,
-            allowed: ['hatType', 'bootType']
-          }, {
-            type: _components.EXTRA_TYPES.ADD_ARGUMENT,
-            argumentType: 'hatType'
-          }]
-        }, {
-          type: _components.EXTRA_TYPES.ADD_ARGUMENT_GROUP,
-          allowed: ['hatType', 'bootType']
-        }]
-      },
-      callBlock: {
-        onCanvas: false,
-        color: "#62869e",
-        icon: _fi.FiLogOut
-      },
-      properties: {
-        children: {
-          name: 'Children',
-          accepts: ['functionType', 'blockType', 'operationType'],
-          default: [],
-          isList: true,
-          fullWidth: true
-        }
-      }
-    },
-    operationType: {
-      name: 'Operation',
-      type: _components.TYPES.OBJECT,
-      instanceBlock: {
-        onCanvas: false,
-        color: "#629e6c",
-        icon: _fi.FiClipboard,
-        extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
-          icon: _fi.FiMoreHorizontal,
-          type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
-        }],
-        hideNewPrefix: true
-      },
-      properties: {
-        hat: {
-          name: "Hat",
-          accepts: ["hatType"],
-          default: null,
-          isList: false
-        },
-        boot: {
-          name: "Boot",
-          accepts: ["bootType"],
-          default: null,
-          isList: false
-        },
-        speed: {
-          name: "Speed",
-          type: _components.SIMPLE_PROPERTY_TYPES.NUMBER,
-          default: 1,
-          min: 0,
-          max: 2
-        },
-        doFunky: {
-          name: "Do Funky",
-          type: _components.SIMPLE_PROPERTY_TYPES.BOOLEAN,
-          default: false
-        },
-        greeting: {
-          name: "Greeting",
-          type: _components.SIMPLE_PROPERTY_TYPES.STRING,
-          default: ''
-        },
-        time: {
-          name: "Time",
-          type: _components.SIMPLE_PROPERTY_TYPES.OPTIONS,
-          options: [{
-            value: 'am',
-            label: 'AM'
-          }, {
-            value: 'pm',
-            label: 'PM'
-          }],
-          default: 'am'
-        }
-      }
-    },
-    hatType: {
-      name: 'Hat',
-      type: _components.TYPES.OBJECT,
-      instanceBlock: null,
-      referenceBlock: {
-        onCanvas: false,
-        color: "#AD1FDE",
-        icon: _fi.FiGrid,
-        extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
-          icon: _fi.FiMoreHorizontal,
-          type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
-        }]
-      }
-    },
-    bootType: {
-      name: 'Boot',
-      type: _components.TYPES.OBJECT,
-      instanceBlock: null,
-      referenceBlock: {
-        onCanvas: false,
-        color: "#B3A533",
-        icon: _fi.FiGrid,
-        extras: [_components.EXTRA_TYPES.LOCKED_INDICATOR, {
-          icon: _fi.FiMoreHorizontal,
-          type: _components.EXTRA_TYPES.DROPDOWN,
-          contents: [_components.EXTRA_TYPES.DELETE_BUTTON, _components.EXTRA_TYPES.DEBUG_TOGGLE]
-        }]
-      }
-    }
-  },
-  programData: {
-    "45535153s": {
-      id: "45535153s",
-      name: 'MyProgram',
-      type: "programType",
-      dataType: _components.DATA_TYPES.INSTANCE,
-      properties: {
-        children: ['2dfsessfs']
-      },
-      position: {
-        x: 0,
-        y: 10
-      },
-      canDelete: false,
-      canEdit: true,
-      selected: false,
-      editing: false
-    },
-    "655sssefs": {
-      id: "655sssefs",
-      name: 'MyFunction',
-      type: "functionType",
-      dataType: _components.DATA_TYPES.INSTANCE,
-      arguments: [],
-      properties: {
-        children: []
-      },
-      position: {
-        x: 400,
-        y: 10
-      },
-      canDelete: true,
-      canEdit: true,
-      selected: true,
-      editing: false
-    },
-    "s3siakawme": {
-      id: "s3siakawme",
-      name: 'Passed Hat',
-      type: "hatType",
-      dataType: _components.DATA_TYPES.ARGUMENT,
-      canDelete: true,
-      canEdit: true,
-      selected: false,
-      editing: false
-    },
-    "2dfsessfs": {
-      id: "2dfsessfs",
-      name: 'MyOperation',
-      type: "operationType",
-      dataType: _components.DATA_TYPES.INSTANCE,
-      properties: {
-        hat: null,
-        boot: null,
-        speed: 1,
-        doFunky: true,
-        greeting: 'Hello!'
-      },
-      canDelete: true,
-      canEdit: true,
-      selected: false,
-      editing: false
-    },
-    "6dewwwwww": {
-      id: "6dewwwwww",
-      name: 'Sombrero',
-      type: "hatType",
-      dataType: _components.DATA_TYPES.INSTANCE,
-      canDelete: true,
-      canEdit: true,
-      selected: false,
-      editing: false
-    },
-    "pspssse32": {
-      id: "pspssse32",
-      name: 'Fur Boots',
-      type: "bootType",
-      dataType: _components.DATA_TYPES.INSTANCE,
-      canDelete: true,
-      canEdit: true,
-      selected: false,
-      editing: false
-    }
-  }
-};
+  drawerWidth: 235
+}, _basicConfig.default), _basicStarter.default);

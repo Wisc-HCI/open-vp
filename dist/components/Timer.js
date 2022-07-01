@@ -1,21 +1,22 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Timer = void 0;
 
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/classCallCheck"));
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/createClass"));
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
 // Credit to Mugen87 while we wait for this to be added to three.js
 // https://github.com/Mugen87/three.js/blob/3a6d8139367e710a3d4fef274d530dda485f1110/examples/jsm/misc/Timer.js
 var Timer = /*#__PURE__*/function () {
   function Timer() {
-    (0, _classCallCheck2.default)(this, Timer);
+    _classCallCheck(this, Timer);
+
     this._previousTime = 0;
     this._currentTime = 0;
     this._delta = 0;
@@ -33,7 +34,7 @@ var Timer = /*#__PURE__*/function () {
     }
   }
 
-  (0, _createClass2.default)(Timer, [{
+  _createClass(Timer, [{
     key: "disableFixedDelta",
     value: function disableFixedDelta() {
       this._useFixedDelta = false;
@@ -115,6 +116,7 @@ var Timer = /*#__PURE__*/function () {
       return (typeof performance === 'undefined' ? Date : performance).now();
     }
   }]);
+
   return Timer;
 }();
 

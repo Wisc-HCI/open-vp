@@ -1,6 +1,6 @@
 "use strict";
 
-var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard").default;
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -11,8 +11,6 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _fi = require("react-icons/fi");
 
-var _grommet = require("grommet");
-
 var _ProgrammingContext = require("../ProgrammingContext");
 
 var _ = require("..");
@@ -21,375 +19,217 @@ var _ExpandCarrot = require("./ExpandCarrot");
 
 var _Utility = require("./Utility");
 
-var MENU_TYPES = {
-  DROPDOWN: 'DROPDOWN',
-  CONTEXT: 'CONTEXT'
-};
+var _ButtonGroup = _interopRequireDefault(require("@mui/material/ButtonGroup"));
 
-var Pill = function Pill(_ref) {
-  var value = _ref.value;
-  return /*#__PURE__*/_react.default.createElement("div", {
-    style: {
-      borderRadius: 20,
-      minWidth: 6,
-      backgroundColor: "#00000022",
-      paddingLeft: 7,
-      paddingRight: 7,
-      borderStyle: 'solid',
-      borderColor: '#00000088',
-      borderWidth: 1,
-      textAlign: 'center',
-      fontSize: 10
-    }
-  }, value);
-};
+var _Button = _interopRequireDefault(require("@mui/material/Button"));
 
-var FunctionButtonExtra = function FunctionButtonExtra(_ref2) {
-  var actionInfo = _ref2.actionInfo,
-      data = _ref2.data,
-      blockSpec = _ref2.blockSpec,
-      inTopLevel = _ref2.inTopLevel,
-      interactionDisabled = _ref2.interactionDisabled,
-      highlightColor = _ref2.highlightColor,
-      menuType = _ref2.menuType;
+var _IconButton = _interopRequireDefault(require("@mui/material/IconButton"));
 
-  var _onClick = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (state) {
-    if (typeof actionInfo.onClick === 'function') {
+var _ListItemIcon = _interopRequireDefault(require("@mui/material/ListItemIcon"));
+
+var _ListItemText = _interopRequireDefault(require("@mui/material/ListItemText"));
+
+var _Divider = _interopRequireDefault(require("@mui/material/Divider"));
+
+var _Chip = _interopRequireDefault(require("@mui/material/Chip"));
+
+var _MenuItem = _interopRequireDefault(require("@mui/material/MenuItem"));
+
+var _MenuList = _interopRequireDefault(require("@mui/material/MenuList"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
+
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var FunctionButtonExtra = function FunctionButtonExtra(_ref) {
+  var actionInfo = _ref.actionInfo,
+      data = _ref.data,
+      blockSpec = _ref.blockSpec,
+      inTopLevel = _ref.inTopLevel,
+      interactionDisabled = _ref.interactionDisabled;
+  var onClick = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (state) {
+    if (typeof actionInfo.onClick === "function") {
       return actionInfo.onClick;
     } else {
       return state[actionInfo.onClick];
     }
   }, [actionInfo]));
-
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
   var ExtraActionIcon = actionInfo.icon ? actionInfo.icon : _fi.FiCircle;
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    size: "small",
-    focusIndicator: false,
-    hoverIndicator: false,
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
     disabled: interactionDisabled,
-    plain: true,
-    style: {
-      padding: inTopLevel ? null : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(ExtraActionIcon, null) : null,
-    label: inTopLevel ? null : actionInfo.label,
-    onClick: function onClick() {
-      return _onClick(data, blockSpec);
+    onClick: onClick
+  }, /*#__PURE__*/_react.default.createElement(ExtraActionIcon, null)) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+    disabled: interactionDisabled,
+    onClick: onClick
+  }, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(ExtraActionIcon, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
+    primaryTypographyProps: {
+      color: interactionDisabled ? "text.secondary" : "text.primary"
     }
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor,
-      disabled: interactionDisabled,
-      onSelect: function onSelect() {
-        return _onClick(data, blockSpec);
-      }
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(ExtraActionIcon, null)), inner);
-  }
+  }, actionInfo.label));
 };
 
-var LabelExtra = function LabelExtra(_ref3) {
-  var inTopLevel = _ref3.inTopLevel,
-      menuType = _ref3.menuType,
-      label = _ref3.label;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuLabel : _Utility.ContextMenuLabel;
-
-  if (inTopLevel) {
-    return /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-      size: "small",
-      plain: true,
-      focusIndicator: false,
-      hoverIndicator: false,
-      disabled: true,
-      style: {
-        padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-      },
-      label: label
-    });
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, null, label);
-  }
+var LabelExtra = function LabelExtra(_ref2) {
+  var inTopLevel = _ref2.inTopLevel,
+      label = _ref2.label;
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_Button.default, {
+    disabled: true
+  }, label) :
+  /*#__PURE__*/
+  // <Divider style={{fontFamily:'Helvetica'}}>{label}</Divider>
+  _react.default.createElement(_ListItemText.default, {
+    primaryTypographyProps: {
+      color: "text.secondary"
+    },
+    style: {
+      marginLeft: 10,
+      opacity: 0.5
+    }
+  }, label);
 };
 
-var LockIndicatorExtra = function LockIndicatorExtra(_ref4) {
-  var locked = _ref4.locked,
-      inTopLevel = _ref4.inTopLevel,
-      highlightColor = _ref4.highlightColor,
-      menuType = _ref4.menuType;
+var LockIndicatorExtra = function LockIndicatorExtra(_ref3) {
+  var locked = _ref3.locked,
+      inTopLevel = _ref3.inTopLevel;
   var Icon = locked ? _fi.FiLock : _fi.FiUnlock;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    size: "small",
-    plain: true,
-    focusIndicator: false,
-    hoverIndicator: false,
-    disabled: true,
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(Icon, null) : null,
-    label: inTopLevel ? null : locked ? 'Locked' : 'Unlocked'
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor,
-      disabled: true
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(Icon, null)), inner);
-  }
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
+    disableFocusRipple: true,
+    disableTouchRipple: true
+  }, /*#__PURE__*/_react.default.createElement(Icon, null)) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, null, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(Icon, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
+    primaryTypographyProps: {
+      color: "text.secondary"
+    }
+  }, locked ? "Locked" : "Unlocked"));
 };
 
-var NameEditToggleExtra = function NameEditToggleExtra(_ref5) {
-  var isEditing = _ref5.isEditing,
-      setIsEditing = _ref5.setIsEditing,
-      locked = _ref5.locked,
-      interactionDisabled = _ref5.interactionDisabled,
-      inTopLevel = _ref5.inTopLevel,
-      highlightColor = _ref5.highlightColor,
-      menuType = _ref5.menuType,
-      data = _ref5.data;
+var NameEditToggleExtra = function NameEditToggleExtra(_ref4) {
+  var isEditing = _ref4.isEditing,
+      setIsEditing = _ref4.setIsEditing,
+      locked = _ref4.locked,
+      interactionDisabled = _ref4.interactionDisabled,
+      inTopLevel = _ref4.inTopLevel,
+      data = _ref4.data;
   var Icon = isEditing ? _fi.FiSave : _fi.FiEdit3;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
   var disabled = locked || interactionDisabled && data.dataType !== _.DATA_TYPES.REFERENCE;
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    size: "small",
-    plain: true,
-    focusIndicator: false,
-    hoverIndicator: false,
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
     disabled: disabled,
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(Icon, null) : null,
-    label: inTopLevel ? null : isEditing ? 'Save' : 'Edit Name',
     onClick: function onClick() {
       return setIsEditing(!isEditing);
     }
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor,
-      disabled: disabled,
-      onSelect: function onSelect() {
-        return setIsEditing(!isEditing);
-      }
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(Icon, null)), inner);
-  }
+  }, /*#__PURE__*/_react.default.createElement(Icon, null)) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+    onClick: function onClick() {
+      return setIsEditing(!isEditing);
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(Icon, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
+    primaryTypographyProps: {
+      color: disabled ? "text.secondary" : "text.primary"
+    }
+  }, isEditing ? "Save" : "Edit Name"));
 };
 
-var SelectionToggleExtra = function SelectionToggleExtra(_ref6) {
-  var isSelected = _ref6.isSelected,
-      setIsSelected = _ref6.setIsSelected,
-      inTopLevel = _ref6.inTopLevel,
-      data = _ref6.data,
-      locked = _ref6.locked,
-      highlightColor = _ref6.highlightColor,
-      menuType = _ref6.menuType;
+var SelectionToggleExtra = function SelectionToggleExtra(_ref5) {
+  var isSelected = _ref5.isSelected,
+      setIsSelected = _ref5.setIsSelected,
+      inTopLevel = _ref5.inTopLevel,
+      data = _ref5.data,
+      locked = _ref5.locked;
   var Icon = isSelected ? _fi.FiEyeOff : _fi.FiEye;
   var disabled = data.dataType === _.DATA_TYPES.INSTANCE && locked;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    plain: true,
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
     disabled: disabled,
-    focusIndicator: false,
-    hoverIndicator: false,
-    size: "small",
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(Icon, null) : null,
-    label: inTopLevel ? null : isSelected ? 'Deselect' : 'Select',
     onClick: function onClick() {
       return setIsSelected(!isSelected);
     }
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor,
-      disabled: disabled,
-      onSelect: function onSelect() {
-        return setIsSelected(!isSelected);
-      }
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(Icon, null)), inner);
-  }
+  }, /*#__PURE__*/_react.default.createElement(Icon, null)) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+    onClick: function onClick() {
+      return setIsSelected(!isSelected);
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(Icon, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
+    primaryTypographyProps: {
+      color: disabled ? "text.secondary" : "text.primary"
+    }
+  }, isSelected ? "Deselect" : "Select"));
 };
 
-var CollapseToggleExtra = function CollapseToggleExtra(_ref7) {
-  var isCollapsed = _ref7.isCollapsed,
-      setIsCollapsed = _ref7.setIsCollapsed,
-      inTopLevel = _ref7.inTopLevel,
-      highlightColor = _ref7.highlightColor,
-      menuType = _ref7.menuType;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    plain: true,
-    focusIndicator: false,
-    hoverIndicator: false,
-    size: "small",
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(_ExpandCarrot.ExpandCarrot, {
-      expanded: !isCollapsed
-    }) : null,
+var CollapseToggleExtra = function CollapseToggleExtra(_ref6) {
+  var isCollapsed = _ref6.isCollapsed,
+      setIsCollapsed = _ref6.setIsCollapsed,
+      inTopLevel = _ref6.inTopLevel;
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
     onClick: function onClick() {
       return setIsCollapsed(!isCollapsed);
-    },
-    label: inTopLevel ? null : isCollapsed ? "Expand" : "Collapse"
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor,
-      onSelect: function onSelect() {
-        return setIsCollapsed(!isCollapsed);
-      }
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, isCollapsed ? /*#__PURE__*/_react.default.createElement(_fi.FiChevronDown, null) : /*#__PURE__*/_react.default.createElement(_fi.FiChevronRight, null)), inner);
-  }
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ExpandCarrot.ExpandCarrot, {
+    expanded: !isCollapsed
+  })) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+    onClick: function onClick() {
+      return setIsCollapsed(!isCollapsed);
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(_ExpandCarrot.ExpandCarrot, {
+    expanded: !isCollapsed
+  })), /*#__PURE__*/_react.default.createElement(_ListItemText.default, null, isCollapsed ? "Expand" : "Collapse"));
 };
 
-var DebugToggleExtra = function DebugToggleExtra(_ref8) {
-  var isDebugging = _ref8.isDebugging,
-      setIsDebugging = _ref8.setIsDebugging,
-      inTopLevel = _ref8.inTopLevel,
-      highlightColor = _ref8.highlightColor,
-      menuType = _ref8.menuType;
+var DebugToggleExtra = function DebugToggleExtra(_ref7) {
+  var isDebugging = _ref7.isDebugging,
+      setIsDebugging = _ref7.setIsDebugging,
+      inTopLevel = _ref7.inTopLevel;
   var Icon = isDebugging ? _fi.FiZapOff : _fi.FiZap;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    plain: true,
-    focusIndicator: false,
-    hoverIndicator: false,
-    size: "small",
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(Icon, null) : null,
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
     onClick: function onClick() {
       return setIsDebugging(!isDebugging);
-    },
-    label: inTopLevel ? null : isDebugging ? "Cancel Debug" : "Debug"
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor,
-      onSelect: function onSelect() {
-        return setIsDebugging(!isDebugging);
-      }
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(Icon, null)), inner);
-  }
+    }
+  }, /*#__PURE__*/_react.default.createElement(Icon, null)) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+    onClick: function onClick() {
+      return setIsDebugging(!isDebugging);
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(Icon, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, null, isDebugging ? "Cancel Debug" : "Debug"));
 };
 
-var IndicatorTextExtra = function IndicatorTextExtra(_ref9) {
+var IndicatorTextExtra = function IndicatorTextExtra(_ref8) {
+  var value = _ref8.value,
+      label = _ref8.label,
+      inTopLevel = _ref8.inTopLevel;
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, null, /*#__PURE__*/_react.default.createElement(_Chip.default, {
+    size: "small",
+    label: value
+  })) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, null, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(_Chip.default, {
+    size: "small",
+    label: value
+  })), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
+    primaryTypographyProps: {
+      color: 'text.secondary'
+    }
+  }, label));
+};
+
+var IndicatorIconExtra = function IndicatorIconExtra(_ref9) {
   var value = _ref9.value,
       label = _ref9.label,
-      inTopLevel = _ref9.inTopLevel,
-      highlightColor = _ref9.highlightColor,
-      menuType = _ref9.menuType;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
-
-  if (inTopLevel) {
-    return /*#__PURE__*/_react.default.createElement(Pill, {
-      value: value
-    });
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(Pill, {
-      value: value
-    })), /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-      size: "small",
-      plain: true,
-      focusIndicator: false,
-      hoverIndicator: false,
-      style: {
-        padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-      },
-      label: label
-    }));
-  }
+      inTopLevel = _ref9.inTopLevel;
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, null, value) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, null, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, value), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
+    primaryTypographyProps: {
+      color: 'text.secondary'
+    }
+  }, label));
 };
 
-var IndicatorIconExtra = function IndicatorIconExtra(_ref10) {
-  var value = _ref10.value,
-      label = _ref10.label,
+var AddArgumentExtra = function AddArgumentExtra(_ref10) {
+  var _typeSpec$referenceBl;
+
+  var data = _ref10.data,
+      argumentType = _ref10.argumentType,
+      interactionDisabled = _ref10.interactionDisabled,
       inTopLevel = _ref10.inTopLevel,
       highlightColor = _ref10.highlightColor,
       menuType = _ref10.menuType;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    size: "small",
-    plain: true,
-    focusIndicator: false,
-    hoverIndicator: false,
-    disabled: true,
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? value : null,
-    label: inTopLevel ? null : label
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, value), inner);
-  }
-};
-
-var AddArgumentExtra = function AddArgumentExtra(_ref11) {
-  var _typeSpec$referenceBl;
-
-  var data = _ref11.data,
-      argumentType = _ref11.argumentType,
-      interactionDisabled = _ref11.interactionDisabled,
-      inTopLevel = _ref11.inTopLevel,
-      highlightColor = _ref11.highlightColor,
-      menuType = _ref11.menuType;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
   var typeSpec = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (store) {
     return store.programSpec.objectTypes[argumentType];
   }, [argumentType]));
@@ -397,44 +237,26 @@ var AddArgumentExtra = function AddArgumentExtra(_ref11) {
   var addArgument = (0, _ProgrammingContext.useProgrammingStore)(function (store) {
     return store.addArgument;
   });
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    size: "small",
-    plain: true,
-    focusIndicator: false,
-    hoverIndicator: false,
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
     disabled: interactionDisabled,
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(Icon, null) : null,
     onClick: function onClick() {
-      return inTopLevel ? addArgument(data.id, argumentType) : {};
-    },
-    label: inTopLevel ? null : "Add ".concat(typeSpec.name, " Argument")
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor,
-      disabled: interactionDisabled,
-      onSelect: function onSelect() {
-        return addArgument(data.id, argumentType);
-      }
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(Icon, null)), inner);
-  }
+      return addArgument(data.id, argumentType);
+    }
+  }, /*#__PURE__*/_react.default.createElement(Icon, null)) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+    disabled: interactionDisabled,
+    onClick: function onClick() {
+      return addArgument(data.id, argumentType);
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(Icon, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, null, "Add ".concat(typeSpec.name, " Argument")));
 };
 
-var AddArgumentGroupExtra = function AddArgumentGroupExtra(_ref12) {
-  var data = _ref12.data,
-      allowed = _ref12.allowed,
-      interactionDisabled = _ref12.interactionDisabled,
-      inTopLevel = _ref12.inTopLevel,
-      highlightColor = _ref12.highlightColor,
-      menuType = _ref12.menuType;
+var AddArgumentGroupExtra = function AddArgumentGroupExtra(_ref11) {
+  var data = _ref11.data,
+      allowed = _ref11.allowed,
+      interactionDisabled = _ref11.interactionDisabled,
+      inTopLevel = _ref11.inTopLevel,
+      highlightColor = _ref11.highlightColor,
+      menuType = _ref11.menuType;
   return /*#__PURE__*/_react.default.createElement(DropdownExtra, {
     icon: _fi.FiPlus,
     label: "Add Argument",
@@ -452,151 +274,122 @@ var AddArgumentGroupExtra = function AddArgumentGroupExtra(_ref12) {
   });
 };
 
-var DeleteExtra = function DeleteExtra(_ref13) {
+var DeleteExtra = function DeleteExtra(_ref12) {
   var _data$refData;
 
-  var data = _ref13.data,
-      inTopLevel = _ref13.inTopLevel,
-      locked = _ref13.locked,
-      fieldInfo = _ref13.fieldInfo,
-      parentId = _ref13.parentId,
-      highlightColor = _ref13.highlightColor,
-      menuType = _ref13.menuType;
+  var data = _ref12.data,
+      inTopLevel = _ref12.inTopLevel,
+      locked = _ref12.locked,
+      fieldInfo = _ref12.fieldInfo,
+      parentId = _ref12.parentId,
+      highlightColor = _ref12.highlightColor,
+      menuType = _ref12.menuType;
   var deleteFunc = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return state.deleteBlock;
   });
-  var canDeleteInstance = parentId === 'spawner' && data.dataType === _.DATA_TYPES.REFERENCE && ((_data$refData = data.refData) === null || _data$refData === void 0 ? void 0 : _data$refData.canDelete);
+  var canDeleteInstance = parentId === "spawner" && data.dataType === _.DATA_TYPES.REFERENCE && ((_data$refData = data.refData) === null || _data$refData === void 0 ? void 0 : _data$refData.canDelete);
   var canDelete = !locked && data.canDelete || canDeleteInstance;
-  var Wrapper = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuCheckboxItem : _Utility.ContextMenuCheckboxItem;
-  var Indicator = menuType === MENU_TYPES.DROPDOWN ? _Utility.DropdownMenuItemIndicator : _Utility.ContextMenuItemIndicator;
-
-  var inner = /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    size: "small",
-    plain: true,
-    focusIndicator: false,
-    hoverIndicator: false,
+  return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
     disabled: !canDelete,
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(_fi.FiTrash2, null) : null,
-    label: inTopLevel ? null : 'Delete',
     onClick: function onClick() {
       return deleteFunc(data, parentId, fieldInfo);
     }
-  });
-
-  if (inTopLevel) {
-    return inner;
-  } else {
-    return /*#__PURE__*/_react.default.createElement(Wrapper, {
-      checked: true,
-      $highlightColor: highlightColor,
-      disabled: !canDelete,
-      onSelect: function onSelect() {
-        return deleteFunc(data, parentId, fieldInfo);
-      }
-    }, /*#__PURE__*/_react.default.createElement(Indicator, null, /*#__PURE__*/_react.default.createElement(_fi.FiTrash2, null)), inner);
-  }
+  }, /*#__PURE__*/_react.default.createElement(_fi.FiTrash2, null)) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+    disabled: !canDelete,
+    onClick: function onClick() {
+      return deleteFunc(data, parentId, fieldInfo);
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(_fi.FiTrash2, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
+    primary: "Delete"
+  }));
 };
 
-var DropdownExtra = function DropdownExtra(_ref14) {
-  var icon = _ref14.icon,
-      contents = _ref14.contents,
-      label = _ref14.label,
-      inTopLevel = _ref14.inTopLevel,
+var DropdownExtra = function DropdownExtra(_ref13) {
+  var icon = _ref13.icon,
+      contents = _ref13.contents,
+      _ref13$label = _ref13.label,
+      label = _ref13$label === void 0 ? "More Options" : _ref13$label,
+      inTopLevel = _ref13.inTopLevel,
+      data = _ref13.data,
+      blockSpec = _ref13.blockSpec,
+      isEditing = _ref13.isEditing,
+      isCollapsed = _ref13.isCollapsed,
+      isSelected = _ref13.isSelected,
+      isDebugging = _ref13.isDebugging,
+      setIsEditing = _ref13.setIsEditing,
+      setIsCollapsed = _ref13.setIsCollapsed,
+      setIsSelected = _ref13.setIsSelected,
+      setIsDebugging = _ref13.setIsDebugging,
+      interactionDisabled = _ref13.interactionDisabled,
+      parentId = _ref13.parentId,
+      fieldInfo = _ref13.fieldInfo,
+      highlightColor = _ref13.highlightColor;
+  var DropIcon = icon ? icon : inTopLevel ? _fi.FiMoreHorizontal : _fi.FiChevronRight;
+  var childProps = {
+    data: data,
+    blockSpec: blockSpec,
+    highlightColor: highlightColor,
+    isEditing: isEditing,
+    setIsEditing: setIsEditing,
+    isCollapsed: isCollapsed,
+    setIsCollapsed: setIsCollapsed,
+    isSelected: isSelected,
+    setIsSelected: setIsSelected,
+    isDebugging: isDebugging,
+    setIsDebugging: setIsDebugging,
+    interactionDisabled: interactionDisabled,
+    fieldInfo: fieldInfo,
+    parentId: parentId,
+    inTopLevel: false
+  };
+  return /*#__PURE__*/_react.default.createElement(_Utility.DropdownTrigger, {
+    isChild: !inTopLevel,
+    triggerComponent: inTopLevel ? _IconButton.default : _MenuItem.default,
+    triggerProps: inTopLevel ? {
+      onClick: function onClick() {
+        return setIsEditing(!isEditing);
+      },
+      children: /*#__PURE__*/_react.default.createElement(DropIcon, null)
+    } : {
+      onClick: function onClick() {
+        return setIsEditing(!isEditing);
+      },
+      children: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(DropIcon, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
+        primary: label
+      }))
+    }
+  }, contents === null || contents === void 0 ? void 0 : contents.map(function (feature, featureIdx) {
+    return getItem(_objectSpread(_objectSpread({}, childProps), {}, {
+      feature: feature,
+      key: featureIdx
+    }));
+  }));
+};
+
+var getItem = function getItem(_ref14) {
+  var key = _ref14.key,
       data = _ref14.data,
       blockSpec = _ref14.blockSpec,
+      highlightColor = _ref14.highlightColor,
       isEditing = _ref14.isEditing,
-      isCollapsed = _ref14.isCollapsed,
-      isSelected = _ref14.isSelected,
-      isDebugging = _ref14.isDebugging,
       setIsEditing = _ref14.setIsEditing,
+      isCollapsed = _ref14.isCollapsed,
       setIsCollapsed = _ref14.setIsCollapsed,
+      isSelected = _ref14.isSelected,
       setIsSelected = _ref14.setIsSelected,
+      isDebugging = _ref14.isDebugging,
       setIsDebugging = _ref14.setIsDebugging,
       interactionDisabled = _ref14.interactionDisabled,
-      parentId = _ref14.parentId,
+      inTopLevel = _ref14.inTopLevel,
+      feature = _ref14.feature,
       fieldInfo = _ref14.fieldInfo,
-      highlightColor = _ref14.highlightColor,
+      parentId = _ref14.parentId,
       menuType = _ref14.menuType;
-  var DropIcon = icon ? icon : inTopLevel ? _fi.FiMoreHorizontal : _fi.FiChevronRight;
-  var TriggerComponent = menuType === MENU_TYPES.CONTEXT ? _Utility.ContextMenuTriggerItem : inTopLevel ? _Utility.DropdownMenuTrigger : _Utility.DropdownMenuTriggerItem;
-  var ContentComponent = menuType === MENU_TYPES.CONTEXT ? _Utility.ContextMenuContent : _Utility.DropdownMenuContent;
-  var MenuComponent = menuType === MENU_TYPES.CONTEXT ? _Utility.ContextMenu : _Utility.DropdownMenu;
-  var usedLabel = label ? label : 'More Options';
-  return /*#__PURE__*/_react.default.createElement(MenuComponent, null, /*#__PURE__*/_react.default.createElement(TriggerComponent, {
-    asChild: inTopLevel,
-    $highlightColor: highlightColor
-  }, inTopLevel ? /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    size: "small",
-    as: "div",
-    focusIndicator: false,
-    hoverIndicator: false,
-    plain: true,
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(DropIcon, null) : null,
-    label: inTopLevel ? null : usedLabel
-  }) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_grommet.Button, {
-    size: "small",
-    as: "div",
-    focusIndicator: false,
-    hoverIndicator: false,
-    plain: true,
-    style: {
-      padding: inTopLevel ? '5pt 2pt 5pt 2pt' : '5pt 10pt 5pt 10pt'
-    },
-    icon: inTopLevel ? /*#__PURE__*/_react.default.createElement(DropIcon, null) : null,
-    label: inTopLevel ? null : usedLabel
-  }), /*#__PURE__*/_react.default.createElement(_Utility.RightSlot, null, /*#__PURE__*/_react.default.createElement(DropIcon, null)))), /*#__PURE__*/_react.default.createElement(ContentComponent, null, contents === null || contents === void 0 ? void 0 : contents.map(function (feature, featureIdx) {
-    return /*#__PURE__*/_react.default.createElement(ButtonSwitch, {
-      key: featureIdx,
-      feature: feature,
-      data: data,
-      blockSpec: blockSpec,
-      inTopLevel: false,
-      isEditing: isEditing,
-      isCollapsed: isCollapsed,
-      isSelected: isSelected,
-      isDebugging: isDebugging,
-      setIsEditing: setIsEditing,
-      setIsCollapsed: setIsCollapsed,
-      setIsSelected: setIsSelected,
-      setIsDebugging: setIsDebugging,
-      interactionDisabled: interactionDisabled,
-      fieldInfo: fieldInfo,
-      parentId: parentId,
-      highlightColor: highlightColor,
-      menuType: menuType
-    });
-  })));
-};
 
-var ButtonSwitch = function ButtonSwitch(_ref15) {
-  var data = _ref15.data,
-      blockSpec = _ref15.blockSpec,
-      highlightColor = _ref15.highlightColor,
-      isEditing = _ref15.isEditing,
-      setIsEditing = _ref15.setIsEditing,
-      isCollapsed = _ref15.isCollapsed,
-      setIsCollapsed = _ref15.setIsCollapsed,
-      isSelected = _ref15.isSelected,
-      setIsSelected = _ref15.setIsSelected,
-      isDebugging = _ref15.isDebugging,
-      setIsDebugging = _ref15.setIsDebugging,
-      interactionDisabled = _ref15.interactionDisabled,
-      inTopLevel = _ref15.inTopLevel,
-      feature = _ref15.feature,
-      fieldInfo = _ref15.fieldInfo,
-      parentId = _ref15.parentId,
-      menuType = _ref15.menuType;
   // console.log(highlightColor)
-  var inner = null;
-
   if (feature === _.EXTRA_TYPES.LOCKED_INDICATOR) {
-    inner = /*#__PURE__*/_react.default.createElement(LockIndicatorExtra, {
+    return /*#__PURE__*/_react.default.createElement(LockIndicatorExtra, {
+      key: key,
       highlightColor: highlightColor,
       locked: !data.canEdit,
       inTopLevel: inTopLevel,
@@ -604,7 +397,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if (feature === _.EXTRA_TYPES.NAME_EDIT_TOGGLE) {
-    inner = /*#__PURE__*/_react.default.createElement(NameEditToggleExtra, {
+    return /*#__PURE__*/_react.default.createElement(NameEditToggleExtra, {
+      key: key,
       highlightColor: highlightColor,
       isEditing: isEditing,
       setIsEditing: setIsEditing,
@@ -615,7 +409,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       data: data
     });
   } else if (feature === _.EXTRA_TYPES.COLLAPSE_TOGGLE) {
-    inner = /*#__PURE__*/_react.default.createElement(CollapseToggleExtra, {
+    return /*#__PURE__*/_react.default.createElement(CollapseToggleExtra, {
+      key: key,
       highlightColor: highlightColor,
       isCollapsed: isCollapsed,
       setIsCollapsed: setIsCollapsed,
@@ -624,7 +419,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if (feature === _.EXTRA_TYPES.SELECTION_TOGGLE) {
-    inner = /*#__PURE__*/_react.default.createElement(SelectionToggleExtra, {
+    return /*#__PURE__*/_react.default.createElement(SelectionToggleExtra, {
+      key: key,
       highlightColor: highlightColor,
       locked: interactionDisabled,
       data: data,
@@ -634,7 +430,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if (feature === _.EXTRA_TYPES.DEBUG_TOGGLE) {
-    inner = /*#__PURE__*/_react.default.createElement(DebugToggleExtra, {
+    return /*#__PURE__*/_react.default.createElement(DebugToggleExtra, {
+      key: key,
       highlightColor: highlightColor,
       isDebugging: isDebugging,
       setIsDebugging: setIsDebugging,
@@ -642,7 +439,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if (feature === _.EXTRA_TYPES.DELETE_BUTTON) {
-    inner = /*#__PURE__*/_react.default.createElement(DeleteExtra, {
+    return /*#__PURE__*/_react.default.createElement(DeleteExtra, {
+      key: key,
       highlightColor: highlightColor,
       data: data,
       inTopLevel: inTopLevel,
@@ -652,13 +450,15 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.LABEL) {
-    inner = /*#__PURE__*/_react.default.createElement(LabelExtra, {
+    return /*#__PURE__*/_react.default.createElement(LabelExtra, {
+      key: key,
       inTopLevel: inTopLevel,
       label: feature.label,
       menuType: menuType
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.ADD_ARGUMENT) {
-    inner = /*#__PURE__*/_react.default.createElement(AddArgumentExtra, {
+    return /*#__PURE__*/_react.default.createElement(AddArgumentExtra, {
+      key: key,
       highlightColor: highlightColor,
       data: data,
       argumentType: feature === null || feature === void 0 ? void 0 : feature.argumentType,
@@ -667,7 +467,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.ADD_ARGUMENT_GROUP) {
-    inner = /*#__PURE__*/_react.default.createElement(AddArgumentGroupExtra, {
+    return /*#__PURE__*/_react.default.createElement(AddArgumentGroupExtra, {
+      key: key,
       highlightColor: highlightColor,
       data: data,
       allowed: feature === null || feature === void 0 ? void 0 : feature.allowed,
@@ -676,7 +477,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.FUNCTION_BUTTON) {
-    inner = /*#__PURE__*/_react.default.createElement(FunctionButtonExtra, {
+    return /*#__PURE__*/_react.default.createElement(FunctionButtonExtra, {
+      key: key,
       highlightColor: highlightColor,
       actionInfo: feature,
       data: data,
@@ -686,7 +488,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.INDICATOR_TEXT) {
-    inner = /*#__PURE__*/_react.default.createElement(IndicatorTextExtra, {
+    return /*#__PURE__*/_react.default.createElement(IndicatorTextExtra, {
+      key: key,
       highlightColor: highlightColor,
       value: feature.accessor(data),
       label: feature.label,
@@ -695,7 +498,8 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       menuType: menuType
     });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.INDICATOR_ICON) {
-    inner = /*#__PURE__*/_react.default.createElement(IndicatorIconExtra, {
+    return /*#__PURE__*/_react.default.createElement(IndicatorIconExtra, {
+      key: key,
       highlightColor: highlightColor,
       value: feature.accessor(data),
       label: feature.label,
@@ -703,17 +507,9 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       interactionDisabled: interactionDisabled,
       menuType: menuType
     });
-  } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.ADD_ARGUMENT) {
-    inner = /*#__PURE__*/_react.default.createElement(AddArgumentGroupExtra, {
-      data: data,
-      allowed: feature === null || feature === void 0 ? void 0 : feature.allowed,
-      interactionDisabled: interactionDisabled,
-      inTopLevel: inTopLevel,
-      highlightColor: highlightColor,
-      menuType: menuType
-    });
   } else if ((feature === null || feature === void 0 ? void 0 : feature.type) === _.EXTRA_TYPES.DROPDOWN) {
-    inner = /*#__PURE__*/_react.default.createElement(DropdownExtra, {
+    return /*#__PURE__*/_react.default.createElement(DropdownExtra, {
+      key: key,
       data: data,
       blockSpec: blockSpec,
       icon: feature === null || feature === void 0 ? void 0 : feature.icon,
@@ -734,75 +530,68 @@ var ButtonSwitch = function ButtonSwitch(_ref15) {
       highlightColor: highlightColor,
       menuType: menuType
     });
-  } else if (feature === _.EXTRA_TYPES.DIVIDER && !inTopLevel) {
-    inner = menuType === MENU_TYPES.DROPDOWN ? /*#__PURE__*/_react.default.createElement(_Utility.DropdownMenuSeparator, null) : /*#__PURE__*/_react.default.createElement(_Utility.ContextMenuSeparator, null);
-  } else if (feature === _.EXTRA_TYPES.DIVIDER && inTopLevel) {
-    inner = /*#__PURE__*/_react.default.createElement(_Utility.OtherStyledSeparator, {
-      decorative: true,
-      orientation: "vertical",
-      $height: "15px"
+  } else if (feature === _.EXTRA_TYPES.DIVIDER) {
+    return /*#__PURE__*/_react.default.createElement(_Divider.default, {
+      key: key
     });
   }
 
-  return inner;
+  return /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
+    key: key
+  }, "Not Handled");
 };
 
-var ExtraBar = function ExtraBar(_ref16) {
+var ExtraBar = function ExtraBar(_ref15) {
   var _blockSpec$extras;
 
-  var data = _ref16.data,
-      blockSpec = _ref16.blockSpec,
-      highlightColor = _ref16.highlightColor,
-      isEditing = _ref16.isEditing,
-      setIsEditing = _ref16.setIsEditing,
-      isCollapsed = _ref16.isCollapsed,
-      setIsCollapsed = _ref16.setIsCollapsed,
-      isSelected = _ref16.isSelected,
-      setIsSelected = _ref16.setIsSelected,
-      isDebugging = _ref16.isDebugging,
-      setIsDebugging = _ref16.setIsDebugging,
-      interactionDisabled = _ref16.interactionDisabled,
-      fieldInfo = _ref16.fieldInfo,
-      parentId = _ref16.parentId;
-  return /*#__PURE__*/_react.default.createElement(_grommet.Box, {
-    direction: "row",
-    margin: {
-      left: 'xsmall'
-    },
-    gap: "none",
-    align: "center",
-    alignContent: "center",
-    justify: "between",
-    flex: false
-  }, /*#__PURE__*/_react.default.createElement(_Utility.DropdownMenu, null, blockSpec === null || blockSpec === void 0 ? void 0 : (_blockSpec$extras = blockSpec.extras) === null || _blockSpec$extras === void 0 ? void 0 : _blockSpec$extras.map(function (extra, extraIdx) {
-    return /*#__PURE__*/_react.default.createElement(ButtonSwitch, {
-      key: extraIdx,
-      data: data,
-      blockSpec: blockSpec,
-      inTopLevel: true,
-      isEditing: isEditing,
-      isCollapsed: isCollapsed,
-      isSelected: isSelected,
-      isDebugging: isDebugging,
-      setIsEditing: setIsEditing,
-      setIsCollapsed: setIsCollapsed,
-      setIsSelected: setIsSelected,
-      setIsDebugging: setIsDebugging,
-      interactionDisabled: interactionDisabled,
+  var data = _ref15.data,
+      blockSpec = _ref15.blockSpec,
+      highlightColor = _ref15.highlightColor,
+      isEditing = _ref15.isEditing,
+      setIsEditing = _ref15.setIsEditing,
+      isCollapsed = _ref15.isCollapsed,
+      setIsCollapsed = _ref15.setIsCollapsed,
+      isSelected = _ref15.isSelected,
+      setIsSelected = _ref15.setIsSelected,
+      isDebugging = _ref15.isDebugging,
+      setIsDebugging = _ref15.setIsDebugging,
+      interactionDisabled = _ref15.interactionDisabled,
+      fieldInfo = _ref15.fieldInfo,
+      parentId = _ref15.parentId;
+  var childProps = {
+    data: data,
+    blockSpec: blockSpec,
+    highlightColor: highlightColor,
+    isEditing: isEditing,
+    setIsEditing: setIsEditing,
+    isCollapsed: isCollapsed,
+    setIsCollapsed: setIsCollapsed,
+    isSelected: isSelected,
+    setIsSelected: setIsSelected,
+    isDebugging: isDebugging,
+    setIsDebugging: setIsDebugging,
+    interactionDisabled: interactionDisabled,
+    fieldInfo: fieldInfo,
+    parentId: parentId,
+    inTopLevel: true
+  };
+  return /*#__PURE__*/_react.default.createElement(_ButtonGroup.default, {
+    variant: "outlined",
+    "aria-label": "outlined button group",
+    color: "quiet"
+  }, blockSpec === null || blockSpec === void 0 ? void 0 : (_blockSpec$extras = blockSpec.extras) === null || _blockSpec$extras === void 0 ? void 0 : _blockSpec$extras.map(function (extra, extraIdx) {
+    return getItem(_objectSpread(_objectSpread({}, childProps), {}, {
       feature: extra,
-      fieldInfo: fieldInfo,
-      parentId: parentId,
-      highlightColor: highlightColor,
-      menuType: MENU_TYPES.DROPDOWN
-    });
-  })));
+      key: extraIdx
+    }));
+  }));
 };
 
 exports.ExtraBar = ExtraBar;
 
 var flattenMenuOnce = function flattenMenuOnce(extras) {
   var pancaked = [];
-  extras.forEach(function (extra) {
+  extras === null || extras === void 0 ? void 0 : extras.forEach(function (extra) {
     if (extra.type === _.EXTRA_TYPES.DROPDOWN) {
       if (pancaked[pancaked.length - 1] !== _.EXTRA_TYPES.DIVIDER) {
         pancaked.push(_.EXTRA_TYPES.DIVIDER);
@@ -847,46 +636,54 @@ var flattenMenuOnce = function flattenMenuOnce(extras) {
   } // console.log(pancaked)
 
 
+  if (pancaked.length === 0) {
+    pancaked.push({
+      label: 'No Actions',
+      type: _.EXTRA_TYPES.LABEL
+    });
+  }
+
   return pancaked;
 };
 
-var RightClickMenu = function RightClickMenu(_ref17) {
-  var data = _ref17.data,
-      blockSpec = _ref17.blockSpec,
-      highlightColor = _ref17.highlightColor,
-      isEditing = _ref17.isEditing,
-      setIsEditing = _ref17.setIsEditing,
-      isCollapsed = _ref17.isCollapsed,
-      setIsCollapsed = _ref17.setIsCollapsed,
-      isSelected = _ref17.isSelected,
-      setIsSelected = _ref17.setIsSelected,
-      isDebugging = _ref17.isDebugging,
-      setIsDebugging = _ref17.setIsDebugging,
-      interactionDisabled = _ref17.interactionDisabled,
-      fieldInfo = _ref17.fieldInfo,
-      parentId = _ref17.parentId;
+var RightClickMenu = function RightClickMenu(_ref16) {
+  var data = _ref16.data,
+      blockSpec = _ref16.blockSpec,
+      highlightColor = _ref16.highlightColor,
+      isEditing = _ref16.isEditing,
+      setIsEditing = _ref16.setIsEditing,
+      isCollapsed = _ref16.isCollapsed,
+      setIsCollapsed = _ref16.setIsCollapsed,
+      isSelected = _ref16.isSelected,
+      setIsSelected = _ref16.setIsSelected,
+      isDebugging = _ref16.isDebugging,
+      setIsDebugging = _ref16.setIsDebugging,
+      interactionDisabled = _ref16.interactionDisabled,
+      fieldInfo = _ref16.fieldInfo,
+      parentId = _ref16.parentId;
   var flattenedExtras = flattenMenuOnce(blockSpec === null || blockSpec === void 0 ? void 0 : blockSpec.extras);
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, flattenedExtras.map(function (extra, extraIdx) {
-    return /*#__PURE__*/_react.default.createElement(ButtonSwitch, {
-      key: extraIdx,
-      data: data,
-      blockSpec: blockSpec,
-      inTopLevel: false,
-      isEditing: isEditing,
-      isCollapsed: isCollapsed,
-      isSelected: isSelected,
-      isDebugging: isDebugging,
-      setIsEditing: setIsEditing,
-      setIsCollapsed: setIsCollapsed,
-      setIsSelected: setIsSelected,
-      setIsDebugging: setIsDebugging,
-      interactionDisabled: interactionDisabled,
+  var childProps = {
+    data: data,
+    blockSpec: blockSpec,
+    highlightColor: highlightColor,
+    isEditing: isEditing,
+    setIsEditing: setIsEditing,
+    isCollapsed: isCollapsed,
+    setIsCollapsed: setIsCollapsed,
+    isSelected: isSelected,
+    setIsSelected: setIsSelected,
+    isDebugging: isDebugging,
+    setIsDebugging: setIsDebugging,
+    interactionDisabled: interactionDisabled,
+    fieldInfo: fieldInfo,
+    parentId: parentId,
+    inTopLevel: false
+  };
+  return /*#__PURE__*/_react.default.createElement(_MenuList.default, null, flattenedExtras.map(function (extra, extraIdx) {
+    return getItem(_objectSpread(_objectSpread({}, childProps), {}, {
       feature: extra,
-      fieldInfo: fieldInfo,
-      parentId: parentId,
-      highlightColor: highlightColor,
-      menuType: MENU_TYPES.CONTEXT
-    });
+      key: extraIdx
+    }));
   }));
 };
 

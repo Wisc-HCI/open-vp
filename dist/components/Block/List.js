@@ -1,7 +1,5 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -12,6 +10,8 @@ var _react = _interopRequireDefault(require("react"));
 var _ = require(".");
 
 var _DropRegion = require("./DropRegion");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var List = function List(_ref) {
   var ids = _ref.ids,

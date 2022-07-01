@@ -1,7 +1,5 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -12,10 +10,6 @@ exports.deleteFromProgram = deleteFromProgram;
 exports.deleteSelfBlock = deleteSelfBlock;
 exports.move = move;
 exports.useDefaultProgrammingStore = void 0;
-
-var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/objectSpread2"));
-
-var _toConsumableArray2 = _interopRequireDefault(require("@babel/runtime/helpers/esm/toConsumableArray"));
 
 var _zustand = _interopRequireDefault(require("zustand"));
 
@@ -30,6 +24,26 @@ var _lodash = require("lodash");
 var _Generators = require("./Generators");
 
 var _Timer = require("./Timer");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 var randInt8 = function randInt8() {
   return Math.floor(Math.random() * 256);
@@ -64,11 +78,11 @@ function move(array, moveIndex, toIndex) {
 
   if (diff > 0) {
     // move left
-    return [].concat((0, _toConsumableArray2.default)(array.slice(0, toIndex)), [item], (0, _toConsumableArray2.default)(array.slice(toIndex, moveIndex)), (0, _toConsumableArray2.default)(array.slice(moveIndex + 1, length)));
+    return [].concat(_toConsumableArray(array.slice(0, toIndex)), [item], _toConsumableArray(array.slice(toIndex, moveIndex)), _toConsumableArray(array.slice(moveIndex + 1, length)));
   } else if (diff < 0) {
     // move right
     var targetIndex = toIndex + 1;
-    return [].concat((0, _toConsumableArray2.default)(array.slice(0, moveIndex)), (0, _toConsumableArray2.default)(array.slice(moveIndex + 1, targetIndex)), [item], (0, _toConsumableArray2.default)(array.slice(targetIndex, length)));
+    return [].concat(_toConsumableArray(array.slice(0, moveIndex)), _toConsumableArray(array.slice(moveIndex + 1, targetIndex)), [item], _toConsumableArray(array.slice(targetIndex, length)));
   }
 
   return array;
@@ -301,7 +315,7 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
         if (!state.programData[data.id]) {
           // Clone the data with a new id
           id = generateUuid(data.type);
-          state.programData[id] = (0, _objectSpread2.default)((0, _objectSpread2.default)({}, data), {}, {
+          state.programData[id] = _objectSpread(_objectSpread({}, data), {}, {
             id: id
           });
           newSpawn = true;
@@ -368,7 +382,7 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
         if (!state.programData[data.id]) {
           // Clone the data with a new id
           id = generateUuid(data.type);
-          state.programData[id] = (0, _objectSpread2.default)((0, _objectSpread2.default)({}, data), {}, {
+          state.programData[id] = _objectSpread(_objectSpread({}, data), {}, {
             id: id
           });
         }
@@ -382,20 +396,24 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
     addInstance: function addInstance(instanceType) {
       set(function (state) {
         var id = generateUuid(instanceType);
-        var template = (0, _objectSpread2.default)((0, _objectSpread2.default)({}, (0, _Generators.instanceTemplateFromSpec)(instanceType, state.programSpec.objectTypes[instanceType], false)), {}, {
+
+        var template = _objectSpread(_objectSpread({}, (0, _Generators.instanceTemplateFromSpec)(instanceType, state.programSpec.objectTypes[instanceType], false)), {}, {
           id: id,
           dataType: _.DATA_TYPES.INSTANCE
         });
+
         state.programData[id] = template;
       });
     },
     addArgument: function addArgument(parentFunctionId, argumentType) {
       set(function (state) {
         var id = generateUuid(argumentType);
-        var template = (0, _objectSpread2.default)((0, _objectSpread2.default)({}, (0, _Generators.instanceTemplateFromSpec)(argumentType, state.programSpec.objectTypes[argumentType], true)), {}, {
+
+        var template = _objectSpread(_objectSpread({}, (0, _Generators.instanceTemplateFromSpec)(argumentType, state.programSpec.objectTypes[argumentType], true)), {}, {
           id: id,
           dataType: _.DATA_TYPES.ARGUMENT
         });
+
         state.programData[id] = template;
         state.programData[parentFunctionId].arguments.push(id);
       });
@@ -420,6 +438,7 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
       });
     },
     updateItemSimpleProperty: function updateItemSimpleProperty(id, property, value) {
+      // console.log({id,property,value})
       set(function (state) {
         state.programData[id].properties[property] = value;
       });

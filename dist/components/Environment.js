@@ -1,7 +1,5 @@
 "use strict";
 
-var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault").default;
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -29,6 +27,10 @@ var _reactFlowRenderer = require("react-flow-renderer");
 
 var _theme = require("./theme");
 
+var _styles = require("@mui/material/styles");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 // import { HTML5Backend } from "react-dnd-html5-backend";
 function Environment(_ref) {
   var store = _ref.store,
@@ -38,8 +40,22 @@ function Environment(_ref) {
       drawerWidth = _ref.drawerWidth,
       snapToGrid = _ref.snapToGrid;
   var theme = (0, _theme.getTheme)(highlightColor);
+  var muiTheme = (0, _styles.createTheme)({
+    palette: {
+      mode: "dark",
+      highlightColor: {
+        main: highlightColor
+      },
+      quiet: {
+        main: '#444',
+        darker: '#333'
+      }
+    }
+  });
   return /*#__PURE__*/_react.default.createElement(_grommet.Grommet, {
     theme: theme
+  }, /*#__PURE__*/_react.default.createElement(_styles.ThemeProvider, {
+    theme: muiTheme
   }, /*#__PURE__*/_react.default.createElement(_ProgrammingContext.ProgrammingProvider, {
     store: store
   }, /*#__PURE__*/_react.default.createElement(_reactDnd.DndProvider, {
@@ -49,7 +65,7 @@ function Environment(_ref) {
     style: {
       padding: 0,
       margin: 0,
-      display: 'flex',
+      display: "flex",
       height: height,
       width: width
     }
@@ -61,5 +77,5 @@ function Environment(_ref) {
     snapToGrid: snapToGrid
   }))), /*#__PURE__*/_react.default.createElement(_DragLayer.DragLayer, {
     highlightColor: highlightColor
-  }))));
+  })))));
 }
