@@ -20,6 +20,7 @@ import { Block } from ".";
 import { pickBy, omitBy } from "lodash";
 import { ExpandCarrot } from "./ExpandCarrot";
 import { ProgressBar } from "./Progress";
+import { ConnectionHandle } from "./ConnectionHandle";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import TextField from "@mui/material/TextField";
@@ -107,32 +108,33 @@ export const VisualBlock = memo(
       const minified =
         blockSpec.minified && data.dataType === DATA_TYPES.INSTANCE;
 
-      const simpleProperties = typeSpec && typeSpec.properties
-        ? pickBy(
-            typeSpec.properties,
-            (entry) =>
-              Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type) &&
-              entry.type !== SIMPLE_PROPERTY_TYPES.IGNORED
-          )
-        : {};
-      const standardProperties = typeSpec && typeSpec.properties
-        ? omitBy(typeSpec.properties, (entry) =>
-            Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)
-          )
-        : {};
+      const simpleProperties =
+        typeSpec && typeSpec.properties
+          ? pickBy(
+              typeSpec.properties,
+              (entry) =>
+                Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type) &&
+                entry.type !== SIMPLE_PROPERTY_TYPES.IGNORED
+            )
+          : {};
+      const standardProperties =
+        typeSpec && typeSpec.properties
+          ? omitBy(typeSpec.properties, (entry) =>
+              Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)
+            )
+          : {};
 
       const Icon = blockSpec.icon ? blockSpec.icon : FiSquare;
 
       const dataType = data ? data.dataType : null;
 
-      const name = [DATA_TYPES.CALL, DATA_TYPES.REFERENCE].includes(
-        dataType
-      )
+      const name = [DATA_TYPES.CALL, DATA_TYPES.REFERENCE].includes(dataType)
         ? data?.refData?.name
         : data?.name;
 
       const editing = (data && data.editing) || (data && data.refData?.editing);
-      const selected = (data && data.selected) || (data && data.refData?.selected);
+      const selected =
+        (data && data.selected) || (data && data.refData?.selected);
       const canDragBlockRFR =
         onCanvas && blockSpec.onCanvas && !editing && !locked;
       // console.log("canDrag", { canDragBlockRFR, data, onCanvas, blockspecCanvas:blockSpec.onCanvas, editing, locked });
@@ -149,7 +151,7 @@ export const VisualBlock = memo(
       };
 
       if (!data) {
-        return null
+        return null;
       }
 
       return (
@@ -276,7 +278,7 @@ export const VisualBlock = memo(
                     onMouseEnter={editing ? (_) => setLocked(true) : null}
                     onMouseLeave={editing ? (_) => setLocked(false) : null}
                     disabled={!data.editing && !data.refData?.editing}
-                    value={name}
+                    value={name ? name : ''}
                     onChange={(e) => {
                       // console.log("changing", e);
                       updateItemName(
@@ -285,7 +287,7 @@ export const VisualBlock = memo(
                       );
                     }}
                     InputProps={{
-                      style:{
+                      style: {
                         // boxShadow: editing
                         //   ? `0 0 0 1px ${highlightColor}`
                         //   : `0 0 0 1px #222222`,
@@ -298,7 +300,7 @@ export const VisualBlock = memo(
                         backgroundColor: editing
                           ? `${highlightColor}99`
                           : "#22222299",
-                      }
+                      },
                     }}
                     // style={{
                     //   // boxShadow: editing
@@ -454,7 +456,7 @@ export const VisualBlock = memo(
                                       // placeholder={fieldInfo.name}
                                       onMouseEnter={(_) => setLocked(true)}
                                       onMouseLeave={(_) => setLocked(false)}
-                                      value={currentValue}
+                                      value={currentValue ? currentValue : ''}
                                       disabled={interactionDisabled}
                                       onChange={(e) =>
                                         updateItemSimpleProperty(
@@ -644,6 +646,24 @@ export const VisualBlock = memo(
                     ))}
                   </Box>
                 )}
+
+              {/* Add Connection Info/Handles here for blocks */}
+              {onCanvas && (
+                <>
+                  {["top", "bottom", "left", "right"]
+                    .filter((position) => blockSpec.connections?.[position])
+                    .map((position) => (
+                      <ConnectionHandle
+                        key={position}
+                        nodeData={data}
+                        position={position}
+                        direction={blockSpec.connections[position].direction}
+                        allowed={blockSpec.connections[position].allowed}
+                        highlightColor={highlightColor}
+                      />
+                    ))}
+                </>
+              )}
               {/* If the block has simple parameters, show them in a collapse block */}
               {Object.keys(simpleProperties).length > 0 &&
                 data.dataType === DATA_TYPES.INSTANCE && (
@@ -763,7 +783,7 @@ export const VisualBlock = memo(
                                     onMouseLeave={(_) => setLocked(false)}
                                     size="small"
                                     // style={{ color: "#00000088" }}
-                                    value={data.properties[propKey]}
+                                    value={data.properties[propKey] ? data.properties[propKey] : ''}
                                     disabled={interactionDisabled}
                                     onChange={(e) =>
                                       updateItemSimpleProperty(

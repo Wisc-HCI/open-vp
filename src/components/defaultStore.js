@@ -2,9 +2,10 @@ import create from "zustand";
 import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
 import { DATA_TYPES, TYPES } from ".";
-import { remove, pickBy } from "lodash";
+import { remove, pickBy, omitBy } from "lodash";
 import { instanceTemplateFromSpec } from "./Generators";
 import { Timer } from "./Timer";
+import { SIMPLE_PROPERTY_TYPES } from ".";
 
 const randInt8 = () => {
   return Math.floor(Math.random() * 256);
@@ -58,6 +59,20 @@ export function move(array, moveIndex, toIndex) {
   return array;
 }
 
+const pruneEdgesFromBlock = (state, blockId) => {
+  state.programData = omitBy(state.programData,(data) => {
+    if (
+      data.dataType === DATA_TYPES.CONNECTION &&
+      (data.parent.id === blockId || data.child.id === blockId)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  return state
+};
+
 export function deleteFromChildren(state, idsToDelete, parentData) {
   // Corner case for call blocks (don't look at parent's information)
   if (parentData.dataType === DATA_TYPES.CALL) {
@@ -69,6 +84,7 @@ export function deleteFromChildren(state, idsToDelete, parentData) {
       ) {
         delete state.programData[parentData.properties[propName]];
         state.programData[parentData.id].properties[propName] = null;
+        state = pruneEdgesFromBlock(state,parentData.properties[propName]);
       }
     });
     for (let i = 0; i < idsToDelete.length; i++) {
@@ -95,10 +111,12 @@ export function deleteFromChildren(state, idsToDelete, parentData) {
                 state.programData[child]
               );
             });
-            idsToDelete.forEach(idToDelete=>{
-              const newList = state.programData[parentData.id].properties[propName].filter((field) => state.programData[field]?.ref !== idToDelete)
-              state.programData[parentData.id].properties[propName] = newList
-            })
+            idsToDelete.forEach((idToDelete) => {
+              const newList = state.programData[parentData.id].properties[
+                propName
+              ].filter((field) => state.programData[field]?.ref !== idToDelete);
+              state.programData[parentData.id].properties[propName] = newList;
+            });
           } else if (
             property &&
             parentData.properties[propName] &&
@@ -110,6 +128,7 @@ export function deleteFromChildren(state, idsToDelete, parentData) {
             delete state.programData[parentData.properties[propName]];
             // entry.properties[propName] = null;
             state.programData[parentData.id].properties[propName] = null;
+            state = pruneEdgesFromBlock(state,parentData.properties[propName]);
           }
         }
       });
@@ -158,13 +177,14 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
     if (data.arguments) {
       data.arguments.forEach((argumentId) => {
         delete state.programData[argumentId];
+        state = pruneEdgesFromBlock(state,argumentId);
       });
     }
 
     // Find the parent's of the references, and remove the references from them
     Object.keys(state.programData).forEach((entryId) => {
       const entry = state.programData[entryId];
-      if (state.programSpec.objectTypes[entry.type].properties) {
+      if (state.programSpec.objectTypes[entry.type]?.properties) {
         // Iterate through properties
         Object.keys(
           state.programSpec.objectTypes[entry.type].properties
@@ -201,12 +221,14 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
     callIds.forEach((reference) => {
       state = deleteChildren(state, state.programData[reference]);
       delete state.programData[reference];
+      state = pruneEdgesFromBlock(state,reference);
     });
   } else if (fieldInfo?.isSpawner) {
     if (parentId === "spawner") {
       // Drawer deletion
       state = deleteFromProgram(state, [data.ref]);
       delete state.programData[data.ref];
+      state = pruneEdgesFromBlock(state,data.ref);
     } else {
       // Argument deletion
       state = deleteFromChildren(
@@ -227,6 +249,7 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
 
   // Remove self from state
   delete state.programData[data.id];
+  state = pruneEdgesFromBlock(state,data.id);
 
   return state;
 }
@@ -317,6 +340,8 @@ export const ProgrammingSlice = (set, get) => ({
   locked: false,
   setLocked: (locked) => set({ locked }),
   activeDrawer: null,
+  connectionInfo: null,
+  setConnectionInfo: (info) => set({ connectionInfo: info }),
   setActiveDrawer: (activeDrawer) => set({ activeDrawer }),
   programSpec: DEFAULT_PROGRAM_SPEC,
   programData: {},
@@ -386,7 +411,11 @@ export const ProgrammingSlice = (set, get) => ({
   moveBlocks: (changes) =>
     set((state) => {
       changes.forEach((change) => {
-        if (change.type === "position" && state.programData[change.id] && change.position) {
+        if (
+          change.type === "position" &&
+          state.programData[change.id] &&
+          change.position
+        ) {
           state.programData[change.id].position = change.position;
         }
       });
@@ -486,9 +515,99 @@ export const ProgrammingSlice = (set, get) => ({
     });
   },
   updateItemSimpleProperty: (id, property, value) => {
-    // console.log({id,property,value})
     set((state) => {
       state.programData[id].properties[property] = value;
+    });
+  },
+  updateEdgeName: (id, value) => {
+    set((state) => {
+      state.programData[id].name = value;
+    });
+  },
+  deleteEdge: (id) => {
+    set((state) => {
+      delete state.programData[id];
+    });
+  },
+  createEdge: (source, sourceHandle, target, targetHandle) => {
+    set((state) => {
+      // console.log("createEdge", { source, sourceHandle, target, targetHandle });
+      const edgeCount = Object.values(state.programData).filter(
+        (d) => d.dataType === DATA_TYPES.CONNECTION
+      ).length;
+      const newEdge = {
+        id: generateUuid("edge"),
+        name: `Connection ${edgeCount + 1}`,
+        dataType: DATA_TYPES.CONNECTION,
+        parent: { id: source, handle: sourceHandle },
+        child: { id: target, handle: targetHandle },
+        mode: SIMPLE_PROPERTY_TYPES.STRING,
+      };
+      state.programData[newEdge.id] = newEdge;
+      // console.log('createEdge',{source,sourceHandle,target,targetHandle})
+    });
+  },
+  validateEdge: (source, sourceHandle, target, targetHandle) => {
+    // console.log("validateEdge", { source, sourceHandle, target, targetHandle });
+    if (source === target) {
+      return false
+    }
+    const edges = Object.values(get().programData).filter(
+      (d) => d.dataType === DATA_TYPES.CONNECTION
+    );
+    const sourceNode = get().programData[source];
+    const sourceTypeInfo = get().programSpec.objectTypes[sourceNode.type];
+    // console.log(sourceTypeInfo);
+    const sourceConnectionInfo =
+      sourceNode.dataType === DATA_TYPES.REFERENCE
+        ? sourceTypeInfo.referenceBlock.connections[sourceHandle]
+        : sourceNode.dataType === DATA_TYPES.CALL
+        ? sourceTypeInfo.callBlock.connections[sourceHandle]
+        : sourceTypeInfo.instanceBlock.connections[sourceHandle];
+    const targetNode = get().programData[target];
+    const targetTypeInfo = get().programSpec.objectTypes[targetNode.type];
+    const targetConnectionInfo =
+      targetNode.dataType === DATA_TYPES.REFERENCE
+        ? targetTypeInfo.referenceBlock.connections[targetHandle]
+        : targetNode.dataType === DATA_TYPES.CALL
+        ? targetTypeInfo.callBlock.connections[targetHandle]
+        : targetTypeInfo.instanceBlock.connections[targetHandle];
+    if (sourceConnectionInfo.direction === targetConnectionInfo.direction) {
+      return false;
+    }
+    if (!sourceConnectionInfo.allowed.includes(targetNode.type)) {
+      return false;
+    } else if (!targetConnectionInfo.allowed.includes(sourceNode.type)) {
+      return false;
+    } else if (
+      edges.some((edge) => {
+        const foundMatch =
+          edge.parent.id === source &&
+          edge.child.id === target &&
+          edge.parent.handle === sourceHandle &&
+          edge.child.handle === targetHandle;
+        // console.log('match search',{foundMatch,edge,source,target,sourceHandle,targetHandle})
+        return foundMatch;
+      })
+    ) {
+      // console.log('already existing')
+      return false;
+    }
+    return true;
+  },
+  toggleEdgeMode: (id) => {
+    set((state) => {
+      const edgeMode = state.programData[id].mode;
+      if (edgeMode === SIMPLE_PROPERTY_TYPES.STRING) {
+        state.programData[id].mode = SIMPLE_PROPERTY_TYPES.NUMBER;
+        state.programData[id].name = 0;
+      } else {
+        const edgeCount = Object.values(state.programData).filter(
+          (d) => d.dataType === DATA_TYPES.CONNECTION
+        ).length;
+        state.programData[id].mode = SIMPLE_PROPERTY_TYPES.STRING;
+        state.programData[id].name = `Connection ${edgeCount + 1}`;
+      }
     });
   },
   // Just to illustrate alternative functionExtraTypes

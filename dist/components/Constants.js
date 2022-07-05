@@ -3,13 +3,14 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TYPES = exports.SIMPLE_PROPERTY_TYPES = exports.EXTRA_TYPES = exports.DATA_TYPES = void 0;
+exports.TYPES = exports.SIMPLE_PROPERTY_TYPES = exports.EXTRA_TYPES = exports.DATA_TYPES = exports.CONNECTIONS = void 0;
 // DATA_TYPES are the sub-types of each user-defined type. For example, you may have an INSTANCE and REFERENCE to some newType
 var DATA_TYPES = {
   INSTANCE: 'INSTANCE',
   REFERENCE: 'REFERENCE',
   CALL: 'CALL',
-  ARGUMENT: 'ARGUMENT'
+  ARGUMENT: 'ARGUMENT',
+  CONNECTION: 'CONNECTION'
 }; // The high-level type that each objectType belongs to (either object or function)
 
 exports.DATA_TYPES = DATA_TYPES;
@@ -43,3 +44,8 @@ var SIMPLE_PROPERTY_TYPES = {
   IGNORED: 'IGNORED'
 };
 exports.SIMPLE_PROPERTY_TYPES = SIMPLE_PROPERTY_TYPES;
+var CONNECTIONS = {
+  OUTBOUND: 'OUTBOUND',
+  INBOUND: 'INBOUND'
+};
+exports.CONNECTIONS = CONNECTIONS;

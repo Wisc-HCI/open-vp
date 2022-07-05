@@ -17,6 +17,8 @@ var _ProgrammingContext = require("./ProgrammingContext");
 
 var _Block = require("./Block");
 
+var _CanvasEdge = require("./CanvasEdge");
+
 var _Constants = require("./Constants");
 
 var _Generators = require("./Generators");
@@ -84,13 +86,24 @@ var Canvas = function Canvas(_ref2) {
   var setLocked = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
     return state.setLocked;
   });
+  var createEdge = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.createEdge;
+  });
+  var validateEdge = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.validateEdge;
+  });
+  var setConnectionInfo = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return state.setConnectionInfo;
+  });
   var nodes = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
-    return Object.values(state.programData).map(function (data) {
+    return Object.values(state.programData).filter(function (data) {
+      return data.dataType !== _Constants.DATA_TYPES.CONNECTION;
+    }).map(function (data) {
       var _state$programSpec$ob, _state$programSpec$ob2;
 
       var typeSpec = state.programSpec.objectTypes[data.type];
       var progress = state.executionData[data.id];
-      var blockType = data.dataType === _Constants.DATA_TYPES.INSTANCE ? 'instanceBlock' : data.dataType === _Constants.DATA_TYPES.CALL ? 'callBlock' : data.dataType === _Constants.DATA_TYPES.REFERENCE ? 'referenceBlock' : 'nullBlock';
+      var blockType = data.dataType === _Constants.DATA_TYPES.INSTANCE ? "instanceBlock" : data.dataType === _Constants.DATA_TYPES.CALL ? "callBlock" : data.dataType === _Constants.DATA_TYPES.REFERENCE ? "referenceBlock" : "nullBlock";
       var color = (_state$programSpec$ob = state.programSpec.objectTypes[data.type][blockType]) === null || _state$programSpec$ob === void 0 ? void 0 : _state$programSpec$ob.color;
       var onCanvas = (_state$programSpec$ob2 = state.programSpec.objectTypes[data.type][blockType]) === null || _state$programSpec$ob2 === void 0 ? void 0 : _state$programSpec$ob2.onCanvas;
       var ref = data.ref ? state.programData[data.ref] : null;
@@ -103,7 +116,7 @@ var Canvas = function Canvas(_ref2) {
       return {
         id: data.id,
         position: data.position,
-        type: 'canvasNode',
+        type: "canvasNode",
         // draggable:!locked,
         data: _objectSpread(_objectSpread({}, data), {}, {
           highlightColor: highlightColor,
@@ -121,6 +134,23 @@ var Canvas = function Canvas(_ref2) {
       var _data$data$typeSpec;
 
       return (_data$data$typeSpec = data.data.typeSpec) === null || _data$data$typeSpec === void 0 ? void 0 : _data$data$typeSpec.onCanvas;
+    });
+  });
+  var edges = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
+    return Object.values(state.programData).filter(function (data) {
+      return data.dataType === _Constants.DATA_TYPES.CONNECTION;
+    }).map(function (data) {
+      return {
+        id: data.id,
+        source: data.parent.id,
+        target: data.child.id,
+        sourceHandle: data.parent.handle,
+        targetHandle: data.child.handle,
+        data: {
+          label: data.name
+        },
+        type: "canvasEdge"
+      };
     });
   });
   var acceptTypes = (0, _ProgrammingContext.useProgrammingStore)(function (state) {
@@ -169,28 +199,49 @@ var Canvas = function Canvas(_ref2) {
       });
       createPlacedNode(item.data, position.x, position.y);
     }
-  })[1];
+  })[1]; // console.log({ nodes, edges });
+
   return /*#__PURE__*/_react.default.createElement("div", {
     ref: ref,
     style: {
       backgroundColor: "black",
-      display: 'flex',
+      display: "flex",
       flex: 1
     }
   }, /*#__PURE__*/_react.default.createElement(_reactFlowRenderer.default, {
     ref: drop,
     maxZoom: 1.5,
-    minZoom: 0.5 // panOnDrag={!locked}
+    minZoom: 0.5,
+    nodesConnectable: true // elementsSelectable={false}
     ,
-    nodesConnectable: false,
-    elementsSelectable: false,
     nodeTypes: (0, _react.useMemo)(function () {
       return {
         canvasNode: CanvasNode
       };
     }, []),
+    edgeTypes: (0, _react.useMemo)(function () {
+      return {
+        canvasEdge: _CanvasEdge.CanvasEdge
+      };
+    }, []),
     nodes: nodes,
-    onConnect: function onConnect(_) {},
+    edges: edges,
+    connectionLineComponent: _CanvasEdge.DrawingCanvasEdge,
+    onConnect: function onConnect(data) {
+      if (validateEdge(data.source, data.sourceHandle, data.target, data.targetHandle)) {
+        // console.log('valid edge found')
+        createEdge(data.source, data.sourceHandle, data.target, data.targetHandle);
+      }
+    },
+    onConnectStart: function onConnectStart(_, data) {
+      setConnectionInfo(data);
+    },
+    onConnectEnd: function onConnectEnd(_) {
+      setConnectionInfo(null);
+    },
+    onConnectStop: function onConnectStop(_) {
+      setConnectionInfo(null);
+    },
     onNodesChange: moveNodes,
     fitView: true,
     snapToGrid: snapToGrid,

@@ -19,7 +19,6 @@
     "@babel/cli": "^7.17.10",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@mui-treasury/component-numberinput": "^0.0.1-alpha.15",
     "@mui/core": "^5.0.0-alpha.54",
     "@mui/material": "^5.8.5",
     "@radix-ui/react-scroll-area": "^0.1.5-rc.44",

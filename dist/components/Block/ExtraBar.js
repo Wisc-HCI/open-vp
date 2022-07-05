@@ -55,20 +55,24 @@ var FunctionButtonExtra = function FunctionButtonExtra(_ref) {
       blockSpec = _ref.blockSpec,
       inTopLevel = _ref.inTopLevel,
       interactionDisabled = _ref.interactionDisabled;
-  var onClick = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (state) {
+
+  var _onClick = (0, _ProgrammingContext.useProgrammingStore)((0, _react.useCallback)(function (state) {
     if (typeof actionInfo.onClick === "function") {
       return actionInfo.onClick;
     } else {
       return state[actionInfo.onClick];
     }
   }, [actionInfo]));
+
   var ExtraActionIcon = actionInfo.icon ? actionInfo.icon : _fi.FiCircle;
   return inTopLevel ? /*#__PURE__*/_react.default.createElement(_IconButton.default, {
     disabled: interactionDisabled,
-    onClick: onClick
+    onClick: function onClick() {
+      return _onClick(data, blockSpec);
+    }
   }, /*#__PURE__*/_react.default.createElement(ExtraActionIcon, null)) : /*#__PURE__*/_react.default.createElement(_MenuItem.default, {
     disabled: interactionDisabled,
-    onClick: onClick
+    onClick: _onClick
   }, /*#__PURE__*/_react.default.createElement(_ListItemIcon.default, null, /*#__PURE__*/_react.default.createElement(ExtraActionIcon, null)), /*#__PURE__*/_react.default.createElement(_ListItemText.default, {
     primaryTypographyProps: {
       color: interactionDisabled ? "text.secondary" : "text.primary"

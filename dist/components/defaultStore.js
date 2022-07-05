@@ -88,6 +88,17 @@ function move(array, moveIndex, toIndex) {
   return array;
 }
 
+var pruneEdgesFromBlock = function pruneEdgesFromBlock(state, blockId) {
+  state.programData = (0, _lodash.omitBy)(state.programData, function (data) {
+    if (data.dataType === _.DATA_TYPES.CONNECTION && (data.parent.id === blockId || data.child.id === blockId)) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+  return state;
+};
+
 function deleteFromChildren(state, idsToDelete, parentData) {
   // Corner case for call blocks (don't look at parent's information)
   if (parentData.dataType === _.DATA_TYPES.CALL) {
@@ -99,6 +110,7 @@ function deleteFromChildren(state, idsToDelete, parentData) {
       if (idsToDelete.includes((_state$programData$pa = state.programData[parentData.properties[propName]]) === null || _state$programData$pa === void 0 ? void 0 : _state$programData$pa.ref)) {
         delete state.programData[parentData.properties[propName]];
         state.programData[parentData.id].properties[propName] = null;
+        state = pruneEdgesFromBlock(state, parentData.properties[propName]);
       }
     });
 
@@ -134,6 +146,7 @@ function deleteFromChildren(state, idsToDelete, parentData) {
             delete state.programData[parentData.properties[propName]]; // entry.properties[propName] = null;
 
             state.programData[parentData.id].properties[propName] = null;
+            state = pruneEdgesFromBlock(state, parentData.properties[propName]);
           }
         }
       });
@@ -173,14 +186,17 @@ function deleteSelfBlock(state, data, parentId, fieldInfo) {
     if (data.arguments) {
       data.arguments.forEach(function (argumentId) {
         delete state.programData[argumentId];
+        state = pruneEdgesFromBlock(state, argumentId);
       });
     } // Find the parent's of the references, and remove the references from them
 
 
     Object.keys(state.programData).forEach(function (entryId) {
+      var _state$programSpec$ob2;
+
       var entry = state.programData[entryId];
 
-      if (state.programSpec.objectTypes[entry.type].properties) {
+      if ((_state$programSpec$ob2 = state.programSpec.objectTypes[entry.type]) !== null && _state$programSpec$ob2 !== void 0 && _state$programSpec$ob2.properties) {
         // Iterate through properties
         Object.keys(state.programSpec.objectTypes[entry.type].properties).forEach(function (propName) {
           if (propName) {
@@ -217,12 +233,14 @@ function deleteSelfBlock(state, data, parentId, fieldInfo) {
     callIds.forEach(function (reference) {
       state = deleteChildren(state, state.programData[reference]);
       delete state.programData[reference];
+      state = pruneEdgesFromBlock(state, reference);
     });
   } else if (fieldInfo !== null && fieldInfo !== void 0 && fieldInfo.isSpawner) {
     if (parentId === "spawner") {
       // Drawer deletion
       state = deleteFromProgram(state, [data.ref]);
       delete state.programData[data.ref];
+      state = pruneEdgesFromBlock(state, data.ref);
     } else {
       var _state$programData$pa3;
 
@@ -241,6 +259,7 @@ function deleteSelfBlock(state, data, parentId, fieldInfo) {
 
 
   delete state.programData[data.id];
+  state = pruneEdgesFromBlock(state, data.id);
   return state;
 }
 
@@ -297,6 +316,12 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
       });
     },
     activeDrawer: null,
+    connectionInfo: null,
+    setConnectionInfo: function setConnectionInfo(info) {
+      return set({
+        connectionInfo: info
+      });
+    },
     setActiveDrawer: function setActiveDrawer(activeDrawer) {
       return set({
         activeDrawer: activeDrawer
@@ -438,9 +463,93 @@ var ProgrammingSlice = function ProgrammingSlice(set, get) {
       });
     },
     updateItemSimpleProperty: function updateItemSimpleProperty(id, property, value) {
-      // console.log({id,property,value})
       set(function (state) {
         state.programData[id].properties[property] = value;
+      });
+    },
+    updateEdgeName: function updateEdgeName(id, value) {
+      set(function (state) {
+        state.programData[id].name = value;
+      });
+    },
+    deleteEdge: function deleteEdge(id) {
+      set(function (state) {
+        delete state.programData[id];
+      });
+    },
+    createEdge: function createEdge(source, sourceHandle, target, targetHandle) {
+      set(function (state) {
+        // console.log("createEdge", { source, sourceHandle, target, targetHandle });
+        var edgeCount = Object.values(state.programData).filter(function (d) {
+          return d.dataType === _.DATA_TYPES.CONNECTION;
+        }).length;
+        var newEdge = {
+          id: generateUuid("edge"),
+          name: "Connection ".concat(edgeCount + 1),
+          dataType: _.DATA_TYPES.CONNECTION,
+          parent: {
+            id: source,
+            handle: sourceHandle
+          },
+          child: {
+            id: target,
+            handle: targetHandle
+          },
+          mode: _.SIMPLE_PROPERTY_TYPES.STRING
+        };
+        state.programData[newEdge.id] = newEdge; // console.log('createEdge',{source,sourceHandle,target,targetHandle})
+      });
+    },
+    validateEdge: function validateEdge(source, sourceHandle, target, targetHandle) {
+      // console.log("validateEdge", { source, sourceHandle, target, targetHandle });
+      if (source === target) {
+        return false;
+      }
+
+      var edges = Object.values(get().programData).filter(function (d) {
+        return d.dataType === _.DATA_TYPES.CONNECTION;
+      });
+      var sourceNode = get().programData[source];
+      var sourceTypeInfo = get().programSpec.objectTypes[sourceNode.type]; // console.log(sourceTypeInfo);
+
+      var sourceConnectionInfo = sourceNode.dataType === _.DATA_TYPES.REFERENCE ? sourceTypeInfo.referenceBlock.connections[sourceHandle] : sourceNode.dataType === _.DATA_TYPES.CALL ? sourceTypeInfo.callBlock.connections[sourceHandle] : sourceTypeInfo.instanceBlock.connections[sourceHandle];
+      var targetNode = get().programData[target];
+      var targetTypeInfo = get().programSpec.objectTypes[targetNode.type];
+      var targetConnectionInfo = targetNode.dataType === _.DATA_TYPES.REFERENCE ? targetTypeInfo.referenceBlock.connections[targetHandle] : targetNode.dataType === _.DATA_TYPES.CALL ? targetTypeInfo.callBlock.connections[targetHandle] : targetTypeInfo.instanceBlock.connections[targetHandle];
+
+      if (sourceConnectionInfo.direction === targetConnectionInfo.direction) {
+        return false;
+      }
+
+      if (!sourceConnectionInfo.allowed.includes(targetNode.type)) {
+        return false;
+      } else if (!targetConnectionInfo.allowed.includes(sourceNode.type)) {
+        return false;
+      } else if (edges.some(function (edge) {
+        var foundMatch = edge.parent.id === source && edge.child.id === target && edge.parent.handle === sourceHandle && edge.child.handle === targetHandle; // console.log('match search',{foundMatch,edge,source,target,sourceHandle,targetHandle})
+
+        return foundMatch;
+      })) {
+        // console.log('already existing')
+        return false;
+      }
+
+      return true;
+    },
+    toggleEdgeMode: function toggleEdgeMode(id) {
+      set(function (state) {
+        var edgeMode = state.programData[id].mode;
+
+        if (edgeMode === _.SIMPLE_PROPERTY_TYPES.STRING) {
+          state.programData[id].mode = _.SIMPLE_PROPERTY_TYPES.NUMBER;
+          state.programData[id].name = 0;
+        } else {
+          var edgeCount = Object.values(state.programData).filter(function (d) {
+            return d.dataType === _.DATA_TYPES.CONNECTION;
+          }).length;
+          state.programData[id].mode = _.SIMPLE_PROPERTY_TYPES.STRING;
+          state.programData[id].name = "Connection ".concat(edgeCount + 1);
+        }
       });
     },
     // Just to illustrate alternative functionExtraTypes

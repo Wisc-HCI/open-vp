@@ -5,7 +5,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" =
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Selectable = void 0;
+exports.selectKeyframes = exports.Selectable = void 0;
 
 var _styledComponents = _interopRequireWildcard(require("styled-components"));
 
@@ -20,6 +20,8 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 var selectKeyframes = function selectKeyframes(props) {
   return (0, _styledComponents.keyframes)(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n    0% {\n        box-shadow: 0pt 0pt 3pt 1pt ", ", 0pt 0pt 2pt 2pt ", ", inset 0pt 0pt 1pt 1pt ", ", 0pt 0pt 20pt 20pt ", ";\n    }\n\n    50% {\n        box-shadow: 0pt 0pt 3pt 1pt ", ", 0pt 0pt 2pt 5pt ", ", inset 0pt 0pt 1pt 1pt ", ", 0pt 0pt 20pt 20pt ", ";\n    }\n    \n    100% {\n        box-shadow: 0pt 0pt 3pt 1pt ", ", 0pt 0pt 2pt 2pt ", ", inset 0pt 0pt 1pt 1pt ", ", 0pt 0pt 20pt 20pt ", ";\n    }\n"])), props.selected ? 'rgba(255,255,255,0.5)' : 'transparent', props.selected ? props.highlightColor : 'transparent', props.selected ? 'rgba(0,0,0,0.7)' : 'transparent', props.selected ? 'rgba(0,0,0,0.4)' : 'transparent', props.selected ? 'rgba(255,255,255,0.5)' : 'transparent', props.selected ? props.highlightColor : 'transparent', props.selected ? 'rgba(0,0,0,0.7)' : 'transparent', props.selected ? 'rgba(0,0,0,0.4)' : 'transparent', props.selected ? 'rgba(255,255,255,0.5)' : 'transparent', props.selected ? props.highlightColor : 'transparent', props.selected ? 'rgba(0,0,0,0.7)' : 'transparent', props.selected ? 'rgba(0,0,0,0.4)' : 'transparent');
 };
+
+exports.selectKeyframes = selectKeyframes;
 
 var Selectable = _styledComponents.default.div(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n    animation: ", " 2s ease-in-out infinite reverse;\n"])), selectKeyframes);
 

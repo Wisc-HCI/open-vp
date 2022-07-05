@@ -3,7 +3,8 @@ export const DATA_TYPES = {
     INSTANCE: 'INSTANCE',
     REFERENCE: 'REFERENCE',
     CALL: 'CALL',
-    ARGUMENT: 'ARGUMENT'
+    ARGUMENT: 'ARGUMENT',
+    CONNECTION: 'CONNECTION'
 }
 
 // The high-level type that each objectType belongs to (either object or function)
@@ -35,4 +36,9 @@ export const SIMPLE_PROPERTY_TYPES = {
     STRING: 'STRING',
     OPTIONS: 'OPTIONS',
     IGNORED: 'IGNORED'
+}
+
+export const CONNECTIONS = {
+    OUTBOUND: 'OUTBOUND',
+    INBOUND: 'INBOUND'
 }

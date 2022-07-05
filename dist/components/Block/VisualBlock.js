@@ -33,6 +33,8 @@ var _ExpandCarrot = require("./ExpandCarrot");
 
 var _Progress = require("./Progress");
 
+var _ConnectionHandle = require("./ConnectionHandle");
+
 var _MenuItem = _interopRequireDefault(require("@mui/material/MenuItem"));
 
 var _Menu = _interopRequireDefault(require("@mui/material/Menu"));
@@ -289,7 +291,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.memo)( /*#__PURE__*/(0, _react.forward
       return setLocked(false);
     } : null,
     disabled: !data.editing && !((_data$refData4 = data.refData) !== null && _data$refData4 !== void 0 && _data$refData4.editing),
-    value: name,
+    value: name ? name : '',
     onChange: function onChange(e) {
       // console.log("changing", e);
       updateItemName(data.refData ? data.refData.id : data.id, e.target.value);
@@ -421,7 +423,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.memo)( /*#__PURE__*/(0, _react.forward
           onMouseLeave: function onMouseLeave(_) {
             return setLocked(false);
           },
-          value: currentValue,
+          value: currentValue ? currentValue : '',
           disabled: interactionDisabled,
           onChange: function onChange(e) {
             return updateItemSimpleProperty(data.id, fieldKey, e.target.value);
@@ -555,6 +557,19 @@ var VisualBlock = /*#__PURE__*/(0, _react.memo)( /*#__PURE__*/(0, _react.forward
         isSpawner: true
       }
     });
+  })), onCanvas && /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, ["top", "bottom", "left", "right"].filter(function (position) {
+    var _blockSpec$connection;
+
+    return (_blockSpec$connection = blockSpec.connections) === null || _blockSpec$connection === void 0 ? void 0 : _blockSpec$connection[position];
+  }).map(function (position) {
+    return /*#__PURE__*/_react.default.createElement(_ConnectionHandle.ConnectionHandle, {
+      key: position,
+      nodeData: data,
+      position: position,
+      direction: blockSpec.connections[position].direction,
+      allowed: blockSpec.connections[position].allowed,
+      highlightColor: highlightColor
+    });
   })), Object.keys(simpleProperties).length > 0 && data.dataType === _Constants.DATA_TYPES.INSTANCE && /*#__PURE__*/_react.default.createElement(_grommet.Box, {
     margin: "xsmall",
     background: "#00000055",
@@ -661,7 +676,7 @@ var VisualBlock = /*#__PURE__*/(0, _react.memo)( /*#__PURE__*/(0, _react.forward
       },
       size: "small" // style={{ color: "#00000088" }}
       ,
-      value: data.properties[propKey],
+      value: data.properties[propKey] ? data.properties[propKey] : '',
       disabled: interactionDisabled,
       onChange: function onChange(e) {
         return updateItemSimpleProperty(data.id, propKey, e.target.value);

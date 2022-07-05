@@ -54,7 +54,7 @@ const FunctionButtonExtra = ({
 
   const ExtraActionIcon = actionInfo.icon ? actionInfo.icon : FiCircle;
   return inTopLevel ? (
-    <IconButton disabled={interactionDisabled} onClick={onClick}>
+    <IconButton disabled={interactionDisabled} onClick={()=>onClick(data,blockSpec)}>
       <ExtraActionIcon />
     </IconButton>
   ) : (

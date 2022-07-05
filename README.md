@@ -258,7 +258,15 @@ const instanceBlock = {
                 EXTRA_TYPES.DELETE_BUTTON
             ]
         }
-    ]
+    ],
+    /* Connections are optional fields that can be specified for onCanvas blocks */
+    connections: {
+        /* Keys are either top, bottom, left, or right */
+        bottom: {
+                direction: CONNECTIONS.OUTBOUND,
+                allowed: ["operationType"]
+            }
+    }
     /* In the drawer, whether to prevent automatically 
     pre-pending "New" in front of each instance that 
     can be dragged in.
