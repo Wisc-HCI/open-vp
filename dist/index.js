@@ -3,6 +3,12 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+Object.defineProperty(exports, "CONNECTIONS", {
+  enumerable: true,
+  get: function get() {
+    return _components.CONNECTIONS;
+  }
+});
 Object.defineProperty(exports, "DATA_TYPES", {
   enumerable: true,
   get: function get() {
