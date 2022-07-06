@@ -1,7 +1,8 @@
 {
   "name": "simple-vp",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "private": false,
   "files": [
     "dist",
@@ -49,9 +50,9 @@
     "start": "npm run storybook",
     "build": "npm run build-storybook",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public && rm -rf docs && mv storybook-static docs",
+    "build-storybook": "build-storybook -s public --debug-webpack --output-dir docs",
     "clean": "rimraf dist",
-    "compile": "npm run clean && cross-env BABEL_ENV=production babel src -d dist --ignore __tests__,spec.js,test.js,stories.js,__snapshots__",
+    "compile": "rollup -c",
     "generate-all": "npm run compile && npm run build-storybook"
   },
   "eslintConfig": {
@@ -83,6 +84,10 @@
     ]
   },
   "devDependencies": {
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@storybook/addon-actions": "^6.5.9",
     "@storybook/addon-essentials": "^6.5.9",
     "@storybook/addon-links": "^6.5.9",
@@ -92,9 +97,11 @@
     "@storybook/preset-create-react-app": "^4.1.2",
     "@storybook/react": "^6.5.9",
     "cross-env": "^7.0.3",
-    "webpack": "^5.72.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-terser": "^7.0.2",
+    "webpack": "^5.72.1"
   },
   "peerDependencies": {
     "react": "^18.2.0",
