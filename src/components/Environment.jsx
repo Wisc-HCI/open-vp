@@ -1,13 +1,13 @@
 import React from "react";
-import { Canvas } from "./Canvas";
-import { Drawer } from "./Drawer";
+// import { Canvas } from "./Canvas";
+import { Contents } from "./Contents";
 import { DragLayer } from "./DragLayer";
 // import { HTML5Backend } from "react-dnd-html5-backend";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
 import { ProgrammingProvider } from "./ProgrammingContext";
-import { Grommet } from "grommet";
+import { Grommet, Box } from "grommet";
 import { ReactFlowProvider } from "react-flow-renderer";
 import { getTheme } from "./theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -39,7 +39,9 @@ export default function Environment({
       <ThemeProvider theme={muiTheme}>
         <ProgrammingProvider store={store}>
           <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-            <div
+            <ReactFlowProvider>
+            <Box
+              direction='row'
               style={{
                 padding: 0,
                 margin: 0,
@@ -48,18 +50,21 @@ export default function Environment({
                 width,
               }}
             >
-              <Drawer
+              <Contents drawerWidth={drawerWidth} highlightColor={highlightColor} snapToGrid={snapToGrid}/>
+              
+              {/* <Drawer
                 highlightColor={highlightColor}
                 drawerWidth={drawerWidth ? drawerWidth : 235}
-              />
-              <ReactFlowProvider>
-                <Canvas
+              /> */}
+              
+                {/* <Canvas
                   highlightColor={highlightColor}
                   snapToGrid={snapToGrid}
-                />
-              </ReactFlowProvider>
-            </div>
+                /> */}
+              
+            </Box>
             <DragLayer highlightColor={highlightColor} />
+            </ReactFlowProvider>
           </DndProvider>
         </ProgrammingProvider>
       </ThemeProvider>

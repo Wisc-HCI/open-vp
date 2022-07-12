@@ -31,8 +31,9 @@ import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
+import { memo } from "react";
 
-const FunctionButtonExtra = ({
+const FunctionButtonExtra = memo(({
   actionInfo,
   data,
   blockSpec,
@@ -71,9 +72,9 @@ const FunctionButtonExtra = ({
       </ListItemText>
     </MenuItem>
   );
-};
+});
 
-const LabelExtra = ({ inTopLevel, label }) => {
+const LabelExtra = memo(({ inTopLevel, label }) => {
   return inTopLevel ? (
     <Button disabled>{label}</Button>
   ) : (
@@ -85,9 +86,9 @@ const LabelExtra = ({ inTopLevel, label }) => {
       {label}
     </ListItemText>
   );
-};
+});
 
-const LockIndicatorExtra = ({ locked, inTopLevel }) => {
+const LockIndicatorExtra = memo(({ locked, inTopLevel }) => {
   const Icon = locked ? FiLock : FiUnlock;
 
   return inTopLevel ? (
@@ -104,9 +105,9 @@ const LockIndicatorExtra = ({ locked, inTopLevel }) => {
       </ListItemText>
     </MenuItem>
   );
-};
+});
 
-const NameEditToggleExtra = ({
+const NameEditToggleExtra = memo(({
   isEditing,
   setIsEditing,
   locked,
@@ -134,9 +135,9 @@ const NameEditToggleExtra = ({
       </ListItemText>
     </MenuItem>
   );
-};
+});
 
-const SelectionToggleExtra = ({
+const SelectionToggleExtra = memo(({
   isSelected,
   setIsSelected,
   inTopLevel,
@@ -164,9 +165,9 @@ const SelectionToggleExtra = ({
       </ListItemText>
     </MenuItem>
   );
-};
+});
 
-const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
+const CollapseToggleExtra = memo(({ isCollapsed, setIsCollapsed, inTopLevel }) => {
   return inTopLevel ? (
     <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
       <ExpandCarrot expanded={!isCollapsed} />
@@ -177,9 +178,9 @@ const CollapseToggleExtra = ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
       <ListItemText>{isCollapsed ? "Expand" : "Collapse"}</ListItemText>
     </MenuItem>
   );
-};
+});
 
-const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel }) => {
+const DebugToggleExtra = memo(({ isDebugging, setIsDebugging, inTopLevel }) => {
   const Icon = isDebugging ? FiZapOff : FiZap;
 
   return inTopLevel ? (
@@ -192,9 +193,9 @@ const DebugToggleExtra = ({ isDebugging, setIsDebugging, inTopLevel }) => {
       <ListItemText>{isDebugging ? "Cancel Debug" : "Debug"}</ListItemText>
     </MenuItem>
   );
-};
+});
 
-const IndicatorTextExtra = ({ value, label, inTopLevel }) => {
+const IndicatorTextExtra = memo(({ value, label, inTopLevel }) => {
   return inTopLevel ? (
     <IconButton>
       <Chip size="small" label={value} />
@@ -207,9 +208,9 @@ const IndicatorTextExtra = ({ value, label, inTopLevel }) => {
       <ListItemText primaryTypographyProps={{color:'text.secondary'}}>{label}</ListItemText>
     </MenuItem>
   );
-};
+});
 
-const IndicatorIconExtra = ({ value, label, inTopLevel }) => {
+const IndicatorIconExtra = memo(({ value, label, inTopLevel }) => {
   return inTopLevel ? (
     <IconButton>{value}</IconButton>
   ) : (
@@ -218,15 +219,13 @@ const IndicatorIconExtra = ({ value, label, inTopLevel }) => {
       <ListItemText primaryTypographyProps={{color:'text.secondary'}}>{label}</ListItemText>
     </MenuItem>
   );
-};
+});
 
-const AddArgumentExtra = ({
+const AddArgumentExtra = memo(({
   data,
   argumentType,
   interactionDisabled,
-  inTopLevel,
-  highlightColor,
-  menuType,
+  inTopLevel
 }) => {
   
   const typeSpec = useProgrammingStore(
@@ -250,9 +249,9 @@ const AddArgumentExtra = ({
       <ListItemText>{`Add ${typeSpec.name} Argument`}</ListItemText>
     </MenuItem>
   );
-};
+});
 
-const AddArgumentGroupExtra = ({
+const AddArgumentGroupExtra = memo(({
   data,
   allowed,
   interactionDisabled,
@@ -275,9 +274,9 @@ const AddArgumentGroupExtra = ({
       menuType={menuType}
     />
   );
-};
+});
 
-const DeleteExtra = ({
+const DeleteExtra = memo(({
   data,
   inTopLevel,
   locked,
@@ -305,9 +304,9 @@ const DeleteExtra = ({
       <ListItemText primary="Delete"></ListItemText>
     </MenuItem>
   );
-};
+});
 
-const DropdownExtra = ({
+const DropdownExtra = memo(({
   icon,
   contents,
   label = "More Options",
@@ -373,7 +372,7 @@ const DropdownExtra = ({
       )}
     </DropdownTrigger>
   );
-};
+});
 
 const getItem = ({
   key,
@@ -569,10 +568,11 @@ const getItem = ({
   } else if (feature === EXTRA_TYPES.DIVIDER) {
     return <Divider key={key}/>;
   }
+  console.warn('Not Handled',{feature})
   return <MenuItem key={key}>Not Handled</MenuItem>;
 };
 
-export const ExtraBar = ({
+export const ExtraBar = memo(({
   data,
   blockSpec,
   highlightColor,
@@ -587,6 +587,7 @@ export const ExtraBar = ({
   interactionDisabled,
   fieldInfo,
   parentId,
+  inDrawer = false
 }) => {
   const childProps = {
     data,
@@ -603,20 +604,26 @@ export const ExtraBar = ({
     interactionDisabled,
     fieldInfo,
     parentId,
-    inTopLevel: true,
+    inTopLevel: true
   };
+
+  const extras = !blockSpec?.extras 
+    ? [] 
+    : inDrawer 
+    ? [{type: EXTRA_TYPES.DROPDOWN,contents:flattenMenuOnce(blockSpec.extras)}] 
+    : blockSpec.extras;
   return (
     <ButtonGroup
       variant="outlined"
       aria-label="outlined button group"
       color="quiet"
     >
-      {blockSpec?.extras?.map((extra, extraIdx) =>
+      {extras.map((extra, extraIdx) =>
         getItem({ ...childProps, feature: extra, key: extraIdx })
       )}
     </ButtonGroup>
   );
-};
+});
 
 const flattenMenuOnce = (extras) => {
   let pancaked = [];
@@ -662,7 +669,7 @@ const flattenMenuOnce = (extras) => {
   return pancaked;
 };
 
-export const RightClickMenu = ({
+export const RightClickMenu = memo(({
   data,
   blockSpec,
   highlightColor,
@@ -703,4 +710,4 @@ export const RightClickMenu = ({
       )}
     </MenuList>
   );
-};
+});

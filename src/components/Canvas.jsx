@@ -143,12 +143,12 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
   return (
     <div
       ref={ref}
-      style={{ backgroundColor: "black", display: "flex", flex: 1 }}
+      style={{ backgroundColor: "black", display: "flex", flex: 1, height:'100%', width:'100%' }}
     >
       <ReactFlow
         ref={drop}
-        maxZoom={1.5}
-        minZoom={0.5}
+        maxZoom={1}
+        minZoom={0.25}
         nodesConnectable
         // elementsSelectable={false}
         nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}

@@ -41,10 +41,13 @@ const Block = memo(({
         ? typeSpec.instanceBlock.onCanvas
         : "null";
 
+  // const setActiveDrawer = useProgrammingStore(state=>state.setActiveDrawer);
+
   const [dragProps, drag, preview] = useDrag(
     () => ({
       type: data?.type ? data.type : "null",
       item: () => {
+        // setActiveDrawer(null);
         return { data, typeSpec, parentId, fieldInfo, idx, onCanvas, context:wholeContext };
       },
       canDrag: !dragDisabled && !data.editing && !locked,

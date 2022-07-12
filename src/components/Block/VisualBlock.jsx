@@ -90,6 +90,7 @@ export const VisualBlock = memo(
       const [simplePropertiesCollapsed, setSimplePropertiesCollapsed] =
         useState(true);
 
+      // const setModalBlock = useProgrammingStore((store)=>store.setModalBlock);
       const updateItemName = useProgrammingStore(
         (store) => store.updateItemName
       );
@@ -154,9 +155,16 @@ export const VisualBlock = memo(
         return null;
       }
 
+      const inDrawer = parentId === 'spawner';
+
       return (
         <Selectable
           // role="Handle"
+          // onDoubleClick={(e)=>{
+          //   console.log('double click',{id:data.id,context});
+          //   setModalBlock(data.id,context);
+          //   e.stopPropagation()
+          // }}
           selected={selected}
           highlightColor={highlightColor}
           className={canDragBlockRFR ? null : "nodrag"}
@@ -189,8 +197,6 @@ export const VisualBlock = memo(
                 : undefined
             }
           >
-            {/* <MenuItem onClick={()=>{console.log('1')}}>Profile</MenuItem>
-            <MenuItem onClick={()=>{console.log('2')}}>Button2</MenuItem> */}
             <RightClickMenu
               highlightColor={highlightColor}
               fieldInfo={fieldInfo}
@@ -224,13 +230,6 @@ export const VisualBlock = memo(
               setIsDebugging={setIsDebugging}
             />
           </Menu>
-          {/* <DropdownTrigger
-                triggerComponent={Button}
-                triggerProps={{children:'button',fontFamily:'Helvetica'}}
-              >
-                <MenuItem onClick={()=>{console.log('1')}}>Profile</MenuItem>
-                <MenuItem onClick={()=>{console.log('2')}}>Button2</MenuItem>
-              </DropdownTrigger> */}
           {/* The 'Selectable' component just handles the highlighting, but is essentially a div */}
           <Box
             className={canDragBlockRFR ? null : "nodrag"}
@@ -280,7 +279,6 @@ export const VisualBlock = memo(
                     disabled={!data.editing && !data.refData?.editing}
                     value={name ? name : ''}
                     onChange={(e) => {
-                      // console.log("changing", e);
                       updateItemName(
                         data.refData ? data.refData.id : data.id,
                         e.target.value
@@ -288,32 +286,12 @@ export const VisualBlock = memo(
                     }}
                     InputProps={{
                       style: {
-                        // boxShadow: editing
-                        //   ? `0 0 0 1px ${highlightColor}`
-                        //   : `0 0 0 1px #222222`,
-                        // "&:focus": {
-                        //   boxShadow: `0 0 0 2px ${highlightColor}`,
-                        // },
                         borderRadius: 5,
-                        // borderColor: editing ? highlightColor : '#dddddd55',
-                        // boxShadow: `0 0 0 ${editing?1:0.5}px ${editing?highlightColor:'#dddddd55'}`,
                         backgroundColor: editing
                           ? `${highlightColor}99`
                           : "#22222299",
                       },
                     }}
-                    // style={{
-                    //   // boxShadow: editing
-                    //   //   ? `0 0 0 1px ${highlightColor}`
-                    //   //   : `0 0 0 1px #222222`,
-                    //   // "&:focus": {
-                    //   //   boxShadow: `0 0 0 2px ${highlightColor}`,
-                    //   // },
-                    //   borderRadius: 5,
-                    //   backgroundColor: editing
-                    //     ? `${highlightColor}99`
-                    //     : "#22222299",
-                    // }}
                   />
                 </Box>
               </Box>
@@ -574,6 +552,7 @@ export const VisualBlock = memo(
             )}
             {blockSpec?.extras && (
               <ExtraBar
+                inDrawer={inDrawer}
                 highlightColor={highlightColor}
                 fieldInfo={fieldInfo}
                 parentId={parentId}
@@ -741,7 +720,7 @@ export const VisualBlock = memo(
                               )}
                               {propInfo.type ===
                                 SIMPLE_PROPERTY_TYPES.NUMBER && (
-                                <Box width="small" align="end">
+                                <Box key={propKey} width="small" align="end">
                                   <NumberInput
                                     onMouseEnter={(_) => setLocked(true)}
                                     onMouseLeave={(_) => setLocked(false)}
@@ -775,7 +754,7 @@ export const VisualBlock = memo(
                               )}
                               {propInfo.type ===
                                 SIMPLE_PROPERTY_TYPES.STRING && (
-                                <Box width="xsmall">
+                                <Box key={propKey} width="xsmall">
                                   <TextField
                                     className="nodrag"
                                     color="highlightColor"
@@ -793,32 +772,16 @@ export const VisualBlock = memo(
                                       )
                                     }
                                   />
-                                  {/* <Input
-                                    className="nodrag"
-                                    onMouseEnter={(_) => setLocked(true)}
-                                    onMouseLeave={(_) => setLocked(false)}
-                                    size="xsmall"
-                                    textAlign="right"
-                                    // style={{ color: "#00000088" }}
-                                    value={data.properties[propKey]}
-                                    disabled={interactionDisabled}
-                                    onChange={(e) =>
-                                      updateItemSimpleProperty(
-                                        data.id,
-                                        propKey,
-                                        e.target.value
-                                      )
-                                    }
-                                  /> */}
                                 </Box>
                               )}
                               {propInfo.type ===
                                 SIMPLE_PROPERTY_TYPES.OPTIONS && (
                                 <Select
+                                  key={propKey} 
                                   disabled={interactionDisabled}
                                   size="small"
                                   color="highlightColor"
-                                  value={data.properties[propKey]}
+                                  value={data.properties[propKey] ? data.properties[propKey] : ''}
                                   onChange={(e) =>
                                     updateItemSimpleProperty(
                                       data.id,
@@ -827,36 +790,15 @@ export const VisualBlock = memo(
                                     )
                                   }
                                 >
-                                  {propInfo.options.map((option) => (
+                                  {propInfo.options.map((option,optionIdx) => (
                                     <MenuItem
-                                      key={option.value}
+                                      key={optionIdx}
                                       value={option.value}
                                     >
                                       {option.label}
                                     </MenuItem>
                                   ))}
-                                  {/* <MenuItem value={10}>Ten</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem> */}
                                 </Select>
-                                // <RadioButtonGroup
-                                //   name={propInfo.name}
-                                //   disabled={interactionDisabled}
-                                //   size="xsmall"
-                                //   style={{
-                                //     color: "#00000088",
-                                //     fontSize: 13,
-                                //   }}
-                                //   options={propInfo.options}
-                                //   value={data.properties[propKey]}
-                                //   onChange={(e) =>
-                                //     updateItemSimpleProperty(
-                                //       data.id,
-                                //       propKey,
-                                //       e.target.value
-                                //     )
-                                //   }
-                                // />
                               )}
                             </Box>
                           )
@@ -870,7 +812,7 @@ export const VisualBlock = memo(
                 data.argumentBlockData.map((argInfo, argIdx) => {
                   return (
                     <Box
-                      key={argIdx}
+                      key={`arg-${argIdx}`}
                       direction="row"
                       margin="xsmall"
                       background="#ffffff20"

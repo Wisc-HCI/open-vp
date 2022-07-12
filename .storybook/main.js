@@ -1,3 +1,5 @@
+const svgrPlugin = require("vite-plugin-svgr");
+
 module.exports = {
   "stories": [
     "../src/**/*.stories.mdx",
@@ -6,10 +8,18 @@ module.exports = {
   "addons": [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/preset-create-react-app"
+    "@storybook/addon-interactions"
   ],
   "framework": "@storybook/react",
   "core": {
-    "builder": "webpack5"
+    "builder": "@storybook/builder-vite"
+  },
+  "features": {
+    "storyStoreV7": true
+  },
+  async viteFinal(config, {configType}) {
+    config.plugins = [...config.plugins,svgrPlugin.default()],
+    config.assetsInclude = ["**/*.svg"]
+    return config
   }
 }

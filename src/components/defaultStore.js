@@ -48,7 +48,7 @@ export function move(array, moveIndex, toIndex) {
     ];
   } else if (diff < 0) {
     // move right
-    const targetIndex = toIndex + 1;
+    const targetIndex = toIndex;
     return [
       ...array.slice(0, moveIndex),
       ...array.slice(moveIndex + 1, targetIndex),
@@ -337,6 +337,8 @@ const immer = (config) => (set, get, api) =>
   );
 
 export const ProgrammingSlice = (set, get) => ({
+  modalBlock: {block: null,context:[]},
+  setModalBlock: (block,context) => set({ modalBlock: {block,context}}),
   locked: false,
   setLocked: (locked) => set({ locked }),
   activeDrawer: null,
