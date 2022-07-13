@@ -35,40 +35,37 @@ const SectionStrip = ({ highlightColor, setSearchTerm, setActiveDrawer }) => {
       style={{ zIndex: 100 }}
     >
       {drawers.map((drawer, drawerIdx) => {
-        console.log(drawerIdx);
+        // console.log(drawerIdx);
         const Icon = drawer.icon;
         return (
-          <React.Fragment key={`${drawer.title}-${drawerIdx}`}>
-            <Tooltip
-              key={`${drawer.title}-${drawerIdx}`}
-              title={<Typography>{drawer.title}</Typography>}
-              arrow
-              placement="right"
-            >
-              <Button
-                primary
-                focusIndicator={false}
-                hoverIndicator={
-                  activeDrawer === drawerIdx ? highlightColor : "#414141"
-                }
-                color={activeDrawer === drawerIdx ? highlightColor : "#313131"}
-                margin={{
-                  top: "xsmall",
-                  bottom: "none",
-                  left: "xsmall",
-                  right: "xsmall",
-                }}
-                round="small"
-                onClick={() => {
-                  setSearchTerm("");
-                  setActiveDrawer(
-                    activeDrawer === drawerIdx ? null : drawerIdx
-                  );
-                }}
-                icon={<Icon />}
-              />
-            </Tooltip>
-          </React.Fragment>
+          <Tooltip
+            key={`${drawer.title}-${drawerIdx}-drawer-tt`}
+            title={<Typography>{drawer.title}</Typography>}
+            arrow
+            placement="right"
+          >
+            <Button
+              primary
+              key={`${drawer.title}-${drawerIdx}-button`}
+              focusIndicator={false}
+              hoverIndicator={
+                activeDrawer === drawerIdx ? highlightColor : "#414141"
+              }
+              color={activeDrawer === drawerIdx ? highlightColor : "#313131"}
+              margin={{
+                top: "xsmall",
+                bottom: "none",
+                left: "xsmall",
+                right: "xsmall",
+              }}
+              round="small"
+              onClick={() => {
+                setSearchTerm("");
+                setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
+              }}
+              icon={<Icon />}
+            />
+          </Tooltip>
         );
       })}
     </Box>
@@ -87,7 +84,7 @@ const BlockPanel = ({
   // const [drawerRef, drawerBounds] = useMeasure();
 
   const blocks = useProgrammingStore(
-    useCallback(
+    // useCallback(
       (store) => {
         let blocks = [];
         if (activeDrawer !== null) {
@@ -140,9 +137,9 @@ const BlockPanel = ({
             block.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             searchTerm === ""
         );
-      },
-      [activeDrawer, searchTerm]
-    )
+      }//,
+      //[activeDrawer, searchTerm]
+    //)
   );
 
   return (
@@ -192,7 +189,7 @@ const BlockPanel = ({
       <ScrollRegion height={height - 110} width={drawerWidth} vertical>
         {blocks.map((block, idx) => (
           <Box
-            key={idx}
+            key={block.id}
             animation={{ type: "fadeIn", delay: idx * 30 }}
             style={{ marginBottom: 5, width: drawerWidth - 10 }}
           >
@@ -239,11 +236,6 @@ export const Contents = ({ highlightColor, drawerWidth = 235, snapToGrid }) => {
   //     width: activeDrawer !== null ? drawerWidth + 52 : 52,
   //     config: config.stiff,
   //   });
-
-  const drawerVariants = {
-    open: { width: drawerWidth },
-    closed: { width: 0 },
-  };
 
   return (
     <Box

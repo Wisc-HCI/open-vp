@@ -1,7 +1,7 @@
 {
   "name": "simple-vp",
   "private": true,
-  "version": "0.6.2",
+  "version": "0.6.3",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -26,8 +26,7 @@
   "dependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@mui/core": "^5.0.0-alpha.54",
-    "@mui/material": "^5.8.5",
+    "@mui/material": "^5.9.0",
     "@radix-ui/react-scroll-area": "^0.1.5-rc.44",
     "@react-spring/web": "^9.4.5",
     "framer-motion": "^6.5.0",

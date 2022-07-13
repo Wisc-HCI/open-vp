@@ -1,4 +1,9 @@
 import { DATA_TYPES, TYPES } from './Constants';
+import { v4 as uuidv4 } from "uuid";
+
+const generateUuid = (type) => {
+    return `${type}-${uuidv4()}`;
+  };
 
 export const instanceTemplateFromSpec = (type, objectSpec, isArg) => {
     let data = { 
@@ -28,7 +33,7 @@ export const instanceTemplateFromSpec = (type, objectSpec, isArg) => {
 
 export const referenceTemplateFromSpec = (type, instanceReference, objectSpec) => {
     let data = { 
-        id: type, 
+        id: generateUuid(type), 
         type, 
         ref: instanceReference.id, 
         dataType: DATA_TYPES.REFERENCE,
@@ -46,7 +51,7 @@ export const referenceTemplateFromSpec = (type, instanceReference, objectSpec) =
 
 export const callTemplateFromSpec = (type, functionReference, objectSpec) => {
     let data = { 
-        id: type, 
+        id: generateUuid(type), 
         type, 
         ref: functionReference.id, 
         dataType: DATA_TYPES.CALL, 
