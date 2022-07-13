@@ -329,7 +329,7 @@ export const VisualBlock = memo(
             )}
 
             {minified &&
-              !limitedRender(
+              !limitedRender && (
                 <>
                   <ScrollRegion
                     className={canDragBlockRFR ? null : "nodrag"}

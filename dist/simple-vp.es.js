@@ -56627,7 +56627,7 @@ const VisualBlock = memo(forwardRef(({
           borderRadius: 1,
           bgcolor: "#22222299"
         }
-      }), minified && !limitedRender(/* @__PURE__ */ jsx(Fragment, {
+      }), minified && !limitedRender && /* @__PURE__ */ jsx(Fragment, {
         children: /* @__PURE__ */ jsx(ScrollRegion, {
           className: canDragBlockRFR ? null : "nodrag",
           width: "100%",
@@ -56793,7 +56793,7 @@ const VisualBlock = memo(forwardRef(({
             })
           })
         })
-      })), (blockSpec == null ? void 0 : blockSpec.extras) && !limitedRender && /* @__PURE__ */ jsx(ExtraBar, {
+      }), (blockSpec == null ? void 0 : blockSpec.extras) && !limitedRender && /* @__PURE__ */ jsx(ExtraBar, {
         inDrawer,
         highlightColor,
         fieldInfo,
@@ -57699,31 +57699,34 @@ const SectionStrip = ({
       zIndex: 100
     },
     children: drawers.map((drawer, drawerIdx) => {
+      console.log(drawerIdx);
       const Icon = drawer.icon;
-      return /* @__PURE__ */ jsx(Tooltip$1, {
-        title: /* @__PURE__ */ jsx(Typography$1, {
-          children: drawer.title
-        }),
-        arrow: true,
-        placement: "right",
-        children: /* @__PURE__ */ jsx(Button$2, {
-          primary: true,
-          focusIndicator: false,
-          hoverIndicator: activeDrawer === drawerIdx ? highlightColor : "#414141",
-          color: activeDrawer === drawerIdx ? highlightColor : "#313131",
-          margin: {
-            top: "xsmall",
-            bottom: "none",
-            left: "xsmall",
-            right: "xsmall"
-          },
-          round: "small",
-          onClick: () => {
-            setSearchTerm("");
-            setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
-          },
-          icon: /* @__PURE__ */ jsx(Icon, {})
-        })
+      return /* @__PURE__ */ jsx(React__default.Fragment, {
+        children: /* @__PURE__ */ jsx(Tooltip$1, {
+          title: /* @__PURE__ */ jsx(Typography$1, {
+            children: drawer.title
+          }),
+          arrow: true,
+          placement: "right",
+          children: /* @__PURE__ */ jsx(Button$2, {
+            primary: true,
+            focusIndicator: false,
+            hoverIndicator: activeDrawer === drawerIdx ? highlightColor : "#414141",
+            color: activeDrawer === drawerIdx ? highlightColor : "#313131",
+            margin: {
+              top: "xsmall",
+              bottom: "none",
+              left: "xsmall",
+              right: "xsmall"
+            },
+            round: "small",
+            onClick: () => {
+              setSearchTerm("");
+              setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
+            },
+            icon: /* @__PURE__ */ jsx(Icon, {})
+          })
+        }, `${drawer.title}-${drawerIdx}`)
       }, `${drawer.title}-${drawerIdx}`);
     })
   });
@@ -57835,7 +57838,6 @@ const Contents = ({
   snapToGrid
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  useRef();
   const [envRef, envBounds] = useMeasure();
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
   const setActiveDrawer = useProgrammingStore((store) => store.setActiveDrawer);
