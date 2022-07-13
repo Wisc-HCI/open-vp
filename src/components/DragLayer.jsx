@@ -32,6 +32,7 @@ export const DragLayer = ({highlightColor}) => {
           highlightColor={highlightColor}
           context={item.context}
           interactionDisabled
+          limitedRender
         />
       )}
     </div>

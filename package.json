@@ -1,7 +1,7 @@
 {
   "name": "simple-vp",
   "private": true,
-  "version": "0.6.0",
+  "version": "0.6.1",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -30,6 +30,7 @@
     "@mui/material": "^5.8.5",
     "@radix-ui/react-scroll-area": "^0.1.5-rc.44",
     "@react-spring/web": "^9.4.5",
+    "framer-motion": "^6.5.0",
     "grommet": "^2.24.0",
     "immer": "^9.0.12",
     "lodash": "^4.17.21",

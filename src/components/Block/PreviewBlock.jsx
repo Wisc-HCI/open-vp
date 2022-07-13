@@ -18,6 +18,6 @@ export const PreviewBlock = memo(({ id, staticData, bounded, highlightColor, con
     if (!data) {
       return null;
     } else {
-      return <VisualBlock data={data} typeSpec={typeSpec} interactionDisabled bounded={bounded} highlightColor={highlightColor} context={wholeContext} style={style}/>;
+      return <VisualBlock data={data} typeSpec={typeSpec} interactionDisabled bounded={bounded} highlightColor={highlightColor} context={wholeContext} style={style} limitedRender/>;
     }
   });

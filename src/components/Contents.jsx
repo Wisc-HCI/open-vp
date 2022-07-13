@@ -20,7 +20,8 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import Drawer from "@mui/material/Drawer";
+// import Drawer from "@mui/material/Drawer";
+import { motion, AnimatePresence } from "framer-motion";
 
 const SectionStrip = ({ highlightColor, setSearchTerm, setActiveDrawer }) => {
   const drawers = useProgrammingStore((store) => store.programSpec.drawers);
@@ -37,7 +38,7 @@ const SectionStrip = ({ highlightColor, setSearchTerm, setActiveDrawer }) => {
         const Icon = drawer.icon;
         return (
           <Tooltip
-            key={drawerIdx}
+            key={`${drawer.title}-${drawerIdx}`}
             title={<Typography>{drawer.title}</Typography>}
             arrow
             placement="right"
@@ -143,9 +144,8 @@ const BlockPanel = ({
     <Box
       direction="column"
       width={`${drawerWidth}px`}
-      height={`${height}px`}
-      animation={["fadeIn"]}
-      background='#222222ee'
+      height='100%'
+      background="#222222ee"
     >
       <Box
         // flex
@@ -235,6 +235,11 @@ export const Contents = ({ highlightColor, drawerWidth = 235, snapToGrid }) => {
   //     config: config.stiff,
   //   });
 
+  const drawerVariants = {
+    open: { width: drawerWidth },
+    closed: { width: 0 },
+  };
+
   return (
     <Box
       ref={envRef}
@@ -251,18 +256,13 @@ export const Contents = ({ highlightColor, drawerWidth = 235, snapToGrid }) => {
         setActiveDrawer={setActiveDrawer}
         setSearchTerm={setSearchTerm}
       />
-      <Box flex ref={containerRef}>
-        {/* <Drawer open={activeDrawer !== null} anchor="left" SlideProps={{container:containerRef.current}} variant='temporary' hideBackdrop> */}
-
-        {/* <Box direction="row" height="100%" background={'red'}></Box> */}
-        <Canvas highlightColor={highlightColor} snapToGrid={snapToGrid} />
+      <AnimatePresence>
         {activeDrawer !== null && (
-          <Layer
-            animation="fadeIn"
-            modal={false}
-            position="left"
-            background='transparent'
-            target={containerRef.current}
+          <motion.div
+            layout
+            initial={{ width: 0 }}
+            animate={{ width: drawerWidth }}
+            exit={{ width: 0 }}
           >
             <BlockPanel
               height={envBounds.height}
@@ -271,11 +271,41 @@ export const Contents = ({ highlightColor, drawerWidth = 235, snapToGrid }) => {
               highlightColor={highlightColor}
               setSearchTerm={setSearchTerm}
             />
-          </Layer>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* </Drawer> */}
-        {/* {activeDrawer !== null && (
+      {/* <motion.div variants={drawerVariants} animate={activeDrawer !== null ? 'open' : 'closed'}>
+        {}
+      </motion.div> */}
+
+      <Box flex height="100%">
+        <Canvas highlightColor={highlightColor} snapToGrid={snapToGrid} />
+      </Box>
+      {/* <Box flex ref={containerRef} direction='row'> */}
+      {/* <Drawer
+          open={activeDrawer !== null}
+          anchor="left"
+          SlideProps={{ container: containerRef.current }}
+          variant="temporary"
+          hideBackdrop
+        > */}
+
+      {/* <Box direction="row" height="100%" background={'red'}></Box> */}
+
+      {/* {activeDrawer !== null && (
+          <Layer
+            animation="none"
+            modal={false}
+            position="left"
+            background='transparent'
+            target={containerRef.current}
+          >
+            
+          </Layer>
+        )} */}
+      {/* </Drawer> */}
+      {/* {activeDrawer !== null && (
           <Layer
             animation='fadeIn'
             responsive
@@ -288,9 +318,11 @@ export const Contents = ({ highlightColor, drawerWidth = 235, snapToGrid }) => {
             
           </Layer>
         )} */}
-      </Box>
+      {/* </Box> */}
 
-      {/* <Main open={activeDrawer !== null} drawerWidth={drawerWidth}></Main> */}
+      {/* <Main open={activeDrawer !== null} drawerWidth={drawerWidth}> */}
+
+      {/* </Main> */}
 
       {/* <div
         style={{

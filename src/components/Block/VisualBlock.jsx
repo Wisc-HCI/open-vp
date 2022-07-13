@@ -28,6 +28,7 @@ import Switch from "@mui/material/Switch";
 import Select from "@mui/material/Select";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import Skeleton from "@mui/material/Skeleton";
 
 import { NumberInput, ScrollRegion } from "./Utility";
 
@@ -49,6 +50,7 @@ export const VisualBlock = memo(
         parentId,
         style = {},
         progress,
+        limitedRender
       },
       ref
     ) => {
@@ -155,7 +157,7 @@ export const VisualBlock = memo(
         return null;
       }
 
-      const inDrawer = parentId === 'spawner';
+      const inDrawer = parentId === "spawner";
 
       return (
         <Selectable
@@ -187,49 +189,51 @@ export const VisualBlock = memo(
           }}
           onContextMenu={handleContextMenu}
         >
-          <Menu
-            open={contextMenu !== null}
-            onClose={handleContextMenuClose}
-            anchorReference="anchorPosition"
-            anchorPosition={
-              contextMenu !== null
-                ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-                : undefined
-            }
-          >
-            <RightClickMenu
-              highlightColor={highlightColor}
-              fieldInfo={fieldInfo}
-              parentId={parentId}
-              interactionDisabled={interactionDisabled}
-              data={data}
-              blockSpec={blockSpec}
-              isEditing={editing}
-              isCollapsed={isCollapsed}
-              isSelected={selected}
-              isDebugging={isDebugging}
-              setIsEditing={
-                data.dataType === DATA_TYPES.REFERENCE ||
-                data.dataType === DATA_TYPES.CALL
-                  ? (v) => setIsEditing(data.ref, v)
-                  : (v) => setIsEditing(data.id, v)
+          {!limitedRender && (
+            <Menu
+              open={contextMenu !== null}
+              onClose={handleContextMenuClose}
+              anchorReference="anchorPosition"
+              anchorPosition={
+                contextMenu !== null
+                  ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                  : undefined
               }
-              setIsSelected={
-                data.dataType === DATA_TYPES.REFERENCE ||
-                data.dataType === DATA_TYPES.CALL
-                  ? (v) => {
-                      // console.log(data);
-                      setIsSelected(data.ref, v);
-                    }
-                  : (v) => {
-                      // console.log(data);
-                      setIsSelected(data.id, v);
-                    }
-              }
-              setIsCollapsed={setIsCollapsed}
-              setIsDebugging={setIsDebugging}
-            />
-          </Menu>
+            >
+              <RightClickMenu
+                highlightColor={highlightColor}
+                fieldInfo={fieldInfo}
+                parentId={parentId}
+                interactionDisabled={interactionDisabled}
+                data={data}
+                blockSpec={blockSpec}
+                isEditing={editing}
+                isCollapsed={isCollapsed}
+                isSelected={selected}
+                isDebugging={isDebugging}
+                setIsEditing={
+                  data.dataType === DATA_TYPES.REFERENCE ||
+                  data.dataType === DATA_TYPES.CALL
+                    ? (v) => setIsEditing(data.ref, v)
+                    : (v) => setIsEditing(data.id, v)
+                }
+                setIsSelected={
+                  data.dataType === DATA_TYPES.REFERENCE ||
+                  data.dataType === DATA_TYPES.CALL
+                    ? (v) => {
+                        // console.log(data);
+                        setIsSelected(data.ref, v);
+                      }
+                    : (v) => {
+                        // console.log(data);
+                        setIsSelected(data.id, v);
+                      }
+                }
+                setIsCollapsed={setIsCollapsed}
+                setIsDebugging={setIsDebugging}
+              />
+            </Menu>
+          )}
           {/* The 'Selectable' component just handles the highlighting, but is essentially a div */}
           <Box
             className={canDragBlockRFR ? null : "nodrag"}
@@ -244,92 +248,293 @@ export const VisualBlock = memo(
             {/* The header, includes the name/text field and the extra bar */}
             {!minified && (
               <Box flex align="center" direction="row" gap="xsmall">
-                <Stack anchor="center" alignSelf="center">
-                  <Box
-                    align="center"
-                    justify="center"
-                    {...stopPropArgs}
-                    style={{
-                      backgroundColor: "#22222299",
-                      color: "white",
-                      padding: 9,
-                      borderRadius: 5,
-                      boxShadow: `0 0 0 1px #dddddd55`,
-                      height: "39px",
-                      width: "39px",
-                    }}
-                  >
-                    <Icon />
-                  </Box>
-                  <div style={{ height: 30, width: 30 }}>
-                    <ProgressBar progress={progress} color={highlightColor} />
-                  </div>
-                </Stack>
+                {!limitedRender ? (
+                  <Stack anchor="center" alignSelf="center">
+                    <Box
+                      align="center"
+                      justify="center"
+                      {...stopPropArgs}
+                      style={{
+                        backgroundColor: "#22222299",
+                        color: "white",
+                        padding: 9,
+                        borderRadius: 5,
+                        boxShadow: `0 0 0 1px #dddddd55`,
+                        height: "39px",
+                        width: "39px",
+                      }}
+                    >
+                      <Icon />
+                    </Box>
+                    <div style={{ height: 30, width: 30 }}>
+                      <ProgressBar progress={progress} color={highlightColor} />
+                    </div>
+                  </Stack>
+                ) : (
+                  <Skeleton
+                    variant="rectangular"
+                    height="39px"
+                    width="39px"
+                    sx={{ borderRadius: 1, bgcolor: "#22222299" }}
+                  />
+                )}
 
                 <Box flex>
-                  <TextField
-                    // label='Name'
-                    size="small"
-                    margin="none"
-                    variant="outlined"
-                    color="highlightColor"
-                    className={canDragBlockRFR ? null : "nodrag"}
-                    onMouseEnter={editing ? (_) => setLocked(true) : null}
-                    onMouseLeave={editing ? (_) => setLocked(false) : null}
-                    disabled={!data.editing && !data.refData?.editing}
-                    value={name ? name : ''}
-                    onChange={(e) => {
-                      updateItemName(
-                        data.refData ? data.refData.id : data.id,
-                        e.target.value
-                      );
-                    }}
-                    InputProps={{
-                      style: {
-                        borderRadius: 5,
-                        backgroundColor: editing
-                          ? `${highlightColor}99`
-                          : "#22222299",
-                      },
-                    }}
-                  />
+                  {!limitedRender ? (
+                    <TextField
+                      // label='Name'
+                      size="small"
+                      margin="none"
+                      variant="outlined"
+                      color="highlightColor"
+                      className={canDragBlockRFR ? null : "nodrag"}
+                      onMouseEnter={editing ? (_) => setLocked(true) : null}
+                      onMouseLeave={editing ? (_) => setLocked(false) : null}
+                      disabled={!data.editing && !data.refData?.editing}
+                      value={name ? name : ""}
+                      onChange={(e) => {
+                        updateItemName(
+                          data.refData ? data.refData.id : data.id,
+                          e.target.value
+                        );
+                      }}
+                      InputProps={{
+                        style: {
+                          borderRadius: 5,
+                          backgroundColor: editing
+                            ? `${highlightColor}99`
+                            : "#22222299",
+                        },
+                      }}
+                    />
+                  ) : (
+                    <Skeleton
+                      variant="rectangular"
+                      height="39px"
+                      width="flex"
+                      sx={{ borderRadius: 1, bgcolor: "#22222299" }}
+                    />
+                  )}
                 </Box>
               </Box>
             )}
 
-            {minified && (
-              <>
-                <ScrollRegion
-                  className={canDragBlockRFR ? null : "nodrag"}
-                  width="100%"
-                  horizontal
-                >
-                  <Box
+            {minified && limitedRender && (
+              <Skeleton
+                variant="rectangular"
+                height="39px"
+                width="flex"
+                sx={{ borderRadius: 1, bgcolor: "#22222299" }}
+              />
+            )}
+
+            {minified &&
+              !limitedRender(
+                <>
+                  <ScrollRegion
                     className={canDragBlockRFR ? null : "nodrag"}
-                    direction="row"
-                    gap="xxsmall"
-                    // pad={{ top: "none", bottom: "none", left: "xxsmall" }}
-                    // border="right"
-                    alignContent="center"
-                    align="center"
+                    width="100%"
+                    horizontal
                   >
-                    {Object.entries(typeSpec.properties)?.map(
-                      ([fieldKey, fieldInfo]) => {
-                        if (
-                          Object.values(SIMPLE_PROPERTY_TYPES).includes(
-                            fieldInfo.type
-                          ) &&
-                          fieldInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED
-                        ) {
+                    <Box
+                      className={canDragBlockRFR ? null : "nodrag"}
+                      direction="row"
+                      gap="xxsmall"
+                      // pad={{ top: "none", bottom: "none", left: "xxsmall" }}
+                      // border="right"
+                      alignContent="center"
+                      align="center"
+                    >
+                      {Object.entries(typeSpec.properties)?.map(
+                        ([fieldKey, fieldInfo]) => {
                           if (
-                            fieldInfo.type === SIMPLE_PROPERTY_TYPES.OPTIONS
+                            Object.values(SIMPLE_PROPERTY_TYPES).includes(
+                              fieldInfo.type
+                            ) &&
+                            fieldInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED
                           ) {
-                            // const currentText = fieldInfo.options
-                            //   .filter(
-                            //     (option) =>
-                            //       option.value === data.properties[fieldKey]
-                            //   )
-                            //   .map((option) => option.label)[0];
+                            if (
+                              fieldInfo.type === SIMPLE_PROPERTY_TYPES.OPTIONS
+                            ) {
+                              // const currentText = fieldInfo.options
+                              //   .filter(
+                              //     (option) =>
+                              //       option.value === data.properties[fieldKey]
+                              //   )
+                              //   .map((option) => option.label)[0];
+                              return (
+                                <Tooltip
+                                  key={fieldKey}
+                                  title={
+                                    <Typography>{fieldInfo.name}</Typography>
+                                  }
+                                  arrow
+                                  placement="bottom"
+                                >
+                                  <Select
+                                    key={fieldKey}
+                                    label={fieldInfo.name}
+                                    disabled={interactionDisabled}
+                                    size="small"
+                                    color="highlightColor"
+                                    value={data.properties[fieldKey]}
+                                    onChange={(e) =>
+                                      updateItemSimpleProperty(
+                                        data.id,
+                                        fieldKey,
+                                        e.target.value
+                                      )
+                                    }
+                                  >
+                                    {fieldInfo.options.map((option) => (
+                                      <MenuItem
+                                        key={option.value}
+                                        value={option.value}
+                                      >
+                                        {option.label}
+                                      </MenuItem>
+                                    ))}
+                                  </Select>
+                                </Tooltip>
+                              );
+                            } else if (
+                              fieldInfo.type === SIMPLE_PROPERTY_TYPES.BOOLEAN
+                            ) {
+                              return (
+                                <Box
+                                  key={fieldKey}
+                                  style={{ minWidth: 70 }}
+                                  pad={{ left: "xsmall", right: "xsmall" }}
+                                  justify="center"
+                                >
+                                  <Tooltip
+                                    key={fieldKey}
+                                    title={
+                                      <Typography>{fieldInfo.name}</Typography>
+                                    }
+                                    arrow
+                                    placement="bottom"
+                                  >
+                                    {/* <Box
+                                    // key="sliderContainer"
+                                    background='red'
+                                    pad={{left:'xsmall',right:'xsmall'}}
+                                    // style={{ width: 80 }}
+                                    // alignContent='center'
+                                    focusIndicator={false}
+                                  > */}
+                                    <Switch
+                                      checked={data.properties[fieldKey]}
+                                      onChange={(event) =>
+                                        updateItemSimpleProperty(
+                                          data.id,
+                                          fieldKey,
+                                          event.target.checked
+                                        )
+                                      }
+                                      color="highlightColor"
+                                      disabled={interactionDisabled}
+                                    />
+                                    {/* </Box> */}
+                                  </Tooltip>
+                                </Box>
+                              );
+                            } else if (
+                              fieldInfo.type === SIMPLE_PROPERTY_TYPES.STRING
+                            ) {
+                              const currentValue = data.properties[fieldKey];
+                              return (
+                                <Box key={fieldKey} style={{ minWidth: 43 }}>
+                                  <Tooltip
+                                    key={fieldKey}
+                                    title={
+                                      <Typography>{fieldInfo.name}</Typography>
+                                    }
+                                    arrow
+                                    placement="bottom"
+                                  >
+                                    <Box
+                                      key={fieldKey}
+                                      style={{ minWidth: 43, maxWidth: 100 }}
+                                    >
+                                      <TextField
+                                        size="small"
+                                        label={fieldInfo.name}
+                                        color="highlightColor"
+                                        className="nodrag"
+                                        key={fieldKey}
+                                        // placeholder={fieldInfo.name}
+                                        onMouseEnter={(_) => setLocked(true)}
+                                        onMouseLeave={(_) => setLocked(false)}
+                                        value={currentValue ? currentValue : ""}
+                                        disabled={interactionDisabled}
+                                        onChange={(e) =>
+                                          updateItemSimpleProperty(
+                                            data.id,
+                                            fieldKey,
+                                            e.target.value
+                                          )
+                                        }
+                                      />
+                                    </Box>
+                                  </Tooltip>
+                                </Box>
+                              );
+                            } else if (
+                              fieldInfo.type === SIMPLE_PROPERTY_TYPES.NUMBER
+                            ) {
+                              return (
+                                <Box key={fieldKey} style={{ minWidth: 40 }}>
+                                  <Tooltip
+                                    key={fieldKey}
+                                    title={
+                                      <Typography>{fieldInfo.name}</Typography>
+                                    }
+                                    arrow
+                                    placement="bottom"
+                                  >
+                                    <Box
+                                      key={fieldKey}
+                                      style={{ minWidth: 43, maxWidth: 100 }}
+                                    >
+                                      <NumberInput
+                                        label={fieldInfo.name}
+                                        onMouseEnter={(_) => setLocked(true)}
+                                        onMouseLeave={(_) => setLocked(false)}
+                                        className="nodrag"
+                                        key={fieldKey}
+                                        style={{ width: 105, marginRight: 3 }}
+                                        min={
+                                          fieldInfo.min !== undefined
+                                            ? fieldInfo.min
+                                            : 0
+                                        }
+                                        max={
+                                          fieldInfo.max !== undefined
+                                            ? fieldInfo.max
+                                            : 10
+                                        }
+                                        step={fieldInfo.step}
+                                        suffix={fieldInfo.units}
+                                        value={data.properties[fieldKey]}
+                                        disabled={interactionDisabled}
+                                        visualScaling={fieldInfo.visualScaling}
+                                        onChange={(value) =>
+                                          !interactionDisabled &&
+                                          updateItemSimpleProperty(
+                                            data.id,
+                                            fieldKey,
+                                            value
+                                          )
+                                        }
+                                      />
+                                    </Box>
+                                  </Tooltip>
+                                </Box>
+                              );
+                            }
+                          } else {
+                            // const innerLabel = !fieldInfo.fullWidth ? fieldInfo.name : '';
                             return (
                               <Tooltip
                                 key={fieldKey}
@@ -339,218 +544,49 @@ export const VisualBlock = memo(
                                 arrow
                                 placement="bottom"
                               >
-                                <Select
-                                  key={fieldKey}
-                                  label={fieldInfo.name}
-                                  disabled={interactionDisabled}
-                                  size="small"
-                                  color="highlightColor"
-                                  value={data.properties[fieldKey]}
-                                  onChange={(e) =>
-                                    updateItemSimpleProperty(
-                                      data.id,
-                                      fieldKey,
-                                      e.target.value
-                                    )
-                                  }
-                                >
-                                  {fieldInfo.options.map((option) => (
-                                    <MenuItem
-                                      key={option.value}
-                                      value={option.value}
-                                    >
-                                      {option.label}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
+                                <Box key={fieldKey} focusIndicator={false}>
+                                  {fieldInfo.isList ? (
+                                    <List
+                                      limitedRender={limitedRender}
+                                      ids={data.properties[fieldKey]}
+                                      fieldInfo={{
+                                        ...fieldInfo,
+                                        value: fieldKey,
+                                      }}
+                                      parentId={data.id}
+                                      interactionDisabled={interactionDisabled}
+                                      highlightColor={highlightColor}
+                                      context={context}
+                                    />
+                                  ) : (
+                                    <DropZone
+                                      limitedRender={limitedRender}
+                                      id={data.properties[fieldKey]}
+                                      fieldInfo={{
+                                        ...fieldInfo,
+                                        value: fieldKey,
+                                        name: !fieldInfo.fullWidth
+                                          ? ""
+                                          : fieldInfo.name,
+                                      }}
+                                      parentId={data.id}
+                                      interactionDisabled={interactionDisabled}
+                                      highlightColor={highlightColor}
+                                      context={context}
+                                    />
+                                  )}
+                                </Box>
                               </Tooltip>
                             );
-                          } else if (
-                            fieldInfo.type === SIMPLE_PROPERTY_TYPES.BOOLEAN
-                          ) {
-                            return (
-                              <Box
-                                key={fieldKey}
-                                style={{ minWidth: 70 }}
-                                pad={{ left: "xsmall", right: "xsmall" }}
-                                justify="center"
-                              >
-                                <Tooltip
-                                  key={fieldKey}
-                                  title={
-                                    <Typography>{fieldInfo.name}</Typography>
-                                  }
-                                  arrow
-                                  placement="bottom"
-                                >
-                                  {/* <Box
-                                    // key="sliderContainer"
-                                    background='red'
-                                    pad={{left:'xsmall',right:'xsmall'}}
-                                    // style={{ width: 80 }}
-                                    // alignContent='center'
-                                    focusIndicator={false}
-                                  > */}
-                                  <Switch
-                                    checked={data.properties[fieldKey]}
-                                    onChange={(event) =>
-                                      updateItemSimpleProperty(
-                                        data.id,
-                                        fieldKey,
-                                        event.target.checked
-                                      )
-                                    }
-                                    color="highlightColor"
-                                    disabled={interactionDisabled}
-                                  />
-                                  {/* </Box> */}
-                                </Tooltip>
-                              </Box>
-                            );
-                          } else if (
-                            fieldInfo.type === SIMPLE_PROPERTY_TYPES.STRING
-                          ) {
-                            const currentValue = data.properties[fieldKey];
-                            return (
-                              <Box key={fieldKey} style={{ minWidth: 43 }}>
-                                <Tooltip
-                                  key={fieldKey}
-                                  title={
-                                    <Typography>{fieldInfo.name}</Typography>
-                                  }
-                                  arrow
-                                  placement="bottom"
-                                >
-                                  <Box
-                                    key={fieldKey}
-                                    style={{ minWidth: 43, maxWidth: 100 }}
-                                  >
-                                    <TextField
-                                      size="small"
-                                      label={fieldInfo.name}
-                                      color="highlightColor"
-                                      className="nodrag"
-                                      key={fieldKey}
-                                      // placeholder={fieldInfo.name}
-                                      onMouseEnter={(_) => setLocked(true)}
-                                      onMouseLeave={(_) => setLocked(false)}
-                                      value={currentValue ? currentValue : ''}
-                                      disabled={interactionDisabled}
-                                      onChange={(e) =>
-                                        updateItemSimpleProperty(
-                                          data.id,
-                                          fieldKey,
-                                          e.target.value
-                                        )
-                                      }
-                                    />
-                                  </Box>
-                                </Tooltip>
-                              </Box>
-                            );
-                          } else if (
-                            fieldInfo.type === SIMPLE_PROPERTY_TYPES.NUMBER
-                          ) {
-                            return (
-                              <Box key={fieldKey} style={{ minWidth: 40 }}>
-                                <Tooltip
-                                  key={fieldKey}
-                                  title={
-                                    <Typography>{fieldInfo.name}</Typography>
-                                  }
-                                  arrow
-                                  placement="bottom"
-                                >
-                                  <Box
-                                    key={fieldKey}
-                                    style={{ minWidth: 43, maxWidth: 100 }}
-                                  >
-                                    <NumberInput
-                                      label={fieldInfo.name}
-                                      onMouseEnter={(_) => setLocked(true)}
-                                      onMouseLeave={(_) => setLocked(false)}
-                                      className="nodrag"
-                                      key={fieldKey}
-                                      style={{ width: 105, marginRight: 3 }}
-                                      min={
-                                        fieldInfo.min !== undefined
-                                          ? fieldInfo.min
-                                          : 0
-                                      }
-                                      max={
-                                        fieldInfo.max !== undefined
-                                          ? fieldInfo.max
-                                          : 10
-                                      }
-                                      step={fieldInfo.step}
-                                      suffix={fieldInfo.units}
-                                      value={data.properties[fieldKey]}
-                                      disabled={interactionDisabled}
-                                      visualScaling={fieldInfo.visualScaling}
-                                      onChange={(value) =>
-                                        !interactionDisabled &&
-                                        updateItemSimpleProperty(
-                                          data.id,
-                                          fieldKey,
-                                          value
-                                        )
-                                      }
-                                    />
-                                  </Box>
-                                </Tooltip>
-                              </Box>
-                            );
                           }
-                        } else {
-                          // const innerLabel = !fieldInfo.fullWidth ? fieldInfo.name : '';
-                          return (
-                            <Tooltip
-                              key={fieldKey}
-                              title={<Typography>{fieldInfo.name}</Typography>}
-                              arrow
-                              placement="bottom"
-                            >
-                              <Box key={fieldKey} focusIndicator={false}>
-                                {fieldInfo.isList ? (
-                                  <List
-                                    ids={data.properties[fieldKey]}
-                                    fieldInfo={{
-                                      ...fieldInfo,
-                                      value: fieldKey,
-                                    }}
-                                    parentId={data.id}
-                                    interactionDisabled={interactionDisabled}
-                                    highlightColor={highlightColor}
-                                    context={context}
-                                  />
-                                ) : (
-                                  <DropZone
-                                    id={data.properties[fieldKey]}
-                                    fieldInfo={{
-                                      ...fieldInfo,
-                                      value: fieldKey,
-                                      name: !fieldInfo.fullWidth
-                                        ? ""
-                                        : fieldInfo.name,
-                                    }}
-                                    parentId={data.id}
-                                    interactionDisabled={interactionDisabled}
-                                    highlightColor={highlightColor}
-                                    context={context}
-                                  />
-                                )}
-                              </Box>
-                            </Tooltip>
-                          );
+                          return null;
                         }
-                        return null;
-                      }
-                    )}
-                  </Box>
-                </ScrollRegion>
-              </>
-            )}
-            {blockSpec?.extras && (
+                      )}
+                    </Box>
+                  </ScrollRegion>
+                </>
+              )}
+            {blockSpec?.extras && !limitedRender && (
               <ExtraBar
                 inDrawer={inDrawer}
                 highlightColor={highlightColor}
@@ -644,7 +680,7 @@ export const VisualBlock = memo(
                 </>
               )}
               {/* If the block has simple parameters, show them in a collapse block */}
-              {Object.keys(simpleProperties).length > 0 &&
+              {!limitedRender && Object.keys(simpleProperties).length > 0 &&
                 data.dataType === DATA_TYPES.INSTANCE && (
                   <Box
                     margin="xsmall"
@@ -762,7 +798,11 @@ export const VisualBlock = memo(
                                     onMouseLeave={(_) => setLocked(false)}
                                     size="small"
                                     // style={{ color: "#00000088" }}
-                                    value={data.properties[propKey] ? data.properties[propKey] : ''}
+                                    value={
+                                      data.properties[propKey]
+                                        ? data.properties[propKey]
+                                        : ""
+                                    }
                                     disabled={interactionDisabled}
                                     onChange={(e) =>
                                       updateItemSimpleProperty(
@@ -777,11 +817,15 @@ export const VisualBlock = memo(
                               {propInfo.type ===
                                 SIMPLE_PROPERTY_TYPES.OPTIONS && (
                                 <Select
-                                  key={propKey} 
+                                  key={propKey}
                                   disabled={interactionDisabled}
                                   size="small"
                                   color="highlightColor"
-                                  value={data.properties[propKey] ? data.properties[propKey] : ''}
+                                  value={
+                                    data.properties[propKey]
+                                      ? data.properties[propKey]
+                                      : ""
+                                  }
                                   onChange={(e) =>
                                     updateItemSimpleProperty(
                                       data.id,
@@ -790,7 +834,7 @@ export const VisualBlock = memo(
                                     )
                                   }
                                 >
-                                  {propInfo.options.map((option,optionIdx) => (
+                                  {propInfo.options.map((option, optionIdx) => (
                                     <MenuItem
                                       key={optionIdx}
                                       value={option.value}
@@ -874,6 +918,7 @@ export const VisualBlock = memo(
                             interactionDisabled={interactionDisabled}
                             highlightColor={highlightColor}
                             context={context}
+                            limitedRender={limitedRender}
                           />
                         ) : (
                           <DropZone
@@ -887,6 +932,7 @@ export const VisualBlock = memo(
                             interactionDisabled={interactionDisabled}
                             highlightColor={highlightColor}
                             context={context}
+                            limitedRender={limitedRender}
                           />
                         )}
                       </Box>
