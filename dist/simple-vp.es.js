@@ -6346,6 +6346,7 @@ const immer = (config2) => (set2, get2, api) => config2((partial, replace2) => {
   return set2(nextState, replace2);
 }, get2, api);
 const ProgrammingSlice = (set2, get2) => ({
+  onClick: (entryInfo) => console.log(`Clicked Entry:`, entryInfo),
   modalBlock: { block: null, context: [] },
   setModalBlock: (block, context) => set2({ modalBlock: { block, context } }),
   locked: false,
@@ -7842,7 +7843,7 @@ function makeStoreInstance(debugMode) {
 function _objectWithoutProperties$1(source, excluded) {
   if (source == null)
     return {};
-  var target = _objectWithoutPropertiesLoose$e(source, excluded);
+  var target = _objectWithoutPropertiesLoose$f(source, excluded);
   var key, i;
   if (Object.getOwnPropertySymbols) {
     var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
@@ -7857,7 +7858,7 @@ function _objectWithoutProperties$1(source, excluded) {
   }
   return target;
 }
-function _objectWithoutPropertiesLoose$e(source, excluded) {
+function _objectWithoutPropertiesLoose$f(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -17762,8 +17763,8 @@ var heightStringStyle = function heightStringStyle2(height2, theme) {
 var heightStyle = function heightStyle2(height2, theme) {
   return typeof height2 === "object" ? heightObjectStyle(height2, theme) : heightStringStyle(height2, theme);
 };
-function _extends$u() {
-  _extends$u = Object.assign ? Object.assign.bind() : function(target) {
+function _extends$w() {
+  _extends$w = Object.assign ? Object.assign.bind() : function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -17774,7 +17775,7 @@ function _extends$u() {
     }
     return target;
   };
-  return _extends$u.apply(this, arguments);
+  return _extends$w.apply(this, arguments);
 }
 var isObject = function isObject2(item) {
   return item && typeof item === "object" && !Array.isArray(item);
@@ -17792,13 +17793,13 @@ var deepMerge = function deepMerge2(target) {
   if (!sources.length) {
     return target;
   }
-  var output = _extends$u({}, target);
+  var output = _extends$w({}, target);
   sources.forEach(function(source) {
     if (isObject(source)) {
       Object.keys(source).forEach(function(key) {
         if (isObject(source[key])) {
           if (!output[key]) {
-            output[key] = _extends$u({}, source[key]);
+            output[key] = _extends$w({}, source[key]);
           } else {
             output[key] = deepMerge2(output[key], source[key]);
           }
@@ -17997,7 +17998,7 @@ var _react$l = _interopRequireWildcard$l(React__default);
 var _styledComponents = _interopRequireWildcard$l(require$$1);
 var _grommetStyles = require$$2;
 var _defaultProps = defaultProps$3;
-var _excluded$14 = ["a11yTitle", "color", "size", "theme"];
+var _excluded$15 = ["a11yTitle", "color", "size", "theme"];
 function _getRequireWildcardCache$l(nodeInterop) {
   if (typeof WeakMap !== "function")
     return null;
@@ -18036,8 +18037,8 @@ function _interopRequireWildcard$l(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$t() {
-  _extends$t = Object.assign || function(target) {
+function _extends$v() {
+  _extends$v = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18048,9 +18049,9 @@ function _extends$t() {
     }
     return target;
   };
-  return _extends$t.apply(this, arguments);
+  return _extends$v.apply(this, arguments);
 }
-function _objectWithoutPropertiesLoose$d(source, excluded) {
+function _objectWithoutPropertiesLoose$e(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -18074,8 +18075,8 @@ var IconInner = /* @__PURE__ */ (0, _react$l.forwardRef)(function(_ref, ref) {
   _ref.color;
   _ref.size;
   _ref.theme;
-  var rest = _objectWithoutPropertiesLoose$d(_ref, _excluded$14);
-  return /* @__PURE__ */ _react$l["default"].createElement("svg", _extends$t({
+  var rest = _objectWithoutPropertiesLoose$e(_ref, _excluded$15);
+  return /* @__PURE__ */ _react$l["default"].createElement("svg", _extends$v({
     ref,
     "aria-label": a11yTitle
   }, rest));
@@ -18150,8 +18151,8 @@ function _interopRequireWildcard$k(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$s() {
-  _extends$s = Object.assign || function(target) {
+function _extends$u() {
+  _extends$u = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18162,10 +18163,10 @@ function _extends$s() {
     }
     return target;
   };
-  return _extends$s.apply(this, arguments);
+  return _extends$u.apply(this, arguments);
 }
 var Actions = /* @__PURE__ */ (0, _react$k.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$k["default"].createElement(_StyledIcon$k.StyledIcon, _extends$s({
+  return /* @__PURE__ */ _react$k["default"].createElement(_StyledIcon$k.StyledIcon, _extends$u({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "Actions"
@@ -18219,8 +18220,8 @@ function _interopRequireWildcard$j(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$r() {
-  _extends$r = Object.assign || function(target) {
+function _extends$t() {
+  _extends$t = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18231,10 +18232,10 @@ function _extends$r() {
     }
     return target;
   };
-  return _extends$r.apply(this, arguments);
+  return _extends$t.apply(this, arguments);
 }
 var AssistListening = /* @__PURE__ */ (0, _react$j.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$j["default"].createElement(_StyledIcon$j.StyledIcon, _extends$r({
+  return /* @__PURE__ */ _react$j["default"].createElement(_StyledIcon$j.StyledIcon, _extends$t({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "AssistListening"
@@ -18290,8 +18291,8 @@ function _interopRequireWildcard$i(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$q() {
-  _extends$q = Object.assign || function(target) {
+function _extends$s() {
+  _extends$s = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18302,10 +18303,10 @@ function _extends$q() {
     }
     return target;
   };
-  return _extends$q.apply(this, arguments);
+  return _extends$s.apply(this, arguments);
 }
 var CircleInformation = /* @__PURE__ */ (0, _react$i.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$i["default"].createElement(_StyledIcon$i.StyledIcon, _extends$q({
+  return /* @__PURE__ */ _react$i["default"].createElement(_StyledIcon$i.StyledIcon, _extends$s({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "CircleInformation"
@@ -18359,8 +18360,8 @@ function _interopRequireWildcard$h(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$p() {
-  _extends$p = Object.assign || function(target) {
+function _extends$r() {
+  _extends$r = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18371,10 +18372,10 @@ function _extends$p() {
     }
     return target;
   };
-  return _extends$p.apply(this, arguments);
+  return _extends$r.apply(this, arguments);
 }
 var ClosedCaption = /* @__PURE__ */ (0, _react$h.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$h["default"].createElement(_StyledIcon$h.StyledIcon, _extends$p({
+  return /* @__PURE__ */ _react$h["default"].createElement(_StyledIcon$h.StyledIcon, _extends$r({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "ClosedCaption"
@@ -18428,8 +18429,8 @@ function _interopRequireWildcard$g(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$o() {
-  _extends$o = Object.assign || function(target) {
+function _extends$q() {
+  _extends$q = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18440,10 +18441,10 @@ function _extends$o() {
     }
     return target;
   };
-  return _extends$o.apply(this, arguments);
+  return _extends$q.apply(this, arguments);
 }
 var Expand = /* @__PURE__ */ (0, _react$g.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$g["default"].createElement(_StyledIcon$g.StyledIcon, _extends$o({
+  return /* @__PURE__ */ _react$g["default"].createElement(_StyledIcon$g.StyledIcon, _extends$q({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "Expand"
@@ -18497,8 +18498,8 @@ function _interopRequireWildcard$f(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$n() {
-  _extends$n = Object.assign || function(target) {
+function _extends$p() {
+  _extends$p = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18509,10 +18510,10 @@ function _extends$n() {
     }
     return target;
   };
-  return _extends$n.apply(this, arguments);
+  return _extends$p.apply(this, arguments);
 }
 var FormClose = /* @__PURE__ */ (0, _react$f.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$f["default"].createElement(_StyledIcon$f.StyledIcon, _extends$n({
+  return /* @__PURE__ */ _react$f["default"].createElement(_StyledIcon$f.StyledIcon, _extends$p({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "FormClose"
@@ -18566,8 +18567,8 @@ function _interopRequireWildcard$e(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$m() {
-  _extends$m = Object.assign || function(target) {
+function _extends$o() {
+  _extends$o = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18578,10 +18579,10 @@ function _extends$m() {
     }
     return target;
   };
-  return _extends$m.apply(this, arguments);
+  return _extends$o.apply(this, arguments);
 }
 var FormDown = /* @__PURE__ */ (0, _react$e.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$e["default"].createElement(_StyledIcon$e.StyledIcon, _extends$m({
+  return /* @__PURE__ */ _react$e["default"].createElement(_StyledIcon$e.StyledIcon, _extends$o({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "FormDown"
@@ -18635,8 +18636,8 @@ function _interopRequireWildcard$d(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$l() {
-  _extends$l = Object.assign || function(target) {
+function _extends$n() {
+  _extends$n = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18647,10 +18648,10 @@ function _extends$l() {
     }
     return target;
   };
-  return _extends$l.apply(this, arguments);
+  return _extends$n.apply(this, arguments);
 }
 var FormNext = /* @__PURE__ */ (0, _react$d.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$d["default"].createElement(_StyledIcon$d.StyledIcon, _extends$l({
+  return /* @__PURE__ */ _react$d["default"].createElement(_StyledIcon$d.StyledIcon, _extends$n({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "FormNext"
@@ -18704,8 +18705,8 @@ function _interopRequireWildcard$c(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$k() {
-  _extends$k = Object.assign || function(target) {
+function _extends$m() {
+  _extends$m = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18716,10 +18717,10 @@ function _extends$k() {
     }
     return target;
   };
-  return _extends$k.apply(this, arguments);
+  return _extends$m.apply(this, arguments);
 }
 var FormPrevious = /* @__PURE__ */ (0, _react$c.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$c["default"].createElement(_StyledIcon$c.StyledIcon, _extends$k({
+  return /* @__PURE__ */ _react$c["default"].createElement(_StyledIcon$c.StyledIcon, _extends$m({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "FormPrevious"
@@ -18773,8 +18774,8 @@ function _interopRequireWildcard$b(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$j() {
-  _extends$j = Object.assign || function(target) {
+function _extends$l() {
+  _extends$l = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18785,10 +18786,10 @@ function _extends$j() {
     }
     return target;
   };
-  return _extends$j.apply(this, arguments);
+  return _extends$l.apply(this, arguments);
 }
 var FormUp = /* @__PURE__ */ (0, _react$b.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$b["default"].createElement(_StyledIcon$b.StyledIcon, _extends$j({
+  return /* @__PURE__ */ _react$b["default"].createElement(_StyledIcon$b.StyledIcon, _extends$l({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "FormUp"
@@ -18842,8 +18843,8 @@ function _interopRequireWildcard$a(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$i() {
-  _extends$i = Object.assign || function(target) {
+function _extends$k() {
+  _extends$k = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18854,10 +18855,10 @@ function _extends$i() {
     }
     return target;
   };
-  return _extends$i.apply(this, arguments);
+  return _extends$k.apply(this, arguments);
 }
 var Next = /* @__PURE__ */ (0, _react$a.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$a["default"].createElement(_StyledIcon$a.StyledIcon, _extends$i({
+  return /* @__PURE__ */ _react$a["default"].createElement(_StyledIcon$a.StyledIcon, _extends$k({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "Next"
@@ -18911,8 +18912,8 @@ function _interopRequireWildcard$9(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$h() {
-  _extends$h = Object.assign || function(target) {
+function _extends$j() {
+  _extends$j = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18923,10 +18924,10 @@ function _extends$h() {
     }
     return target;
   };
-  return _extends$h.apply(this, arguments);
+  return _extends$j.apply(this, arguments);
 }
 var Pause = /* @__PURE__ */ (0, _react$9.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$9["default"].createElement(_StyledIcon$9.StyledIcon, _extends$h({
+  return /* @__PURE__ */ _react$9["default"].createElement(_StyledIcon$9.StyledIcon, _extends$j({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "Pause"
@@ -18980,8 +18981,8 @@ function _interopRequireWildcard$8(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$g() {
-  _extends$g = Object.assign || function(target) {
+function _extends$i() {
+  _extends$i = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -18992,10 +18993,10 @@ function _extends$g() {
     }
     return target;
   };
-  return _extends$g.apply(this, arguments);
+  return _extends$i.apply(this, arguments);
 }
 var Play = /* @__PURE__ */ (0, _react$8.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$8["default"].createElement(_StyledIcon$8.StyledIcon, _extends$g({
+  return /* @__PURE__ */ _react$8["default"].createElement(_StyledIcon$8.StyledIcon, _extends$i({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "Play"
@@ -19049,8 +19050,8 @@ function _interopRequireWildcard$7(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$f() {
-  _extends$f = Object.assign || function(target) {
+function _extends$h() {
+  _extends$h = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19061,10 +19062,10 @@ function _extends$f() {
     }
     return target;
   };
-  return _extends$f.apply(this, arguments);
+  return _extends$h.apply(this, arguments);
 }
 var Previous = /* @__PURE__ */ (0, _react$7.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$7["default"].createElement(_StyledIcon$7.StyledIcon, _extends$f({
+  return /* @__PURE__ */ _react$7["default"].createElement(_StyledIcon$7.StyledIcon, _extends$h({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "Previous"
@@ -19118,8 +19119,8 @@ function _interopRequireWildcard$6(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$e() {
-  _extends$e = Object.assign || function(target) {
+function _extends$g() {
+  _extends$g = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19130,10 +19131,10 @@ function _extends$e() {
     }
     return target;
   };
-  return _extends$e.apply(this, arguments);
+  return _extends$g.apply(this, arguments);
 }
 var StatusCriticalSmall = /* @__PURE__ */ (0, _react$6.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$6["default"].createElement(_StyledIcon$6.StyledIcon, _extends$e({
+  return /* @__PURE__ */ _react$6["default"].createElement(_StyledIcon$6.StyledIcon, _extends$g({
     ref,
     viewBox: "0 0 12 12",
     a11yTitle: "Status is critical"
@@ -19186,8 +19187,8 @@ function _interopRequireWildcard$5(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$d() {
-  _extends$d = Object.assign || function(target) {
+function _extends$f() {
+  _extends$f = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19198,10 +19199,10 @@ function _extends$d() {
     }
     return target;
   };
-  return _extends$d.apply(this, arguments);
+  return _extends$f.apply(this, arguments);
 }
 var StatusGoodSmall = /* @__PURE__ */ (0, _react$5.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$5["default"].createElement(_StyledIcon$5.StyledIcon, _extends$d({
+  return /* @__PURE__ */ _react$5["default"].createElement(_StyledIcon$5.StyledIcon, _extends$f({
     ref,
     viewBox: "0 0 12 12",
     a11yTitle: "Status is okay"
@@ -19256,8 +19257,8 @@ function _interopRequireWildcard$4(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$c() {
-  _extends$c = Object.assign || function(target) {
+function _extends$e() {
+  _extends$e = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19268,10 +19269,10 @@ function _extends$c() {
     }
     return target;
   };
-  return _extends$c.apply(this, arguments);
+  return _extends$e.apply(this, arguments);
 }
 var StatusWarningSmall = /* @__PURE__ */ (0, _react$4.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$4["default"].createElement(_StyledIcon$4.StyledIcon, _extends$c({
+  return /* @__PURE__ */ _react$4["default"].createElement(_StyledIcon$4.StyledIcon, _extends$e({
     ref,
     viewBox: "0 0 12 12",
     a11yTitle: "Status is warning"
@@ -19325,8 +19326,8 @@ function _interopRequireWildcard$3(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$b() {
-  _extends$b = Object.assign || function(target) {
+function _extends$d() {
+  _extends$d = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19337,10 +19338,10 @@ function _extends$b() {
     }
     return target;
   };
-  return _extends$b.apply(this, arguments);
+  return _extends$d.apply(this, arguments);
 }
 var StatusUnknownSmall = /* @__PURE__ */ (0, _react$3.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$3["default"].createElement(_StyledIcon$3.StyledIcon, _extends$b({
+  return /* @__PURE__ */ _react$3["default"].createElement(_StyledIcon$3.StyledIcon, _extends$d({
     ref,
     viewBox: "0 0 12 12",
     a11yTitle: "Status is unknown"
@@ -19397,8 +19398,8 @@ function _interopRequireWildcard$2(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$a() {
-  _extends$a = Object.assign || function(target) {
+function _extends$c() {
+  _extends$c = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19409,10 +19410,10 @@ function _extends$a() {
     }
     return target;
   };
-  return _extends$a.apply(this, arguments);
+  return _extends$c.apply(this, arguments);
 }
 var Subtract = /* @__PURE__ */ (0, _react$2.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$2["default"].createElement(_StyledIcon$2.StyledIcon, _extends$a({
+  return /* @__PURE__ */ _react$2["default"].createElement(_StyledIcon$2.StyledIcon, _extends$c({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "Subtract"
@@ -19466,8 +19467,8 @@ function _interopRequireWildcard$1(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$9() {
-  _extends$9 = Object.assign || function(target) {
+function _extends$b() {
+  _extends$b = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19478,10 +19479,10 @@ function _extends$9() {
     }
     return target;
   };
-  return _extends$9.apply(this, arguments);
+  return _extends$b.apply(this, arguments);
 }
 var Volume = /* @__PURE__ */ (0, _react$1.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react$1["default"].createElement(_StyledIcon$1.StyledIcon, _extends$9({
+  return /* @__PURE__ */ _react$1["default"].createElement(_StyledIcon$1.StyledIcon, _extends$b({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "Volume"
@@ -19535,8 +19536,8 @@ function _interopRequireWildcard(obj, nodeInterop) {
   }
   return newObj;
 }
-function _extends$8() {
-  _extends$8 = Object.assign || function(target) {
+function _extends$a() {
+  _extends$a = Object.assign || function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19547,10 +19548,10 @@ function _extends$8() {
     }
     return target;
   };
-  return _extends$8.apply(this, arguments);
+  return _extends$a.apply(this, arguments);
 }
 var VolumeLow = /* @__PURE__ */ (0, _react.forwardRef)(function(props, ref) {
-  return /* @__PURE__ */ _react["default"].createElement(_StyledIcon.StyledIcon, _extends$8({
+  return /* @__PURE__ */ _react["default"].createElement(_StyledIcon.StyledIcon, _extends$a({
     ref,
     viewBox: "0 0 24 24",
     a11yTitle: "VolumeLow"
@@ -19563,8 +19564,8 @@ var VolumeLow = /* @__PURE__ */ (0, _react.forwardRef)(function(props, ref) {
 });
 VolumeLow_2 = VolumeLow;
 VolumeLow.displayName = "VolumeLow";
-function _extends$7() {
-  _extends$7 = Object.assign ? Object.assign.bind() : function(target) {
+function _extends$9() {
+  _extends$9 = Object.assign ? Object.assign.bind() : function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -19575,7 +19576,7 @@ function _extends$7() {
     }
     return target;
   };
-  return _extends$7.apply(this, arguments);
+  return _extends$9.apply(this, arguments);
 }
 var brandColor = "#7D4CDB";
 var accentColors = ["#6FFFB0", "#FD6FFF", "#81FCED", "#FFCA58"];
@@ -19805,7 +19806,7 @@ var generate = function generate2(baseSpacing, scale2) {
           size: "2px"
         }
       },
-      font: _extends$7({}, fontSizing(0)),
+      font: _extends$9({}, fontSizing(0)),
       hover: {
         background: {
           color: "active",
@@ -20299,45 +20300,45 @@ var generate = function generate2(baseSpacing, scale2) {
       level: {
         1: {
           font: {},
-          small: _extends$7({}, fontSizing(4)),
-          medium: _extends$7({}, fontSizing(8)),
-          large: _extends$7({}, fontSizing(16)),
-          xlarge: _extends$7({}, fontSizing(24))
+          small: _extends$9({}, fontSizing(4)),
+          medium: _extends$9({}, fontSizing(8)),
+          large: _extends$9({}, fontSizing(16)),
+          xlarge: _extends$9({}, fontSizing(24))
         },
         2: {
           font: {},
-          small: _extends$7({}, fontSizing(2)),
-          medium: _extends$7({}, fontSizing(4)),
-          large: _extends$7({}, fontSizing(8)),
-          xlarge: _extends$7({}, fontSizing(12))
+          small: _extends$9({}, fontSizing(2)),
+          medium: _extends$9({}, fontSizing(4)),
+          large: _extends$9({}, fontSizing(8)),
+          xlarge: _extends$9({}, fontSizing(12))
         },
         3: {
           font: {},
-          small: _extends$7({}, fontSizing(1)),
-          medium: _extends$7({}, fontSizing(2)),
-          large: _extends$7({}, fontSizing(4)),
-          xlarge: _extends$7({}, fontSizing(6))
+          small: _extends$9({}, fontSizing(1)),
+          medium: _extends$9({}, fontSizing(2)),
+          large: _extends$9({}, fontSizing(4)),
+          xlarge: _extends$9({}, fontSizing(6))
         },
         4: {
           font: {},
-          small: _extends$7({}, fontSizing(0)),
-          medium: _extends$7({}, fontSizing(0)),
-          large: _extends$7({}, fontSizing(0)),
-          xlarge: _extends$7({}, fontSizing(0))
+          small: _extends$9({}, fontSizing(0)),
+          medium: _extends$9({}, fontSizing(0)),
+          large: _extends$9({}, fontSizing(0)),
+          xlarge: _extends$9({}, fontSizing(0))
         },
         5: {
           font: {},
-          small: _extends$7({}, fontSizing(-0.5)),
-          medium: _extends$7({}, fontSizing(-0.5)),
-          large: _extends$7({}, fontSizing(-0.5)),
-          xlarge: _extends$7({}, fontSizing(-0.5))
+          small: _extends$9({}, fontSizing(-0.5)),
+          medium: _extends$9({}, fontSizing(-0.5)),
+          large: _extends$9({}, fontSizing(-0.5)),
+          xlarge: _extends$9({}, fontSizing(-0.5))
         },
         6: {
           font: {},
-          small: _extends$7({}, fontSizing(-1)),
-          medium: _extends$7({}, fontSizing(-1)),
-          large: _extends$7({}, fontSizing(-1)),
-          xlarge: _extends$7({}, fontSizing(-1))
+          small: _extends$9({}, fontSizing(-1)),
+          medium: _extends$9({}, fontSizing(-1)),
+          large: _extends$9({}, fontSizing(-1)),
+          xlarge: _extends$9({}, fontSizing(-1))
         }
       },
       responsiveBreakpoint: "small",
@@ -20691,7 +20692,7 @@ var generate = function generate2(baseSpacing, scale2) {
               vertical: "4px",
               horizontal: "4px"
             },
-            font: _extends$7({}, fontSizing(-1)),
+            font: _extends$9({}, fontSizing(-1)),
             height: baseSpacing * 1.25 + "px",
             width: baseSpacing * 1.25 + "px"
           },
@@ -20704,7 +20705,7 @@ var generate = function generate2(baseSpacing, scale2) {
               vertical: "4px",
               horizontal: "4px"
             },
-            font: _extends$7({}, fontSizing(0)),
+            font: _extends$9({}, fontSizing(0)),
             height: baseSpacing * 1.5 + "px",
             width: baseSpacing * 1.5 + "px"
           },
@@ -20717,7 +20718,7 @@ var generate = function generate2(baseSpacing, scale2) {
               vertical: "4px",
               horizontal: "4px"
             },
-            font: _extends$7({}, fontSizing(1)),
+            font: _extends$9({}, fontSizing(1)),
             height: baseSpacing * 2 + "px",
             width: baseSpacing * 2 + "px"
           }
@@ -20737,11 +20738,11 @@ var generate = function generate2(baseSpacing, scale2) {
     },
     paragraph: {
       font: {},
-      small: _extends$7({}, fontSizing(-1)),
-      medium: _extends$7({}, fontSizing(0)),
-      large: _extends$7({}, fontSizing(1)),
-      xlarge: _extends$7({}, fontSizing(2)),
-      xxlarge: _extends$7({}, fontSizing(4))
+      small: _extends$9({}, fontSizing(-1)),
+      medium: _extends$9({}, fontSizing(0)),
+      large: _extends$9({}, fontSizing(1)),
+      xlarge: _extends$9({}, fontSizing(2)),
+      xxlarge: _extends$9({}, fontSizing(4))
     },
     spinner: {
       container: {
@@ -20977,17 +20978,17 @@ var generate = function generate2(baseSpacing, scale2) {
     },
     text: {
       font: {},
-      xsmall: _extends$7({}, fontSizing(-1.5)),
-      small: _extends$7({}, fontSizing(-1)),
-      medium: _extends$7({}, fontSizing(0)),
-      large: _extends$7({}, fontSizing(1)),
-      xlarge: _extends$7({}, fontSizing(2)),
-      xxlarge: _extends$7({}, fontSizing(4)),
-      "2xl": _extends$7({}, fontSizing(4)),
-      "3xl": _extends$7({}, fontSizing(6)),
-      "4xl": _extends$7({}, fontSizing(9)),
-      "5xl": _extends$7({}, fontSizing(13)),
-      "6xl": _extends$7({}, fontSizing(18))
+      xsmall: _extends$9({}, fontSizing(-1.5)),
+      small: _extends$9({}, fontSizing(-1)),
+      medium: _extends$9({}, fontSizing(0)),
+      large: _extends$9({}, fontSizing(1)),
+      xlarge: _extends$9({}, fontSizing(2)),
+      xxlarge: _extends$9({}, fontSizing(4)),
+      "2xl": _extends$9({}, fontSizing(4)),
+      "3xl": _extends$9({}, fontSizing(6)),
+      "4xl": _extends$9({}, fontSizing(9)),
+      "5xl": _extends$9({}, fontSizing(13)),
+      "6xl": _extends$9({}, fontSizing(18))
     },
     textArea: {},
     textInput: {},
@@ -21051,10 +21052,10 @@ var base = generate(24);
 var defaultProps$1 = {
   theme: base
 };
-var PropType$9 = {};
-var KeyboardPropTypes = PropType$9;
-var _excluded$13 = ["capture", "target", "children", "onKeyDown"];
-function _objectWithoutPropertiesLoose$c(source, excluded) {
+var PropType$a = {};
+var KeyboardPropTypes = PropType$a;
+var _excluded$14 = ["capture", "target", "children", "onKeyDown"];
+function _objectWithoutPropertiesLoose$d(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -21082,7 +21083,7 @@ var KEYS = {
   16: "onShift"
 };
 var Keyboard = function Keyboard2(_ref) {
-  var capture = _ref.capture, target = _ref.target, children2 = _ref.children, onKeyDown = _ref.onKeyDown, restProps = _objectWithoutPropertiesLoose$c(_ref, _excluded$13);
+  var capture = _ref.capture, target = _ref.target, children2 = _ref.children, onKeyDown = _ref.onKeyDown, restProps = _objectWithoutPropertiesLoose$d(_ref, _excluded$14);
   var onKeyDownHandler = useCallback(function(event) {
     var key = event.keyCode ? event.keyCode : event.which;
     var callbackName = KEYS[key];
@@ -21112,8 +21113,8 @@ var Keyboard = function Keyboard2(_ref) {
 };
 Keyboard.propTypes = KeyboardPropTypes;
 var _FLEX_MAP;
-function _extends$6() {
-  _extends$6 = Object.assign ? Object.assign.bind() : function(target) {
+function _extends$8() {
+  _extends$8 = Object.assign ? Object.assign.bind() : function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -21124,7 +21125,7 @@ function _extends$6() {
     }
     return target;
   };
-  return _extends$6.apply(this, arguments);
+  return _extends$8.apply(this, arguments);
 }
 var BASIS_MAP = {
   auto: "auto",
@@ -21313,7 +21314,7 @@ var gapStyle = function gapStyle2(directionProp, gap2, responsive, border2, them
     var responsiveBorderMetric = responsive && breakpoint && (breakpoint.borderSize[borderSize] || borderSize);
     var responsiveBorderOffset = responsiveBorderMetric && parseMetricToNum$1(responsiveMetric) / 2 - parseMetricToNum$1(responsiveBorderMetric) / 2 + "px";
     if (directionProp === "column" || directionProp === "column-reverse") {
-      var adjustedBorder = typeof border2 === "string" ? "top" : _extends$6({}, border2, {
+      var adjustedBorder = typeof border2 === "string" ? "top" : _extends$8({}, border2, {
         side: "top"
       });
       styles2.push(Ce$1(["position:relative;&:after{content:'';position:absolute;width:100%;top:", ";", "}"], borderOffset, borderStyle(adjustedBorder, responsive, theme)));
@@ -21321,7 +21322,7 @@ var gapStyle = function gapStyle2(directionProp, gap2, responsive, border2, them
         styles2.push(breakpointStyle(breakpoint, "\n            &:after {\n              content: '';\n              top: " + responsiveBorderOffset + ";\n            }"));
       }
     } else {
-      var _adjustedBorder = typeof border2 === "string" ? "left" : _extends$6({}, border2, {
+      var _adjustedBorder = typeof border2 === "string" ? "left" : _extends$8({}, border2, {
         side: "left"
       });
       styles2.push(Ce$1(["position:relative;&:after{content:'';position:absolute;height:100%;left:", ";", "}"], borderOffset, borderStyle(_adjustedBorder, directionProp !== "row-responsive" && responsive, theme)));
@@ -21329,7 +21330,7 @@ var gapStyle = function gapStyle2(directionProp, gap2, responsive, border2, them
         if (directionProp === "row" || directionProp === "row-reverse") {
           styles2.push(breakpointStyle(breakpoint, "\n              &:after {\n                content: '';\n                left: " + responsiveBorderOffset + ";\n              }"));
         } else if (directionProp === "row-responsive") {
-          var adjustedBorder2 = typeof border2 === "string" ? "top" : _extends$6({}, border2, {
+          var adjustedBorder2 = typeof border2 === "string" ? "top" : _extends$8({}, border2, {
             side: "top"
           });
           styles2.push(breakpointStyle(breakpoint, "\n              &:after {\n                content: '';\n                height: auto;\n                left: unset;\n                width: 100%;\n                top: " + responsiveBorderOffset + ";\n                border-left: none;\n                " + responsiveBorderStyle(adjustedBorder2, theme) + "\n              }"));
@@ -21370,11 +21371,11 @@ PropTypes.oneOfType([PropTypes.oneOf(OVERFLOW_VALUES), PropTypes.shape({
   horizontal: PropTypes.oneOf(OVERFLOW_VALUES),
   vertical: PropTypes.oneOf(OVERFLOW_VALUES)
 }), PropTypes.string]);
-var PropType$8 = {};
-var BoxPropTypes = PropType$8;
-var _excluded$12 = ["a11yTitle", "background", "border", "children", "direction", "elevation", "fill", "gap", "kind", "onBlur", "onClick", "onFocus", "overflow", "responsive", "tag", "as", "wrap", "width", "height", "tabIndex"];
-function _extends$5() {
-  _extends$5 = Object.assign ? Object.assign.bind() : function(target) {
+var PropType$9 = {};
+var BoxPropTypes = PropType$9;
+var _excluded$13 = ["a11yTitle", "background", "border", "children", "direction", "elevation", "fill", "gap", "kind", "onBlur", "onClick", "onFocus", "overflow", "responsive", "tag", "as", "wrap", "width", "height", "tabIndex"];
+function _extends$7() {
+  _extends$7 = Object.assign ? Object.assign.bind() : function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -21385,9 +21386,9 @@ function _extends$5() {
     }
     return target;
   };
-  return _extends$5.apply(this, arguments);
+  return _extends$7.apply(this, arguments);
 }
-function _objectWithoutPropertiesLoose$b(source, excluded) {
+function _objectWithoutPropertiesLoose$c(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -21402,7 +21403,7 @@ function _objectWithoutPropertiesLoose$b(source, excluded) {
   return target;
 }
 var Box = /* @__PURE__ */ forwardRef(function(_ref, ref) {
-  var a11yTitle = _ref.a11yTitle, background = _ref.background, border2 = _ref.border, children2 = _ref.children, _ref$direction = _ref.direction, direction = _ref$direction === void 0 ? "column" : _ref$direction, elevation = _ref.elevation, fill = _ref.fill, gap2 = _ref.gap, kind = _ref.kind, _onBlur = _ref.onBlur, onClick = _ref.onClick, _onFocus = _ref.onFocus, overflow2 = _ref.overflow, _ref$responsive = _ref.responsive, responsive = _ref$responsive === void 0 ? true : _ref$responsive, tag = _ref.tag, as = _ref.as, wrap = _ref.wrap, width2 = _ref.width, height2 = _ref.height, tabIndex = _ref.tabIndex, rest = _objectWithoutPropertiesLoose$b(_ref, _excluded$12);
+  var a11yTitle = _ref.a11yTitle, background = _ref.background, border2 = _ref.border, children2 = _ref.children, _ref$direction = _ref.direction, direction = _ref$direction === void 0 ? "column" : _ref$direction, elevation = _ref.elevation, fill = _ref.fill, gap2 = _ref.gap, kind = _ref.kind, _onBlur = _ref.onBlur, onClick = _ref.onClick, _onFocus = _ref.onFocus, overflow2 = _ref.overflow, _ref$responsive = _ref.responsive, responsive = _ref$responsive === void 0 ? true : _ref$responsive, tag = _ref.tag, as = _ref.as, wrap = _ref.wrap, width2 = _ref.width, height2 = _ref.height, tabIndex = _ref.tabIndex, rest = _objectWithoutPropertiesLoose$c(_ref, _excluded$13);
   var theme = useContext(Ge$1) || defaultProps$1.theme;
   var focusable = useMemo(function() {
     return onClick && !(tabIndex < 0);
@@ -21471,11 +21472,11 @@ var Box = /* @__PURE__ */ forwardRef(function(_ref, ref) {
       var dark2 = backgroundIsDark(background, theme);
       var darkChanged = dark2 !== void 0 && dark2 !== theme.dark;
       if (darkChanged || theme.darkChanged) {
-        result = _extends$5({}, theme);
+        result = _extends$7({}, theme);
         result.dark = dark2 === void 0 ? theme.dark : dark2;
         result.background = background;
       } else if (background) {
-        result = _extends$5({}, theme);
+        result = _extends$7({}, theme);
         result.background = background;
       }
     }
@@ -21515,8 +21516,8 @@ var Box = /* @__PURE__ */ forwardRef(function(_ref, ref) {
 });
 Box.displayName = "Box";
 Box.propTypes = BoxPropTypes;
-var PropType$7 = {};
-var ButtonPropTypes = PropType$7;
+var PropType$8 = {};
+var ButtonPropTypes = PropType$8;
 var reactDom = { exports: {} };
 var reactDom_production_min = {};
 var scheduler = { exports: {} };
@@ -28674,8 +28675,8 @@ function checkDCE() {
 var ReactDOM = reactDom.exports;
 var ContainerTargetContext = /* @__PURE__ */ React__default.createContext(typeof document === "object" ? document.body : void 0);
 var RootsContext = /* @__PURE__ */ React__default.createContext([]);
-var _excluded$11 = ["hidden", "restrictScroll", "children", "trapFocus"];
-function _objectWithoutPropertiesLoose$a(source, excluded) {
+var _excluded$12 = ["hidden", "restrictScroll", "children", "trapFocus"];
+function _objectWithoutPropertiesLoose$b(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -28690,7 +28691,7 @@ function _objectWithoutPropertiesLoose$a(source, excluded) {
   return target;
 }
 var FocusedContainer = function FocusedContainer2(_ref) {
-  var _ref$hidden = _ref.hidden, hidden = _ref$hidden === void 0 ? false : _ref$hidden, _ref$restrictScroll = _ref.restrictScroll, restrictScroll = _ref$restrictScroll === void 0 ? false : _ref$restrictScroll, children2 = _ref.children, trapFocus = _ref.trapFocus, rest = _objectWithoutPropertiesLoose$a(_ref, _excluded$11);
+  var _ref$hidden = _ref.hidden, hidden = _ref$hidden === void 0 ? false : _ref$hidden, _ref$restrictScroll = _ref.restrictScroll, restrictScroll = _ref$restrictScroll === void 0 ? false : _ref$restrictScroll, children2 = _ref.children, trapFocus = _ref.trapFocus, rest = _objectWithoutPropertiesLoose$b(_ref, _excluded$12);
   var _useState = useState(""), bodyOverflowStyle = _useState[0], setBodyOverflowStyle = _useState[1];
   var ref = useRef(null);
   var roots = useContext(RootsContext);
@@ -28782,9 +28783,9 @@ var StyledDrop = styled$3.div.withConfig({
 });
 StyledDrop.defaultProps = {};
 Object.setPrototypeOf(StyledDrop.defaultProps, defaultProps$1);
-var _excluded$10 = ["a11yTitle", "aria-label", "align", "background", "onAlign", "children", "dropTarget", "elevation", "onClickOutside", "onEsc", "onKeyDown", "overflow", "plain", "responsive", "restrictFocus", "stretch", "trapFocus"];
-function _extends$4() {
-  _extends$4 = Object.assign ? Object.assign.bind() : function(target) {
+var _excluded$11 = ["a11yTitle", "aria-label", "align", "background", "onAlign", "children", "dropTarget", "elevation", "onClickOutside", "onEsc", "onKeyDown", "overflow", "plain", "responsive", "restrictFocus", "stretch", "trapFocus"];
+function _extends$6() {
+  _extends$6 = Object.assign ? Object.assign.bind() : function(target) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
@@ -28795,9 +28796,9 @@ function _extends$4() {
     }
     return target;
   };
-  return _extends$4.apply(this, arguments);
+  return _extends$6.apply(this, arguments);
 }
-function _objectWithoutPropertiesLoose$9(source, excluded) {
+function _objectWithoutPropertiesLoose$a(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -28823,7 +28824,7 @@ var defaultAlign = {
 };
 var defaultPortalContext = [];
 var DropContainer = /* @__PURE__ */ forwardRef(function(_ref, ref) {
-  var a11yTitle = _ref.a11yTitle, ariaLabel = _ref["aria-label"], _ref$align = _ref.align, align = _ref$align === void 0 ? defaultAlign : _ref$align, background = _ref.background, onAlign = _ref.onAlign, children2 = _ref.children, dropTarget = _ref.dropTarget, elevation = _ref.elevation, onClickOutside = _ref.onClickOutside, onEsc = _ref.onEsc, onKeyDown = _ref.onKeyDown, _ref$overflow = _ref.overflow, overflow2 = _ref$overflow === void 0 ? "auto" : _ref$overflow, plain = _ref.plain, responsive = _ref.responsive, restrictFocus = _ref.restrictFocus, _ref$stretch = _ref.stretch, stretch = _ref$stretch === void 0 ? "width" : _ref$stretch, trapFocus = _ref.trapFocus, rest = _objectWithoutPropertiesLoose$9(_ref, _excluded$10);
+  var a11yTitle = _ref.a11yTitle, ariaLabel = _ref["aria-label"], _ref$align = _ref.align, align = _ref$align === void 0 ? defaultAlign : _ref$align, background = _ref.background, onAlign = _ref.onAlign, children2 = _ref.children, dropTarget = _ref.dropTarget, elevation = _ref.elevation, onClickOutside = _ref.onClickOutside, onEsc = _ref.onEsc, onKeyDown = _ref.onKeyDown, _ref$overflow = _ref.overflow, overflow2 = _ref$overflow === void 0 ? "auto" : _ref$overflow, plain = _ref.plain, responsive = _ref.responsive, restrictFocus = _ref.restrictFocus, _ref$stretch = _ref.stretch, stretch = _ref$stretch === void 0 ? "width" : _ref$stretch, trapFocus = _ref.trapFocus, rest = _objectWithoutPropertiesLoose$a(_ref, _excluded$11);
   var containerTarget = useContext(ContainerTargetContext);
   var theme = useContext(Ge$1) || defaultProps$1.theme;
   var portalContext = useContext(PortalContext) || defaultPortalContext;
@@ -29027,7 +29028,7 @@ var DropContainer = /* @__PURE__ */ forwardRef(function(_ref, ref) {
     if (background || theme.global.drop.background) {
       dark3 = backgroundIsDark(background || theme.global.drop.background, theme);
     }
-    return _extends$4({}, theme, {
+    return _extends$6({}, theme, {
       dark: dark3
     });
   }, [background, theme]);
@@ -29060,10 +29061,10 @@ PropTypes.oneOfType([PropTypes.oneOf(OVERFLOW_VALUES$1), PropTypes.shape({
   horizontal: PropTypes.oneOf(OVERFLOW_VALUES$1),
   vertical: PropTypes.oneOf(OVERFLOW_VALUES$1)
 }), PropTypes.string]);
-var PropType$6 = {};
-var DropPropTypes = PropType$6;
-var _excluded$$ = ["inline", "restrictFocus", "target", "trapFocus"];
-function _objectWithoutPropertiesLoose$8(source, excluded) {
+var PropType$7 = {};
+var DropPropTypes = PropType$7;
+var _excluded$10 = ["inline", "restrictFocus", "target", "trapFocus"];
+function _objectWithoutPropertiesLoose$9(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -29078,7 +29079,7 @@ function _objectWithoutPropertiesLoose$8(source, excluded) {
   return target;
 }
 var Drop = /* @__PURE__ */ forwardRef(function(_ref, ref) {
-  var inline = _ref.inline, restrictFocus = _ref.restrictFocus, dropTarget = _ref.target, _ref$trapFocus = _ref.trapFocus, trapFocus = _ref$trapFocus === void 0 ? true : _ref$trapFocus, rest = _objectWithoutPropertiesLoose$8(_ref, _excluded$$);
+  var inline = _ref.inline, restrictFocus = _ref.restrictFocus, dropTarget = _ref.target, _ref$trapFocus = _ref.trapFocus, trapFocus = _ref$trapFocus === void 0 ? true : _ref$trapFocus, rest = _objectWithoutPropertiesLoose$9(_ref, _excluded$10);
   var theme = useContext(Ge$1) || defaultProps$1.theme;
   var _useState = useState(), originalFocusedElement = _useState[0], setOriginalFocusedElement = _useState[1];
   useEffect(function() {
@@ -29119,8 +29120,8 @@ var Drop = /* @__PURE__ */ forwardRef(function(_ref, ref) {
 });
 Drop.displayName = "Drop";
 Drop.propTypes = DropPropTypes;
-var PropType$5 = {};
-var TipPropTypes = PropType$5;
+var PropType$6 = {};
+var TipPropTypes = PropType$6;
 var Tip = /* @__PURE__ */ forwardRef(function(_ref, tipRef) {
   var children2 = _ref.children, content = _ref.content, dropProps = _ref.dropProps, plain = _ref.plain;
   var theme = useContext(Ge$1);
@@ -29228,10 +29229,10 @@ var StyledStackLayer = styled$3.div.withConfig({
 });
 StyledStackLayer.defaultProps = {};
 Object.setPrototypeOf(StyledStackLayer.defaultProps, defaultProps$1);
-var PropType$4 = {};
-var StackPropTypes = PropType$4;
-var _excluded$_ = ["anchor", "children", "fill", "guidingChild", "interactiveChild"];
-function _objectWithoutPropertiesLoose$7(source, excluded) {
+var PropType$5 = {};
+var StackPropTypes = PropType$5;
+var _excluded$$ = ["anchor", "children", "fill", "guidingChild", "interactiveChild"];
+function _objectWithoutPropertiesLoose$8(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -29264,7 +29265,7 @@ var buildStyledChildren = function buildStyledChildren2(_ref) {
   };
 };
 var Stack = /* @__PURE__ */ forwardRef(function(_ref2, ref) {
-  var anchor = _ref2.anchor, children2 = _ref2.children, fill = _ref2.fill, guidingChild = _ref2.guidingChild, interactiveChild = _ref2.interactiveChild, rest = _objectWithoutPropertiesLoose$7(_ref2, _excluded$_);
+  var anchor = _ref2.anchor, children2 = _ref2.children, fill = _ref2.fill, guidingChild = _ref2.guidingChild, interactiveChild = _ref2.interactiveChild, rest = _objectWithoutPropertiesLoose$8(_ref2, _excluded$$);
   var prunedChildren = Children.toArray(children2).filter(function(c6) {
     return c6;
   });
@@ -29341,10 +29342,10 @@ var StyledText = styled$3("span").withConfig({
 });
 StyledText.defaultProps = {};
 Object.setPrototypeOf(StyledText.defaultProps, defaultProps$1);
-var PropType$3 = {};
-var TextPropTypes = PropType$3;
-var _excluded$Z = ["children", "color", "tag", "as", "tip", "a11yTitle", "truncate"];
-function _objectWithoutPropertiesLoose$6(source, excluded) {
+var PropType$4 = {};
+var TextPropTypes = PropType$4;
+var _excluded$_ = ["children", "color", "tag", "as", "tip", "a11yTitle", "truncate"];
+function _objectWithoutPropertiesLoose$7(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -29359,7 +29360,7 @@ function _objectWithoutPropertiesLoose$6(source, excluded) {
   return target;
 }
 var Text = /* @__PURE__ */ forwardRef(function(_ref, ref) {
-  var children2 = _ref.children, color2 = _ref.color, tag = _ref.tag, as = _ref.as, tipProp = _ref.tip, _ref$a11yTitle = _ref.a11yTitle, a11yTitle = _ref$a11yTitle === void 0 ? typeof tipProp === "string" && tipProp || (tipProp == null ? void 0 : tipProp.content) || void 0 : _ref$a11yTitle, truncate = _ref.truncate, rest = _objectWithoutPropertiesLoose$6(_ref, _excluded$Z);
+  var children2 = _ref.children, color2 = _ref.color, tag = _ref.tag, as = _ref.as, tipProp = _ref.tip, _ref$a11yTitle = _ref.a11yTitle, a11yTitle = _ref$a11yTitle === void 0 ? typeof tipProp === "string" && tipProp || (tipProp == null ? void 0 : tipProp.content) || void 0 : _ref$a11yTitle, truncate = _ref.truncate, rest = _objectWithoutPropertiesLoose$7(_ref, _excluded$_);
   var textRef = useForwardedRef(ref);
   var _useState = useState(false), textTruncated = _useState[0], setTextTruncated = _useState[1];
   useLayoutEffect$1(function() {
@@ -29744,8 +29745,8 @@ var StyledButtonKind = styled$3.button.withConfig({
 });
 StyledButtonKind.defaultProps = {};
 Object.setPrototypeOf(StyledButtonKind.defaultProps, defaultProps$1);
-var _excluded$Y = ["active", "align", "aria-label", "badge", "color", "children", "disabled", "icon", "focusIndicator", "gap", "fill", "href", "justify", "kind", "label", "onBlur", "onClick", "onFocus", "onMouseOut", "onMouseOver", "plain", "primary", "reverse", "secondary", "selected", "size", "tip", "type", "a11yTitle", "as"];
-function _objectWithoutPropertiesLoose$5(source, excluded) {
+var _excluded$Z = ["active", "align", "aria-label", "badge", "color", "children", "disabled", "icon", "focusIndicator", "gap", "fill", "href", "justify", "kind", "label", "onBlur", "onClick", "onFocus", "onMouseOut", "onMouseOver", "plain", "primary", "reverse", "secondary", "selected", "size", "tip", "type", "a11yTitle", "as"];
+function _objectWithoutPropertiesLoose$6(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -29809,7 +29810,7 @@ var getPropertyColor = function getPropertyColor2(property, paths, theme, kind, 
   return result;
 };
 var Button$2 = /* @__PURE__ */ forwardRef(function(_ref, ref) {
-  var active = _ref.active, _ref$align = _ref.align, align = _ref$align === void 0 ? "center" : _ref$align, ariaLabel = _ref["aria-label"], badgeProp = _ref.badge, color2 = _ref.color, children2 = _ref.children, disabled = _ref.disabled, icon = _ref.icon, _ref$focusIndicator = _ref.focusIndicator, focusIndicator = _ref$focusIndicator === void 0 ? true : _ref$focusIndicator, gap2 = _ref.gap, fill = _ref.fill, href = _ref.href, justify = _ref.justify, kindArg = _ref.kind, label = _ref.label, _onBlur = _ref.onBlur, onClick = _ref.onClick, _onFocus = _ref.onFocus, onMouseOut = _ref.onMouseOut, onMouseOver = _ref.onMouseOver, plain = _ref.plain, primary = _ref.primary, reverse = _ref.reverse, secondary = _ref.secondary, selected = _ref.selected, size = _ref.size, tip = _ref.tip, _ref$type = _ref.type, type = _ref$type === void 0 ? "button" : _ref$type, _ref$a11yTitle = _ref.a11yTitle, a11yTitle = _ref$a11yTitle === void 0 ? typeof tip === "string" ? tip : void 0 : _ref$a11yTitle, as = _ref.as, rest = _objectWithoutPropertiesLoose$5(_ref, _excluded$Y);
+  var active = _ref.active, _ref$align = _ref.align, align = _ref$align === void 0 ? "center" : _ref$align, ariaLabel = _ref["aria-label"], badgeProp = _ref.badge, color2 = _ref.color, children2 = _ref.children, disabled = _ref.disabled, icon = _ref.icon, _ref$focusIndicator = _ref.focusIndicator, focusIndicator = _ref$focusIndicator === void 0 ? true : _ref$focusIndicator, gap2 = _ref.gap, fill = _ref.fill, href = _ref.href, justify = _ref.justify, kindArg = _ref.kind, label = _ref.label, _onBlur = _ref.onBlur, onClick = _ref.onClick, _onFocus = _ref.onFocus, onMouseOut = _ref.onMouseOut, onMouseOver = _ref.onMouseOver, plain = _ref.plain, primary = _ref.primary, reverse = _ref.reverse, secondary = _ref.secondary, selected = _ref.selected, size = _ref.size, tip = _ref.tip, _ref$type = _ref.type, type = _ref$type === void 0 ? "button" : _ref$type, _ref$a11yTitle = _ref.a11yTitle, a11yTitle = _ref$a11yTitle === void 0 ? typeof tip === "string" ? tip : void 0 : _ref$a11yTitle, as = _ref.as, rest = _objectWithoutPropertiesLoose$6(_ref, _excluded$Z);
   var theme = useContext(Ge$1) || defaultProps$1.theme;
   var _useState = useState(), focus = _useState[0], setFocus = _useState[1];
   var _useState2 = useState(false), hover = _useState2[0], setHover = _useState2[1];
@@ -30034,8 +30035,8 @@ var Button$2 = /* @__PURE__ */ forwardRef(function(_ref, ref) {
 });
 Button$2.displayName = "Button";
 Button$2.propTypes = ButtonPropTypes;
-var PropType$2 = {};
-var CollapsiblePropTypes = PropType$2;
+var PropType$3 = {};
+var CollapsiblePropTypes = PropType$3;
 var AnimatedBox = styled$3(Box).withConfig({
   displayName: "Collapsible__AnimatedBox",
   componentId: "sc-15kniua-0"
@@ -30230,10 +30231,32 @@ var defaultValue = {
   }
 };
 var MessageContext = /* @__PURE__ */ React__default.createContext(defaultValue);
-var PropType$1 = {};
-var ResponsiveContextPropTypes = PropType$1;
+var PropType$2 = {};
+var ResponsiveContextPropTypes = PropType$2;
 var ResponsiveContext = /* @__PURE__ */ React__default.createContext(void 0);
 ResponsiveContext.propTypes = ResponsiveContextPropTypes;
+function _extends$5() {
+  _extends$5 = Object.assign ? Object.assign.bind() : function(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+    return target;
+  };
+  return _extends$5.apply(this, arguments);
+}
+var Nav = function Nav2(_ref) {
+  var rest = _extends$5({}, _ref);
+  return /* @__PURE__ */ React__default.createElement(Box, _extends$5({
+    as: "nav",
+    flex: false,
+    gap: "medium"
+  }, rest));
+};
 var fullStyle = function fullStyle2(full) {
   if (full === "min")
     return Ce$1(["min-height:100vh;"]);
@@ -30260,10 +30283,10 @@ var StyledGrommet = styled$3.div.withConfig({
 StyledGrommet.defaultProps = {};
 Object.setPrototypeOf(StyledGrommet.defaultProps, defaultProps$1);
 var OptionsContext = /* @__PURE__ */ React__default.createContext({});
-var PropType = {};
-var GrommetPropTypes = PropType;
-var _excluded$X = ["children", "full", "containerTarget", "theme", "options", "messages"];
-function _objectWithoutPropertiesLoose$4(source, excluded) {
+var PropType$1 = {};
+var GrommetPropTypes = PropType$1;
+var _excluded$Y = ["children", "full", "containerTarget", "theme", "options", "messages"];
+function _objectWithoutPropertiesLoose$5(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -30292,7 +30315,7 @@ var deviceResponsive = function deviceResponsive2(userAgent, theme) {
 };
 var defaultOptions = {};
 var Grommet = /* @__PURE__ */ forwardRef(function(props, ref) {
-  var children2 = props.children, full = props.full, _props$containerTarge = props.containerTarget, containerTarget = _props$containerTarge === void 0 ? typeof document === "object" ? document.body : void 0 : _props$containerTarge, themeProp = props.theme, _props$options = props.options, options = _props$options === void 0 ? defaultOptions : _props$options, messagesProp = props.messages, rest = _objectWithoutPropertiesLoose$4(props, _excluded$X);
+  var children2 = props.children, full = props.full, _props$containerTarge = props.containerTarget, containerTarget = _props$containerTarge === void 0 ? typeof document === "object" ? document.body : void 0 : _props$containerTarge, themeProp = props.theme, _props$options = props.options, options = _props$options === void 0 ? defaultOptions : _props$options, messagesProp = props.messages, rest = _objectWithoutPropertiesLoose$5(props, _excluded$Y);
   var background = props.background, dir = props.dir, themeMode = props.themeMode, userAgent = props.userAgent;
   var _useState = useState(), stateResponsive = _useState[0], setResponsive = _useState[1];
   var _useState2 = useState([]), roots = _useState2[0], setRoots = _useState2[1];
@@ -30366,6 +30389,55 @@ var Grommet = /* @__PURE__ */ forwardRef(function(props, ref) {
 });
 Grommet.displayName = "Grommet";
 Grommet.propTypes = GrommetPropTypes;
+var PropType = {};
+var SidebarPropTypes = PropType;
+var _excluded$X = ["children", "footer", "header"];
+function _extends$4() {
+  _extends$4 = Object.assign ? Object.assign.bind() : function(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+    return target;
+  };
+  return _extends$4.apply(this, arguments);
+}
+function _objectWithoutPropertiesLoose$4(source, excluded) {
+  if (source == null)
+    return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0)
+      continue;
+    target[key] = source[key];
+  }
+  return target;
+}
+var Sidebar = function Sidebar2(_ref) {
+  var children2 = _ref.children, footer = _ref.footer, header = _ref.header, rest = _objectWithoutPropertiesLoose$4(_ref, _excluded$X);
+  return /* @__PURE__ */ React__default.createElement(Box, _extends$4({
+    pad: "small",
+    gap: "large",
+    height: {
+      min: "100%"
+    }
+  }, rest), header, /* @__PURE__ */ React__default.createElement(Box, {
+    flex: true
+  }, children2), footer);
+};
+Sidebar.propTypes = SidebarPropTypes;
+Sidebar.defaultProps = {
+  children: void 0,
+  footer: void 0,
+  header: void 0
+};
 let updateQueue = makeQueue();
 const raf = (fn3) => schedule$1(fn3, updateQueue);
 let writeQueue = makeQueue();
@@ -56558,6 +56630,7 @@ const VisualBlock = memo(forwardRef(({
   const setIsEditing = useProgrammingStore((store) => store.updateItemEditing);
   const setIsSelected = useProgrammingStore((store) => store.updateItemSelected);
   const updateItemSimpleProperty = useProgrammingStore((store) => store.updateItemSimpleProperty);
+  const onClick = useProgrammingStore((state) => state.onClick);
   const setLocked = useProgrammingStore((state) => state.setLocked);
   const locked = useProgrammingStore((state) => state.locked);
   const minified = blockSpec.minified && data.dataType === DATA_TYPES.INSTANCE;
@@ -56582,6 +56655,9 @@ const VisualBlock = memo(forwardRef(({
   }
   const inDrawer = parentId === "spawner";
   return /* @__PURE__ */ jsxs(Selectable, {
+    onClick: () => {
+      onClick(data);
+    },
     selected,
     highlightColor,
     className: canDragBlockRFR ? null : "nodrag",
@@ -56678,25 +56754,47 @@ const VisualBlock = memo(forwardRef(({
           }
         }), /* @__PURE__ */ jsx(Box, {
           flex: true,
-          children: !limitedRender ? /* @__PURE__ */ jsx(TextField$1, {
-            size: "small",
-            margin: "none",
-            variant: "outlined",
-            color: "highlightColor",
-            className: canDragBlockRFR ? null : "nodrag",
-            onMouseEnter: editing ? (_2) => setLocked(true) : null,
-            onMouseLeave: editing ? (_2) => setLocked(false) : null,
-            disabled: !data.editing && !((_d = data.refData) == null ? void 0 : _d.editing),
-            value: name ? name : "",
-            onChange: (e2) => {
-              updateItemName(data.refData ? data.refData.id : data.id, e2.target.value);
+          children: !limitedRender ? /* @__PURE__ */ jsx(Tooltip$1, {
+            title: name ? name : "",
+            enterDelay: 2e3,
+            arrow: true,
+            placement: "top",
+            sx: {
+              color: blockSpec.color,
+              fontSize: 50
             },
-            InputProps: {
-              style: {
-                borderRadius: 5,
-                backgroundColor: editing ? `${highlightColor}99` : "#22222299"
+            componentsProps: {
+              tooltip: {
+                sx: {
+                  bgcolor: "common.black",
+                  color: blockSpec.color,
+                  fontSize: 14,
+                  "& .MuiTooltip-arrow": {
+                    color: "common.black"
+                  }
+                }
               }
-            }
+            },
+            children: /* @__PURE__ */ jsx(TextField$1, {
+              size: "small",
+              margin: "none",
+              variant: "outlined",
+              color: "highlightColor",
+              className: canDragBlockRFR ? null : "nodrag",
+              onMouseEnter: editing ? (_2) => setLocked(true) : null,
+              onMouseLeave: editing ? (_2) => setLocked(false) : null,
+              disabled: !data.editing && !((_d = data.refData) == null ? void 0 : _d.editing),
+              value: name ? name : "",
+              onChange: (e2) => {
+                updateItemName(data.refData ? data.refData.id : data.id, e2.target.value);
+              },
+              InputProps: {
+                style: {
+                  borderRadius: 5,
+                  backgroundColor: editing ? `${highlightColor}99` : "#22222299"
+                }
+              }
+            })
           }) : /* @__PURE__ */ jsx(Skeleton$1, {
             variant: "rectangular",
             height: "39px",
@@ -57329,6 +57427,7 @@ const CanvasEdge = ({
   const updateEdgeName = useProgrammingStore((state) => state.updateEdgeName);
   const deleteEdge = useProgrammingStore((state) => state.deleteEdge);
   const toggleEdgeMode = useProgrammingStore((state) => state.toggleEdgeMode);
+  const onClick = useProgrammingStore((state) => state.onClick);
   const edge = useProgrammingStore(useCallback((state) => state.programData[id2], [id2]));
   const bounds = {
     width: 165,
@@ -57349,6 +57448,9 @@ const CanvasEdge = ({
     targetY
   });
   return edge && /* @__PURE__ */ jsxs("g", {
+    onClick: () => {
+      onClick(edge);
+    },
     children: [/* @__PURE__ */ jsx("path", {
       id: id2,
       style: {
@@ -57392,12 +57494,19 @@ const CanvasEdge = ({
             style: {
               width: bounds.width - 40
             },
-            onChange: (v2) => updateEdgeName(edge.id, v2.target.value)
+            onChange: (v2) => updateEdgeName(edge.id, v2.target.value),
+            onClick: (e2) => e2.stopPropagation()
           }), /* @__PURE__ */ jsx(EdgeButton, {
-            onClick: () => toggleEdgeMode(edge.id),
+            onClick: (e2) => {
+              toggleEdgeMode(edge.id);
+              e2.stopPropagation();
+            },
             children: edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? /* @__PURE__ */ jsx(FiType, {}) : /* @__PURE__ */ jsx(FiHash, {})
           }), /* @__PURE__ */ jsx(EdgeButton, {
-            onClick: () => deleteEdge(edge.id),
+            onClick: (e2) => {
+              deleteEdge(edge.id);
+              e2.stopPropagation();
+            },
             children: /* @__PURE__ */ jsx(FiTrash2, {})
           })]
         })
@@ -57778,41 +57887,30 @@ const SectionStrip = ({
 }) => {
   const drawers = useProgrammingStore((store) => store.programSpec.drawers);
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
-  return /* @__PURE__ */ jsx(Box, {
-    gap: "xxsmall",
-    pad: "xxsmall",
-    direction: "column",
-    width: "60px",
-    style: {
-      zIndex: 100
-    },
-    children: drawers.map((drawer, drawerIdx) => {
-      const Icon = drawer.icon;
-      return /* @__PURE__ */ jsx(Tooltip$1, {
-        title: /* @__PURE__ */ jsx(Typography$1, {
-          children: drawer.title
-        }),
-        arrow: true,
-        placement: "right",
-        children: /* @__PURE__ */ jsx(Button$2, {
-          primary: true,
-          focusIndicator: false,
-          hoverIndicator: activeDrawer === drawerIdx ? highlightColor : "#414141",
-          color: activeDrawer === drawerIdx ? highlightColor : "#313131",
-          margin: {
-            top: "xsmall",
-            bottom: "none",
-            left: "xsmall",
-            right: "xsmall"
-          },
-          round: "small",
-          onClick: () => {
-            setSearchTerm("");
-            setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
-          },
-          icon: /* @__PURE__ */ jsx(Icon, {})
-        }, `${drawer.title}-${drawerIdx}-button`)
-      }, `${drawer.title}-${drawerIdx}-drawer-tt`);
+  return /* @__PURE__ */ jsx(Sidebar, {
+    children: /* @__PURE__ */ jsx(Nav, {
+      gap: "xxsmall",
+      children: drawers.map((drawer, drawerIdx) => {
+        const Icon = drawer.icon;
+        return /* @__PURE__ */ jsx(Tooltip$1, {
+          title: /* @__PURE__ */ jsx(Typography$1, {
+            children: drawer.title
+          }),
+          arrow: true,
+          placement: "right",
+          children: /* @__PURE__ */ jsx(IconButton$1, {
+            size: "large",
+            color: activeDrawer === drawerIdx ? "highlightColor" : "vibrant",
+            onClick: () => {
+              setSearchTerm("");
+              setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
+            },
+            children: /* @__PURE__ */ jsx(Icon, {
+              width: 30
+            })
+          })
+        }, `${drawer.title}-${drawerIdx}-drawer-tt`);
+      })
     })
   });
 };
@@ -57820,12 +57918,12 @@ const BlockPanel = ({
   searchTerm,
   setSearchTerm,
   drawerWidth,
-  highlightColor,
-  height: height2
+  highlightColor
 }) => {
   const drawers = useProgrammingStore((store) => store.programSpec.drawers);
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
-  const blocks = useProgrammingStore((store) => {
+  const [scrollContainerRef, scrollContainerBounds] = useMeasure();
+  const blocks = useProgrammingStore(useCallback((store) => {
     let blocks2 = [];
     if (activeDrawer !== null) {
       const drawer = store.programSpec.drawers[activeDrawer];
@@ -57844,17 +57942,16 @@ const BlockPanel = ({
       }
     }
     return blocks2.filter((block) => block.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === "");
-  });
+  }, [activeDrawer, searchTerm]));
   return /* @__PURE__ */ jsxs(Box, {
+    height: "100%",
     direction: "column",
     width: `${drawerWidth}px`,
-    height: "100%",
     background: "#222222ee",
     children: [/* @__PURE__ */ jsxs(Box, {
       background: "#44444499",
       direction: "column",
       pad: "small",
-      height: "110px",
       children: [/* @__PURE__ */ jsxs(Box, {
         direction: "row",
         justify: "between",
@@ -57864,10 +57961,9 @@ const BlockPanel = ({
           children: /* @__PURE__ */ jsx(Text, {
             children: activeDrawer !== null && drawers[activeDrawer].title
           })
-        }), activeDrawer !== null && drawers[activeDrawer].dataType === DATA_TYPES.REFERENCE && /* @__PURE__ */ jsx(Button$2, {
-          secondary: true,
+        }), activeDrawer !== null && drawers[activeDrawer].dataType === DATA_TYPES.REFERENCE && /* @__PURE__ */ jsx(IconButton$1, {
           onClick: () => addInstance(drawers[activeDrawer].objectType),
-          icon: /* @__PURE__ */ jsx(FiPlus, {})
+          children: /* @__PURE__ */ jsx(FiPlus, {})
         })]
       }), /* @__PURE__ */ jsx(TextField$1, {
         size: "small",
@@ -57886,34 +57982,39 @@ const BlockPanel = ({
           })
         }
       })]
-    }), /* @__PURE__ */ jsx(ScrollRegion, {
-      height: height2 - 110,
-      width: drawerWidth,
-      vertical: true,
-      children: blocks.map((block, idx) => /* @__PURE__ */ jsx(Box, {
-        animation: {
-          type: "fadeIn",
-          delay: idx * 30
-        },
-        style: {
-          marginBottom: 5,
-          width: drawerWidth - 10
-        },
-        children: /* @__PURE__ */ jsx(Block, {
-          staticData: block,
-          parentId: "spawner",
-          bounded: true,
-          highlightColor,
-          context: [],
-          interactionDisabled: true,
-          fieldInfo: {
-            name: "",
-            value: null,
-            accepts: [],
-            isSpawner: true
-          }
-        })
-      }, block.id))
+    }), /* @__PURE__ */ jsx(Box, {
+      ref: scrollContainerRef,
+      flex: true,
+      direction: "column",
+      children: /* @__PURE__ */ jsx(ScrollRegion, {
+        height: scrollContainerBounds.height,
+        width: drawerWidth,
+        vertical: true,
+        children: blocks.map((block, idx) => /* @__PURE__ */ jsx(Box, {
+          animation: {
+            type: "fadeIn",
+            delay: idx * 30
+          },
+          style: {
+            marginBottom: 5,
+            width: drawerWidth - 10
+          },
+          children: /* @__PURE__ */ jsx(Block, {
+            staticData: block,
+            parentId: "spawner",
+            bounded: true,
+            highlightColor,
+            context: [],
+            interactionDisabled: true,
+            fieldInfo: {
+              name: "",
+              value: null,
+              accepts: [],
+              isSpawner: true
+            }
+          })
+        }, block.id))
+      })
     })]
   });
 };
@@ -57923,13 +58024,12 @@ const Contents = ({
   snapToGrid
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [envRef, envBounds] = useMeasure();
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
   const setActiveDrawer = useProgrammingStore((store) => store.setActiveDrawer);
   return /* @__PURE__ */ jsxs(Box, {
-    ref: envRef,
     flex: true,
     direction: "row",
+    height: "100%",
     pad: "none",
     style: {
       overflow: "hidden"
@@ -57940,18 +58040,18 @@ const Contents = ({
       setSearchTerm
     }), /* @__PURE__ */ jsx(AnimatePresence, {
       children: activeDrawer !== null && /* @__PURE__ */ jsx(motion.div, {
-        layout: true,
         initial: {
-          width: 0
+          width: 0,
+          overflow: "hidden"
         },
         animate: {
           width: drawerWidth
         },
         exit: {
-          width: 0
+          width: 0,
+          overflow: "hidden"
         },
         children: /* @__PURE__ */ jsx(BlockPanel, {
-          height: envBounds.height,
           searchTerm,
           drawerWidth,
           highlightColor,
@@ -60106,6 +60206,10 @@ function Environment({
       quiet: {
         main: "#444",
         darker: "#333"
+      },
+      vibrant: {
+        main: "#fff",
+        darker: "#ddd"
       }
     }
   });

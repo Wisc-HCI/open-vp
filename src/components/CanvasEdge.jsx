@@ -1,8 +1,5 @@
 import React, { useCallback } from "react";
-import {
-  getSmoothStepPath,
-  getEdgeCenter,
-} from "react-flow-renderer";
+import { getSmoothStepPath, getEdgeCenter } from "react-flow-renderer";
 import { useProgrammingStore } from "./ProgrammingContext";
 import { Box } from "grommet";
 import { FiTrash2, FiType, FiHash } from "react-icons/fi";
@@ -10,25 +7,25 @@ import styled from "styled-components";
 import { SIMPLE_PROPERTY_TYPES } from "./Constants";
 
 const EdgeButton = styled.button({
-  all: 'unset',
-  fontFamily: 'inherit',
-  borderRadius: '100%',
-  height: '20px',
-  width: '20px',
-  display: 'inherit',
-  padding: '3px',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: 'white',
-  cursor: 'pointer',
+  all: "unset",
+  fontFamily: "inherit",
+  borderRadius: "100%",
+  height: "20px",
+  width: "20px",
+  display: "inherit",
+  padding: "3px",
+  alignItems: "center",
+  justifyContent: "center",
+  color: "white",
+  cursor: "pointer",
   // backgroundColor: 'darkgrey',
-  '&:hover': { 
-    backgroundColor: '#ffffff22'
+  "&:hover": {
+    backgroundColor: "#ffffff22",
   },
-  '&:focus': { 
-    boxShadow: '0 0 0 2px darkgrey'
+  "&:focus": {
+    boxShadow: "0 0 0 2px darkgrey",
   },
-})
+});
 
 const EdgeField = styled.input`
   border-width: 0;
@@ -57,11 +54,10 @@ export const DrawingCanvasEdge = ({
   targetX,
   targetY,
   targetPosition,
-  style = {}
+  style = {},
   // connectionLineType,
   // connectionLineStyle,
 }) => {
-
   const edgePath = getSmoothStepPath({
     sourceX,
     sourceY,
@@ -80,10 +76,17 @@ export const DrawingCanvasEdge = ({
         className="animated"
         d={edgePath}
       />
-      <circle cx={targetX} cy={targetY} fill="#fff" r={3} stroke="#222" strokeWidth={1.5} />
+      <circle
+        cx={targetX}
+        cy={targetY}
+        fill="#fff"
+        r={3}
+        stroke="#222"
+        strokeWidth={1.5}
+      />
     </g>
-  )
-}
+  );
+};
 
 export const CanvasEdge = ({
   id,
@@ -98,7 +101,8 @@ export const CanvasEdge = ({
 }) => {
   const updateEdgeName = useProgrammingStore((state) => state.updateEdgeName);
   const deleteEdge = useProgrammingStore((state) => state.deleteEdge);
-  const toggleEdgeMode = useProgrammingStore(state=>state.toggleEdgeMode);
+  const toggleEdgeMode = useProgrammingStore((state) => state.toggleEdgeMode);
+  const onClick = useProgrammingStore((state) => state.onClick);
   const edge = useProgrammingStore(
     useCallback((state) => state.programData[id], [id])
   );
@@ -124,11 +128,15 @@ export const CanvasEdge = ({
 
   return (
     edge && (
-      <g>
+      <g
+        onClick={() => {
+          onClick(edge);
+        }}
+      >
         <path
           id={id}
           style={{ ...style, strokeWidth: 2 }}
-          className='animated react-flow__edge-path'
+          className="animated react-flow__edge-path"
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -164,16 +172,33 @@ export const CanvasEdge = ({
               alignContent="baseline"
             >
               <EdgeField
-                type={edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? 'number' : null}
+                type={
+                  edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? "number" : null
+                }
                 className="nodrag"
                 value={edge.name}
                 style={{ width: bounds.width - 40 }}
                 onChange={(v) => updateEdgeName(edge.id, v.target.value)}
+                onClick={(e) => e.stopPropagation()}
               />
-              <EdgeButton onClick={() => toggleEdgeMode(edge.id)}>
-                {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? <FiType /> : <FiHash/>}
+              <EdgeButton
+                onClick={(e) => {
+                  toggleEdgeMode(edge.id);
+                  e.stopPropagation();
+                }}
+              >
+                {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? (
+                  <FiType />
+                ) : (
+                  <FiHash />
+                )}
               </EdgeButton>
-              <EdgeButton onClick={() => deleteEdge(edge.id)}>
+              <EdgeButton
+                onClick={(e) => {
+                  deleteEdge(edge.id);
+                  e.stopPropagation();
+                }}
+              >
                 <FiTrash2 />
               </EdgeButton>
             </Box>

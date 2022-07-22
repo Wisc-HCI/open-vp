@@ -337,6 +337,7 @@ const immer = (config) => (set, get, api) =>
   );
 
 export const ProgrammingSlice = (set, get) => ({
+  onClick: (entryInfo) => console.log(`Clicked Entry:`, entryInfo),
   modalBlock: {block: null,context:[]},
   setModalBlock: (block,context) => set({ modalBlock: {block,context}}),
   locked: false,

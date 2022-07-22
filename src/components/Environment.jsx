@@ -2,7 +2,6 @@ import React from "react";
 // import { Canvas } from "./Canvas";
 import { Contents } from "./Contents";
 import { DragLayer } from "./DragLayer";
-// import { HTML5Backend } from "react-dnd-html5-backend";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
@@ -31,6 +30,10 @@ export default function Environment({
         main: '#444',
         darker: '#333',
       },
+      vibrant: {
+        main: '#fff',
+        darker: '#ddd'
+      }
     },
   });
 
