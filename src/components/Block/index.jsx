@@ -7,6 +7,7 @@ import { PreviewBlock } from "./PreviewBlock";
 import { VisualBlock } from "./VisualBlock";
 import { DATA_TYPES } from "..";
 import { combinedBlockData } from "../Generators";
+import { stringEquality } from "./Utility";
 
 const Block = memo(
   ({
@@ -27,7 +28,8 @@ const Block = memo(
       useCallback(
         (state) => combinedBlockData(state, staticData, id),
         [id, staticData]
-      )
+      ),
+      stringEquality
     );
 
     const locked = useProgrammingStore((state) => state.locked);

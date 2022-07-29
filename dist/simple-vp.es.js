@@ -151,8 +151,10 @@ withSelector_production_min.useSyncExternalStoreWithSelector = function(a2, b2, 
 {
   withSelector.exports = withSelector_production_min;
 }
+var useSyncExternalStoreExports = withSelector.exports;
+const { useSyncExternalStoreWithSelector } = useSyncExternalStoreExports;
 function useStore$1(api, selector18 = api.getState, equalityFn) {
-  const slice2 = withSelector.exports.useSyncExternalStoreWithSelector(api.subscribe, api.getState, api.getServerState || api.getState, selector18, equalityFn);
+  const slice2 = useSyncExternalStoreWithSelector(api.subscribe, api.getState, api.getServerState || api.getState, selector18, equalityFn);
   useDebugValue(slice2);
   return slice2;
 }
@@ -164,6 +166,30 @@ const createImpl = (createState2) => {
 };
 const create$2 = (createState2) => createState2 ? createImpl(createState2) : createImpl;
 var create$1$1 = create$2;
+const subscribeWithSelectorImpl = (fn3) => (set2, get2, api) => {
+  const origSubscribe = api.subscribe;
+  api.subscribe = (selector18, optListener, options) => {
+    let listener = selector18;
+    if (optListener) {
+      const equalityFn = (options == null ? void 0 : options.equalityFn) || Object.is;
+      let currentSlice = selector18(api.getState());
+      listener = (state) => {
+        const nextSlice = selector18(state);
+        if (!equalityFn(currentSlice, nextSlice)) {
+          const previousSlice = currentSlice;
+          optListener(currentSlice = nextSlice, previousSlice);
+        }
+      };
+      if (options == null ? void 0 : options.fireImmediately) {
+        optListener(currentSlice, currentSlice);
+      }
+    }
+    return origSubscribe(listener);
+  };
+  const initialState2 = fn3(set2, get2, api);
+  return initialState2;
+};
+const subscribeWithSelector = subscribeWithSelectorImpl;
 function n$3(n2) {
   for (var r2 = arguments.length, t2 = Array(r2 > 1 ? r2 - 1 : 0), e2 = 1; e2 < r2; e2++)
     t2[e2 - 1] = arguments[e2];
@@ -507,7 +533,14 @@ an.setUseProxies.bind(an);
 an.applyPatches.bind(an);
 an.createDraft.bind(an);
 an.finishDraft.bind(an);
-var produce = fn;
+const immerImpl = (initializer) => (set2, get2, store) => {
+  store.setState = (updater, replace2, ...a2) => {
+    const nextState = typeof updater === "function" ? fn(updater) : updater;
+    return set2(nextState, replace2, ...a2);
+  };
+  return initializer(store.setState, get2, store);
+};
+const immer = immerImpl;
 var getRandomValues;
 var rnds8 = new Uint8Array(16);
 function rng() {
@@ -6341,12 +6374,9 @@ function deleteChildren(state, data, parentId, fieldInfo) {
   }
   return state;
 }
-const immer = (config2) => (set2, get2, api) => config2((partial, replace2) => {
-  const nextState = typeof partial === "function" ? produce(partial) : partial;
-  return set2(nextState, replace2);
-}, get2, api);
 const ProgrammingSlice = (set2, get2) => ({
-  onClick: (entryInfo) => console.log(`Clicked Entry:`, entryInfo),
+  onVPEClick: (entryInfo) => console.log(`Clicked Entry:`, entryInfo),
+  onOffVPEClick: () => console.log(`Missed VPE Click:`),
   modalBlock: { block: null, context: [] },
   setModalBlock: (block, context) => set2({ modalBlock: { block, context } }),
   locked: false,
@@ -6550,7 +6580,7 @@ const ProgrammingSlice = (set2, get2) => ({
     get2().clock._elapsed = time ? time * 1e3 : 0;
   }
 });
-const ImmerProgrammingSlice = immer(ProgrammingSlice);
+const ImmerProgrammingSlice = subscribeWithSelector(immer(ProgrammingSlice));
 const useDefaultProgrammingStore = create$1$1(ImmerProgrammingSlice);
 var jsxRuntime = { exports: {} };
 var reactJsxRuntime_production_min = {};
@@ -8803,20 +8833,6 @@ function __rest$1(s2, e2) {
         t2[p2[i]] = s2[p2[i]];
     }
   return t2;
-}
-function __values(o2) {
-  var s2 = typeof Symbol === "function" && Symbol.iterator, m2 = s2 && o2[s2], i = 0;
-  if (m2)
-    return m2.call(o2);
-  if (o2 && typeof o2.length === "number")
-    return {
-      next: function() {
-        if (o2 && i >= o2.length)
-          o2 = void 0;
-        return { value: o2 && o2[i++], done: !o2 };
-      }
-    };
-  throw new TypeError(s2 ? "Object is not iterable." : "Symbol.iterator is not defined.");
 }
 function __read(o2, n2) {
   var m2 = typeof Symbol === "function" && o2[Symbol.iterator];
@@ -14762,173 +14778,6 @@ var featureBundle = __assign$1(__assign$1(__assign$1(__assign$1({}, animations),
 var motion = /* @__PURE__ */ createMotionProxy(function(Component, config2) {
   return createDomMotionConfig(Component, config2, featureBundle, createDomVisualElement, HTMLProjectionNode);
 });
-function useIsMounted$1() {
-  var isMounted = useRef(false);
-  useIsomorphicLayoutEffect$1(function() {
-    isMounted.current = true;
-    return function() {
-      isMounted.current = false;
-    };
-  }, []);
-  return isMounted;
-}
-function useForceUpdate$1() {
-  var isMounted = useIsMounted$1();
-  var _a = __read(useState(0), 2), forcedRenderCount = _a[0], setForcedRenderCount = _a[1];
-  var forceRender = useCallback(function() {
-    isMounted.current && setForcedRenderCount(forcedRenderCount + 1);
-  }, [forcedRenderCount]);
-  var deferredForceRender = useCallback(function() {
-    return sync$1.postRender(forceRender);
-  }, [forceRender]);
-  return [deferredForceRender, forcedRenderCount];
-}
-var PresenceChild = function(_a) {
-  var children2 = _a.children, initial = _a.initial, isPresent = _a.isPresent, onExitComplete = _a.onExitComplete, custom = _a.custom, presenceAffectsLayout = _a.presenceAffectsLayout;
-  var presenceChildren = useConstant(newChildrenMap);
-  var id2 = useId$1();
-  var context = useMemo(function() {
-    return {
-      id: id2,
-      initial,
-      isPresent,
-      custom,
-      onExitComplete: function(childId) {
-        var e_1, _a2;
-        presenceChildren.set(childId, true);
-        try {
-          for (var _b = __values(presenceChildren.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
-            var isComplete = _c.value;
-            if (!isComplete)
-              return;
-          }
-        } catch (e_1_1) {
-          e_1 = { error: e_1_1 };
-        } finally {
-          try {
-            if (_c && !_c.done && (_a2 = _b.return))
-              _a2.call(_b);
-          } finally {
-            if (e_1)
-              throw e_1.error;
-          }
-        }
-        onExitComplete === null || onExitComplete === void 0 ? void 0 : onExitComplete();
-      },
-      register: function(childId) {
-        presenceChildren.set(childId, false);
-        return function() {
-          return presenceChildren.delete(childId);
-        };
-      }
-    };
-  }, presenceAffectsLayout ? void 0 : [isPresent]);
-  useMemo(function() {
-    presenceChildren.forEach(function(_2, key) {
-      return presenceChildren.set(key, false);
-    });
-  }, [isPresent]);
-  React.useEffect(function() {
-    !isPresent && !presenceChildren.size && (onExitComplete === null || onExitComplete === void 0 ? void 0 : onExitComplete());
-  }, [isPresent]);
-  return React.createElement(PresenceContext.Provider, { value: context }, children2);
-};
-function newChildrenMap() {
-  return /* @__PURE__ */ new Map();
-}
-var getChildKey = function(child) {
-  return child.key || "";
-};
-function updateChildLookup(children2, allChildren) {
-  children2.forEach(function(child) {
-    var key = getChildKey(child);
-    allChildren.set(key, child);
-  });
-}
-function onlyElements(children2) {
-  var filtered = [];
-  Children.forEach(children2, function(child) {
-    if (isValidElement(child))
-      filtered.push(child);
-  });
-  return filtered;
-}
-var AnimatePresence = function(_a) {
-  var children2 = _a.children, custom = _a.custom, _b = _a.initial, initial = _b === void 0 ? true : _b, onExitComplete = _a.onExitComplete, exitBeforeEnter = _a.exitBeforeEnter, _c = _a.presenceAffectsLayout, presenceAffectsLayout = _c === void 0 ? true : _c;
-  var _d = __read(useForceUpdate$1(), 1), forceRender = _d[0];
-  var forceRenderLayoutGroup = useContext(LayoutGroupContext).forceRender;
-  if (forceRenderLayoutGroup)
-    forceRender = forceRenderLayoutGroup;
-  var isMounted = useIsMounted$1();
-  var filteredChildren = onlyElements(children2);
-  var childrenToRender = filteredChildren;
-  var exiting = /* @__PURE__ */ new Set();
-  var presentChildren = useRef(childrenToRender);
-  var allChildren = useRef(/* @__PURE__ */ new Map()).current;
-  var isInitialRender = useRef(true);
-  useIsomorphicLayoutEffect$1(function() {
-    isInitialRender.current = false;
-    updateChildLookup(filteredChildren, allChildren);
-    presentChildren.current = childrenToRender;
-  });
-  useUnmountEffect(function() {
-    isInitialRender.current = true;
-    allChildren.clear();
-    exiting.clear();
-  });
-  if (isInitialRender.current) {
-    return React.createElement(React.Fragment, null, childrenToRender.map(function(child) {
-      return React.createElement(PresenceChild, { key: getChildKey(child), isPresent: true, initial: initial ? void 0 : false, presenceAffectsLayout }, child);
-    }));
-  }
-  childrenToRender = __spreadArray([], __read(childrenToRender), false);
-  var presentKeys = presentChildren.current.map(getChildKey);
-  var targetKeys = filteredChildren.map(getChildKey);
-  var numPresent = presentKeys.length;
-  for (var i = 0; i < numPresent; i++) {
-    var key = presentKeys[i];
-    if (targetKeys.indexOf(key) === -1) {
-      exiting.add(key);
-    }
-  }
-  if (exitBeforeEnter && exiting.size) {
-    childrenToRender = [];
-  }
-  exiting.forEach(function(key2) {
-    if (targetKeys.indexOf(key2) !== -1)
-      return;
-    var child = allChildren.get(key2);
-    if (!child)
-      return;
-    var insertionIndex = presentKeys.indexOf(key2);
-    var onExit = function() {
-      allChildren.delete(key2);
-      exiting.delete(key2);
-      var removeIndex = presentChildren.current.findIndex(function(presentChild) {
-        return presentChild.key === key2;
-      });
-      presentChildren.current.splice(removeIndex, 1);
-      if (!exiting.size) {
-        presentChildren.current = filteredChildren;
-        if (isMounted.current === false)
-          return;
-        forceRender();
-        onExitComplete && onExitComplete();
-      }
-    };
-    childrenToRender.splice(insertionIndex, 0, React.createElement(PresenceChild, { key: getChildKey(child), isPresent: false, onExitComplete: onExit, custom, presenceAffectsLayout }, child));
-  });
-  childrenToRender = childrenToRender.map(function(child) {
-    var key2 = child.key;
-    return exiting.has(key2) ? child : React.createElement(PresenceChild, { key: getChildKey(child), isPresent: true, presenceAffectsLayout }, child);
-  });
-  if (env !== "production" && exitBeforeEnter && childrenToRender.length > 1) {
-    console.warn("You're attempting to animate multiple children within AnimatePresence, but its exitBeforeEnter prop is set to true. This will lead to odd visual behaviour.");
-  }
-  return React.createElement(React.Fragment, null, exiting.size ? childrenToRender : childrenToRender.map(function(child) {
-    return cloneElement(child);
-  }));
-};
 const transferBlockSelector = (state) => state.transferBlock;
 const DropRegion = ({
   id: id2,
@@ -14975,68 +14824,66 @@ const DropRegion = ({
       display: "flex",
       flex: 1
     },
-    children: /* @__PURE__ */ jsx(AnimatePresence, {
-      children: renderedData && !isPreview ? /* @__PURE__ */ jsx(motion.div, {
-        initial: {
-          scaleY: 0
-        },
-        animate: {
-          scaleY: 1
-        },
+    children: renderedData && !isPreview ? /* @__PURE__ */ jsx(motion.div, {
+      initial: {
+        scaleY: 0
+      },
+      animate: {
+        scaleY: 1
+      },
+      style: {
+        flex: 1,
+        minHeight: minHeight2
+      },
+      children: /* @__PURE__ */ jsx(Block, {
+        staticData: renderedData,
+        idx,
+        parentId,
+        fieldInfo,
+        bounded: true,
         style: {
-          flex: 1,
-          minHeight: minHeight2
+          marginTop: 4,
+          marginBottom: 4
         },
-        children: /* @__PURE__ */ jsx(Block, {
-          staticData: renderedData,
-          idx,
-          parentId,
-          fieldInfo,
-          bounded: true,
-          style: {
-            marginTop: 4,
-            marginBottom: 4
-          },
-          highlightColor,
-          context,
-          limitedRender
-        })
-      }, "not-preview-rendered-data") : renderedData ? /* @__PURE__ */ jsx(motion.div, {
-        initial: {
-          scaleY: 0
-        },
-        animate: {
-          scaleY: 1
-        },
+        highlightColor,
+        context,
+        limitedRender
+      })
+    }, "not-preview-rendered-data") : renderedData ? /* @__PURE__ */ jsx(motion.div, {
+      initial: {
+        scaleY: 0
+      },
+      animate: {
+        scaleY: 1
+      },
+      style: {
+        flex: 1
+      },
+      children: /* @__PURE__ */ jsx(PreviewBlock, {
+        staticData: renderedData,
+        idx,
+        parentId,
+        fieldInfo,
+        bounded: true,
+        highlightColor,
+        context,
         style: {
-          flex: 1
-        },
-        children: /* @__PURE__ */ jsx(PreviewBlock, {
-          staticData: renderedData,
-          idx,
-          parentId,
-          fieldInfo,
-          bounded: true,
-          highlightColor,
-          context,
-          style: {
-            marginBottom: showBuffer ? minHeight2 : null,
-            marginTop: showBuffer ? minHeight2 : null
-          }
-        })
-      }, "preview-rendered-data") : hideText ? null : /* @__PURE__ */ jsx(motion.span, {
-        initial: {
-          scaleY: 0
-        },
-        animate: {
-          scaleY: 1
-        },
-        style: {
-          flex: 1
-        },
-        children: fieldInfo.name
-      }, "field-empty")
-    })
+          marginBottom: showBuffer ? minHeight2 : null,
+          marginTop: showBuffer ? minHeight2 : null
+        }
+      })
+    }, "preview-rendered-data") : hideText ? null : /* @__PURE__ */ jsx(motion.span, {
+      initial: {
+        scaleY: 0
+      },
+      animate: {
+        scaleY: 1
+      },
+      style: {
+        flex: 1
+      },
+      children: fieldInfo.name
+    }, "field-empty")
   });
 };
 const DropZone = ({
@@ -47967,6 +47814,7 @@ const TextField = /* @__PURE__ */ React.forwardRef(function TextField2(inProps, 
   }));
 });
 var TextField$1 = TextField;
+const stringEquality = (e1, e2) => JSON.stringify(e1) === JSON.stringify(e2);
 const DropdownTrigger = ({
   triggerComponent,
   triggerProps,
@@ -48932,7 +48780,7 @@ function createStore$1(createState2) {
     }
   };
   const getState = () => state;
-  const subscribeWithSelector = (listener, selector18 = getState, equalityFn = Object.is) => {
+  const subscribeWithSelector2 = (listener, selector18 = getState, equalityFn = Object.is) => {
     console.warn("[DEPRECATED] Please use `subscribeWithSelector` middleware");
     let currentSlice = selector18(state);
     function listenerToAdd() {
@@ -48947,7 +48795,7 @@ function createStore$1(createState2) {
   };
   const subscribe = (listener, selector18, equalityFn) => {
     if (selector18 || equalityFn) {
-      return subscribeWithSelector(listener, selector18, equalityFn);
+      return subscribeWithSelector2(listener, selector18, equalityFn);
     }
     listeners.add(listener);
     return () => listeners.delete(listener);
@@ -56630,7 +56478,7 @@ const VisualBlock = memo(forwardRef(({
   const setIsEditing = useProgrammingStore((store) => store.updateItemEditing);
   const setIsSelected = useProgrammingStore((store) => store.updateItemSelected);
   const updateItemSimpleProperty = useProgrammingStore((store) => store.updateItemSimpleProperty);
-  const onClick = useProgrammingStore((state) => state.onClick);
+  const onClick = useProgrammingStore((state) => state.onVPEClick);
   const setLocked = useProgrammingStore((state) => state.setLocked);
   const locked = useProgrammingStore((state) => state.locked);
   const minified = blockSpec.minified && data.dataType === DATA_TYPES.INSTANCE;
@@ -56655,8 +56503,9 @@ const VisualBlock = memo(forwardRef(({
   }
   const inDrawer = parentId === "spawner";
   return /* @__PURE__ */ jsxs(Selectable, {
-    onClick: () => {
+    onClick: (e2) => {
       onClick(data);
+      e2.stopPropagation();
     },
     selected,
     highlightColor,
@@ -57279,7 +57128,7 @@ const Block = memo(({
   interactionDisabled,
   limitedRender
 }) => {
-  const [data, typeSpec, progress2] = useProgrammingStore(useCallback((state) => combinedBlockData(state, staticData, id2), [id2, staticData]));
+  const [data, typeSpec, progress2] = useProgrammingStore(useCallback((state) => combinedBlockData(state, staticData, id2), [id2, staticData]), stringEquality);
   const locked = useProgrammingStore((state) => state.locked);
   const blockContext = data.arguments ? data.arguments : [];
   const wholeContext = [...context, ...blockContext];
@@ -57707,6 +57556,7 @@ function findScrollContainers(element) {
 }
 const keys = ["x", "y", "top", "bottom", "left", "right", "width", "height"];
 const areBoundsEqual = (a2, b2) => keys.every((key) => a2[key] === b2[key]);
+const typeToBlockField = (dataType) => dataType === DATA_TYPES.INSTANCE ? "instanceBlock" : dataType === DATA_TYPES.CALL ? "callBlock" : dataType === DATA_TYPES.REFERENCE ? "referenceBlock" : null;
 const CanvasNode = ({
   data
 }) => {
@@ -57734,12 +57584,16 @@ const Canvas = ({
   const setLocked = useProgrammingStore((state) => state.setLocked);
   const createEdge = useProgrammingStore((state) => state.createEdge);
   const validateEdge = useProgrammingStore((state) => state.validateEdge);
+  const onOffClick = useProgrammingStore((state) => state.onOffVPEClick);
   const setConnectionInfo = useProgrammingStore((state) => state.setConnectionInfo);
-  const nodes = useProgrammingStore((state) => Object.values(state.programData).filter((data) => data.dataType !== DATA_TYPES.CONNECTION).map((data) => {
+  const nodes = useProgrammingStore((state) => Object.values(state.programData).filter((data) => {
+    var _a;
+    return data.dataType !== DATA_TYPES.CONNECTION && ((_a = state.programSpec.objectTypes[data.type][typeToBlockField(data.dataType)]) == null ? void 0 : _a.onCanvas);
+  }).map((data) => {
     var _a, _b;
     const typeSpec = state.programSpec.objectTypes[data.type];
     const progress2 = state.executionData[data.id];
-    const blockType = data.dataType === DATA_TYPES.INSTANCE ? "instanceBlock" : data.dataType === DATA_TYPES.CALL ? "callBlock" : data.dataType === DATA_TYPES.REFERENCE ? "referenceBlock" : "nullBlock";
+    const blockType = typeToBlockField(data.dataType);
     const color2 = (_a = state.programSpec.objectTypes[data.type][blockType]) == null ? void 0 : _a.color;
     const onCanvas = (_b = state.programSpec.objectTypes[data.type][blockType]) == null ? void 0 : _b.onCanvas;
     const ref2 = data.ref ? state.programData[data.ref] : null;
@@ -57770,7 +57624,7 @@ const Canvas = ({
   }).filter((data) => {
     var _a;
     return (_a = data.data.typeSpec) == null ? void 0 : _a.onCanvas;
-  }));
+  }), stringEquality);
   const edges = useProgrammingStore((state) => {
     return Object.values(state.programData).filter((data) => data.dataType === DATA_TYPES.CONNECTION).map((data) => ({
       id: data.id,
@@ -57820,6 +57674,7 @@ const Canvas = ({
       maxZoom: 1,
       minZoom: 0.25,
       nodesConnectable: true,
+      onClick: () => onOffClick(),
       nodeTypes: useMemo(() => ({
         canvasNode: CanvasNode
       }), []),
@@ -57881,7 +57736,6 @@ const Canvas = ({
   });
 };
 const SectionStrip = ({
-  highlightColor,
   setSearchTerm,
   setActiveDrawer
 }) => {
@@ -57922,27 +57776,28 @@ const BlockPanel = ({
 }) => {
   const drawers = useProgrammingStore((store) => store.programSpec.drawers);
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
-  const [scrollContainerRef, scrollContainerBounds] = useMeasure();
-  const blocks = useProgrammingStore(useCallback((store) => {
-    let blocks2 = [];
+  const addInstance = useProgrammingStore((store) => store.addInstance);
+  const [entries, contentType, objectType, objectTypeInfo] = useProgrammingStore((store) => {
     if (activeDrawer !== null) {
       const drawer = store.programSpec.drawers[activeDrawer];
       if (drawer.dataType === DATA_TYPES.INSTANCE) {
-        drawer.objectTypes.forEach((objectType) => {
-          blocks2.push(instanceTemplateFromSpec(objectType, store.programSpec.objectTypes[objectType]));
-        });
-      } else if (drawer.dataType === DATA_TYPES.REFERENCE) {
-        Object.values(store.programData).filter((d2) => d2.dataType === DATA_TYPES.INSTANCE && d2.type === drawer.objectType).forEach((instanceReference) => {
-          blocks2.push(referenceTemplateFromSpec(drawer.objectType, instanceReference, store.programSpec.objectTypes[drawer.objectType]));
-        });
-      } else if (drawer.dataType === DATA_TYPES.CALL) {
-        Object.values(store.programData).filter((d2) => d2.dataType === DATA_TYPES.INSTANCE && d2.type === drawer.objectType).forEach((functionReference) => {
-          blocks2.push(callTemplateFromSpec(drawer.objectType, functionReference, store.programSpec.objectTypes[drawer.objectType]));
-        });
+        let entries2 = drawer.objectTypes.map((t2) => ({
+          blockType: t2,
+          ...store.programSpec.objectTypes[t2]
+        }));
+        return [entries2, drawer.dataType, null, null];
+      } else if (drawer.dataType === DATA_TYPES.REFERENCE || drawer.dataType === DATA_TYPES.CALL) {
+        let entries2 = Object.values(store.programData).filter((d2) => d2.dataType === DATA_TYPES.INSTANCE && d2.type === drawer.objectType);
+        return [entries2, drawer.dataType, drawer.objectType, store.programSpec.objectTypes[drawer.objectType]];
+      } else {
+        return [[], null, null, null];
       }
+    } else {
+      return [[], null, null, null];
     }
-    return blocks2.filter((block) => block.name.toLowerCase().includes(searchTerm.toLowerCase()) || searchTerm === "");
-  }, [activeDrawer, searchTerm]));
+  }, stringEquality);
+  const blocks = contentType === DATA_TYPES.INSTANCE ? entries.map((e2) => instanceTemplateFromSpec(e2.blockType, e2)) : contentType === DATA_TYPES.REFERENCE ? entries.map((e2) => referenceTemplateFromSpec(objectType, e2, objectTypeInfo)) : contentType === DATA_TYPES.CALL ? entries.map((e2) => callTemplateFromSpec(objectType, e2, objectTypeInfo)) : [];
+  const [scrollContainerRef, scrollContainerBounds] = useMeasure();
   return /* @__PURE__ */ jsxs(Box, {
     height: "100%",
     direction: "column",
@@ -57990,11 +57845,7 @@ const BlockPanel = ({
         height: scrollContainerBounds.height,
         width: drawerWidth,
         vertical: true,
-        children: blocks.map((block, idx) => /* @__PURE__ */ jsx(Box, {
-          animation: {
-            type: "fadeIn",
-            delay: idx * 30
-          },
+        children: blocks.filter((b2) => searchTerm === "" || b2.name.toLowerCase().includes(searchTerm.toLowerCase())).map((block, idx) => /* @__PURE__ */ jsx(Box, {
           style: {
             marginBottom: 5,
             width: drawerWidth - 10
@@ -58021,7 +57872,8 @@ const BlockPanel = ({
 const Contents = ({
   highlightColor,
   drawerWidth = 235,
-  snapToGrid
+  snapToGrid,
+  animateDrawer
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
@@ -58038,27 +57890,30 @@ const Contents = ({
       highlightColor,
       setActiveDrawer,
       setSearchTerm
-    }), /* @__PURE__ */ jsx(AnimatePresence, {
-      children: activeDrawer !== null && /* @__PURE__ */ jsx(motion.div, {
-        initial: {
-          width: 0,
-          overflow: "hidden"
-        },
-        animate: {
-          width: drawerWidth
-        },
-        exit: {
-          width: 0,
-          overflow: "hidden"
-        },
-        children: /* @__PURE__ */ jsx(BlockPanel, {
-          searchTerm,
-          drawerWidth,
-          highlightColor,
-          setSearchTerm
-        })
+    }), animateDrawer && activeDrawer !== null ? /* @__PURE__ */ jsx(motion.div, {
+      initial: {
+        width: 0,
+        overflow: "hidden"
+      },
+      animate: {
+        width: drawerWidth
+      },
+      exit: {
+        width: 0,
+        overflow: "hidden"
+      },
+      children: /* @__PURE__ */ jsx(BlockPanel, {
+        searchTerm,
+        drawerWidth,
+        highlightColor,
+        setSearchTerm
       })
-    }), /* @__PURE__ */ jsx(Box, {
+    }) : activeDrawer !== null ? /* @__PURE__ */ jsx(BlockPanel, {
+      searchTerm,
+      drawerWidth,
+      highlightColor,
+      setSearchTerm
+    }) : null, /* @__PURE__ */ jsx(Box, {
       flex: true,
       height: "100%",
       children: /* @__PURE__ */ jsx(Canvas, {
@@ -60194,7 +60049,8 @@ function Environment({
   height: height2,
   width: width2,
   drawerWidth,
-  snapToGrid
+  snapToGrid,
+  animateDrawer = true
 }) {
   const theme = getTheme(highlightColor);
   const muiTheme = createTheme({
@@ -60235,7 +60091,8 @@ function Environment({
               children: /* @__PURE__ */ jsx(Contents, {
                 drawerWidth,
                 highlightColor,
-                snapToGrid
+                snapToGrid,
+                animateDrawer
               })
             }), /* @__PURE__ */ jsx(DragLayer, {
               highlightColor

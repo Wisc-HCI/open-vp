@@ -15,6 +15,17 @@ import { DATA_TYPES } from "./Constants";
 import { referenceTemplateFromSpec } from "./Generators";
 import useMeasure from "react-use-measure";
 import { FiLock, FiUnlock } from "react-icons/fi";
+import { debounce } from "lodash";
+import { stringEquality } from "./Block/Utility";
+
+const typeToBlockField = (dataType) =>
+  dataType === DATA_TYPES.INSTANCE
+    ? "instanceBlock"
+    : dataType === DATA_TYPES.CALL
+    ? "callBlock"
+    : dataType === DATA_TYPES.REFERENCE
+    ? "referenceBlock"
+    : null;
 
 const CanvasNode = ({ data }) => {
   const { highlightColor, progress, ...rest } = data;
@@ -38,23 +49,23 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
   const setLocked = useProgrammingStore((state) => state.setLocked);
   const createEdge = useProgrammingStore((state) => state.createEdge);
   const validateEdge = useProgrammingStore((state) => state.validateEdge);
+  const onOffClick = useProgrammingStore((state) => state.onOffVPEClick);
   const setConnectionInfo = useProgrammingStore(
     (state) => state.setConnectionInfo
   );
   const nodes = useProgrammingStore((state) =>
     Object.values(state.programData)
-      .filter((data) => data.dataType !== DATA_TYPES.CONNECTION)
+      .filter(
+        (data) =>
+          data.dataType !== DATA_TYPES.CONNECTION &&
+          state.programSpec.objectTypes[data.type][
+            typeToBlockField(data.dataType)
+          ]?.onCanvas
+      )
       .map((data) => {
         const typeSpec = state.programSpec.objectTypes[data.type];
         const progress = state.executionData[data.id];
-        const blockType =
-          data.dataType === DATA_TYPES.INSTANCE
-            ? "instanceBlock"
-            : data.dataType === DATA_TYPES.CALL
-            ? "callBlock"
-            : data.dataType === DATA_TYPES.REFERENCE
-            ? "referenceBlock"
-            : "nullBlock";
+        const blockType = typeToBlockField(data.dataType);
         const color =
           state.programSpec.objectTypes[data.type][blockType]?.color;
         const onCanvas =
@@ -86,7 +97,8 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
           },
         };
       })
-      .filter((data) => data.data.typeSpec?.onCanvas)
+      .filter((data) => data.data.typeSpec?.onCanvas),
+      stringEquality
   );
 
   const edges = useProgrammingStore((state) => {
@@ -143,13 +155,20 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
   return (
     <div
       ref={ref}
-      style={{ backgroundColor: "black", display: "flex", flex: 1, height:'100%', width:'100%' }}
+      style={{
+        backgroundColor: "black",
+        display: "flex",
+        flex: 1,
+        height: "100%",
+        width: "100%",
+      }}
     >
       <ReactFlow
         ref={drop}
         maxZoom={1}
         minZoom={0.25}
         nodesConnectable
+        onClick={() => onOffClick()}
         // elementsSelectable={false}
         nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}
         edgeTypes={useMemo(() => ({ canvasEdge: CanvasEdge }), [])}
@@ -157,12 +176,14 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         edges={edges}
         connectionLineComponent={DrawingCanvasEdge}
         onConnect={(data) => {
-          if (validateEdge(
-            data.source,
-            data.sourceHandle,
-            data.target,
-            data.targetHandle
-          )) {
+          if (
+            validateEdge(
+              data.source,
+              data.sourceHandle,
+              data.target,
+              data.targetHandle
+            )
+          ) {
             // console.log('valid edge found')
             createEdge(
               data.source,
@@ -170,7 +191,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
               data.target,
               data.targetHandle
             );
-          } 
+          }
         }}
         onConnectStart={(_, data) => {
           setConnectionInfo(data);

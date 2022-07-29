@@ -105,7 +105,7 @@ export const VisualBlock = memo(
       const updateItemSimpleProperty = useProgrammingStore(
         (store) => store.updateItemSimpleProperty
       );
-      const onClick = useProgrammingStore((state) => state.onClick);
+      const onClick = useProgrammingStore((state) => state.onVPEClick);
       const setLocked = useProgrammingStore((state) => state.setLocked);
       const locked = useProgrammingStore((state) => state.locked);
 
@@ -168,8 +168,9 @@ export const VisualBlock = memo(
           //   setModalBlock(data.id,context);
           //   e.stopPropagation()
           // }}
-          onClick={() => {
+          onClick={(e) => {
             onClick(data);
+            e.stopPropagation();
           }}
           selected={selected}
           highlightColor={highlightColor}

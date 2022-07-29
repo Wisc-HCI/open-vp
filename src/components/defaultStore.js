@@ -1,5 +1,7 @@
 import create from "zustand";
-import produce from "immer";
+import { subscribeWithSelector } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+// import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
 import { DATA_TYPES, TYPES } from ".";
 import { remove, pickBy, omitBy } from "lodash";
@@ -18,6 +20,36 @@ const randomColor = () => {
 const DEFAULT_PROGRAM_SPEC = {
   drawers: [],
   objectTypes: {},
+};
+
+const log = (config) => (set, get, api) =>
+  config(
+    (...args) => {
+      console.log("  applying", args);
+      set(...args);
+      console.log("  new state", get());
+    },
+    get,
+    api
+  );
+
+const subscribeWithCustomSelector = (fn) => (set, get, api) => {
+  const origSubscribe = api.subscribe;
+  api.subscribe = (selector, optListener, options) => {
+    let listener = selector; // if no selector
+    const equalityFn = options?.equalityFn || Object.is;
+    let currentSlice = selector(api.getState());
+    listener = (state) => {
+      const nextSlice = selector(state);
+      if (!equalityFn(currentSlice, nextSlice)) {
+        const previousSlice = currentSlice;
+        optListener((currentSlice = nextSlice), previousSlice);
+      }
+    };
+    return origSubscribe(listener);
+  };
+  const initialState = fn(set, get, api);
+  return initialState;
 };
 
 const generateUuid = (type) => {
@@ -60,7 +92,7 @@ export function move(array, moveIndex, toIndex) {
 }
 
 const pruneEdgesFromBlock = (state, blockId) => {
-  state.programData = omitBy(state.programData,(data) => {
+  state.programData = omitBy(state.programData, (data) => {
     if (
       data.dataType === DATA_TYPES.CONNECTION &&
       (data.parent.id === blockId || data.child.id === blockId)
@@ -70,7 +102,7 @@ const pruneEdgesFromBlock = (state, blockId) => {
       return false;
     }
   });
-  return state
+  return state;
 };
 
 export function deleteFromChildren(state, idsToDelete, parentData) {
@@ -84,7 +116,7 @@ export function deleteFromChildren(state, idsToDelete, parentData) {
       ) {
         delete state.programData[parentData.properties[propName]];
         state.programData[parentData.id].properties[propName] = null;
-        state = pruneEdgesFromBlock(state,parentData.properties[propName]);
+        state = pruneEdgesFromBlock(state, parentData.properties[propName]);
       }
     });
     for (let i = 0; i < idsToDelete.length; i++) {
@@ -128,7 +160,7 @@ export function deleteFromChildren(state, idsToDelete, parentData) {
             delete state.programData[parentData.properties[propName]];
             // entry.properties[propName] = null;
             state.programData[parentData.id].properties[propName] = null;
-            state = pruneEdgesFromBlock(state,parentData.properties[propName]);
+            state = pruneEdgesFromBlock(state, parentData.properties[propName]);
           }
         }
       });
@@ -177,7 +209,7 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
     if (data.arguments) {
       data.arguments.forEach((argumentId) => {
         delete state.programData[argumentId];
-        state = pruneEdgesFromBlock(state,argumentId);
+        state = pruneEdgesFromBlock(state, argumentId);
       });
     }
 
@@ -221,14 +253,14 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
     callIds.forEach((reference) => {
       state = deleteChildren(state, state.programData[reference]);
       delete state.programData[reference];
-      state = pruneEdgesFromBlock(state,reference);
+      state = pruneEdgesFromBlock(state, reference);
     });
   } else if (fieldInfo?.isSpawner) {
     if (parentId === "spawner") {
       // Drawer deletion
       state = deleteFromProgram(state, [data.ref]);
       delete state.programData[data.ref];
-      state = pruneEdgesFromBlock(state,data.ref);
+      state = pruneEdgesFromBlock(state, data.ref);
     } else {
       // Argument deletion
       state = deleteFromChildren(
@@ -249,7 +281,7 @@ export function deleteSelfBlock(state, data, parentId, fieldInfo) {
 
   // Remove self from state
   delete state.programData[data.id];
-  state = pruneEdgesFromBlock(state,data.id);
+  state = pruneEdgesFromBlock(state, data.id);
 
   return state;
 }
@@ -325,21 +357,22 @@ export function deleteChildren(state, data, parentId, fieldInfo) {
   return state;
 }
 
-const immer = (config) => (set, get, api) =>
-  config(
-    (partial, replace) => {
-      const nextState =
-        typeof partial === "function" ? produce(partial) : partial;
-      return set(nextState, replace);
-    },
-    get,
-    api
-  );
+// const immer = (config) => (set, get, api) =>
+//   config(
+//     (partial, replace) => {
+//       const nextState =
+//         typeof partial === "function" ? produce(partial) : partial;
+//       return set(nextState, replace);
+//     },
+//     get,
+//     api
+//   );
 
 export const ProgrammingSlice = (set, get) => ({
-  onClick: (entryInfo) => console.log(`Clicked Entry:`, entryInfo),
-  modalBlock: {block: null,context:[]},
-  setModalBlock: (block,context) => set({ modalBlock: {block,context}}),
+  onVPEClick: (entryInfo) => console.log(`Clicked Entry:`, entryInfo),
+  onOffVPEClick: () => console.log(`Missed VPE Click:`),
+  modalBlock: { block: null, context: [] },
+  setModalBlock: (block, context) => set({ modalBlock: { block, context } }),
   locked: false,
   setLocked: (locked) => set({ locked }),
   activeDrawer: null,
@@ -553,7 +586,7 @@ export const ProgrammingSlice = (set, get) => ({
   validateEdge: (source, sourceHandle, target, targetHandle) => {
     // console.log("validateEdge", { source, sourceHandle, target, targetHandle });
     if (source === target) {
-      return false
+      return false;
     }
     const edges = Object.values(get().programData).filter(
       (d) => d.dataType === DATA_TYPES.CONNECTION
@@ -636,6 +669,6 @@ export const ProgrammingSlice = (set, get) => ({
   },
 });
 
-export const ImmerProgrammingSlice = immer(ProgrammingSlice);
+export const ImmerProgrammingSlice = subscribeWithSelector(immer(ProgrammingSlice));
 
 export const useDefaultProgrammingStore = create(ImmerProgrammingSlice);

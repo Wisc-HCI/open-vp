@@ -23,6 +23,8 @@ import Fade from "@mui/material/Fade";
 import { TextField } from "@mui/material";
 // import { TextField, InputAdornment } from "@mui/material";
 
+export const stringEquality = (e1,e2) => JSON.stringify(e1) === JSON.stringify(e2)
+
 export const DropdownTrigger = ({
   triggerComponent,
   triggerProps,

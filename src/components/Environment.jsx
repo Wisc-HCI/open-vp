@@ -18,22 +18,23 @@ export default function Environment({
   width,
   drawerWidth,
   snapToGrid,
+  animateDrawer = true,
 }) {
   const theme = getTheme(highlightColor);
   const muiTheme = createTheme({
     palette: {
       mode: "dark",
-      highlightColor:{
-        main: highlightColor
+      highlightColor: {
+        main: highlightColor,
       },
       quiet: {
-        main: '#444',
-        darker: '#333',
+        main: "#444",
+        darker: "#333",
       },
       vibrant: {
-        main: '#fff',
-        darker: '#ddd'
-      }
+        main: "#fff",
+        darker: "#ddd",
+      },
     },
   });
 
@@ -43,30 +44,24 @@ export default function Environment({
         <ProgrammingProvider store={store}>
           <DndProvider backend={MultiBackend} options={HTML5toTouch}>
             <ReactFlowProvider>
-            <Box
-              direction='row'
-              style={{
-                padding: 0,
-                margin: 0,
-                display: "flex",
-                height,
-                width,
-              }}
-            >
-              <Contents drawerWidth={drawerWidth} highlightColor={highlightColor} snapToGrid={snapToGrid}/>
-              
-              {/* <Drawer
-                highlightColor={highlightColor}
-                drawerWidth={drawerWidth ? drawerWidth : 235}
-              /> */}
-              
-                {/* <Canvas
+              <Box
+                direction="row"
+                style={{
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  height,
+                  width,
+                }}
+              >
+                <Contents
+                  drawerWidth={drawerWidth}
                   highlightColor={highlightColor}
                   snapToGrid={snapToGrid}
-                /> */}
-              
-            </Box>
-            <DragLayer highlightColor={highlightColor} />
+                  animateDrawer={animateDrawer}
+                />
+              </Box>
+              <DragLayer highlightColor={highlightColor} />
             </ReactFlowProvider>
           </DndProvider>
         </ProgrammingProvider>

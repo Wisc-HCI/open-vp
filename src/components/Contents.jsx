@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, memo } from "react";
 import { useState } from "react";
 import { Block } from "./Block";
 // import { useSpring, animated } from "@react-spring/web";
@@ -22,9 +22,12 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 // import Drawer from "@mui/material/Drawer";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+// import { pickBy } from "lodash";
+import shallow from "zustand/shallow";
+import { stringEquality } from "./Block/Utility";
 
-const SectionStrip = ({ highlightColor, setSearchTerm, setActiveDrawer }) => {
+const SectionStrip = ({ setSearchTerm, setActiveDrawer }) => {
   const drawers = useProgrammingStore((store) => store.programSpec.drawers);
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
   return (
@@ -42,7 +45,9 @@ const SectionStrip = ({ highlightColor, setSearchTerm, setActiveDrawer }) => {
             >
               <IconButton
                 size="large"
-                color={activeDrawer === drawerIdx ? "highlightColor" : "vibrant"}
+                color={
+                  activeDrawer === drawerIdx ? "highlightColor" : "vibrant"
+                }
                 onClick={() => {
                   setSearchTerm("");
                   setActiveDrawer(
@@ -50,7 +55,7 @@ const SectionStrip = ({ highlightColor, setSearchTerm, setActiveDrawer }) => {
                   );
                 }}
               >
-                <Icon width={30}/>
+                <Icon width={30} />
               </IconButton>
             </Tooltip>
           );
@@ -68,66 +73,59 @@ const BlockPanel = ({
 }) => {
   const drawers = useProgrammingStore((store) => store.programSpec.drawers);
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
-  const [scrollContainerRef, scrollContainerBounds] = useMeasure();
+  const addInstance = useProgrammingStore((store) => store.addInstance);
 
-  const blocks = useProgrammingStore(
-    useCallback(
+  const [entries, contentType, objectType, objectTypeInfo] =
+    useProgrammingStore(
+      // useCallback(
       (store) => {
-        let blocks = [];
         if (activeDrawer !== null) {
           const drawer = store.programSpec.drawers[activeDrawer];
           if (drawer.dataType === DATA_TYPES.INSTANCE) {
-            drawer.objectTypes.forEach((objectType) => {
-              blocks.push(
-                instanceTemplateFromSpec(
-                  objectType,
-                  store.programSpec.objectTypes[objectType]
-                )
-              );
-            });
-          } else if (drawer.dataType === DATA_TYPES.REFERENCE) {
-            Object.values(store.programData)
-              .filter(
-                (d) =>
-                  d.dataType === DATA_TYPES.INSTANCE &&
-                  d.type === drawer.objectType
-              )
-              .forEach((instanceReference) => {
-                blocks.push(
-                  referenceTemplateFromSpec(
-                    drawer.objectType,
-                    instanceReference,
-                    store.programSpec.objectTypes[drawer.objectType]
-                  )
-                );
-              });
-          } else if (drawer.dataType === DATA_TYPES.CALL) {
-            Object.values(store.programData)
-              .filter(
-                (d) =>
-                  d.dataType === DATA_TYPES.INSTANCE &&
-                  d.type === drawer.objectType
-              )
-              .forEach((functionReference) => {
-                blocks.push(
-                  callTemplateFromSpec(
-                    drawer.objectType,
-                    functionReference,
-                    store.programSpec.objectTypes[drawer.objectType]
-                  )
-                );
-              });
+            let entries = drawer.objectTypes.map((t) => ({
+              blockType: t,
+              ...store.programSpec.objectTypes[t],
+            }));
+            return [entries, drawer.dataType, null, null];
+          } else if (
+            drawer.dataType === DATA_TYPES.REFERENCE ||
+            drawer.dataType === DATA_TYPES.CALL
+          ) {
+            let entries = Object.values(store.programData).filter(
+              (d) =>
+                d.dataType === DATA_TYPES.INSTANCE &&
+                d.type === drawer.objectType
+            );
+            return [
+              entries,
+              drawer.dataType,
+              drawer.objectType,
+              store.programSpec.objectTypes[drawer.objectType],
+            ];
+          } else {
+            return [[], null, null, null];
           }
+        } else {
+          return [[], null, null, null];
         }
-        return blocks.filter(
-          (block) =>
-            block.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            searchTerm === ""
-        );
       },
-      [activeDrawer, searchTerm]
-    )
-  );
+      //   [activeDrawer, searchTerm]
+      // ),
+      stringEquality
+    );
+
+  const blocks =
+    contentType === DATA_TYPES.INSTANCE
+      ? entries.map((e) => instanceTemplateFromSpec(e.blockType, e))
+      : contentType === DATA_TYPES.REFERENCE
+      ? entries.map((e) =>
+          referenceTemplateFromSpec(objectType, e, objectTypeInfo)
+        )
+      : contentType === DATA_TYPES.CALL
+      ? entries.map((e) => callTemplateFromSpec(objectType, e, objectTypeInfo))
+      : [];
+
+  const [scrollContainerRef, scrollContainerBounds] = useMeasure();
 
   return (
     <Box
@@ -171,35 +169,46 @@ const BlockPanel = ({
           width={drawerWidth}
           vertical
         >
-          {blocks.map((block, idx) => (
-            <Box
-              key={block.id}
-              animation={{ type: "fadeIn", delay: idx * 30 }}
-              style={{ marginBottom: 5, width: drawerWidth - 10 }}
-            >
-              <Block
-                staticData={block}
-                parentId="spawner"
-                bounded
-                highlightColor={highlightColor}
-                context={[]}
-                interactionDisabled
-                fieldInfo={{
-                  name: "",
-                  value: null,
-                  accepts: [],
-                  isSpawner: true,
-                }}
-              />
-            </Box>
-          ))}
+          {blocks
+            .filter(
+              (b) =>
+                searchTerm === "" ||
+                b.name.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((block, idx) => (
+              <Box
+                key={block.id}
+                // animation={{ type: "fadeIn", delay: idx * 30 }}
+                style={{ marginBottom: 5, width: drawerWidth - 10 }}
+              >
+                <Block
+                  staticData={block}
+                  parentId="spawner"
+                  bounded
+                  highlightColor={highlightColor}
+                  context={[]}
+                  interactionDisabled
+                  fieldInfo={{
+                    name: "",
+                    value: null,
+                    accepts: [],
+                    isSpawner: true,
+                  }}
+                />
+              </Box>
+            ))}
         </ScrollRegion>
       </Box>
     </Box>
   );
 };
 
-export const Contents = ({ highlightColor, drawerWidth = 235, snapToGrid }) => {
+export const Contents = ({
+  highlightColor,
+  drawerWidth = 235,
+  snapToGrid,
+  animateDrawer,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
   const setActiveDrawer = useProgrammingStore((store) => store.setActiveDrawer);
@@ -217,22 +226,27 @@ export const Contents = ({ highlightColor, drawerWidth = 235, snapToGrid }) => {
         setActiveDrawer={setActiveDrawer}
         setSearchTerm={setSearchTerm}
       />
-      <AnimatePresence>
-        {activeDrawer !== null && (
-          <motion.div
-            initial={{ width: 0, overflow: "hidden" }}
-            animate={{ width: drawerWidth }}
-            exit={{ width: 0, overflow: "hidden" }}
-          >
-            <BlockPanel
-              searchTerm={searchTerm}
-              drawerWidth={drawerWidth}
-              highlightColor={highlightColor}
-              setSearchTerm={setSearchTerm}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {animateDrawer && activeDrawer !== null ? (
+        <motion.div
+          initial={{ width: 0, overflow: "hidden" }}
+          animate={{ width: drawerWidth }}
+          exit={{ width: 0, overflow: "hidden" }}
+        >
+          <BlockPanel
+            searchTerm={searchTerm}
+            drawerWidth={drawerWidth}
+            highlightColor={highlightColor}
+            setSearchTerm={setSearchTerm}
+          />
+        </motion.div>
+      ) : activeDrawer !== null ? (
+        <BlockPanel
+          searchTerm={searchTerm}
+          drawerWidth={drawerWidth}
+          highlightColor={highlightColor}
+          setSearchTerm={setSearchTerm}
+        />
+      ) : null}
 
       <Box flex height="100%">
         <Canvas highlightColor={highlightColor} snapToGrid={snapToGrid} />

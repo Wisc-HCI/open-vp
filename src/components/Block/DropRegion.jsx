@@ -85,7 +85,7 @@ export const DropRegion = ({
         flex: 1,
       }}
     >
-      <AnimatePresence>
+      
         {renderedData && !isPreview ? (
           <motion.div
             initial={{ scaleY: 0 }}
@@ -138,7 +138,6 @@ export const DropRegion = ({
             {fieldInfo.name}
           </motion.span>
         )}
-      </AnimatePresence>
     </div>
   );
 };

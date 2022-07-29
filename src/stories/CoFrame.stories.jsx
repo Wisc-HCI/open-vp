@@ -21,7 +21,7 @@ const Template = (args) => {
   })
   return (
     <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:otherArgs.highlightColor}}>
-      <Environment {...otherArgs} store={useDefaultProgrammingStore} height={bounds.height} width={bounds.width} drawerWidth={drawerWidth}/>
+      <Environment {...otherArgs} store={useDefaultProgrammingStore} height={bounds.height} width={bounds.width} drawerWidth={drawerWidth} />
     </div>
     )
 };
@@ -32,6 +32,7 @@ Coframe.args = {
   highlightColor: '#ff00ff',
   drawerWidth: 235,
   snapToGrid: true,
+  animateDrawer: false,
   ...coframeConfig,
   programData:coframeStarter,
   executionData:{}
