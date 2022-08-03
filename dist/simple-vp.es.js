@@ -57074,4 +57074,4 @@ const ExternalBlock = ({
     })
   });
 };
-export { CONNECTIONS, DATA_TYPES, EXTRA_TYPES, Environment, ExternalBlock, ImmerProgrammingSlice, ProgrammingProvider, ProgrammingSlice, SIMPLE_PROPERTY_TYPES, StyleWrapper, TYPES, UnwrappedEnvironment, callTemplateFromSpec, instanceTemplateFromSpec, referenceTemplateFromSpec, useDefaultProgrammingStore };
+export { CONNECTIONS, DATA_TYPES, EXTRA_TYPES, Environment, ExternalBlock, ImmerProgrammingSlice, ProgrammingProvider, ProgrammingSlice, SIMPLE_PROPERTY_TYPES, StyleWrapper, TYPES, UnwrappedEnvironment, UnwrappedExternalBlock, callTemplateFromSpec, instanceTemplateFromSpec, referenceTemplateFromSpec, useDefaultProgrammingStore };

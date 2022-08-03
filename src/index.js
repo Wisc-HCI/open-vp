@@ -12,6 +12,7 @@ import {
     SIMPLE_PROPERTY_TYPES,
     ProgrammingProvider,
     ExternalBlock,
+    UnwrappedExternalBlock,
     instanceTemplateFromSpec,
     referenceTemplateFromSpec,
     callTemplateFromSpec
@@ -32,6 +33,7 @@ export {
     CONNECTIONS,
     ProgrammingProvider,
     ExternalBlock,
+    UnwrappedExternalBlock,
     instanceTemplateFromSpec,
     referenceTemplateFromSpec,
     callTemplateFromSpec
