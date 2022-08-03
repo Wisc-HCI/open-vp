@@ -12,13 +12,15 @@ import { DndProvider } from "react-dnd";
 import { combinedBlockData } from "../Generators";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { stringEquality } from "./Utility";
+import { StyleWrapper } from "../Environment";
 
 const InnerExternalBlock = (props) => {
   const [data, typeSpec] = useProgrammingStore(
     useCallback(
       (state) => combinedBlockData(state, props.data, null),
       [props.data]
-    ),stringEquality
+    ),
+    stringEquality
   );
 
   const otherProps = {
@@ -37,6 +39,24 @@ const InnerExternalBlock = (props) => {
   );
 };
 
+export const UnwrappedExternalBlock = ({
+  highlightColor,
+  data,
+  style,
+  context,
+}) => {
+  return (
+    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+      <InnerExternalBlock
+        highlightColor={highlightColor}
+        data={data}
+        style={{ ...style }}
+        context={context}
+      />
+    </DndProvider>
+  );
+};
+
 export const ExternalBlock = ({
   store,
   highlightColor,
@@ -44,34 +64,17 @@ export const ExternalBlock = ({
   style,
   context,
 }) => {
-  const theme = getTheme(highlightColor, true);
-  const muiTheme = createTheme({
-    palette: {
-      mode: "dark",
-      highlightColor: {
-        main: highlightColor,
-      },
-      quiet: {
-        main: "#444",
-        darker: "#333",
-      },
-    },
-  });
 
   return (
-    <Grommet theme={theme}>
-      <ThemeProvider theme={muiTheme}>
-        <ProgrammingProvider store={store}>
-          <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-            <InnerExternalBlock
-              highlightColor={highlightColor}
-              data={data}
-              style={{ ...style }}
-              context={context}
-            />
-          </DndProvider>
-        </ProgrammingProvider>
-      </ThemeProvider>
-    </Grommet>
+    <StyleWrapper highlightColor={highlightColor}>
+      <ProgrammingProvider store={store}>
+        <UnwrappedExternalBlock
+          highlightColor={highlightColor}
+          data={data}
+          style={{ ...style }}
+          context={context}
+        />
+      </ProgrammingProvider>
+    </StyleWrapper>
   );
 };

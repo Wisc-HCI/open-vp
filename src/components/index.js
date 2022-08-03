@@ -9,6 +9,7 @@ export {
     ProgrammingSlice, 
     ImmerProgrammingSlice, 
     useDefaultProgrammingStore, 
+    ProgrammingProvider,
     Environment, 
     UnwrappedEnvironment,
     StyleWrapper,

@@ -57033,6 +57033,25 @@ const InnerExternalBlock = (props) => {
     typeSpec
   });
 };
+const UnwrappedExternalBlock = ({
+  highlightColor,
+  data,
+  style: style2,
+  context
+}) => {
+  return /* @__PURE__ */ jsx(DndProvider, {
+    backend: MultiFactory,
+    options: HTML5toTouch,
+    children: /* @__PURE__ */ jsx(InnerExternalBlock, {
+      highlightColor,
+      data,
+      style: {
+        ...style2
+      },
+      context
+    })
+  });
+};
 const ExternalBlock = ({
   store,
   highlightColor,
@@ -57040,39 +57059,19 @@ const ExternalBlock = ({
   style: style2,
   context
 }) => {
-  const theme = getTheme(highlightColor, true);
-  const muiTheme = createTheme({
-    palette: {
-      mode: "dark",
-      highlightColor: {
-        main: highlightColor
-      },
-      quiet: {
-        main: "#444",
-        darker: "#333"
-      }
-    }
-  });
-  return /* @__PURE__ */ jsx(Grommet, {
-    theme,
-    children: /* @__PURE__ */ jsx(ThemeProvider, {
-      theme: muiTheme,
-      children: /* @__PURE__ */ jsx(ProgrammingProvider, {
-        store,
-        children: /* @__PURE__ */ jsx(DndProvider, {
-          backend: MultiFactory,
-          options: HTML5toTouch,
-          children: /* @__PURE__ */ jsx(InnerExternalBlock, {
-            highlightColor,
-            data,
-            style: {
-              ...style2
-            },
-            context
-          })
-        })
+  return /* @__PURE__ */ jsx(StyleWrapper, {
+    highlightColor,
+    children: /* @__PURE__ */ jsx(ProgrammingProvider, {
+      store,
+      children: /* @__PURE__ */ jsx(UnwrappedExternalBlock, {
+        highlightColor,
+        data,
+        style: {
+          ...style2
+        },
+        context
       })
     })
   });
 };
-export { CONNECTIONS, DATA_TYPES, EXTRA_TYPES, Environment, ExternalBlock, ImmerProgrammingSlice, ProgrammingSlice, SIMPLE_PROPERTY_TYPES, StyleWrapper, TYPES, UnwrappedEnvironment, callTemplateFromSpec, instanceTemplateFromSpec, referenceTemplateFromSpec, useDefaultProgrammingStore };
+export { CONNECTIONS, DATA_TYPES, EXTRA_TYPES, Environment, ExternalBlock, ImmerProgrammingSlice, ProgrammingProvider, ProgrammingSlice, SIMPLE_PROPERTY_TYPES, StyleWrapper, TYPES, UnwrappedEnvironment, callTemplateFromSpec, instanceTemplateFromSpec, referenceTemplateFromSpec, useDefaultProgrammingStore };
