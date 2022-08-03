@@ -1,15 +1,13 @@
 import React from "react";
-import { useSpring, animated } from "@react-spring/web";
-import { config } from "react-spring";
+import { motion } from "framer-motion";
 import SvgIcon from '@mui/material/SvgIcon';
 
 export const ExpandCarrot = ({ expanded, onClick }) => {
-  const arrowStyle = useSpring({
-    d: expanded
-      ? "M770.578,215.347L399.578,586.347L26.887,213.656"
-      : "M214.078,28.156L585.078,399.156L212.387,771.847",
-    config: config.wobbly,
-  });
+  
+  const variants = {
+    open: {d: "M770.578,215.347L399.578,586.347L26.887,213.656"},
+    closed: {d: "M214.078,28.156L585.078,399.156L212.387,771.847"}
+  }
 
   return (
     <SvgIcon
@@ -26,8 +24,9 @@ export const ExpandCarrot = ({ expanded, onClick }) => {
         strokeMiterlimit: 1.5,
       }}
     >
-      <animated.path
-        {...arrowStyle}
+      <motion.path
+        animate={expanded ? 'open' : 'closed'}
+        variants={variants}
         style={{
           fill: "none",
           stroke: "white",

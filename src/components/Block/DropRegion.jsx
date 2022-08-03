@@ -5,6 +5,7 @@ import { Block, PreviewBlock } from "./index";
 import { useCallback } from "react";
 import { isEqual, intersection } from "lodash";
 import { motion, AnimatePresence } from "framer-motion";
+import { stringEquality } from "./Utility";
 
 const transferBlockSelector = (state) => state.transferBlock;
 
@@ -24,7 +25,7 @@ export const DropRegion = ({
   const transferBlock = useProgrammingStore(transferBlockSelector);
 
   const data = useProgrammingStore(
-    useCallback((store) => store.programData[id], [id])
+    useCallback((store) => store.programData[id], [id]),stringEquality
   );
 
   const [dropProps, drop] = useDrop(

@@ -20,6 +20,51 @@ export default function Environment({
   snapToGrid,
   animateDrawer = true,
 }) {
+
+  return (
+    <StyleWrapper highlightColor={highlightColor}>
+        <ProgrammingProvider store={store}>
+          <UnwrappedEnvironment height={height} width={width} drawerWidth={drawerWidth} snapToGrid={snapToGrid} animateDrawer={animateDrawer}/>
+        </ProgrammingProvider>
+    </StyleWrapper>
+  );
+}
+
+export function UnwrappedEnvironment({
+  highlightColor,
+  height,
+  width,
+  drawerWidth,
+  snapToGrid,
+  animateDrawer = true,
+}) {
+  return (
+    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+      <ReactFlowProvider>
+        <Box
+          direction="row"
+          style={{
+            padding: 0,
+            margin: 0,
+            display: "flex",
+            height,
+            width,
+          }}
+        >
+          <Contents
+            drawerWidth={drawerWidth}
+            highlightColor={highlightColor}
+            snapToGrid={snapToGrid}
+            animateDrawer={animateDrawer}
+          />
+        </Box>
+        <DragLayer highlightColor={highlightColor} />
+      </ReactFlowProvider>
+    </DndProvider>
+  );
+}
+
+export function StyleWrapper({ highlightColor, children }) {
   const theme = getTheme(highlightColor);
   const muiTheme = createTheme({
     palette: {
@@ -40,32 +85,7 @@ export default function Environment({
 
   return (
     <Grommet theme={theme}>
-      <ThemeProvider theme={muiTheme}>
-        <ProgrammingProvider store={store}>
-          <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-            <ReactFlowProvider>
-              <Box
-                direction="row"
-                style={{
-                  padding: 0,
-                  margin: 0,
-                  display: "flex",
-                  height,
-                  width,
-                }}
-              >
-                <Contents
-                  drawerWidth={drawerWidth}
-                  highlightColor={highlightColor}
-                  snapToGrid={snapToGrid}
-                  animateDrawer={animateDrawer}
-                />
-              </Box>
-              <DragLayer highlightColor={highlightColor} />
-            </ReactFlowProvider>
-          </DndProvider>
-        </ProgrammingProvider>
-      </ThemeProvider>
+      <ThemeProvider theme={muiTheme}>{children}</ThemeProvider>
     </Grommet>
   );
 }

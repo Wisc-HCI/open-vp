@@ -31,6 +31,7 @@ import Typography from "@mui/material/Typography";
 import Skeleton from "@mui/material/Skeleton";
 
 import { NumberInput, ScrollRegion } from "./Utility";
+import shallow from "zustand/shallow";
 
 export const VisualBlock = memo(
   forwardRef(
@@ -94,20 +95,20 @@ export const VisualBlock = memo(
 
       // const setModalBlock = useProgrammingStore((store)=>store.setModalBlock);
       const updateItemName = useProgrammingStore(
-        (store) => store.updateItemName
+        (store) => store.updateItemName, shallow
       );
       const setIsEditing = useProgrammingStore(
-        (store) => store.updateItemEditing
+        (store) => store.updateItemEditing, shallow
       );
       const setIsSelected = useProgrammingStore(
-        (store) => store.updateItemSelected
+        (store) => store.updateItemSelected, shallow
       );
       const updateItemSimpleProperty = useProgrammingStore(
-        (store) => store.updateItemSimpleProperty
+        (store) => store.updateItemSimpleProperty, shallow
       );
-      const onClick = useProgrammingStore((state) => state.onVPEClick);
-      const setLocked = useProgrammingStore((state) => state.setLocked);
-      const locked = useProgrammingStore((state) => state.locked);
+      const onClick = useProgrammingStore((state) => state.onVPEClick, shallow);
+      const setLocked = useProgrammingStore((state) => state.setLocked, shallow);
+      const locked = useProgrammingStore((state) => state.locked, shallow);
 
       const minified =
         blockSpec.minified && data.dataType === DATA_TYPES.INSTANCE;
@@ -162,12 +163,6 @@ export const VisualBlock = memo(
 
       return (
         <Selectable
-          // role="Handle"
-          // onDoubleClick={(e)=>{
-          //   console.log('double click',{id:data.id,context});
-          //   setModalBlock(data.id,context);
-          //   e.stopPropagation()
-          // }}
           onClick={(e) => {
             onClick(data);
             e.stopPropagation();

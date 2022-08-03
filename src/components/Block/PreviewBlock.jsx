@@ -3,13 +3,14 @@ import { useCallback } from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { VisualBlock } from './VisualBlock';
 import { combinedBlockData } from "../Generators";
+import { stringEquality } from './Utility';
 
 export const PreviewBlock = memo(({ id, staticData, bounded, highlightColor, context, style}) => {
   const [data, typeSpec] = useProgrammingStore(
     useCallback(
       (state) => combinedBlockData(state,staticData,id),
       [id, staticData]
-    )
+    ),stringEquality
   );
 
   const blockContext = data.arguments ? data.arguments : [];

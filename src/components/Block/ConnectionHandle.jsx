@@ -2,6 +2,8 @@ import React from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { Handle } from "react-flow-renderer";
 import { CONNECTIONS, DATA_TYPES } from "../Constants";
+import shallow from "zustand/shallow";
+import { stringEquality } from "./Utility";
 
 const handleTypeToDirection = (handleType) =>
   handleType === "target" ? CONNECTIONS.INBOUND : CONNECTIONS.OUTBOUND;
@@ -28,7 +30,7 @@ export const ConnectionHandle = ({
   direction = CONNECTIONS.INBOUND,
   highlightColor,
 }) => {
-  const validateEdge = useProgrammingStore((state) => state.validateEdge);
+  const validateEdge = useProgrammingStore((state) => state.validateEdge,shallow);
   const connectionInfo = useProgrammingStore((state) => {
     if (state.connectionInfo) {
       const node = state.programData[state.connectionInfo.nodeId];
@@ -52,7 +54,7 @@ export const ConnectionHandle = ({
     } else {
       return null;
     }
-  });
+  },stringEquality);
   const isValidConnectionOption = checkValid(
     connectionInfo,
     nodeData,

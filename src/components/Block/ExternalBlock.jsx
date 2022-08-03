@@ -11,13 +11,14 @@ import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
 import { combinedBlockData } from "../Generators";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { stringEquality } from "./Utility";
 
 const InnerExternalBlock = (props) => {
   const [data, typeSpec] = useProgrammingStore(
     useCallback(
       (state) => combinedBlockData(state, props.data, null),
       [props.data]
-    )
+    ),stringEquality
   );
 
   const otherProps = {
