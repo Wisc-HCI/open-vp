@@ -19,7 +19,7 @@ const Template = (args) => {
     useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData});
   })
   return (
-    <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:otherArgs.highlightColor}}>
+    <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:'#333'}}>
       <Environment {...otherArgs} store={useDefaultProgrammingStore} height={bounds.height} width={bounds.width} drawerWidth={drawerWidth}/>
     </div>
     )
@@ -310,12 +310,12 @@ SOBORO.args = {
       },
       referenceBlock: null,
       properties: {
-        expressionType: {
-          name: "Type",
-          type: SIMPLE_PROPERTY_TYPES.OPTIONS,
-          options: [{value:'not',label:'Not'},{value:'is',label:'Is'}],
-          default: 'not'
-        },
+        // expressionType: {
+        //   name: "Type",
+        //   type: SIMPLE_PROPERTY_TYPES.OPTIONS,
+        //   options: [{value:'not',label:'Not'},{value:'is',label:'Is'}],
+        //   default: 'not'
+        // },
         doFunky: {
           name: "Do Funky",
           type: SIMPLE_PROPERTY_TYPES.BOOLEAN,

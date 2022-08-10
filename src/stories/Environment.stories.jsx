@@ -20,7 +20,7 @@ const Template = (args) => {
     useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData});
   })
   return (
-    <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:otherArgs.highlightColor}}>
+    <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:'#333'}}>
       <Environment {...otherArgs} store={useDefaultProgrammingStore} height={bounds.height} width={bounds.width} drawerWidth={drawerWidth}/>
     </div>
     )

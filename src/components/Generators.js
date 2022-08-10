@@ -33,7 +33,7 @@ export const instanceTemplateFromSpec = (type, objectSpec, isArg) => {
 
 export const referenceTemplateFromSpec = (type, instanceReference, objectSpec) => {
     let data = { 
-        id: generateUuid(type), 
+        id: `new-${type}-${instanceReference.id}`, 
         type, 
         ref: instanceReference.id, 
         dataType: DATA_TYPES.REFERENCE,
@@ -51,7 +51,7 @@ export const referenceTemplateFromSpec = (type, instanceReference, objectSpec) =
 
 export const callTemplateFromSpec = (type, functionReference, objectSpec) => {
     let data = { 
-        id: generateUuid(type), 
+        id: `new-${type}-${functionReference.id}`, 
         type, 
         ref: functionReference.id, 
         dataType: DATA_TYPES.CALL, 

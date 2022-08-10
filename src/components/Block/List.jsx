@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {memo} from 'react';
 import { Block } from ".";
 import { DropRegion } from "./DropRegion";
 
-export const List = ({ ids, parentId, fieldInfo, interactionDisabled, highlightColor, context, limitedRender }) => {
+export const List = memo(({ ids, parentId, fieldInfo, interactionDisabled, highlightColor, context, limitedRender }) => {
   // const setField = useStore((store) => store.setField);
   const minHeight = ids.length === 0 ? 30 : 8;
 
@@ -62,4 +62,4 @@ export const List = ({ ids, parentId, fieldInfo, interactionDisabled, highlightC
       ))}
     </div>
   );
-};
+});

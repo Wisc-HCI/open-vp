@@ -8,6 +8,7 @@ import { VisualBlock } from "./VisualBlock";
 import { DATA_TYPES } from "..";
 import { combinedBlockData } from "../Generators";
 import { stringEquality } from "./Utility";
+import shallow from "zustand/shallow";
 
 const Block = memo(
   ({
@@ -31,8 +32,8 @@ const Block = memo(
       ),
       stringEquality
     );
-
-    const locked = useProgrammingStore((state) => state.locked);
+    
+    const locked = useProgrammingStore((state) => state.locked, shallow);
 
     const blockContext = data.arguments ? data.arguments : [];
     const wholeContext = [...context, ...blockContext];
@@ -66,7 +67,7 @@ const Block = memo(
         canDrag: !dragDisabled && !data.editing && !locked,
         collect: (monitor) => ({ isDragging: monitor.isDragging() }),
       }),
-      [data, typeSpec, parentId, fieldInfo, idx, dragDisabled]
+      [data, typeSpec, parentId, fieldInfo, idx, dragDisabled, locked]
     );
 
     const hidden = !fieldInfo?.isSpawner && dragProps.isDragging;

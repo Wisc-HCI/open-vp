@@ -30,7 +30,7 @@ const Template = (args) => {
         display: "flex",
         height: "100vh",
         flexDirection: "row",
-        backgroundColor: otherArgs.highlightColor,
+        backgroundColor: '#333',
       }}
     >
       <div style={{ flex: 1, backgroundColor: "darkgray" }}/>

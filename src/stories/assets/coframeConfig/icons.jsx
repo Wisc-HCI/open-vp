@@ -35,14 +35,19 @@ export const FixtureIconStyled = FixtureIcon;
 export const ZoneIconStyled = ZoneIcon;
 export const LinkIconStyled = LinkIcon;
 
+const FailureIcon = () => (<FiAlertOctagon color="white" fill="red" />);
+const ValidIcon = () => (<FiThumbsUp color="white" />);
+const WarningIcon = () => (<FiAlertTriangle color="white" fill="#ff7300" />);
+const PendingIcon = () => (<FiRefreshCw className="rotate" />)
+
 export const statusIcon = (data) => {
     if ([data.properties?.status,data.refData?.properties?.status].includes(STATUS.FAILED)) {
-      return <FiAlertOctagon color="white" fill="red" />;
+      return FailureIcon;
     } else if ([data.properties?.status,data.refData?.properties?.status].includes(STATUS.VALID)) {
-      return <FiThumbsUp color="white" />;
+      return ValidIcon;
     } else if ([data.properties?.status,data.refData?.properties?.status].includes(STATUS.WARN)) {
-      return <FiAlertTriangle color="white" fill="#ff7300" />;
+      return WarningIcon;
     } else if ([data.properties?.status,data.refData?.properties?.status].includes(STATUS.PENDING)) {
-      return <FiRefreshCw className="rotate" />;
+      return PendingIcon;
     }
   }

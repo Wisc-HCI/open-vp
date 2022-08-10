@@ -1,10 +1,10 @@
-import React, { useRef, useCallback, memo } from "react";
+import React from "react";
 import { useState } from "react";
 import { Block } from "./Block";
 // import { useSpring, animated } from "@react-spring/web";
 // import { config } from "react-spring";
 import { useProgrammingStore } from "./ProgrammingContext";
-import { Button, Box, Text, Sidebar, Nav } from "grommet";
+// import { Button, Box, Text, Sidebar, Nav } from "grommet";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { DATA_TYPES } from "./Constants";
 import {
@@ -21,47 +21,48 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-// import Drawer from "@mui/material/Drawer";
-import { motion } from "framer-motion";
-// import { pickBy } from "lodash";
 import shallow from "zustand/shallow";
 import { stringEquality } from "./Block/Utility";
+import { Stack, Box, Collapse } from "@mui/material";
 
 const SectionStrip = ({ setSearchTerm, setActiveDrawer }) => {
-  const drawers = useProgrammingStore((store) => store.programSpec.drawers);
-  const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
+  const drawers = useProgrammingStore(
+    (store) => store.programSpec.drawers,
+    shallow
+  );
+  const activeDrawer = useProgrammingStore(
+    (store) => store.activeDrawer,
+    shallow
+  );
   return (
-    <Sidebar>
-      <Nav gap="xxsmall">
-        {drawers.map((drawer, drawerIdx) => {
-          // console.log(drawerIdx);
-          const Icon = drawer.icon;
-          return (
-            <Tooltip
-              key={`${drawer.title}-${drawerIdx}-drawer-tt`}
-              title={<Typography>{drawer.title}</Typography>}
-              arrow
-              placement="right"
+    <Stack direction="column" sx={{ padding: "5px"}} spacing={1}>
+      {/* <Nav gap="xxsmall"> */}
+      {drawers.map((drawer, drawerIdx) => {
+        // console.log(drawerIdx);
+        const Icon = drawer.icon;
+        return (
+          <Tooltip
+            key={`${drawer.title}-${drawerIdx}-drawer-tt`}
+            title={<Typography>{drawer.title}</Typography>}
+            arrow
+            placement="right"
+          >
+            <IconButton
+              size="large"
+              key={`${drawer.title}-${drawerIdx}-drawer-icon`}
+              color={activeDrawer === drawerIdx ? "primary" : "vibrant"}
+              onClick={() => {
+                setSearchTerm("");
+                setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
+              }}
             >
-              <IconButton
-                size="large"
-                color={
-                  activeDrawer === drawerIdx ? "highlightColor" : "vibrant"
-                }
-                onClick={() => {
-                  setSearchTerm("");
-                  setActiveDrawer(
-                    activeDrawer === drawerIdx ? null : drawerIdx
-                  );
-                }}
-              >
-                <Icon width={30} />
-              </IconButton>
-            </Tooltip>
-          );
-        })}
-      </Nav>
-    </Sidebar>
+              <Icon width={30} />
+            </IconButton>
+          </Tooltip>
+        );
+      })}
+      {/* </Nav> */}
+    </Stack>
   );
 };
 
@@ -71,9 +72,18 @@ const BlockPanel = ({
   drawerWidth,
   highlightColor,
 }) => {
-  const drawers = useProgrammingStore((store) => store.programSpec.drawers);
-  const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
-  const addInstance = useProgrammingStore((store) => store.addInstance);
+  const drawers = useProgrammingStore(
+    (store) => store.programSpec.drawers,
+    shallow
+  );
+  const activeDrawer = useProgrammingStore(
+    (store) => store.activeDrawer,
+    shallow
+  );
+  const addInstance = useProgrammingStore(
+    (store) => store.addInstance,
+    shallow
+  );
 
   const [entries, contentType, objectType, objectTypeInfo] =
     useProgrammingStore(
@@ -125,20 +135,20 @@ const BlockPanel = ({
       ? entries.map((e) => callTemplateFromSpec(objectType, e, objectTypeInfo))
       : [];
 
-  const [scrollContainerRef, scrollContainerBounds] = useMeasure();
+  const [drawerRef, drawerBounds] = useMeasure();
+  const [headerRef, headerBounds] = useMeasure();
 
   return (
-    <Box
-      height="100%"
-      direction="column"
-      width={`${drawerWidth}px`}
-      background="#222222ee"
+    <Stack
+      ref={drawerRef}
+      direction='column'
+      sx={{width:`${drawerWidth}px`,backgroundColor:"#222222ee",height:'100%'}}
     >
-      <Box background="#44444499" direction="column" pad="small">
-        <Box direction="row" justify="between" align="center">
-          <Box pad="small">
-            <Text>{activeDrawer !== null && drawers[activeDrawer].title}</Text>
-          </Box>
+      <Stack ref={headerRef} sx={{backgroundColor:"#44444499",padding:'10px'}} direction="column" spacing={1}>
+        <Stack direction='row' sx={{alignItems:'center',justify:'space-between',width:'100%'}} justifyContent='space-between'>
+            <Typography color="white">
+              {activeDrawer !== null && drawers[activeDrawer].title}
+            </Typography>
           {activeDrawer !== null &&
             drawers[activeDrawer].dataType === DATA_TYPES.REFERENCE && (
               <IconButton
@@ -147,11 +157,11 @@ const BlockPanel = ({
                 <FiPlus />
               </IconButton>
             )}
-        </Box>
+        </Stack>
         <TextField
           size="small"
           label="Search"
-          color="highlightColor"
+          color="primary"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputProps={{
@@ -162,26 +172,23 @@ const BlockPanel = ({
             ),
           }}
         />
-      </Box>
-      <Box ref={scrollContainerRef} flex direction="column">
+      </Stack>
+      <Box sx={{flex:1,width:drawerWidth}}>
         <ScrollRegion
-          height={scrollContainerBounds.height}
-          width={drawerWidth}
+          height={drawerBounds.height-headerBounds.height}
           vertical
         >
+          <Stack direction='column' gap={0.5} sx={{padding:'4px'}}>
           {blocks
             .filter(
               (b) =>
                 searchTerm === "" ||
                 b.name.toLowerCase().includes(searchTerm.toLowerCase())
             )
-            .map((block, idx) => (
-              <Box
-                key={block.id}
-                // animation={{ type: "fadeIn", delay: idx * 30 }}
-                style={{ marginBottom: 5, width: drawerWidth - 10 }}
-              >
+            .map((block) => (
+              
                 <Block
+                  key={block.id}
                   staticData={block}
                   parentId="spawner"
                   bounded
@@ -195,11 +202,11 @@ const BlockPanel = ({
                     isSpawner: true,
                   }}
                 />
-              </Box>
             ))}
+          </Stack>
         </ScrollRegion>
       </Box>
-    </Box>
+    </Stack>
   );
 };
 
@@ -210,35 +217,42 @@ export const Contents = ({
   animateDrawer,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const activeDrawer = useProgrammingStore((store) => store.activeDrawer);
-  const setActiveDrawer = useProgrammingStore((store) => store.setActiveDrawer);
+  const activeDrawer = useProgrammingStore(
+    (store) => store.activeDrawer,
+    shallow
+  );
+  const setActiveDrawer = useProgrammingStore(
+    (store) => store.setActiveDrawer,
+    shallow
+  );
 
   return (
     <Box
-      flex
-      direction="row"
-      height="100%"
-      pad="none"
-      style={{ overflow: "hidden" }}
+      sx={{
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "row",
+        height: "100%",
+        flex: 1,
+        padding: 0,
+      }}
     >
       <SectionStrip
         highlightColor={highlightColor}
         setActiveDrawer={setActiveDrawer}
         setSearchTerm={setSearchTerm}
       />
-      {animateDrawer && activeDrawer !== null ? (
-        <motion.div
-          initial={{ width: 0, overflow: "hidden" }}
-          animate={{ width: drawerWidth }}
-          exit={{ width: 0, overflow: "hidden" }}
-        >
-          <BlockPanel
-            searchTerm={searchTerm}
-            drawerWidth={drawerWidth}
-            highlightColor={highlightColor}
-            setSearchTerm={setSearchTerm}
-          />
-        </motion.div>
+      {animateDrawer ? (
+        <Collapse in={animateDrawer && activeDrawer !== null} orientation='horizontal'>
+          {activeDrawer !== null && (
+            <BlockPanel
+              searchTerm={searchTerm}
+              drawerWidth={drawerWidth}
+              highlightColor={highlightColor}
+              setSearchTerm={setSearchTerm}
+            />
+          )}
+        </Collapse>
       ) : activeDrawer !== null ? (
         <BlockPanel
           searchTerm={searchTerm}
@@ -248,7 +262,15 @@ export const Contents = ({
         />
       ) : null}
 
-      <Box flex height="100%">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          height: "100%",
+          flex: 1,
+          padding: 0,
+        }}
+      >
         <Canvas highlightColor={highlightColor} snapToGrid={snapToGrid} />
       </Box>
     </Box>

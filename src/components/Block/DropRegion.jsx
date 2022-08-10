@@ -1,15 +1,16 @@
-import React from "react";
+import React, {memo} from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { useDrop } from "react-dnd";
 import { Block, PreviewBlock } from "./index";
 import { useCallback } from "react";
 import { isEqual, intersection } from "lodash";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { stringEquality } from "./Utility";
+import shallow from "zustand/shallow";
 
 const transferBlockSelector = (state) => state.transferBlock;
 
-export const DropRegion = ({
+export const DropRegion = memo(({
   id,
   parentId,
   fieldInfo,
@@ -22,10 +23,11 @@ export const DropRegion = ({
   showBuffer,
   limitedRender,
 }) => {
-  const transferBlock = useProgrammingStore(transferBlockSelector);
+  const transferBlock = useProgrammingStore(transferBlockSelector,shallow);
 
   const data = useProgrammingStore(
-    useCallback((store) => store.programData[id], [id]),stringEquality
+    useCallback((store) => store.programData[id], [id]),
+    stringEquality
   );
 
   const [dropProps, drop] = useDrop(
@@ -80,65 +82,60 @@ export const DropRegion = ({
             : validDropType
             ? "#88888888"
             : null,
-        minHeight: minHeight,
+        minHeight,
         minWidth: 100,
         display: "flex",
         flex: 1,
       }}
     >
-      
-        {renderedData && !isPreview ? (
-          <motion.div
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            // exit={{ scaleY: 0 }}
-            style={{ flex: 1, minHeight:minHeight}}
-            key="not-preview-rendered-data"
-          >
-            <Block
-              staticData={renderedData}
-              idx={idx}
-              parentId={parentId}
-              fieldInfo={fieldInfo}
-              bounded
-              style={{ marginTop: 4, marginBottom: 4 }}
-              highlightColor={highlightColor}
-              context={context}
-              limitedRender={limitedRender}
-            />
-          </motion.div>
-        ) : renderedData ? (
-          <motion.div
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            // exit={{ scaleY: 0 }}
-            style={{ flex: 1 }}
-            key="preview-rendered-data"
-          >
-            <PreviewBlock
-              staticData={renderedData}
-              idx={idx}
-              parentId={parentId}
-              fieldInfo={fieldInfo}
-              bounded
-              highlightColor={highlightColor}
-              context={context}
-              style={{
-                marginBottom: showBuffer ? minHeight : null,
-                marginTop: showBuffer ? minHeight : null,
-              }}
-            />
-          </motion.div>
-        ) : hideText ? null : (
-          <motion.span
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            style={{ flex: 1 }}
-            key="field-empty"
-          >
-            {fieldInfo.name}
-          </motion.span>
-        )}
+      {renderedData && !isPreview ? (
+        <motion.div
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          // exit={{ scaleY: 0 }}
+          style={{ flex: 1, minHeight, paddingTop: 4, paddingBottom: 4 }}
+          key="not-preview-rendered-data"
+        >
+          <Block
+            staticData={renderedData}
+            idx={idx}
+            parentId={parentId}
+            fieldInfo={fieldInfo}
+            bounded
+            // style={{ marginTop: 4, marginBottom: 4 }}
+            highlightColor={highlightColor}
+            context={context}
+            limitedRender={limitedRender}
+          />
+        </motion.div>
+      ) : renderedData ? (
+        <motion.div
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          // exit={{ scaleY: 0 }}
+          style={{ flex: 1, paddingBottom: 4, paddingTop:4}}
+          key="preview-rendered-data"
+        >
+          <PreviewBlock
+            staticData={renderedData}
+            idx={idx}
+            parentId={parentId}
+            fieldInfo={fieldInfo}
+            bounded
+            highlightColor={highlightColor}
+            context={context}
+          />
+        </motion.div>
+      ) : hideText ? null : (
+        <motion.span
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          style={{ flex: 1 }}
+          key="field-empty"
+        >
+          {fieldInfo.name}
+        </motion.span>
+      )}
     </div>
   );
-};
+});

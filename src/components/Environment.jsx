@@ -1,5 +1,4 @@
 import React from "react";
-// import { Canvas } from "./Canvas";
 import { Contents } from "./Contents";
 import { DragLayer } from "./DragLayer";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
@@ -20,13 +19,33 @@ export default function Environment({
   snapToGrid,
   animateDrawer = true,
 }) {
-
   return (
-    <StyleWrapper highlightColor={highlightColor}>
-        <ProgrammingProvider store={store}>
-          <UnwrappedEnvironment height={height} width={width} drawerWidth={drawerWidth} snapToGrid={snapToGrid} animateDrawer={animateDrawer}/>
-        </ProgrammingProvider>
-    </StyleWrapper>
+    <ProgrammingProvider store={store}>
+      <StyleWrapper highlightColor={highlightColor}>
+        <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+          <ReactFlowProvider>
+            <div
+              direction="row"
+              style={{
+                padding: 0,
+                margin: 0,
+                display: "flex",
+                height,
+                width,
+              }}
+            >
+              <Contents
+                drawerWidth={drawerWidth}
+                highlightColor={highlightColor}
+                snapToGrid={snapToGrid}
+                animateDrawer={animateDrawer}
+              />
+            </div>
+            <DragLayer highlightColor={highlightColor} />
+          </ReactFlowProvider>
+        </DndProvider>
+      </StyleWrapper>
+    </ProgrammingProvider>
   );
 }
 
@@ -38,38 +57,20 @@ export function UnwrappedEnvironment({
   snapToGrid,
   animateDrawer = true,
 }) {
-  return (
-    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-      <ReactFlowProvider>
-        <Box
-          direction="row"
-          style={{
-            padding: 0,
-            margin: 0,
-            display: "flex",
-            height,
-            width,
-          }}
-        >
-          <Contents
-            drawerWidth={drawerWidth}
-            highlightColor={highlightColor}
-            snapToGrid={snapToGrid}
-            animateDrawer={animateDrawer}
-          />
-        </Box>
-        <DragLayer highlightColor={highlightColor} />
-      </ReactFlowProvider>
-    </DndProvider>
-  );
+  return null;
 }
 
-export function StyleWrapper({ highlightColor, children }) {
-  const theme = getTheme(highlightColor);
+export function StyleWrapper({
+  highlightColor,
+  children,
+  muiThemeOverride = null,
+  grommetThemeOverride = null,
+}) {
+  // const theme = grommetThemeOverride ? grommetThemeOverride : getTheme(highlightColor);
   const muiTheme = createTheme({
     palette: {
       mode: "dark",
-      highlightColor: {
+      primary: {
         main: highlightColor,
       },
       quiet: {
@@ -84,8 +85,7 @@ export function StyleWrapper({ highlightColor, children }) {
   });
 
   return (
-    <Grommet theme={theme}>
+    
       <ThemeProvider theme={muiTheme}>{children}</ThemeProvider>
-    </Grommet>
   );
 }

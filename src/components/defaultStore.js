@@ -666,7 +666,7 @@ export const ProgrammingSlice = (set, get) => ({
   },
   reset: (time) => {
     get().clock._elapsed = time ? time * 1000 : 0;
-  },
+  }
 });
 
 export const ImmerProgrammingSlice = subscribeWithSelector(immer(ProgrammingSlice));

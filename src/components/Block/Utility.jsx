@@ -1,6 +1,7 @@
 import React, { useState, useEffect, forwardRef } from "react";
 // import { styled, keyframes } from "@stitches/react";
-import styled from "styled-components";
+// import styled from "styled-components";
+import styled from "@emotion/styled";
 // import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 // import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 // import * as SeparatorPrimitive from "@radix-ui/react-separator";
@@ -21,9 +22,44 @@ import Menu from "@mui/material/Menu";
 // import MenuList from "@mui/material/MenuList";
 import Fade from "@mui/material/Fade";
 import { TextField } from "@mui/material";
+import { pick, isEqual } from "lodash";
 // import { TextField, InputAdornment } from "@mui/material";
+import { ATTENDED_DATA_PROPERTIES, SIMPLE_PROPERTY_TYPES } from "../Constants";
 
-export const stringEquality = (e1,e2) => JSON.stringify(e1) === JSON.stringify(e2)
+export const stringEquality = (e1, e2) =>
+  JSON.stringify(e1) === JSON.stringify(e2);
+
+export const compareBlockData = (data1, data2, propInfo) => {
+  if (
+    !isEqual(
+      pick(data1, ATTENDED_DATA_PROPERTIES),
+      pick(data2, ATTENDED_DATA_PROPERTIES)
+    )
+  ) {
+    return false;
+  } else {
+    const fields = Object.entries(propInfo)
+      .filter(
+        ([_, fieldInfo]) => fieldInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED
+      )
+      .map(([fieldKey, _]) => fieldKey);
+    return isEqual(
+      pick(data1.properties ? data1.properties : {}, fields),
+      pick(data2.properties ? data2.properties : {}, fields)
+    );
+  }
+};
+
+export const HeaderField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== "active",
+})(
+  { color: "white", "& .MuiInputBase-input": { borderRadius: 4 } },
+  ({ active, theme }) => ({
+    "& .MuiInputBase-input": {
+      backgroundColor: active ? `${theme.palette.primary.main}99` : "#22222299",
+    },
+  })
+);
 
 export const DropdownTrigger = ({
   triggerComponent,
@@ -43,7 +79,7 @@ export const DropdownTrigger = ({
   };
 
   return (
-    <div>
+    <div key={`${triggerProps.key}-wrapper`}>
       <Triggerer
         {...triggerProps}
         id="fade-button"
@@ -53,6 +89,7 @@ export const DropdownTrigger = ({
         onClick={handleClick}
       />
       <Menu
+        key={`${triggerProps.key}-menu`}
         id="fade-menu"
         MenuListProps={{
           "aria-labelledby": "fade-button",
@@ -235,251 +272,66 @@ export const DropdownTrigger = ({
 //   },
 // });
 
-const StyledScrollArea = styled(ScrollArea.Root)`
-  overflow: hidden;
-  height: ${(props) =>
-    props.$containerHeight ? `${props.$containerHeight}px` : "100%"};
-  width: ${(props) =>
-    props.$containerWidth ? `${props.$containerWidth}px` : "100%"};
-`;
+const StyledScrollArea = styled(ScrollArea.Root)(
+  { overflow: "hidden" },
+  (props) => ({ height: props.height, width: props.width })
+);
 
-const StyledViewport = styled(ScrollArea.Viewport)`
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  padding: 4px;
-`;
+const StyledViewport = styled(ScrollArea.Viewport)({
+  width: "100%",
+  height: "100%",
+  borderRadius: "inherit",
+});
 
-const StyledScrollbar = styled(ScrollArea.Scrollbar)`
-  display: flex;
-  user-select: none;
-  touch-action: none;
-  padding: 2px;
-  background: #55555525;
-  transition: background 160ms ease-out;
-  &:hover: {
-    background: #45454540;
-  }
-`;
+const StyledScrollbar = styled(ScrollArea.Scrollbar)({
+  display: "flex",
+  userSelect: "none",
+  touchAction: "none",
+  padding: "2px",
+  background: "#55555525",
+  transition: "background 160ms ease",
+  "&:hover": { background: "#45454540" },
+});
 
-const VerticalScrollBar = styled(StyledScrollbar)`
-  width: 8px;
-`;
+const VerticalScrollBar = styled(StyledScrollbar)({ width: "8px" });
 
-const HorizontalScrollBar = styled(StyledScrollbar)`
-  height: 8px;
-  flex-direction: column;
-`;
+const HorizontalScrollBar = styled(StyledScrollbar)({
+  height: "8px",
+  flexDirection: "column",
+});
 
-const StyledScrollThumb = styled(ScrollArea.Thumb)`
-  flex: 1;
-  background: #eeeeee66;
-  border-radius: 8px;
-`;
+const StyledScrollThumb = styled(ScrollArea.Thumb)({
+  flex: 1,
+  background: "#eeeeee66",
+  borderRadius: "8px",
+});
 
-// export const OtherStyledSeparator = styled(SeparatorPrimitive.Root)(
-//   (props) => ({
-//     background: "#efefef",
-//     backgroundColor: "#efefef",
-//     height:
-//       props.orientation === "horizontal"
-//         ? "1px"
-//         : props.$height
-//         ? props.$height
-//         : "100%",
-//     width:
-//       props.orientation === "vertical"
-//         ? "1px"
-//         : props.$width
-//         ? props.$width
-//         : "100%",
-//   })
-// );
-
-// const StyledDropdownContent = styled(DropdownMenuPrimitive.Content)(
-//   contentStyle
-// );
-
-// const StyledContextContent = styled(ContextMenuPrimitive.Content)(contentStyle);
-
-// const StyledTooltipContent = styled(TooltipPrimitive.Content)(contentStyle);
-
-// const HoverDropdownItem = styled(DropdownMenuPrimitive.Item)(itemStyle);
-
-// const HoverDropdownCheckboxItem = styled(DropdownMenuPrimitive.CheckboxItem)(
-//   itemStyle
-// );
-
-// const HoverDropdownRadioItem = styled(DropdownMenuPrimitive.RadioItem)(
-//   itemStyle
-// );
-
-// const HoverDropdownTriggerItem = styled(DropdownMenuPrimitive.Trigger)(
-//   itemStyle
-// );
-
-// const HoverContextItem = styled(ContextMenuPrimitive.Item)(itemStyle);
-
-// const HoverContextCheckboxItem = styled(ContextMenuPrimitive.CheckboxItem)(
-//   itemStyle
-// );
-
-// const HoverContextRadioItem = styled(ContextMenuPrimitive.RadioItem)(itemStyle);
-
-// const HoverContextTriggerItem = styled(ContextMenuPrimitive.Trigger)(itemStyle);
-
-// const StyledDropdownLabel = styled(DropdownMenuPrimitive.Label)`
-//   padding-left: 25px;
-//   font-size: 12px;
-//   line-height: 25px;
-//   color: #a0a0a0;
-// `;
-
-// const StyledContextLabel = styled(ContextMenuPrimitive.Label)`
-//   padding-left: 25px;
-//   font-size: 12px;
-//   line-height: 25px;
-//   color: #a0a0a0;
-// `;
-
-// const StyledDropdownSeparator = styled(DropdownMenuPrimitive.Separator)`
-//   height: 1px;
-//   background-color: #efefef;
-//   margin: 5px;
-// `;
-// const StyledContextSeparator = styled(ContextMenuPrimitive.Separator)`
-//   height: 1px;
-//   background-color: #efefef;
-//   margin: 5px;
-// `;
-
-// const StyledDropdownItemIndicator = styled(DropdownMenuPrimitive.ItemIndicator)`
-//   position: absolute;
-//   left: 0px;
-//   width: 25px;
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
-// `;
-// const StyledContextItemIndicator = styled(ContextMenuPrimitive.ItemIndicator)`
-//   position: absolute;
-//   left: 0px;
-//   width: 25px;
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
-// `;
-
-// const Tooltip = TooltipPrimitive.Root;
-// const TooltipTrigger = TooltipPrimitive.Trigger;
-
-// export const RightSlot = styled.div`
-//   margin-left: auto;
-//   padding-left: 20px;
-//   color: #efefef;
-//   :focus > &: {
-//     color: white;
-//   }
-//   [data-disabled] &: {
-//     color: #efefef;
-//   }
-// `;
-
-// const StyledSwitch = styled(SwitchPrimitive.Root)`
-//   all: unset;
-//   width: 42px;
-//   height: 25px;
-//   opacity: ${(props) => (props.disabled ? 0.7 : 1)};
-//   background-color: ${(props) =>
-//     props.checked ? props.$highlightColor : "#111111"};
-//   border-radius: 9999px;
-//   position: relative;
-//   box-shadow: inset 0.5px 0.5px 0px 0px rgba(55, 55, 55, 0.25);
-//   webkittaphighlightcolor: rgba(0, 0, 0, 0);
-// `;
-
-// const StyledThumb = styled(SwitchPrimitive.Thumb)`
-//   display: block;
-//   width: 21px;
-//   height: 21px;
-//   background-color: white;
-//   border-radius: 9999px;
-//   box-shadow: 0.5px 0.5px 0px 0px rgba(55, 55, 55, 0.25);
-//   transition: transform 100ms;
-//   transform: ${(props) =>
-//     props.checked ? "translateX(19px)" : "translateX(2px)"};
-//   will-change: transform;
-// `;
-
-// const SwitchThumb = StyledThumb;
-// const Label = styled(LabelPrimitive.Root)`
-//   font-size: 12px;
-//   font-weight: 500px;
-//   color: white;
-//   user-select: none;
-// `;
-
-// const StyledArrow = styled(TooltipPrimitive.Arrow)`
-//   fill: #303030f5;
-// `;
-
-// export const Switch = ({
-//   onCheckedChange,
-//   disabled,
-//   value,
-//   highlightColor,
-//   label,
-// }) => {
-//   return (
-//     <>
-//       <Label htmlFor={`switch-${label}`} style={{ paddingRight: 5 }}>
-//         {label}
-//       </Label>
-//       <StyledSwitch
-//         id={`switch-${label}`}
-//         checked={value}
-//         disabled={disabled}
-//         $highlightColor={highlightColor}
-//         onCheckedChange={onCheckedChange}
-//       >
-//         <SwitchThumb checked={value} />
-//       </StyledSwitch>
-//     </>
-//   );
-// };
-
-// export const ToolTip = ({ children, content, hideArrow }) => {
-//   return (
-//     <Tooltip>
-//       <TooltipTrigger key="trigger" asChild>
-//         {children}
-//       </TooltipTrigger>
-//       <StyledTooltipContent key="content" sideOffset={hideArrow ? 10 : 5}>
-//         {content}
-//         {!hideArrow && <StyledArrow key="arrow" />}
-//       </StyledTooltipContent>
-//     </Tooltip>
-//   );
-// };
-
-// export const Input = styled.input`
-//   border-width: 0;
-//   outline: none;
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
-//   border-radius: 4px;
-//   padding: 0 10px;
-//   height: 35px;
-//   font-size: 12px;
-//   line-height: 1;
-//   color: white;
-//   background-color: #22222299;
-//   box-shadow: 0 0 0 1px #222222;
-//   &:focus: {
-//     box-shadow: 0 0 0 2px #222222;
-//   }
-// `;
+export const ScrollRegion = ({
+  children,
+  horizontal = false,
+  vertical = true,
+  height = "100%",
+  width = "100%",
+}) => (
+  <StyledScrollArea
+    height={height}
+    width={width}
+    onDrag={(e) => e.stopPropagation()}
+  >
+    <StyledViewport>{children}</StyledViewport>
+    {horizontal && (
+      <HorizontalScrollBar orientation="horizontal">
+        <StyledScrollThumb />
+      </HorizontalScrollBar>
+    )}
+    {vertical && (
+      <VerticalScrollBar orientation="vertical">
+        <StyledScrollThumb />
+      </VerticalScrollBar>
+    )}
+    <ScrollArea.Corner />
+  </StyledScrollArea>
+);
 
 const VALID_CHARS = [
   "0",
@@ -495,38 +347,6 @@ const VALID_CHARS = [
   ".",
   "-",
 ];
-
-// const BasicInput = styled.input`
-//   border-width: 0;
-//   width: 40px;
-//   outline: none;
-//   display: inline-flex;
-//   align-items: center;
-//   justify-content: center;
-//   border-radius: 0px;
-//   padding: 0 5px;
-//   height: 35px;
-//   font-size: 12px;
-//   line-height: 1;
-//   color: white;
-//   background-color: transparent;
-// `;
-
-// const InputContainer = styled.div`
-//   padding: 0 5px 0 10px;
-//   color: white;
-//   border-radius: 4px;
-//   display: inline-flex;
-//   align-items: center;
-//   align-content: center;
-//   justify-content: center;
-//   background-color: #22222299;
-//   vertical-align: center;
-//   box-shadow: 0 0 0 1px #222222;
-//   &:focus: {
-//     box-shadow: 0 0 0 2px #222222;
-//   }
-// `;
 
 const SpinnerButton = styled.button({
   all: "unset",
@@ -546,7 +366,7 @@ const SpinnerButton = styled.button({
   "&:hover": {
     background: "#222222",
   },
-  opacity: `${props=>props.disabled ? 0.5 : 1}`
+  opacity: `${(props) => (props.disabled ? 0.5 : 1)}`,
 });
 
 const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
@@ -584,118 +404,122 @@ const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
 //   font-size: 12px;
 // `;
 
-export const NumberInput = forwardRef(({
-  prefix = "",
-  suffix = "",
-  style = {},
-  innerStyle = {},
-  step = 1,
-  onChange,
-  min,
-  max,
-  value,
-  visualScaling = 1,
-  disabled = false,
-  label = null,
-  ...otherProps
-},ref) => {
-  const setNewFromButton = (change) => {
-    const numericNew = plus(value, divide(change, visualScaling));
-    const scaledMax = divide(max, visualScaling);
-    const scaledMin = divide(min, visualScaling);
-    console.log({
-      change,
+export const NumberInput = forwardRef(
+  (
+    {
+      prefix = "",
+      suffix = "",
+      style = {},
+      innerStyle = {},
+      step = 1,
+      onChange,
+      min,
+      max,
       value,
-      visualScaling,
-      numericNew,
-      scaledMax,
-      scaledMin,
-    });
-    if (numericNew > scaledMax) {
-      setAbove(true);
-      setBelow(false);
-      onChange(scaledMax);
-    } else if (numericNew < scaledMin) {
-      setAbove(false);
-      setBelow(true);
-      onChange(scaledMin);
-    } else {
-      setAbove(false);
-      setBelow(false);
-      onChange(numericNew);
-    }
-  };
+      visualScaling = 1,
+      disabled = false,
+      label = null,
+      ...otherProps
+    },
+    ref
+  ) => {
+    const setNewFromButton = (change) => {
+      const numericNew = plus(value, divide(change, visualScaling));
+      const scaledMax = divide(max, visualScaling);
+      const scaledMin = divide(min, visualScaling);
+      console.log({
+        change,
+        value,
+        visualScaling,
+        numericNew,
+        scaledMax,
+        scaledMin,
+      });
+      if (numericNew > scaledMax) {
+        setAbove(true);
+        setBelow(false);
+        onChange(scaledMax);
+      } else if (numericNew < scaledMin) {
+        setAbove(false);
+        setBelow(true);
+        onChange(scaledMin);
+      } else {
+        setAbove(false);
+        setBelow(false);
+        onChange(numericNew);
+      }
+    };
 
-  const setNewFromInput = (event) => {
-    console.log(event);
-    if (event?.nativeEvent?.data) {
-      if (!VALID_CHARS.includes(event.nativeEvent.data)) {
+    const setNewFromInput = (event) => {
+      console.log(event);
+      if (event?.nativeEvent?.data) {
+        if (!VALID_CHARS.includes(event.nativeEvent.data)) {
+          return;
+        }
+      }
+
+      if (event.target.value === "-") {
+        onChange(0);
+        setStoredValue("-");
         return;
       }
-    }
 
-    if (event.target.value === "-") {
-      onChange(0);
-      setStoredValue("-");
+      const numericNew = Number(event.target.value);
+      if (!isNumber(numericNew) || isNaN(numericNew)) {
+        return;
+      }
+
+      if (numericNew > max) {
+        setAbove(true);
+        setBelow(false);
+        onChange(max / visualScaling);
+      } else if (numericNew < min) {
+        setAbove(false);
+        setBelow(true);
+        onChange(min / visualScaling);
+      } else {
+        setAbove(false);
+        setBelow(false);
+        onChange(numericNew / visualScaling);
+        setStoredValue(event.target.value);
+      }
       return;
-    }
+    };
 
-    const numericNew = Number(event.target.value);
-    if (!isNumber(numericNew) || isNaN(numericNew)) {
-      return;
-    }
+    const [above, setAbove] = useState(false);
+    const [below, setBelow] = useState(false);
+    const valid = !above && !below;
+    const [storedValue, setStoredValue] = useState(0);
 
-    if (numericNew > max) {
-      setAbove(true);
-      setBelow(false);
-      onChange(max / visualScaling);
-    } else if (numericNew < min) {
-      setAbove(false);
-      setBelow(true);
-      onChange(min / visualScaling);
-    } else {
-      setAbove(false);
-      setBelow(false);
-      onChange(numericNew / visualScaling);
-      setStoredValue(event.target.value);
-    }
-    return;
-  };
+    useEffect(() => {
+      if (
+        storedValue !== "-" &&
+        storedValue !== "" &&
+        value * visualScaling !== Number(storedValue)
+      ) {
+        setStoredValue(times(value, visualScaling));
+      }
+    }, [storedValue, value, visualScaling]);
 
-  const [above, setAbove] = useState(false);
-  const [below, setBelow] = useState(false);
-  const valid = !above && !below;
-  const [storedValue, setStoredValue] = useState(0);
-
-  useEffect(() => {
-    if (
-      storedValue !== "-" &&
-      storedValue !== "" &&
-      value * visualScaling !== Number(storedValue)
-    ) {
-      setStoredValue(times(value, visualScaling));
-    }
-  }, [storedValue, value, visualScaling]);
-
-  return (
-        <TextField
-          ref={ref}
-          type="text"
-          size='small'
-          color={valid ? 'highlightColor' : 'warning'}
-          className="nodrag"
-          // min={min * visualScaling}
-          // max={max}
-          step={step * visualScaling}
-          style={{paddingRight:0}}
-          InputProps={{
-            className:'nodrag',
-            style:{paddingRight:6},
-            startAdornment: (
-              <InputAdornment position="start">{prefix}</InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position='end'>
+    return (
+      <TextField
+        ref={ref}
+        type="text"
+        size="small"
+        color={valid ? "primary" : "warning"}
+        className="nodrag"
+        // min={min * visualScaling}
+        // max={max}
+        step={step * visualScaling}
+        style={{ paddingRight: 0 }}
+        InputProps={{
+          className: "nodrag",
+          style: { paddingRight: 6 },
+          startAdornment: (
+            <InputAdornment position="start">{prefix}</InputAdornment>
+          ),
+          endAdornment: (
+            <InputAdornment position="end">
               {suffix}
               <Spinner
                 disabled={disabled}
@@ -705,37 +529,15 @@ export const NumberInput = forwardRef(({
                 onClickUp={(e) => setNewFromButton(step)}
               />
             </InputAdornment>
-            )
-          }}
-          value={storedValue}
-          onChange={setNewFromInput}
-          disabled={disabled}
-          {...otherProps}
-        />
-  );
-});
-
-export const ScrollRegion = ({
-  children,
-  horizontal,
-  vertical,
-  height,
-  width,
-}) => (
-  <StyledScrollArea $containerHeight={height} $containerWidth={width}>
-    <StyledViewport>{children}</StyledViewport>
-    {horizontal && (
-      <HorizontalScrollBar orientation="horizontal">
-        <StyledScrollThumb />
-      </HorizontalScrollBar>
-    )}
-    {vertical && (
-      <VerticalScrollBar orientation="vertical">
-        <StyledScrollThumb />
-      </VerticalScrollBar>
-    )}
-    <ScrollArea.Corner />
-  </StyledScrollArea>
+          ),
+        }}
+        value={storedValue}
+        onChange={setNewFromInput}
+        disabled={disabled}
+        {...otherProps}
+      />
+    );
+  }
 );
 
 // Exports

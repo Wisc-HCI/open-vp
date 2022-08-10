@@ -16,12 +16,7 @@ import {
   FiRefreshCw
 } from "react-icons/fi";
 import { SIMPLE_PROPERTY_TYPES } from "../../components/Constants";
-
-import '../rotate.css';
-
-const Synchonizing = () => {
-  return <FiRefreshCw className='rotate'/>
-}
+import { Synchonizing } from "./Synchronizing";
 
 const connectionConfig = {
   drawers: [
@@ -68,7 +63,7 @@ const connectionConfig = {
           {
             type: EXTRA_TYPES.INDICATOR_ICON,
             accessor: (data) => {
-              return <Synchonizing />;
+              return Synchonizing;
             },
             label: "Status",
           },
@@ -98,7 +93,7 @@ const connectionConfig = {
                   {
                     type: EXTRA_TYPES.INDICATOR_ICON,
                     accessor: (data) => {
-                      return <Synchonizing />;
+                      return Synchonizing;
                     },
                     label: "Synchronizing",
                   },

@@ -13,12 +13,12 @@ export const baseTypeData = {
       },
       status: {
         name: "Status",
-        type: SIMPLE_PROPERTY_TYPES.IGNORED,
+        type: SIMPLE_PROPERTY_TYPES.METADATA,
         default: STATUS.PENDING,
       },
       errorCode: {
         name: "Error Code",
-        type: SIMPLE_PROPERTY_TYPES.IGNORED,
+        type: SIMPLE_PROPERTY_TYPES.METADATA,
         nullValid: true,
         default: null
       },
