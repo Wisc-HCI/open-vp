@@ -38,7 +38,7 @@ export const compareBlockData = (data1, data2, propInfo) => {
   ) {
     return false;
   } else {
-    const fields = Object.entries(propInfo)
+    const fields = Object.entries(propInfo ? propInfo : {})
       .filter(
         ([_, fieldInfo]) => fieldInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED
       )
@@ -51,12 +51,13 @@ export const compareBlockData = (data1, data2, propInfo) => {
 };
 
 export const HeaderField = styled(TextField, {
-  shouldForwardProp: (prop) => prop !== "active",
+  shouldForwardProp: (prop) => !["active", "editing"].includes(prop),
 })(
   { color: "white", "& .MuiInputBase-input": { borderRadius: 4 } },
-  ({ active, theme }) => ({
+  ({ active, editing, theme }) => ({
     "& .MuiInputBase-input": {
       backgroundColor: active ? `${theme.palette.primary.main}99` : "#22222299",
+      userSelect: editing ? null : "none",
     },
   })
 );

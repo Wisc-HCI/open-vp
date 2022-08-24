@@ -88,6 +88,7 @@ export const BlockHeader = memo(({
             onChange={(e) => {
               updateItemName(nameId, e.target.value);
             }}
+            editing={editing}
             // sx={{ color: "white", borderColor: 'white' }}
             // InputProps={{
             //   style: {

@@ -1,16 +1,14 @@
 import React, { useCallback } from "react";
-import { Grommet } from "grommet";
+// import { Grommet } from "grommet";
 import { VisualBlock } from "./VisualBlock";
 import {
   ProgrammingProvider,
   useProgrammingStore,
 } from "../ProgrammingContext";
-import { getTheme } from "../theme";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
 import { combinedBlockData } from "../Generators";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { stringEquality } from "./Utility";
 import { StyleWrapper } from "../Environment";
 

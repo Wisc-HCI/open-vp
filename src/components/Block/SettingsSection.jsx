@@ -98,7 +98,7 @@ export const SettingsSection = ({
               />
             )}
             {propInfo.type === SIMPLE_PROPERTY_TYPES.NUMBER && (
-              <Box key={propKey} width="small" align="end">
+              <Box key={propKey} sx={{ maxWidth: 130, padding: "3px" }}>
                 <NumberInput
                   onMouseEnter={(_) => setLocked(true)}
                   onMouseLeave={(_) => setLocked(false)}

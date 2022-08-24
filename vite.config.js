@@ -6,6 +6,7 @@ import svgr from "vite-plugin-svgr";
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    // minify: 'esnext',
     lib: {
       entry: path.resolve(__dirname,'src/index.js'),
       name: 'simple-vp',
@@ -14,14 +15,15 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ['react'],
+      external: ['react','redux'],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          react: 'React'
+          react: 'React',
+          redux: 'redux'
         }
-      }
+      },
     }
   },
   plugins: [react(),svgr()],

@@ -1,11 +1,11 @@
 import React, {memo} from "react";
-import { Box, Skeleton, TextField, Tooltip, Stack, Avatar } from "@mui/material";
+import { Box, Skeleton, TextField, Tooltip, Stack } from "@mui/material";
 import { ProgressBar } from "./Progress";
 import { useProgrammingStore } from "../ProgrammingContext";
 import shallow from "zustand/shallow";
 import { OuterAvatarContainer, InnerAvatarContainer, OuterProgressContainer } from "./BlockContainers";
 
-export const BlockHeader = memo(({
+export const BlockSettings = memo(({
   id,
   highlightColor,
   progress,

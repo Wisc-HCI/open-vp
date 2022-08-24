@@ -1,17 +1,17 @@
 import React, { useCallback } from "react";
 import { getSmoothStepPath, getEdgeCenter } from "react-flow-renderer";
 import { useProgrammingStore } from "./ProgrammingContext";
-import { Box } from "grommet";
 import { FiTrash2, FiType, FiHash } from "react-icons/fi";
-import styled from "styled-components";
+import styled from "@emotion/styled";
 import { SIMPLE_PROPERTY_TYPES } from "./Constants";
 
 const EdgeButton = styled.button({
   all: "unset",
   fontFamily: "inherit",
+  userSelect: "none",
   borderRadius: "100%",
-  height: "20px",
-  width: "20px",
+  height: "23px",
+  width: "23px",
   display: "inherit",
   padding: "3px",
   alignItems: "center",
@@ -29,6 +29,7 @@ const EdgeButton = styled.button({
 
 const EdgeField = styled.input`
   border-width: 0;
+  user-select: none;
   outline: none;
   display: inline-flex;
   align-items: center;
@@ -161,15 +162,15 @@ export const CanvasEdge = ({
               padding: 5,
             }}
           >
-            <Box
-              // style={{ position: "inherit" }}
-              height={`${bounds.height}px`}
-              width={`${bounds.width}px`}
-              direction="row"
-              gap="xsmall"
-              justify="around"
-              align="center"
-              alignContent="baseline"
+            <div
+              style={{
+                height: `${bounds.height}px`,
+                width: `${bounds.width}px`,
+                justifyContent: "space-around",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
             >
               <EdgeField
                 type={
@@ -201,7 +202,7 @@ export const CanvasEdge = ({
               >
                 <FiTrash2 />
               </EdgeButton>
-            </Box>
+            </div>
           </div>
         </foreignObject>
       </g>
