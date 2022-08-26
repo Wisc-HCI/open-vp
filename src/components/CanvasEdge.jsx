@@ -4,6 +4,7 @@ import { useProgrammingStore } from "./ProgrammingContext";
 import { FiTrash2, FiType, FiHash } from "react-icons/fi";
 import styled from "@emotion/styled";
 import { SIMPLE_PROPERTY_TYPES } from "./Constants";
+import { Spinner } from "./Block/Utility";
 
 const EdgeButton = styled.button({
   all: "unset",
@@ -29,7 +30,7 @@ const EdgeButton = styled.button({
 
 const EdgeField = styled.input`
   border-width: 0;
-  user-select: none;
+  // user-select: none;
   outline: none;
   display: inline-flex;
   align-items: center;
@@ -37,7 +38,7 @@ const EdgeField = styled.input`
   border-radius: 4px;
   padding: 0 10px;
   height: 25px;
-  max-width: 80px;
+  // max-width: 80px;
   font-size: 12px;
   line-height: 1;
   color: white;
@@ -46,6 +47,10 @@ const EdgeField = styled.input`
   &:focus: {
     box-shadow: 0 0 0 2px #222222;
   }
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 `;
 
 export const DrawingCanvasEdge = ({
@@ -170,6 +175,7 @@ export const CanvasEdge = ({
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
+                color: 'white'
               }}
             >
               <EdgeField
@@ -178,10 +184,13 @@ export const CanvasEdge = ({
                 }
                 className="nodrag"
                 value={edge.name}
-                style={{ width: bounds.width - 40 }}
+                style={{ maxWidth: edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? bounds.width - 110 : bounds.width - 90}}
                 onChange={(v) => updateEdgeName(edge.id, v.target.value)}
                 onClick={(e) => e.stopPropagation()}
               />
+              {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER && (
+                <Spinner above={false} below={false} onClickDown={v=>updateEdgeName(edge.id, Number(v.target.value) - 0.1)} onClickUp={v=>updateEdgeName(edge.id, Number(v.target.value) + 0.1)}/>
+              )}
               <EdgeButton
                 onClick={(e) => {
                   toggleEdgeMode(edge.id);

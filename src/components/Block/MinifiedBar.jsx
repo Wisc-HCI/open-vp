@@ -13,7 +13,7 @@ import {
   Typography,
   Skeleton,
 } from "@mui/material";
-import { NumberInput } from "./Utility";
+import { NumberInput, Vector3Input } from "./Utility";
 import { DropZone } from "./DropZone";
 import { FullWidthStack, PropertySection } from "./BlockContainers";
 
@@ -52,6 +52,7 @@ export const MinifiedBar = memo(
                 key={fieldKey}
                 direction="row"
                 justifyContent="space-between"
+                onClick={(e) => e.stopPropagation()}
                 sx={{
                   alignItems: "center",
                   justify: "space-between",
@@ -103,9 +104,9 @@ export const MinifiedBar = memo(
                 ) : fieldInfo.type === SIMPLE_PROPERTY_TYPES.STRING ? (
                   <TextField
                     size="small"
-                    // label={fieldInfo.name}
                     color="primary"
                     className="nodrag"
+                    margin="none"
                     key={fieldKey}
                     // placeholder={fieldInfo.name}
                     onMouseEnter={(_) => setLocked(true)}
@@ -121,29 +122,50 @@ export const MinifiedBar = memo(
                     }
                   />
                 ) : fieldInfo.type === SIMPLE_PROPERTY_TYPES.NUMBER ? (
-                  <Box sx={{ maxWidth: 120, padding: "3px" }}>
+                  <Box key={fieldKey} sx={{ maxWidth: 120, padding: "3px" }}>
                     <NumberInput
-                      label={fieldInfo.name}
                       onMouseEnter={(_) => setLocked(true)}
                       onMouseLeave={(_) => setLocked(false)}
                       className="nodrag"
                       key={fieldKey}
                       style={{ width: 50, margin: 3 }}
-                      min={fieldInfo.min !== undefined ? fieldInfo.min : 0}
-                      max={fieldInfo.max !== undefined ? fieldInfo.max : 10}
+                      min={fieldInfo.min}
+                      max={fieldInfo.max}
                       step={fieldInfo.step}
                       suffix={fieldInfo.units}
                       value={properties[fieldKey]}
                       disabled={interactionDisabled}
-                      visualScaling={fieldInfo.visualScaling}
                       onChange={(value) =>
                         !interactionDisabled &&
                         updateItemSimpleProperty(id, fieldKey, value)
                       }
                     />
                   </Box>
+                ) : fieldInfo.type === SIMPLE_PROPERTY_TYPES.VECTOR3 ? (
+                  <Box key={fieldKey} sx={{ maxWidth: 200, padding: "3px" }}>
+                    <Vector3Input
+                      onMouseEnter={(_) => setLocked(true)}
+                      onMouseLeave={(_) => setLocked(false)}
+                      className="nodrag"
+                      min={fieldInfo.min}
+                      max={fieldInfo.max}
+                      step={fieldInfo.step}
+                      endAdornment={fieldInfo.endAdornment}
+                      value={properties[fieldKey]}
+                      disabled={interactionDisabled}
+                      onChange={(event) =>
+                        !interactionDisabled &&
+                        updateItemSimpleProperty(
+                          id,
+                          fieldKey,
+                          event.target.value
+                        )
+                      }
+                    />
+                  </Box>
                 ) : fieldInfo.accepts && fieldInfo.isList ? (
                   <List
+                    key={fieldKey}
                     ids={properties[fieldKey]}
                     fieldInfo={{ ...fieldInfo, value: fieldKey }}
                     parentId={id}
@@ -154,6 +176,7 @@ export const MinifiedBar = memo(
                   />
                 ) : fieldInfo.accepts && !fieldInfo.isList ? (
                   <DropZone
+                    key={fieldKey}
                     id={properties[fieldKey]}
                     fieldInfo={{
                       ...fieldInfo,

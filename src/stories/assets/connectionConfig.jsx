@@ -195,6 +195,7 @@ const connectionConfig = {
           },
         ],
         hideNewPrefix: true,
+        // minified: true,
       },
       properties: {
         hat: {
@@ -238,6 +239,13 @@ const connectionConfig = {
             { value: "pm", label: "PM" },
           ],
           default: "am",
+        },
+        position: {
+          name: "Position",
+          type: SIMPLE_PROPERTY_TYPES.VECTOR3,
+          // min: [0,0,0],
+          max: [20,20,20],
+          default: [0,0,0],
         },
       },
     },

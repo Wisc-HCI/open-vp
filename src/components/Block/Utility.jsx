@@ -1,7 +1,8 @@
-import React, { useState, useEffect, forwardRef } from "react";
+import React, { useState, useEffect, forwardRef, memo } from "react";
 // import { styled, keyframes } from "@stitches/react";
 // import styled from "styled-components";
 import styled from "@emotion/styled";
+import { css } from "@mui/material";
 // import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 // import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 // import * as SeparatorPrimitive from "@radix-ui/react-separator";
@@ -11,20 +12,41 @@ import styled from "@emotion/styled";
 // import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
-import { times, divide, plus } from "number-precision";
+import { times, divide, plus, strip } from "number-precision";
 // import { debounce } from "lodash";
 // import { NumberInput as MuiNumberInput } from "@mui-treasury/component-numberinput";
-import InputAdornment from "@mui/material/InputAdornment";
-import { isNumber, isNaN } from "lodash";
-// import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-// import MenuItem from "@mui/material/MenuItem";
-// import MenuList from "@mui/material/MenuList";
-import Fade from "@mui/material/Fade";
-import { TextField } from "@mui/material";
+import { isNumber, isNaN, clamp } from "lodash";
+import {
+  Menu,
+  Fade,
+  TextField,
+  InputAdornment,
+  OutlinedInput,
+  InputLabel,
+  FormControl,
+  Input,
+  Divider,
+  Stack,
+} from "@mui/material";
 import { pick, isEqual } from "lodash";
 // import { TextField, InputAdornment } from "@mui/material";
 import { ATTENDED_DATA_PROPERTIES, SIMPLE_PROPERTY_TYPES } from "../Constants";
+
+const NumberInputField = styled(Input)`
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
+
+const OutlinedNumberInput = styled(OutlinedInput)`
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+`;
 
 export const stringEquality = (e1, e2) =>
   JSON.stringify(e1) === JSON.stringify(e2);
@@ -353,7 +375,10 @@ const SpinnerButton = styled.button({
   all: "unset",
   display: "flex",
   flexDirection: "column",
-  padding: "2px",
+  paddingLeft: "0px",
+  paddingTop: "2px",
+  paddingRight: "0px",
+  paddingBottom: "2px",
   margin: "0px",
   alignItems: "center",
   justifyContent: "center",
@@ -368,9 +393,9 @@ const SpinnerButton = styled.button({
     background: "#222222",
   },
   opacity: `${(props) => (props.disabled ? 0.5 : 1)}`,
-});
+},props=>({opacity:props.disabled ? 0.5:1}));
 
-const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
+export const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
   return (
     <div
       style={{
@@ -405,7 +430,263 @@ const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
 //   font-size: 12px;
 // `;
 
-export const NumberInput = forwardRef(
+const CompoundInput = memo(forwardRef(
+  ({ onChange, value, disabled, min, max, step, ...other }, ref) => {
+    console.log({min,max})
+    return (
+      <Stack
+        style={{padding:1,marginRight:4}}
+        direction="row"
+        // spacing={0}
+        ref={ref}
+        // justifyContent="space-around"
+        alignItems='center'
+        alignContent='center'
+      >
+        <NumberInputField
+          disabled={disabled}
+          disableUnderline
+          className={other.className}
+          label={null}
+          value={value[0]}
+          style={{marginLeft:1,paddingRight:0}}
+          inputProps={{ step: 0.1 }}
+          onFocus={other.onFocus}
+          onBlur={other.onBlur}
+          onChange={(e) => {
+            onChange({
+              target: {
+                name: other.name,
+                value: [strip(Number(e.target.value)), value[1], value[2]],
+              },
+            });
+          }}
+          type="number"
+          margin="dense"
+        />
+        <Spinner
+          above={value[0] >= max[0]}
+          below={value[0] <= min[0]}
+          onClickUp={() => {
+            onChange({
+              target: {
+                name: other.name,
+                value: [strip(Number(value[0]+step)), value[1], value[2]],
+              },
+            });
+          }}
+          onClickDown={(e) =>
+            onChange({
+              target: {
+                name: other.name,
+                value: [strip(Number(value[0]-step)), value[1], value[2]],
+              },
+            })
+          }
+        />
+        <NumberInputField
+          disabled={disabled}
+          disableUnderline
+          className={other.className}
+          label={null}
+          value={value[1]}
+          style={{marginLeft:1,paddingRight:0}}
+          inputProps={{ step: step, type: "number" }}
+          onFocus={other.onFocus}
+          onBlur={other.onBlur}
+          onChange={(e) => {
+            onChange({
+              target: {
+                name: other.name,
+                value: [value[0], strip(Number(e.target.value)), value[2]],
+              },
+            });
+          }}
+          type="number"
+        />
+        <Spinner
+          above={value[1] >= max[1]}
+          below={value[1] <= min[1]}
+          onClickUp={() => {
+            onChange({
+              target: {
+                name: other.name,
+                value: [value[0], strip(Number(value[1]+step)), value[2]],
+              },
+            });
+          }}
+          onClickDown={(e) =>
+            onChange({
+              target: {
+                name: other.name,
+                value: [value[0], strip(Number(value[1]-step)), value[2]],
+              },
+            })
+          }
+        />
+        <NumberInputField
+          disabled={disabled}
+          disableUnderline
+          className={other.className}
+          label={null}
+          value={value[2]}
+          style={{marginLeft:1,paddingRight:0}}
+          inputProps={{ step: step }}
+          onFocus={other.onFocus}
+          onBlur={other.onBlur}
+          onChange={(e) => {
+            onChange({
+              target: {
+                name: other.name,
+                value: [value[0], value[1], strip(Number(e.target.value))],
+              },
+            });
+          }}
+          type="number"
+          margin="dense"
+        />
+        <Spinner
+        above={value[2] >= max[2]}
+        below={value[2] <= min[2]}
+          onClickUp={() => {
+            onChange({
+              target: {
+                name: other.name,
+                value: [value[0], value[1], strip(Number(value[2]+step))],
+              },
+            });
+          }}
+          onClickDown={(e) =>
+            onChange({
+              target: {
+                name: other.name,
+                value: [value[0], value[1], strip(Number(value[2]-step))],
+              },
+            })
+          }
+        />
+      </Stack>
+    );
+  }
+));
+
+export const Vector3Input = memo(({
+  disabled,
+  label,
+  onChange,
+  value = [0, 0, 0],
+  min = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
+  max = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
+  step = 0.1,
+  onBlur = (_) => {},
+  onFocus = (_) => {},
+  endAdornment,
+}) => {
+  return (
+    <FormControl>
+      <InputLabel htmlFor="outlined-position-vector" color="primary" shrink>
+        {label}
+      </InputLabel>
+      <OutlinedInput
+        notched
+        className="nodrag"
+        size="small"
+        id="outlined-position-vector"
+        label={label}
+        color="primary"
+        onFocus={onFocus}
+        onBlur={onBlur}
+        disabled={disabled}
+        value={value}
+        inputComponent={CompoundInput}
+        inputProps={{min,max,step}}
+        onChange={onChange}
+        endAdornment={
+          endAdornment ? (
+            <InputAdornment position="end">{endAdornment}</InputAdornment>
+          ) : null
+        }
+      />
+    </FormControl>
+  );
+});
+
+export const NumberInput = memo(({
+  disabled,
+  label,
+  onChange,
+  step,
+  value = 0,
+  onBlur = (_) => {},
+  onFocus = (_) => {},
+  suffix="",
+  prefix="",
+  min=Number.NEGATIVE_INFINITY,
+  max=Number.POSITIVE_INFINITY
+}) => {
+
+  const [v, setV] = useState(value);
+
+  useEffect(()=>{
+    if (value < min) {
+      setV(min)
+    } else if (value > max) {
+      setV(max)
+    }
+  })
+
+  const handleChange = (newValue) => {
+    if (newValue < min) {
+      setV(min);
+      onChange(min);
+    } else if (newValue > max) {
+      setV(max);
+      onChange(max);
+    } else {
+      onChange(newValue)
+    }
+  }
+
+  return (
+    <FormControl>
+      <InputLabel htmlFor="outlined-position-vector" color="primary" shrink>
+        {label}
+      </InputLabel>
+      <OutlinedNumberInput
+        notched
+        className="nodrag"
+        size="small"
+        id="outlined-position-vector"
+        label={label}
+        color="primary"
+        onFocus={onFocus}
+        onBlur={onBlur}
+        disabled={disabled}
+        value={value}
+        onChange={(e)=>handleChange(e.target.value)}
+        style={{ paddingRight: 4 }}
+        inputProps={{min,max,type:'number'}}
+        startAdornment={
+          <InputAdornment position='start'>{prefix}</InputAdornment>
+        }
+        endAdornment={
+          <InputAdornment position="end">
+            {suffix}
+            <Spinner
+              disabled={disabled}
+              above={value >= max}
+              below={value <= min}
+              onClickDown={() => onChange(clamp(strip(-1 * step + value),min,max))}
+              onClickUp={() => onChange(clamp(strip(step + value),min,max))}
+            />
+          </InputAdornment>
+        }
+      />
+    </FormControl>
+  );
+});
+
+export const NumberInput2 = forwardRef(
   (
     {
       prefix = "",
@@ -505,7 +786,7 @@ export const NumberInput = forwardRef(
     return (
       <TextField
         ref={ref}
-        type="text"
+        type="number"
         size="small"
         color={valid ? "primary" : "warning"}
         className="nodrag"

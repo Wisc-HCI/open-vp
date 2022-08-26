@@ -57,7 +57,8 @@ const basicStarter = {
             speed: 1,
             doFunky: true,
             greeting: 'Hello!',
-            time: 'am'
+            time: 'am',
+            position: [0,1,2]
           },
           position: { x: 0, y: 150 },
           canDelete: true,

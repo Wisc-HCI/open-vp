@@ -279,6 +279,24 @@ export const VisualBlock = memo(
               )}
             </Stack>
 
+            {/* Add Connection Info/Handles here for blocks */}
+            {onCanvas && (
+              <>
+                {["top", "bottom", "left", "right"]
+                  .filter((position) => blockSpec.connections?.[position])
+                  .map((position) => (
+                    <ConnectionHandle
+                      key={position}
+                      nodeData={data}
+                      position={position}
+                      direction={blockSpec.connections[position].direction}
+                      allowed={blockSpec.connections[position].allowed}
+                      highlightColor={highlightColor}
+                    />
+                  ))}
+              </>
+            )}
+
             {/* If the block is a function instance (the actual function and not a call) then render the spawn area for arguments */}
             <Collapse in={!isCollapsed && !minified} orientation="vertical">
               <Box>
@@ -316,23 +334,6 @@ export const VisualBlock = memo(
                     </Stack>
                   )}
 
-                {/* Add Connection Info/Handles here for blocks */}
-                {onCanvas && (
-                  <>
-                    {["top", "bottom", "left", "right"]
-                      .filter((position) => blockSpec.connections?.[position])
-                      .map((position) => (
-                        <ConnectionHandle
-                          key={position}
-                          nodeData={data}
-                          position={position}
-                          direction={blockSpec.connections[position].direction}
-                          allowed={blockSpec.connections[position].allowed}
-                          highlightColor={highlightColor}
-                        />
-                      ))}
-                  </>
-                )}
                 {/* If the block has simple parameters, show them in a collapse block */}
                 {!limitedRender &&
                   Object.keys(simpleProperties).length > 0 &&

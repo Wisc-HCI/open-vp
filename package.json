@@ -1,7 +1,7 @@
 {
   "name": "simple-vp",
   "private": true,
-  "version": "0.7.1",
+  "version": "0.7.2",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -29,13 +29,13 @@
     "immer": "^9.0.12",
     "lodash": "^4.17.21",
     "number-precision": "^1.5.2",
-    "react-dnd": "^16.0.1",
     "rdndmb-html5-to-touch": "^7.0.0-alpha.1",
+    "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-multi-backend": "^7.0.0-alpha.4",
     "react-dnd-preview": "^7.0.0-alpha.3",
     "react-dnd-touch-backend": "^16.0.1",
-    "react-flow-renderer": "^10.3.8",
+    "react-flow-renderer": "^10.3.16",
     "react-icons": "^4.4.0",
     "react-use-measure": "^2.1.1",
     "uuid": "^8.3.2",
@@ -66,7 +66,6 @@
     "vite-plugin-svgr": "^2.2.0"
   },
   "peerDependencies": {
-    
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mui/material": "^5.9.3",
