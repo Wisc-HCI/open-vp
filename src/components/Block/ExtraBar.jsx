@@ -53,7 +53,7 @@ const FunctionButtonExtra = memo(
         <ExtraActionIcon />
       </IconButton>
     ) : (
-      <MenuItem disabled={interactionDisabled} onClick={onClick}>
+      <MenuItem disabled={interactionDisabled} onClick={() => onClick(data, blockSpec)}>
         <ListItemIcon>
           <ExtraActionIcon />
         </ListItemIcon>

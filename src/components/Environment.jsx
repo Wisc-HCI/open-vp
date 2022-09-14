@@ -5,7 +5,7 @@ import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
 import { ProgrammingProvider } from "./ProgrammingContext";
-import { ReactFlowProvider } from "react-flow-renderer";
+import { ReactFlowProvider } from "reactflow";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 export default function Environment({

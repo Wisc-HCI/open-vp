@@ -137,6 +137,18 @@ class Timer {
 
 	}
 
+	toJSON() {
+		return {
+			timescale: this._timescale
+		}
+	}
+
+	fromJson({timescale=1}) {
+		let timer = new Timer();
+		timer.setTimescale(timescale);
+		return timer;
+	}
+
 }
 
 function handleVisibilityChange() {

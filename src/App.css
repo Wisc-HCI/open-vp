@@ -40,3 +40,11 @@
 button {
   font-size: calc(10px + 2vmin);
 }
+
+.pausable {
+  animation-play-state: paused;
+}
+
+.pausable:hover {
+  animation-play-state: running;
+}

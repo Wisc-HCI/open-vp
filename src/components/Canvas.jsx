@@ -1,11 +1,5 @@
 import React, { memo } from "react";
-import ReactFlow, {
-  MiniMap,
-  Controls,
-  Background,
-  useReactFlow,
-  ControlButton,
-} from "react-flow-renderer";
+import ReactFlow, { Background, Controls, MiniMap, useReactFlow, ControlButton } from 'reactflow';
 import { useDrop } from "react-dnd";
 import { useProgrammingStore } from "./ProgrammingContext";
 import { useMemo } from "react";
@@ -19,6 +13,8 @@ import { FiLock, FiUnlock } from "react-icons/fi";
 import { stringEquality } from "./Block/Utility";
 import shallow from "zustand/shallow";
 import { compareBlockData } from "./Block/Utility";
+import 'reactflow/dist/style.css';
+// import './canvas.css';
 
 const typeToBlockField = (dataType) =>
   dataType === DATA_TYPES.INSTANCE
@@ -216,9 +212,9 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         onConnectEnd={(_) => {
           setConnectionInfo(null);
         }}
-        onConnectStop={(_) => {
-          setConnectionInfo(null);
-        }}
+        // onConnectStop={(_) => {
+        //   setConnectionInfo(null);
+        // }}
         onNodesChange={moveNodes}
         fitView
         snapToGrid={snapToGrid}

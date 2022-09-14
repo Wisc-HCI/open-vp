@@ -1,6 +1,6 @@
 import React from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
-import { Handle } from "react-flow-renderer";
+import { Handle } from "reactflow";
 import { CONNECTIONS, DATA_TYPES } from "../Constants";
 import shallow from "zustand/shallow";
 import { stringEquality } from "./Utility";

@@ -1,0 +1,7 @@
+.pausable {
+    animation-play-state: paused;
+  }
+  
+  .pausable:hover {
+    animation-play-state: running;
+  }

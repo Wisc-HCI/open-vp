@@ -1832,6 +1832,46 @@
   resolved "https://registry.yarnpkg.com/@react-dnd/shallowequal/-/shallowequal-4.0.2.tgz#d1b4befa423f692fa4abf1c79209702e7d8ae4b4"
   integrity sha512-/RVXdLvJxLg4QKvMoM5WlwNR9ViO9z8B/qPcc+C0Sa/teJY7QG7kJ441DwzOjMYEY7GmU4dj5EcGHIkKZiQZCA==
 
+"@reactflow/background@11.0.0-next.5":
+  version "11.0.0-next.5"
+  resolved "https://registry.yarnpkg.com/@reactflow/background/-/background-11.0.0-next.5.tgz#73e694b3c856c425be5f77b509edeb38a7ecca0e"
+  integrity sha512-BIyLx2gQWLB6BTemM4Y7JNQadyX9b9EhYB4DfV/qi/APSP+fqMwIniYZoJq+3P0AIJRD+RQJaQO8L/uKqzuDcQ==
+  dependencies:
+    "@babel/runtime" "^7.18.9"
+    "@reactflow/core" "11.0.0-next.5"
+    classcat "^5.0.3"
+
+"@reactflow/controls@11.0.0-next.5":
+  version "11.0.0-next.5"
+  resolved "https://registry.yarnpkg.com/@reactflow/controls/-/controls-11.0.0-next.5.tgz#10c20f7211342d08c739d1d056938e4e0579d25f"
+  integrity sha512-LpMcnAc3AqDaL3F0RNf1z1nKQAs+zoIPTA2v0Kzx3l7x44hM/W1lJFer5y4lHZURlZqznzUeTp7NXgdMKSv4UQ==
+  dependencies:
+    "@babel/runtime" "^7.18.9"
+    "@reactflow/core" "11.0.0-next.5"
+    classcat "^5.0.3"
+
+"@reactflow/core@11.0.0-next.5":
+  version "11.0.0-next.5"
+  resolved "https://registry.yarnpkg.com/@reactflow/core/-/core-11.0.0-next.5.tgz#facbbfe7101d13f1bb5ad13a4cca7c76d76b0ad0"
+  integrity sha512-+3pYKUjymPtAvBHKvfJVCugtZiPDzCYXyPhW2XdNeAkkx1KbIiBAPH+/SSrSJom7yIv+wIzo93+ToKXL4D0efQ==
+  dependencies:
+    "@types/d3" "^7.4.0"
+    classcat "^5.0.3"
+    d3-drag "^3.0.0"
+    d3-selection "^3.0.0"
+    d3-zoom "^3.0.0"
+    zustand "^4.0.0"
+
+"@reactflow/minimap@11.0.0-next.5":
+  version "11.0.0-next.5"
+  resolved "https://registry.yarnpkg.com/@reactflow/minimap/-/minimap-11.0.0-next.5.tgz#9754eb4d8b0f80a8f625568459831ca41a5c655f"
+  integrity sha512-aZHhhvbfKjgAwdYYgZ8nT0OIteTGHYfvVSQXZHRS68UmHOqWb+aW/zw2mK4PW/HcjdSxzB0Tkisaxud70URHmg==
+  dependencies:
+    "@babel/runtime" "^7.18.9"
+    "@reactflow/core" "11.0.0-next.5"
+    classcat "^5.0.3"
+    zustand "^4.0.0"
+
 "@rollup/pluginutils@^4.2.1":
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-4.2.1.tgz#e6c6c3aba0744edce3fb2074922d3776c0af2a6d"
@@ -2949,6 +2989,13 @@
   dependencies:
     "@babel/runtime" "^7.12.5"
 
+"@tisoap/react-flow-smart-edge@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@tisoap/react-flow-smart-edge/-/react-flow-smart-edge-2.0.0.tgz#25d4bcbbb4ccf7f221dad4b9dd3a2bb7b3ecf7db"
+  integrity sha512-IENfw3xcWKy0ZnyHYbzMZO8k9cL8k2BERTrPYlGappab9vDBwH5cv0+iEGOhg+Q8xQFvXR2V8ZzTjce5LQ3Yzg==
+  dependencies:
+    pathfinding "0.4.18"
+
 "@types/aria-query@^4.2.0":
   version "4.2.2"
   resolved "https://registry.yarnpkg.com/@types/aria-query/-/aria-query-4.2.2.tgz#ed4e0ad92306a704f9fb132a0cfcf77486dbe2bc"
@@ -3350,11 +3397,6 @@
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     csstype "^3.0.2"
-
-"@types/resize-observer-browser@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@types/resize-observer-browser/-/resize-observer-browser-0.1.7.tgz#294aaadf24ac6580b8fbd1fe3ab7b59fe85f9ef3"
-  integrity sha512-G9eN0Sn0ii9PWQ3Vl72jDPgeJwRWhv2Qk/nQkJuWmRmOB4HX3/BhD5SE1dZs/hzPZL/WKnvF0RHdTSG54QJFyg==
 
 "@types/scheduler@*":
   version "0.16.2"
@@ -6930,6 +6972,11 @@ he@^1.2.0:
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
 
+heap@0.2.5:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.5.tgz#713b65590ebcc40fcbeeaf55e851694092b39af1"
+  integrity sha512-G7HLD+WKcrOyJP5VQwYZNC3Z6FcQ7YYjEFiFoIj8PfEr73mu421o8B1N5DKUcc8K37EsJ2XXWA8DtrDz/2dReg==
+
 hey-listen@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/hey-listen/-/hey-listen-1.0.8.tgz#8e59561ff724908de1aa924ed6ecc84a56a9aa68"
@@ -8932,6 +8979,13 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
+pathfinding@0.4.18:
+  version "0.4.18"
+  resolved "https://registry.yarnpkg.com/pathfinding/-/pathfinding-0.4.18.tgz#a9990f6fa22b7ef196e5651b049165403a045fe8"
+  integrity sha512-R0TGEQ9GRcFCDvAWlJAWC+KGJ9SLbW4c0nuZRcioVlXVTlw+F5RvXQ8SQgSqI9KXWC1ew95vgmIiyaWTlCe9Ag==
+  dependencies:
+    heap "0.2.5"
+
 pbkdf2@^3.0.3:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/pbkdf2/-/pbkdf2-3.1.2.tgz#dd822aa0887580e52f1a039dc3eda108efae3075"
@@ -9482,20 +9536,6 @@ react-element-to-jsx-string@^14.3.4:
     is-plain-object "5.0.0"
     react-is "17.0.2"
 
-react-flow-renderer@^10.3.16:
-  version "10.3.16"
-  resolved "https://registry.yarnpkg.com/react-flow-renderer/-/react-flow-renderer-10.3.16.tgz#7285dfcfa35678c2227ede649c8ed5518bf9f30c"
-  integrity sha512-QNvM/W1eurDd4gDK47wBLNE4GfK6Gx+JeygI00JsanNIDKEL/cxNdXcP2fwYgJme72AxuaLXc5xliHGaGmy+Jw==
-  dependencies:
-    "@babel/runtime" "^7.18.9"
-    "@types/d3" "^7.4.0"
-    "@types/resize-observer-browser" "^0.1.7"
-    classcat "^5.0.3"
-    d3-drag "^3.0.0"
-    d3-selection "^3.0.0"
-    d3-zoom "^3.0.0"
-    zustand "^3.7.2"
-
 react-icons@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.4.0.tgz#a13a8a20c254854e1ec9aecef28a95cdf24ef703"
@@ -9545,6 +9585,11 @@ react-refresh@^0.14.0:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.14.0.tgz#4e02825378a5f227079554d4284889354e5f553e"
   integrity sha512-wViHqhAd8OHeLS/IRMJjTSDHF3U9eWi62F/MledQGPdJGDhodXJ9PBLNGr6WWL7qlH12Mt3TyTpbS+hGXMjCzQ==
 
+react-svg-tooltip@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/react-svg-tooltip/-/react-svg-tooltip-0.0.11.tgz#40c1359652ffbc209a62e8e5b8fb0d34882f2bac"
+  integrity sha512-iK7C7Ay5UCQL0Ert9xo1fQVjl+QplaA7VoR+pi+J7Uz25HqkyR3ksY+puHE2O7KVmuIxxre0e2hLWEr+jAv7XQ==
+
 react-transition-group@^4.4.5:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.5.tgz#e53d4e3f3344da8521489fbef8f2581d42becdd1"
@@ -9568,6 +9613,16 @@ react@^18.2.0:
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
   dependencies:
     loose-envify "^1.1.0"
+
+reactflow@^11.0.0-next.11:
+  version "11.0.0-next.11"
+  resolved "https://registry.yarnpkg.com/reactflow/-/reactflow-11.0.0-next.11.tgz#55f9f896f842eaadab3a92eb190f03d9eaee35f7"
+  integrity sha512-udhoz7R57+U12W7blR4CYv3imjcC5NDkUyVHXK0/8egOnmfMBP4wTqIexaH/kTsn5Id+i5jjSNOUWU/IgW1LKg==
+  dependencies:
+    "@reactflow/background" "11.0.0-next.5"
+    "@reactflow/controls" "11.0.0-next.5"
+    "@reactflow/core" "11.0.0-next.5"
+    "@reactflow/minimap" "11.0.0-next.5"
 
 read-pkg-up@^1.0.1:
   version "1.0.1"
@@ -11560,10 +11615,12 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zustand@^3.7.2:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.7.2.tgz#7b44c4f4a5bfd7a8296a3957b13e1c346f42514d"
-  integrity sha512-PIJDIZKtokhof+9+60cpockVOq05sJzHCriyvaLBmEJixseQ1a5Kdov6fWZfWOu5SK9c+FhH1jU0tntLxRJYMA==
+zustand@^4.0.0:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/zustand/-/zustand-4.1.1.tgz#5a61cc755a002df5f041840a414ae6e9a99ee22b"
+  integrity sha512-h4F3WMqsZgvvaE0n3lThx4MM81Ls9xebjvrABNzf5+jb3/03YjNTSgZXeyrvXDArMeV9untvWXRw1tY+ntPYbA==
+  dependencies:
+    use-sync-external-store "1.2.0"
 
 zustand@^4.1.0:
   version "4.1.0"
