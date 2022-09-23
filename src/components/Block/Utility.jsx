@@ -15,7 +15,7 @@ import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import { times, divide, plus, strip } from "number-precision";
 // import { debounce } from "lodash";
 // import { NumberInput as MuiNumberInput } from "@mui-treasury/component-numberinput";
-import { isNumber, isNaN, clamp } from "lodash";
+import { isNumber, isNaN, clamp, toNumber } from "lodash";
 import {
   Menu,
   Fade,
@@ -619,37 +619,85 @@ export const NumberInput = memo(({
   value = 0,
   onBlur = (_) => {},
   onFocus = (_) => {},
+  onMouseEnter = (_) => {},
+  onMouseLeave = (_) => {},
   suffix="",
   prefix="",
   min=Number.NEGATIVE_INFINITY,
   max=Number.POSITIVE_INFINITY
 }) => {
 
-  const [v, setV] = useState(value);
+  const [above, setAbove] = useState(false);
+  const [below, setBelow] = useState(false);
+  const valid = !above && !below;
+  const [storedValue, setStoredValue] = useState(0);
 
-  useEffect(()=>{
-    if (value < min) {
-      setV(min)
-    } else if (value > max) {
-      setV(max)
-    }
-  })
-
-  const handleChange = (newValue) => {
-    if (newValue < min) {
-      setV(min);
-      onChange(min);
-    } else if (newValue > max) {
-      setV(max);
+  const setNewFromButton = (change) => {
+    const numericNew = plus(value, change);
+    if (numericNew > max) {
+      setAbove(true);
+      setBelow(false);
       onChange(max);
+    } else if (numericNew < min) {
+      setAbove(false);
+      setBelow(true);
+      onChange(min);
     } else {
-      onChange(newValue)
+      setAbove(false);
+      setBelow(false);
+      onChange(numericNew);
     }
-  }
+  };
+
+  const setNewFromInput = (event) => {
+    console.log(event);
+    if (event?.nativeEvent?.data) {
+      if (!VALID_CHARS.includes(event.nativeEvent.data)) {
+        return;
+      }
+    }
+
+    if (event.target.value === "-") {
+      onChange(0);
+      setStoredValue("-");
+      return;
+    }
+
+    const numericNew = Number(event.target.value);
+    if (!isNumber(numericNew) || isNaN(numericNew)) {
+      return;
+    }
+
+    if (numericNew > max) {
+      setAbove(true);
+      setBelow(false);
+      onChange(max);
+    } else if (numericNew < min) {
+      setAbove(false);
+      setBelow(true);
+      onChange(min);
+    } else {
+      setAbove(false);
+      setBelow(false);
+      onChange(numericNew);
+      setStoredValue(event.target.value);
+    }
+    return;
+  };
+
+  useEffect(() => {
+    if (
+      storedValue !== "-" &&
+      storedValue !== "" &&
+      value !== Number(storedValue)
+    ) {
+      setStoredValue(value);
+    }
+  }, [storedValue, value]);
 
   return (
-    <FormControl>
-      <InputLabel htmlFor="outlined-position-vector" color="primary" shrink>
+    <FormControl onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className="nodrag">
+      <InputLabel className="nodrag" htmlFor="outlined-position-vector" color="primary" shrink>
         {label}
       </InputLabel>
       <OutlinedNumberInput
@@ -658,14 +706,15 @@ export const NumberInput = memo(({
         size="small"
         id="outlined-position-vector"
         label={label}
-        color="primary"
+        // type='number'
+        color={!valid?'error':"primary"}
         onFocus={onFocus}
         onBlur={onBlur}
         disabled={disabled}
-        value={value}
-        onChange={(e)=>handleChange(e.target.value)}
+        value={storedValue}
+        onChange={setNewFromInput}
         style={{ paddingRight: 4 }}
-        inputProps={{min,max,type:'number'}}
+        inputProps={{min,max,className: "nodrag"}}
         startAdornment={
           <InputAdornment position='start'>{prefix}</InputAdornment>
         }
@@ -676,8 +725,8 @@ export const NumberInput = memo(({
               disabled={disabled}
               above={value >= max}
               below={value <= min}
-              onClickDown={() => onChange(clamp(strip(-1 * step + value),min,max))}
-              onClickUp={() => onChange(clamp(strip(step + value),min,max))}
+              onClickDown={() => setNewFromButton(-step)}
+              onClickUp={() => setNewFromButton(step)}
             />
           </InputAdornment>
         }
@@ -686,141 +735,7 @@ export const NumberInput = memo(({
   );
 });
 
-export const NumberInput2 = forwardRef(
-  (
-    {
-      prefix = "",
-      suffix = "",
-      style = {},
-      innerStyle = {},
-      step = 1,
-      onChange,
-      min,
-      max,
-      value,
-      visualScaling = 1,
-      disabled = false,
-      label = null,
-      ...otherProps
-    },
-    ref
-  ) => {
-    const setNewFromButton = (change) => {
-      const numericNew = plus(value, divide(change, visualScaling));
-      const scaledMax = divide(max, visualScaling);
-      const scaledMin = divide(min, visualScaling);
-      console.log({
-        change,
-        value,
-        visualScaling,
-        numericNew,
-        scaledMax,
-        scaledMin,
-      });
-      if (numericNew > scaledMax) {
-        setAbove(true);
-        setBelow(false);
-        onChange(scaledMax);
-      } else if (numericNew < scaledMin) {
-        setAbove(false);
-        setBelow(true);
-        onChange(scaledMin);
-      } else {
-        setAbove(false);
-        setBelow(false);
-        onChange(numericNew);
-      }
-    };
 
-    const setNewFromInput = (event) => {
-      console.log(event);
-      if (event?.nativeEvent?.data) {
-        if (!VALID_CHARS.includes(event.nativeEvent.data)) {
-          return;
-        }
-      }
-
-      if (event.target.value === "-") {
-        onChange(0);
-        setStoredValue("-");
-        return;
-      }
-
-      const numericNew = Number(event.target.value);
-      if (!isNumber(numericNew) || isNaN(numericNew)) {
-        return;
-      }
-
-      if (numericNew > max) {
-        setAbove(true);
-        setBelow(false);
-        onChange(max / visualScaling);
-      } else if (numericNew < min) {
-        setAbove(false);
-        setBelow(true);
-        onChange(min / visualScaling);
-      } else {
-        setAbove(false);
-        setBelow(false);
-        onChange(numericNew / visualScaling);
-        setStoredValue(event.target.value);
-      }
-      return;
-    };
-
-    const [above, setAbove] = useState(false);
-    const [below, setBelow] = useState(false);
-    const valid = !above && !below;
-    const [storedValue, setStoredValue] = useState(0);
-
-    useEffect(() => {
-      if (
-        storedValue !== "-" &&
-        storedValue !== "" &&
-        value * visualScaling !== Number(storedValue)
-      ) {
-        setStoredValue(times(value, visualScaling));
-      }
-    }, [storedValue, value, visualScaling]);
-
-    return (
-      <TextField
-        ref={ref}
-        type="number"
-        size="small"
-        color={valid ? "primary" : "warning"}
-        className="nodrag"
-        // min={min * visualScaling}
-        // max={max}
-        step={step * visualScaling}
-        style={{ paddingRight: 0 }}
-        InputProps={{
-          className: "nodrag",
-          style: { paddingRight: 6 },
-          startAdornment: (
-            <InputAdornment position="start">{prefix}</InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end">
-              {suffix}
-              <Spinner
-                disabled={disabled}
-                above={above}
-                below={below}
-                onClickDown={(e) => setNewFromButton(-1 * step)}
-                onClickUp={(e) => setNewFromButton(step)}
-              />
-            </InputAdornment>
-          ),
-        }}
-        value={storedValue}
-        onChange={setNewFromInput}
-        disabled={disabled}
-        {...otherProps}
-      />
-    );
-  }
-);
 
 // Exports
 // export const DropdownMenu = DropdownMenuPrimitive.Root;
