@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef, createPortal } from "react";
 import {
   getSmoothStepPath,
-  getEdgeCenter,
+  useReactFlow,
+  // getEdgeCenter,
 } from "reactflow";
 import { useProgrammingStore } from "./ProgrammingContext";
 import { FiTrash2, FiType, FiHash } from "react-icons/fi";
@@ -72,7 +73,7 @@ export const DrawingCanvasEdge = ({
   toY,
   toPosition,
 }) => {
-  const edgePath = getSmoothStepPath({
+  const [edgePath] = getSmoothStepPath({
     sourceX: fromX,
     sourceY: fromY,
     sourcePosition: fromPosition,
@@ -89,7 +90,7 @@ export const DrawingCanvasEdge = ({
         fill="none"
         stroke="#ffffff99"
         strokeWidth={1.5}
-        className="animated"
+        // className="animated"
         d={edgePath}
       />
       <circle
@@ -130,9 +131,9 @@ export const CanvasEdge = ({
     shallow
   );
 
-  const bounds = { width: 165, height: 30 };
+  const bounds = { width: 165, height: 35 };
 
-  const edgePath = getSmoothStepPath({
+  const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
     sourceY,
     sourcePosition,
@@ -140,37 +141,66 @@ export const CanvasEdge = ({
     targetY,
     targetPosition,
   });
-  const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-    sourceX,
-    sourceY,
-    sourcePosition,
-    targetX,
-    targetY,
-    targetPosition,
-  });
+  // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
+  //   sourceX,
+  //   sourceY,
+  //   sourcePosition,
+  //   targetX,
+  //   targetY,
+  //   targetPosition,
+  // });
 
-  const [visible, setVisible] = useState(null);
+  // const [visible, setVisible] = useState(false);
+  const [hoveredLine, setHoveredLine] = useState(false);
+  const [hoveredLabel, setHoveredLabel] = useState(false);
+  const [coords, setCoords] = useState([labelX, labelY]);
+  const gRef = useRef();
+  const { project } = useReactFlow();
+  console.log(gRef?.current?.getBoundingClientRect());
+
+  console.log(coords, { sourceX, sourceY, targetX, targetY });
 
   // console.log(groupRef)
 
-  const handleHover = (_) => {
-    setVisible((previousVisible) => !previousVisible);
-    
+  const handleHoverLine = (e) => {
+    console.log("toggleLine", [e.clientX, e.clientY, e]);
+    setHoveredLine((prev) => !prev);
+    // if (!hoveredLabel) {
+
+    // }
+    const { x, y } = project({
+      x: e.nativeEvent.offsetX,
+      y: e.nativeEvent.offsetY,
+    });
+    setCoords([x, y]);
   };
+
+  const handleHoverLabel = (_) => {
+    console.log("toggleLabel");
+    setHoveredLabel((prev) => !prev);
+  };
+
+  const visible = hoveredLine || hoveredLabel;
 
   return (
     edge && (
       <g
-        style={{ zIndex: visible ? 100 : 1 }}
-        onMouseEnter={handleHover}
-        onMouseLeave={handleHover}
+        ref={gRef}
+        style={{ zIndex: visible ? 100 : 1, userSelect: "none" }}
+        onMouseEnter={handleHoverLine}
+        onMouseLeave={handleHoverLine}
         onClick={() => {
           onClick(edge);
         }}
       >
         <motion.path
           id={id}
-          style={{ ...style, strokeWidth: 3.5, fill: "transparent" }}
+          style={{
+            ...style,
+            strokeWidth: 3.5,
+            fill: "transparent",
+            userSelect: "none",
+          }}
           stroke={visible ? "#ccc" : "#aaa"}
           d={edgePath}
           markerEnd={markerEnd}
@@ -181,7 +211,7 @@ export const CanvasEdge = ({
         />
         <motion.path
           id={id}
-          style={{ ...style, fill: "transparent" }}
+          style={{ ...style, fill: "transparent", userSelect: "none" }}
           // stroke={visible ? "red" : "grey"}
           opacity={0.5}
           d={edgePath}
@@ -190,103 +220,133 @@ export const CanvasEdge = ({
           variants={mainVariants}
           animate={visible ? "highlighted" : "default"}
         />
-        <g>
-          <animateMotion
+        {/* {visible && ( */}
+        <motion.g
+          animate={{
+            scale: visible ? 1 : 0,
+            opacity: visible ? 1 : 0,
+            x: coords[0] - bounds.width / 2,
+            y: coords[1] - bounds.height / 2,
+          }}
+        >
+          {/* <motion.rect
+            onMouseEnter={handleHoverLabel}
+            onMouseLeave={handleHoverLabel}
+            width={bounds.width}
+            height={bounds.height}
+            pointerEvents="all"
+            fill={hoveredLabel ? "pink" : "cyan"}
+            rx={10}
+          /> */}
+          {visible && (
+            <foreignObject
+              // style={{ offsetPath: `path(${edgePath})` }}
+              width={`${bounds.width}pt`}
+              height={`${bounds.height}pt`}
+              // x={`-${bounds.width / 2}px`}
+              // y={`-${bounds.height / 2}px`}
+              requiredExtensions="http://www.w3.org/1999/xhtml"
+            >
+              <div
+                onMouseEnter={handleHoverLabel}
+                onMouseLeave={handleHoverLabel}
+                className="nodrag"
+                style={{
+                  unset: "all",
+                  display: "inline-block",
+                  width: `${bounds.width}px`,
+                  height: `${bounds.height}px`,
+                  backgroundColor: visible ? "#555" : "#333",
+                  borderRadius: 5,
+                  borderColor: "white",
+                  flexDirection: "row",
+                  padding: 5,
+                  userSelect: "none",
+                }}
+              >
+                <div
+                  style={{
+                    height: `${bounds.height}px`,
+                    width: `${bounds.width}px`,
+                    justifyContent: "space-around",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    color: "white",
+                    userSelect: "none",
+                  }}
+                >
+                  <EdgeField
+                    type={
+                      edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
+                        ? "number"
+                        : null
+                    }
+                    className="nodrag"
+                    value={
+                      edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
+                        ? Number(edge.name)
+                        : edge.name
+                    }
+                    style={{
+                      maxWidth:
+                        edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
+                          ? bounds.width - 110
+                          : bounds.width - 90,
+                    }}
+                    onChange={(v) => updateEdgeName(edge.id, v.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER && (
+                    <Spinner
+                      above={false}
+                      below={false}
+                      onClickDown={(v) =>
+                        updateEdgeName(edge.id, strip(Number(edge.name) - 0.1))
+                      }
+                      onClickUp={(v) =>
+                        updateEdgeName(edge.id, strip(Number(edge.name) + 0.1))
+                      }
+                    />
+                  )}
+                  <EdgeButton
+                    onClick={(e) => {
+                      toggleEdgeMode(edge.id);
+                      e.stopPropagation();
+                    }}
+                  >
+                    {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? (
+                      <FiType />
+                    ) : (
+                      <FiHash />
+                    )}
+                  </EdgeButton>
+                  <EdgeButton
+                    onClick={(e) => {
+                      deleteEdge(edge.id);
+                      e.stopPropagation();
+                    }}
+                  >
+                    <FiTrash2 />
+                  </EdgeButton>
+                </div>
+              </div>
+            </foreignObject>
+          )}
+          {/* <text style={{userSelect:'none'}} x={labelX - 100 / 2}
+            y={labelY - 50 / 2} >{edge.name}</text> */}
+          {/* <foreignObject>
+              <input value={edge.name}/></foreignObject> */}
+          {/* <animateMotion
             dur="30s"
             repeatCount="indefinite"
             path={edgePath}
             // variants={{visible:{dur:"1000s"},invisible:{dur:'30s'}}}
             // animate={visible?'visible':'invisible'}
             // transition={{duration:1}}
-          />
-          <foreignObject
-            // style={{ offsetPath: `path(${edgePath})` }}
-            width={`${bounds.width}pt`}
-            height={`${bounds.height}pt`}
-            x={`-${bounds.width / 2}px`}
-            y={`-${bounds.height / 2}px`}
-            requiredExtensions="http://www.w3.org/1999/xhtml"
-          >
-            <div
-              className="nodrag"
-              style={{
-                unset: "all",
-                display: "inline-block",
-                width: `${bounds.width}px`,
-                height: `${bounds.height}px`,
-                backgroundColor: visible ? "#555" : "#333",
-                borderRadius: 5,
-                borderColor: "white",
-                flexDirection: "row",
-                padding: 5,
-              }}
-            >
-              <div
-                style={{
-                  height: `${bounds.height}px`,
-                  width: `${bounds.width}px`,
-                  justifyContent: "space-around",
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  color: "white",
-                }}
-              >
-                <EdgeField
-                  type={
-                    edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? "number" : null
-                  }
-                  className="nodrag"
-                  value={
-                    edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
-                      ? Number(edge.name)
-                      : edge.name
-                  }
-                  style={{
-                    maxWidth:
-                      edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
-                        ? bounds.width - 110
-                        : bounds.width - 90,
-                  }}
-                  onChange={(v) => updateEdgeName(edge.id, v.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                />
-                {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER && (
-                  <Spinner
-                    above={false}
-                    below={false}
-                    onClickDown={(v) =>
-                      updateEdgeName(edge.id, strip(Number(edge.name) - 0.1))
-                    }
-                    onClickUp={(v) =>
-                      updateEdgeName(edge.id, strip(Number(edge.name) + 0.1))
-                    }
-                  />
-                )}
-                <EdgeButton
-                  onClick={(e) => {
-                    toggleEdgeMode(edge.id);
-                    e.stopPropagation();
-                  }}
-                >
-                  {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? (
-                    <FiType />
-                  ) : (
-                    <FiHash />
-                  )}
-                </EdgeButton>
-                <EdgeButton
-                  onClick={(e) => {
-                    deleteEdge(edge.id);
-                    e.stopPropagation();
-                  }}
-                >
-                  <FiTrash2 />
-                </EdgeButton>
-              </div>
-            </div>
-          </foreignObject>
-        </g>
+          /> */}
+        </motion.g>
+
         {/* <path
           id={id}
           style={{ ...style, strokeWidth: 2 }}
