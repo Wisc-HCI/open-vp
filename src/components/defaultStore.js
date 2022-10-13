@@ -4,7 +4,7 @@ import { immer } from "zustand/middleware/immer";
 // import produce from "immer";
 import { v4 as uuidv4 } from "uuid";
 import { DATA_TYPES, TYPES } from ".";
-import { remove, pickBy, omitBy } from "lodash";
+import { remove, pickBy, omitBy, values } from "lodash";
 import { instanceTemplateFromSpec } from "./Generators";
 import { Timer } from "./Timer";
 import { SIMPLE_PROPERTY_TYPES } from ".";
@@ -375,6 +375,18 @@ export function deleteChildren(state, data, parentId, fieldInfo) {
 //     api
 //   );
 
+function parseBlock(block,typeSpec,language,depth,context,storeParser) {
+  if (block.dataType === DATA_TYPES.REFERENCE || block.dataType === DATA_TYPES.ARGUMENT && typeSpec[block.type]?.namePolicy?.[language]) {
+    return typeSpec[block.type].namePolicy[language](block);
+  } else if ((block.dataType === DATA_TYPES.INSTANCE || block.dataType === DATA_TYPES.CALL) && typeSpec[block.type]?.parsers?.[language] && typeSpec[block.type]?.namePolicy?.[language]) {
+    const name = typeSpec[block.type].namePolicy[language](block);
+    return typeSpec[block.type].parsers[language]({block,name,depth,context,storeParser});
+  } else {
+    console.warn(`Block "${block.id}" of type "${block.type}" does not have a valid parser or name policy for language "${language}". Ignoring.`);
+    return ""
+  }
+}
+
 export const ProgrammingSlice = (set, get) => ({
   onVPEClick: (entryInfo) => console.log(`Clicked Entry:`, entryInfo),
   onOffVPEClick: () => console.log(`Missed VPE Click:`),
@@ -389,6 +401,51 @@ export const ProgrammingSlice = (set, get) => ({
   programSpec: DEFAULT_PROGRAM_SPEC,
   programData: {},
   executionData: {},
+  parse: (language,nodeId,depth,context) => {
+    let parsed = "";
+    if (!depth) {
+      depth = 0;
+    }
+    const typeSpec = get().programSpec.objectTypes;
+    const programData = get().programData;
+    const storeParser = get().parse;
+    if (!nodeId) {
+      // By Default, parse any instances or functions at the top level that aren't used directly in any node.
+      let unusedIds = Object.keys(pickBy(programData,(v)=>
+        v.dataType===DATA_TYPES.INSTANCE &&
+        !typeSpec[v.type].instanceBlock?.onCanvas &&
+        !typeSpec[v.type].referenceBlock?.onCanvas &&
+        !typeSpec[v.type].callBlock?.onCanvas
+        ));
+      Object.values(programData).forEach(block=>{
+        if (block.properties) {
+          Object.values(block.properties).forEach(prop=>{
+            if (typeof prop === 'string') {
+              unusedIds = unusedIds.filter(id=>id !== prop)
+            } else if (typeof prop === 'object' && Array.isArray(prop)) {
+              prop.forEach(child=>{
+                unusedIds = unusedIds.filter(id=>id !== child)
+              })
+            }
+          })
+        }
+      })
+     unusedIds.forEach(unusedId=>{
+        parsed += parseBlock(programData[unusedId],typeSpec,language,depth,context,storeParser);
+      })
+      const onCanvasBlocks = pickBy(programData,(v)=>
+        typeSpec[v.type].instanceBlock?.onCanvas ||
+        typeSpec[v.type].referenceBlock?.onCanvas ||
+        typeSpec[v.type].callBlock?.onCanvas);
+      Object.values(onCanvasBlocks).forEach(block=>{
+        parsed += parseBlock(block,typeSpec,language,depth,context,storeParser);
+      })
+    } else {
+      const block = programData[nodeId];
+      parsed += parseBlock(block,typeSpec,language,depth,context,storeParser);
+    }
+    return parsed
+  },
   transferBlock: (data, sourceInfo, destInfo) => {
     set((state) => {
       let newSpawn = false;

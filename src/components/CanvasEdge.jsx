@@ -156,14 +156,14 @@ export const CanvasEdge = ({
   const [coords, setCoords] = useState([labelX, labelY]);
   const gRef = useRef();
   const { project } = useReactFlow();
-  console.log(gRef?.current?.getBoundingClientRect());
+  // console.log(gRef?.current?.getBoundingClientRect());
 
-  console.log(coords, { sourceX, sourceY, targetX, targetY });
+  // console.log(coords, { sourceX, sourceY, targetX, targetY });
 
   // console.log(groupRef)
 
   const handleHoverLine = (e) => {
-    console.log("toggleLine", [e.clientX, e.clientY, e]);
+    // console.log("toggleLine", [e.clientX, e.clientY, e]);
     setHoveredLine((prev) => !prev);
     // if (!hoveredLabel) {
 
@@ -176,7 +176,7 @@ export const CanvasEdge = ({
   };
 
   const handleHoverLabel = (_) => {
-    console.log("toggleLabel");
+    // console.log("toggleLabel");
     setHoveredLabel((prev) => !prev);
   };
 

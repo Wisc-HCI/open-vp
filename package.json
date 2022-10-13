@@ -24,6 +24,7 @@
     "generate-all": "npm run build-storybook && vite build"
   },
   "dependencies": {
+    "@mui/lab": "^5.0.0-alpha.103",
     "@radix-ui/react-scroll-area": "^1.0.0",
     "framer-motion": "^6.5.0",
     "immer": "^9.0.12",

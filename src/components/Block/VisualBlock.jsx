@@ -85,6 +85,10 @@ export const VisualBlock = memo(
       const [isCollapsed, setIsCollapsed] = useState(false);
       const [isDebugging, setIsDebugging] = useState(false);
 
+      if (data.dataType === DATA_TYPES.CALL) {
+        console.log(data)
+      }
+
       const setIsEditing = useProgrammingStore(
         (store) => store.updateItemEditing,
         shallow

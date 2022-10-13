@@ -30,7 +30,7 @@ import {
 } from "@mui/material";
 import { pick, isEqual } from "lodash";
 // import { TextField, InputAdornment } from "@mui/material";
-import { ATTENDED_DATA_PROPERTIES, SIMPLE_PROPERTY_TYPES } from "../Constants";
+import { ATTENDED_DATA_PROPERTIES, DATA_TYPES, SIMPLE_PROPERTY_TYPES } from "../Constants";
 
 const NumberInputField = styled(Input)`
   input[type="number"]::-webkit-inner-spin-button,
@@ -60,11 +60,11 @@ export const compareBlockData = (data1, data2, propInfo) => {
   ) {
     return false;
   } else {
-    const fields = Object.entries(propInfo ? propInfo : {})
+    const fields = data2.dataType !== DATA_TYPES.CALL ? Object.entries(propInfo ? propInfo : {})
       .filter(
         ([_, fieldInfo]) => fieldInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED
       )
-      .map(([fieldKey, _]) => fieldKey);
+      .map(([fieldKey, _]) => fieldKey) : data2.refData.arguments;
     return isEqual(
       pick(data1.properties ? data1.properties : {}, fields),
       pick(data2.properties ? data2.properties : {}, fields)

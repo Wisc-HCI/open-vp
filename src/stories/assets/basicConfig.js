@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  DATA_TYPES,
-  TYPES,
-  EXTRA_TYPES,
-} from "../../components";
+import { DATA_TYPES, TYPES, EXTRA_TYPES } from "../../components";
 import {
   FiClipboard,
   FiBriefcase,
@@ -13,7 +9,7 @@ import {
   FiMoreHorizontal,
   FiLayers,
   FiFeather,
-  FiRefreshCw
+  FiRefreshCw,
 } from "react-icons/fi";
 import { SIMPLE_PROPERTY_TYPES } from "../../components/Constants";
 import { Synchonizing } from "./Synchronizing";
@@ -71,7 +67,7 @@ const basicConfig = {
             type: EXTRA_TYPES.DROPDOWN,
             label: "Custom More...",
             contents: [
-              EXTRA_TYPES.NAME_EDIT_TOGGLE,
+              EXTRA_TYPES.DEBUG_TOGGLE,
               EXTRA_TYPES.LOCKED_INDICATOR,
               EXTRA_TYPES.SELECTION_TOGGLE,
               EXTRA_TYPES.DIVIDER,
@@ -119,6 +115,18 @@ const basicConfig = {
           fullWidth: true,
         },
       },
+      parsers: {
+        javascript: ({ block, name, depth, context, storeParser }) => {
+          return `function ${name}() {\n${block.properties.children
+            .map((a) => storeParser("javascript", a, depth + 1, context))
+            .join(";\n")};\n};\n\n`;
+        },
+      },
+      namePolicy: {
+        javascript: (block) => {
+          return block.name.replace(" ", "");
+        },
+      },
     },
     blockType: {
       name: "Block",
@@ -129,6 +137,7 @@ const basicConfig = {
         icon: FiLayers,
         extras: [
           EXTRA_TYPES.COLLAPSE_TOGGLE,
+          EXTRA_TYPES.DEBUG_TOGGLE,
           {
             type: EXTRA_TYPES.INDICATOR_TEXT,
             accessor: (data) => data.properties.children.length,
@@ -196,7 +205,7 @@ const basicConfig = {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            contents: [EXTRA_TYPES.DEBUG_TOGGLE],
+            contents: [EXTRA_TYPES.DEBUG_TOGGLE,EXTRA_TYPES.DELETE_BUTTON],
           },
         ],
       },
@@ -207,6 +216,24 @@ const basicConfig = {
           default: [],
           isList: true,
           fullWidth: true,
+        },
+      },
+      parsers: {
+        javascript: ({ block, name, depth, context, storeParser }) => {
+          if (block.dataType === DATA_TYPES.INSTANCE) {
+            return `function ${name}(${block.arguments
+              .map((a) => storeParser("javascript", a, 0, context))
+              .join(", ")}) {\n${block.properties.children
+              .map((a) => storeParser("javascript", a, depth + 1, context))
+              .join(";\n")};\n};\n\n`;
+          } else if (block.dataType === DATA_TYPES.CALL) {
+            return `${" ".repeat(depth * 3)}${name}()`;
+          }
+        },
+      },
+      namePolicy: {
+        javascript: (block) => {
+          return block.name.replace(" ", "");
         },
       },
     },
@@ -275,6 +302,72 @@ const basicConfig = {
           default: "am",
         },
       },
+      parsers: {
+        javascript: ({ block, name, depth, context, storeParser }) => {
+          if (block.properties.hat && block.properties.boot) {
+            return (
+              " ".repeat(depth * 3) +
+              'console.log("While wearing ${' +
+              storeParser("javascript", block.properties.hat, 0, context) +
+              "} and ${" +
+              storeParser("javascript", block.properties.boot, 0, context) +
+              "} greet by saying " +
+              block.properties.greeting +
+              " in the " +
+              block.properties.time +
+              " with speed " +
+              block.properties.speed +
+              `${block.properties.doFunky ? " in a funky way." : "."}"` +
+              ")"
+            );
+          } else if (block.properties.hat) {
+            return (
+              " ".repeat(depth * 3) +
+              'console.log("While wearing ${' +
+              storeParser("javascript", block.properties.hat, 0, context) +
+              "} greet by saying " +
+              block.properties.greeting +
+              " in the " +
+              block.properties.time +
+              " with speed " +
+              block.properties.speed +
+              `${block.properties.doFunky ? " in a funky way." : "."}"` +
+              ")"
+            );
+          } else if (block.properties.boot) {
+            return (
+              " ".repeat(depth * 3) +
+              'console.log("While wearing ${' +
+              storeParser("javascript", block.properties.boot, 0, context) +
+              "} greet by saying " +
+              block.properties.greeting +
+              " in the " +
+              block.properties.time +
+              " with speed " +
+              block.properties.speed +
+              `${block.properties.doFunky ? " in a funky way." : "."}"` +
+              ")"
+            );
+          } else {
+            return (
+              " ".repeat(depth * 3) +
+              'console.log("Greet by saying ' +
+              block.properties.greeting +
+              " in the " +
+              block.properties.time +
+              " with speed " +
+              block.properties.speed +
+              `${block.properties.doFunky ? " in a funky way." : "."}"` +
+              ")"
+            );
+          }
+        },
+      },
+      namePolicy: {
+        javascript: (block) => {
+          return block.name.replace(" ", "");
+        },
+      },
     },
     hatType: {
       name: "Hat",
@@ -298,6 +391,16 @@ const basicConfig = {
           },
         ],
       },
+      parsers: {
+        javascript: ({ block, name, depth, context, storeParser }) => {
+          return `let ${name} = {};\n\n`;
+        },
+      },
+      namePolicy: {
+        javascript: (block) => {
+          return block.name.replace(" ", "");
+        },
+      },
     },
     bootType: {
       name: "Boot",
@@ -319,6 +422,16 @@ const basicConfig = {
             ],
           },
         ],
+      },
+      parsers: {
+        javascript: ({ block, name, depth, context, storeParser }) => {
+          return `let ${name} = {};\n\n`;
+        },
+      },
+      namePolicy: {
+        javascript: (block) => {
+          return block.name.replace(" ", "");
+        },
       },
     },
   },
