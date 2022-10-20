@@ -242,7 +242,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
             {locked ? <FiLock /> : <FiUnlock />}
           </ControlButton>
         </Controls>
-        <Background variant="lines" color="#555" gap={30} />
+        <Background variant="dots" color="#555" gap={30} size={2} />
       </ReactFlow>
     </div>
   );
