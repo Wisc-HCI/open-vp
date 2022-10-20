@@ -45,6 +45,25 @@ const basicConfig = {
     programType: {
       name: "Program",
       type: TYPES.OBJECT,
+      description: `# The Program
+The **program** does things. It also allows you to include [Operations](operationType) in their set of *children*. It does a lot of fancy things:
+- Basketball
+- Cribbage
+- Snorkelling
+    1. Eating pie
+
+You should always follow these steps:
+1. Live
+1. Laugh
+1. Love
+
+Equivalent code may look like this in javascript:
+  \`\`\`
+   function main() {
+    // Contents of the program
+   }
+  \`\`\`
+      `,
       instanceBlock: {
         onCanvas: true,
         color: "#3f3f3f",
@@ -67,6 +86,7 @@ const basicConfig = {
             type: EXTRA_TYPES.DROPDOWN,
             label: "Custom More...",
             contents: [
+              EXTRA_TYPES.DOC_TOGGLE,
               EXTRA_TYPES.DEBUG_TOGGLE,
               EXTRA_TYPES.LOCKED_INDICATOR,
               EXTRA_TYPES.SELECTION_TOGGLE,
@@ -136,6 +156,7 @@ const basicConfig = {
         color: "#7f7f7f",
         icon: FiLayers,
         extras: [
+          EXTRA_TYPES.DOC_TOGGLE,
           EXTRA_TYPES.COLLAPSE_TOGGLE,
           EXTRA_TYPES.DEBUG_TOGGLE,
           {
@@ -239,13 +260,26 @@ const basicConfig = {
     },
     operationType: {
       name: "Operation",
+      description: `# The Operation
+The **Operation** does stuff and things. It can be included in a [Program](programType) as a *child*. 
+
+Equivalent code may look like this in javascript:
+  \`\`\`
+   topic.publish({
+    hat,
+    boot,
+    speed,
+    isFancy
+  })
+  \`\`\`
+      `,
       type: TYPES.OBJECT,
       instanceBlock: {
         onCanvas: false,
         color: "#629e6c",
         icon: FiClipboard,
         extras: [
-          EXTRA_TYPES.LOCKED_INDICATOR,
+          EXTRA_TYPES.DOC_TOGGLE,
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
@@ -264,6 +298,7 @@ const basicConfig = {
           accepts: ["hatType"],
           default: null,
           isList: false,
+          isRequired: true
         },
         boot: {
           name: "Boot",

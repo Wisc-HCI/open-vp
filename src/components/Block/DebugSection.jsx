@@ -28,12 +28,6 @@ const StyledTreeItem = styled(TreeItem)(({theme})=>({
       color: 'inherit',
     },
   },
-  // [`& .${treeItemClasses.group}`]: {
-  //   marginLeft: 0,
-  //   [`& .${treeItemClasses.content}`]: {
-  //     paddingLeft: theme.spacing(2),
-  //   },
-  // },
   [`& .label-value`]: {
     paddingTop:3,
     paddingBottom:3,

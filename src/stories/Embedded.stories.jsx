@@ -4,7 +4,7 @@ import useMeasure from "react-use-measure";
 // import { Input } from "../components/Block/Utility";
 import basicConfig from "./assets/basicConfig";
 import basicStarter from "./assets/basicStarter";
-import { IconButton, Stack, TextField } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { FiRotateCw } from "react-icons/fi";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -23,13 +23,17 @@ const Template = (args) => {
     useDefaultProgrammingStore.setState({
       programSpec: { drawers, objectTypes },
       programData,
+      featuredDocs: {
+        '2dfsessfs':"> [warn] There was an error!",
+        // "45535153s":true
+      }
     });
   },[programData,drawers,objectTypes]);
 
   const parse = useDefaultProgrammingStore(state=>state.parse);
   const [parsed,setParsed] = useState("Compile To View Parsed Code");
-  const onFile = useDefaultProgrammingStore(state=>state.programData);
-  console.log(onFile)
+  // const onFile = useDefaultProgrammingStore(state=>state.programData);
+  // console.log(onFile)
 
   return (
     <div

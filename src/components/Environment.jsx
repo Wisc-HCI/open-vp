@@ -73,11 +73,13 @@ export function StyleWrapper({
       },
       quiet: {
         main: "#444",
+        dark: "#3a3a3a",
         darker: "#333",
       },
       vibrant: {
         main: "#fff",
-        darker: "#ddd",
+        dark: "#ddd",
+        darker: "#bbb",
       },
     },
   });

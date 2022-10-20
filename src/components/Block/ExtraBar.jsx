@@ -13,8 +13,10 @@ import {
   FiZap,
   FiZapOff,
   FiPlus,
+  FiInfo,
+  FiXCircle,
+  FiChevronRight 
 } from "react-icons/fi";
-import { FiChevronRight } from "react-icons/fi";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { DATA_TYPES, EXTRA_TYPES } from "..";
 import { ExpandCarrot } from "./ExpandCarrot";
@@ -28,6 +30,8 @@ import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
+import shallow from "zustand/shallow";
+import { Badge } from "@mui/material";
 
 const FunctionButtonExtra = memo(
   ({ actionInfo, data, blockSpec, inTopLevel, interactionDisabled }) => {
@@ -159,6 +163,45 @@ const SelectionToggleExtra = memo(
           {isSelected ? "Deselect" : "Select"}
         </ListItemText>
       </MenuItem>
+    );
+  }
+);
+
+const DocToggleExtra = memo(
+  ({ docActive, setDocActive, inTopLevel, data, locked }) => {
+    const Icon = docActive ? FiXCircle :  FiInfo;
+    const disabled = data.dataType === DATA_TYPES.INSTANCE && locked;
+    const hasFeatured = useProgrammingStore(store=>store?.featuredDocs[data.id] !== undefined, shallow);
+    // console.log('hasFeatured',hasFeatured)
+
+    return inTopLevel ? (
+      <Badge badgeContent={hasFeatured ? <span style={{fontSize:14}}>!</span>: 0} overlap="circular" color='primary'>
+      <IconButton
+        disabled={disabled}
+        onClick={() => setDocActive(!docActive)}
+      >
+        <Icon />
+      </IconButton>
+      </Badge>
+    ) : (
+      
+      <MenuItem onClick={() => setDocActive(!docActive)}>
+        
+        <ListItemIcon>
+          <Icon />
+        </ListItemIcon>
+        
+        <Badge badgeContent={hasFeatured ? <span style={{fontSize:14}}>!</span>: 0} color='primary'>
+        <ListItemText
+          primaryTypographyProps={{
+            color: disabled ? "text.secondary" : "text.primary",
+          }}
+        >
+          {docActive ? "Close Doc" : "Show Doc"}
+        </ListItemText>
+        </Badge>
+      </MenuItem>
+      
     );
   }
 );
@@ -333,10 +376,12 @@ const DropdownExtra = memo(
     isCollapsed,
     isSelected,
     isDebugging,
+    docActive,
     setIsEditing,
     setIsCollapsed,
     setIsSelected,
     setIsDebugging,
+    setDocActive,
     interactionDisabled,
     parentId,
     fieldInfo,
@@ -360,6 +405,8 @@ const DropdownExtra = memo(
       setIsSelected,
       isDebugging,
       setIsDebugging,
+      docActive,
+      setDocActive,
       interactionDisabled,
       fieldInfo,
       parentId,
@@ -410,6 +457,8 @@ const Item = ({
   setIsCollapsed,
   isSelected,
   setIsSelected,
+  docActive,
+  setDocActive,
   isDebugging,
   setIsDebugging,
   interactionDisabled,
@@ -419,7 +468,6 @@ const Item = ({
   parentId,
   menuType,
 }) => {
-  // console.log(highlightColor)
 
   if (feature === EXTRA_TYPES.LOCKED_INDICATOR) {
     // return null
@@ -467,6 +515,19 @@ const Item = ({
         data={data}
         isSelected={isSelected}
         setIsSelected={setIsSelected}
+        inTopLevel={inTopLevel}
+        menuType={menuType}
+      />
+    );
+  } else if (feature === EXTRA_TYPES.DOC_TOGGLE) {
+    // return null
+    return (
+      <DocToggleExtra
+        highlightColor={highlightColor}
+        locked={interactionDisabled}
+        data={data}
+        docActive={docActive}
+        setDocActive={setDocActive}
         inTopLevel={inTopLevel}
         menuType={menuType}
       />
@@ -579,10 +640,12 @@ const Item = ({
         isCollapsed={isCollapsed}
         isSelected={isSelected}
         isDebugging={isDebugging}
+        docActive={docActive}
         setIsEditing={setIsEditing}
         setIsCollapsed={setIsCollapsed}
         setIsSelected={setIsSelected}
         setIsDebugging={setIsDebugging}
+        setDocActive={setDocActive}
         interactionDisabled={interactionDisabled}
         parentId={parentId}
         fieldInfo={fieldInfo}
@@ -610,6 +673,8 @@ export const ExtraBar = memo(
     setIsSelected,
     isDebugging,
     setIsDebugging,
+    docActive,
+    setDocActive,
     interactionDisabled,
     fieldInfo,
     parentId,
@@ -627,6 +692,8 @@ export const ExtraBar = memo(
       setIsSelected,
       isDebugging,
       setIsDebugging,
+      docActive,
+      setDocActive,
       interactionDisabled,
       fieldInfo,
       parentId,
@@ -714,6 +781,8 @@ export const RightClickMenu = memo(
     setIsSelected,
     isDebugging,
     setIsDebugging,
+    docActive,
+    setDocActive,
     interactionDisabled,
     fieldInfo,
     parentId,
@@ -731,6 +800,8 @@ export const RightClickMenu = memo(
       setIsSelected,
       isDebugging,
       setIsDebugging,
+      docActive,
+      setDocActive,
       interactionDisabled,
       fieldInfo,
       parentId,

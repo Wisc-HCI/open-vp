@@ -10,6 +10,18 @@ export default {
   component: Environment
 };
 
+const featured = `
+> [error] There was an error!
+
+> [warn] There was an warning related to [The Program](programType)!
+
+> [info] Here is some info!
+
+> [success] Here is a success message!
+
+> Here is a block quote!
+`
+
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
   const { drawers, objectTypes, programData, executionData, drawerWidth, ...otherArgs } = args;
@@ -17,7 +29,10 @@ const Template = (args) => {
   const [ref, bounds] = useMeasure();
   
   useLayoutEffect(()=>{
-    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData});
+    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData,featuredDocs: {
+      '2dfsessfs':featured,
+      // "45535153s":true
+    }});
   })
   return (
     <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:'#333'}}>

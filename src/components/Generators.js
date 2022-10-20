@@ -15,7 +15,8 @@ export const instanceTemplateFromSpec = (type, objectSpec, isArg) => {
         canDelete: true,
         canEdit: true,
         editing: false,
-        selected: false
+        selected: false,
+        docActive: false
     };
     if (objectSpec.properties) {
         Object.entries(objectSpec.properties).forEach(([propKey, propInfo]) => {
@@ -41,7 +42,8 @@ export const referenceTemplateFromSpec = (type, instanceReference, objectSpec) =
         canDelete: true,
         canEdit: true,
         editing: false,
-        selected: false
+        selected: false,
+        docActive: false
     };
     if (objectSpec.referenceBlock.onCanvas) {
         data.position = { x: 0, y: 0 };
@@ -60,7 +62,8 @@ export const callTemplateFromSpec = (type, functionReference, objectSpec) => {
         canDelete: true,
         canEdit: true,
         editing: false,
-        selected: false
+        selected: false,
+        docActive: false
     };
     if (objectSpec.callBlock.onCanvas) {
         data.position = { x: 0, y: 0 };

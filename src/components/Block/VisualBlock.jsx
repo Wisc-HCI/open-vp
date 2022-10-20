@@ -17,7 +17,7 @@ import { pickBy, omitBy, pick, isEqual } from "lodash";
 import { ConnectionHandle } from "./ConnectionHandle";
 import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
-import { Collapse, Box, Stack } from "@mui/material";
+import { Collapse, Box, Stack, Popper, Fade } from "@mui/material";
 import {
   OuterBlockContainer,
   InnerBlockContainer,
@@ -29,6 +29,8 @@ import { MinifiedBar } from "./MinifiedBar";
 import { SettingsSection } from "./SettingsSection";
 import shallow from "zustand/shallow";
 import { compareBlockData } from "./Utility";
+import { Doc } from './Doc';
+// import useMeasure from "react-use-measure";
 
 export const VisualBlock = memo(
   forwardRef(
@@ -50,6 +52,9 @@ export const VisualBlock = memo(
       ref
     ) => {
       const [contextMenu, setContextMenu] = useState(null);
+      // const headerRef = useRef();
+      // const [headerRef, headerBounds] = useMeasure();
+      const [docReference, setDocReference] = useState();
 
       const handleContextMenu = (event) => {
         event.preventDefault();
@@ -86,7 +91,7 @@ export const VisualBlock = memo(
       const [isDebugging, setIsDebugging] = useState(false);
 
       if (data.dataType === DATA_TYPES.CALL) {
-        console.log(data)
+        console.log(data);
       }
 
       const setIsEditing = useProgrammingStore(
@@ -97,6 +102,11 @@ export const VisualBlock = memo(
         (store) => store.updateItemSelected,
         shallow
       );
+      const setDocActive = useProgrammingStore(
+        (store) => store.updateItemDocActive,
+        shallow
+      );
+
       const onClick = useProgrammingStore((state) => state.onVPEClick, shallow);
 
       const locked = useProgrammingStore((state) => state.locked, shallow);
@@ -136,6 +146,7 @@ export const VisualBlock = memo(
         return null;
       }
 
+      // console.log(ref?.current)
       const inDrawer = parentId === "spawner";
 
       return (
@@ -151,6 +162,8 @@ export const VisualBlock = memo(
           style={style}
         >
           <InnerBlockContainer
+          ref={setDocReference}
+              
             minified={minified}
             selected={selected}
             color={blockSpec.color}
@@ -179,6 +192,8 @@ export const VisualBlock = memo(
                   isCollapsed={isCollapsed}
                   isSelected={selected}
                   isDebugging={isDebugging}
+                  docActive={data.docActive === true}
+                  setDocActive={(v) => setDocActive(data.id, v)}
                   setIsEditing={
                     data.dataType === DATA_TYPES.REFERENCE ||
                     data.dataType === DATA_TYPES.CALL
@@ -255,10 +270,12 @@ export const VisualBlock = memo(
                   interactionDisabled={interactionDisabled}
                   data={data}
                   blockSpec={blockSpec}
+                  docActive={data.docActive === true}
                   isEditing={editing}
                   isCollapsed={isCollapsed}
                   isSelected={selected}
                   isDebugging={isDebugging}
+                  setDocActive={(v) => setDocActive(data.id, v)}
                   setIsEditing={
                     data.dataType === DATA_TYPES.REFERENCE ||
                     data.dataType === DATA_TYPES.CALL
@@ -281,6 +298,13 @@ export const VisualBlock = memo(
                   setIsDebugging={setIsDebugging}
                 />
               )}
+
+              {/* {!limitedRender && (
+                <div style={{position:'fixed',left:headerBounds.left,backgroundColor:'red',color:'white',y:0}}>
+                Content for {data.name}
+                {console.log({...headerBounds,name:data.name})}
+              </div>
+              )} */}
             </Stack>
 
             {/* Add Connection Info/Handles here for blocks */}
@@ -300,6 +324,61 @@ export const VisualBlock = memo(
                   ))}
               </>
             )}
+
+            {/* <Menu
+              key={`${data.id}-docmenu`}
+              open={!limitedRender && data.docActive === true}
+              onClose={()=>setDocActive(data.id,false)}
+              anchorReference='anchorPosition'
+              anchorPosition={{left:headerBounds.left,top:headerBounds.top}}
+            >
+              {console.log(headerBounds)}
+              Content for {data.name} {headerBounds.left+400} {headerBounds.top}
+            </Menu> */}
+
+            <Popper
+              id={`${data.id}-doc`}
+              open={data.docActive === true && !limitedRender}
+              placement='right'
+              anchorEl={docReference}
+              modifiers={[
+                {
+                  name: 'flip',
+                  enabled: true,
+                  options: {
+                    altBoundary: true,
+                    rootBoundary: 'viewport',
+                    padding: 8,
+                  },
+                },
+                {
+                  name: 'preventOverflow',
+                  enabled: onCanvas,
+                  options: {
+                    altAxis: true,
+                    altBoundary: true,
+                    tether: true,
+                    rootBoundary: 'viewport',
+                    padding: 8,
+                  },
+                },
+                {
+                  name: 'arrow',
+                  enabled: true,
+                  // options: {
+                  //   element: arrowRef,
+                  // },
+                },
+              ]}
+              disablePortal
+              transition
+            >
+              {({ TransitionProps }) => (
+                <Fade {...TransitionProps} timeout={350}>
+                  <Doc data={data} typeSpec={typeSpec}/>
+                </Fade>
+              )}
+            </Popper>
 
             {/* If the block is a function instance (the actual function and not a call) then render the spawn area for arguments */}
             <Collapse in={!isCollapsed && !minified} orientation="vertical">

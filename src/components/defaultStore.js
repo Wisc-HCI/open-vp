@@ -609,6 +609,12 @@ export const ProgrammingSlice = (set, get) => ({
       state.programData[usedId].selected = value;
     });
   },
+  updateItemDocActive: (id, value) => {
+    set((state) => {
+      console.log('setting doc active to ',value)
+      state.programData[id].docActive = value;
+    });
+  },
   updateItemEditing: (id, value) => {
     set((state) => {
       state.programData[id].editing = value;
@@ -730,6 +736,9 @@ export const ProgrammingSlice = (set, get) => ({
   },
   reset: (time) => {
     get().clock._elapsed = time ? time * 1000 : 0;
+  },
+  featuredDocs: {
+    
   }
 });
 

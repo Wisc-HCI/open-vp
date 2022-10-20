@@ -30,11 +30,11 @@ const basicStarter = {
       properties: {
         children: [],
       },
-      position: { x: 400, y: 10 },
+      position: { x: 0, y: 400 },
       canDelete: true,
       canEdit: true,
       selected: false,
-      editing: false,
+      editing: false
     },
     s3siakawme: {
       id: "s3siakawme",

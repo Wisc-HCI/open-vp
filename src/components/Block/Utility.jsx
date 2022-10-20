@@ -2,7 +2,6 @@ import React, { useState, useEffect, forwardRef, memo } from "react";
 // import { styled, keyframes } from "@stitches/react";
 // import styled from "styled-components";
 import styled from "@emotion/styled";
-import { css } from "@mui/material";
 // import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 // import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 // import * as SeparatorPrimitive from "@radix-ui/react-separator";
@@ -12,10 +11,10 @@ import { css } from "@mui/material";
 // import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
-import { times, divide, plus, strip } from "number-precision";
+import { plus, strip } from "number-precision";
 // import { debounce } from "lodash";
 // import { NumberInput as MuiNumberInput } from "@mui-treasury/component-numberinput";
-import { isNumber, isNaN, clamp, toNumber } from "lodash";
+import { isNumber, isNaN } from "lodash";
 import {
   Menu,
   Fade,
@@ -25,7 +24,6 @@ import {
   InputLabel,
   FormControl,
   Input,
-  Divider,
   Stack,
 } from "@mui/material";
 import { pick, isEqual } from "lodash";
@@ -126,7 +124,7 @@ export const DropdownTrigger = ({
           vertical: isChild ? "center" : "top",
           horizontal: "left",
         }}
-        open={open}
+        open={open && anchorEl !== undefined}
         onClose={handleClose}
         TransitionComponent={Fade}
       >
