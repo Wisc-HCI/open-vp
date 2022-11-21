@@ -9,7 +9,8 @@ export const DropZone = ({
   interactionDisabled,
   highlightColor,
   context,
-  limitedRender
+  limitedRender,
+  hideText
 }) => {
   return (
     <div
@@ -35,6 +36,7 @@ export const DropZone = ({
         highlightColor={highlightColor}
         context={context}
         limitedRender={limitedRender}
+        hideText={hideText}
       />
     </div>
   );

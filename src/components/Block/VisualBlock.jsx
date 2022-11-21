@@ -1,4 +1,4 @@
-import React, { memo, useState, forwardRef } from "react";
+import React, { memo, useState, forwardRef, useCallback } from "react";
 import { DropZone } from "./DropZone";
 import { List } from "./List";
 import {
@@ -7,6 +7,7 @@ import {
   SIMPLE_PROPERTY_TYPES,
   UNRENDERED_PROPS,
   ATTENDED_RENDER_PROPS,
+  CLIPBOARD_ACTION
 } from "../Constants";
 import { FiSquare } from "react-icons/fi";
 import { useProgrammingStore } from "../ProgrammingContext";
@@ -17,7 +18,13 @@ import { pickBy, omitBy, pick, isEqual } from "lodash";
 import { ConnectionHandle } from "./ConnectionHandle";
 import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
-import { Collapse, Box, Stack, Popper, Fade } from "@mui/material";
+import {
+  Collapse,
+  Box,
+  Stack,
+  Popper,
+  Fade
+} from "@mui/material";
 import {
   OuterBlockContainer,
   InnerBlockContainer,
@@ -29,7 +36,7 @@ import { MinifiedBar } from "./MinifiedBar";
 import { SettingsSection } from "./SettingsSection";
 import shallow from "zustand/shallow";
 import { compareBlockData } from "./Utility";
-import { Doc } from './Doc';
+import { Doc } from "./Doc";
 // import useMeasure from "react-use-measure";
 
 export const VisualBlock = memo(
@@ -47,6 +54,8 @@ export const VisualBlock = memo(
         parentId,
         progress,
         limitedRender,
+        copyFn = ()=>{},
+        cutFn = ()=>{},
         style,
       },
       ref
@@ -76,7 +85,7 @@ export const VisualBlock = memo(
         setContextMenu(null);
       };
 
-      // console.log("rerender", data);
+      // console.log("rerender", {name:data.name,fieldInfo,parentId});
 
       const blockSpec =
         data && data.dataType === DATA_TYPES.REFERENCE
@@ -89,10 +98,11 @@ export const VisualBlock = memo(
 
       const [isCollapsed, setIsCollapsed] = useState(false);
       const [isDebugging, setIsDebugging] = useState(false);
+      // const [isFocused, setIsFocused] = useState(false);
 
-      if (data.dataType === DATA_TYPES.CALL) {
-        console.log(data);
-      }
+      // if (data.dataType === DATA_TYPES.CALL) {
+      //   console.log(data);
+      // }
 
       const setIsEditing = useProgrammingStore(
         (store) => store.updateItemEditing,
@@ -106,6 +116,9 @@ export const VisualBlock = memo(
         (store) => store.updateItemDocActive,
         shallow
       );
+      // const setClipboardBlock = useProgrammingStore( state=> state.setClipboardBlock, shallow);
+      // const inClipboard = useProgrammingStore(useCallback(state=>state.clipboard.block?.data?.id === data.id,[data.id]),shallow);
+      const isCopying = useProgrammingStore(useCallback((state)=>state.clipboard.block?.data?.id === data.id && state.clipboard.action === CLIPBOARD_ACTION.COPY,[data.id]),shallow);
 
       const onClick = useProgrammingStore((state) => state.onVPEClick, shallow);
 
@@ -151,8 +164,10 @@ export const VisualBlock = memo(
 
       return (
         <OuterBlockContainer
+          // contentEditable
           onClick={(e) => {
             onClick(data);
+            // setClipboardBlock({data,fieldInfo,parentId,onCanvas,context});
             e.stopPropagation();
           }}
           className={canDragBlockRFR ? null : "nodrag"}
@@ -162,10 +177,12 @@ export const VisualBlock = memo(
           style={style}
         >
           <InnerBlockContainer
-          ref={setDocReference}
-              
+            ref={setDocReference}
             minified={minified}
             selected={selected}
+            // onClick={() => setIsFocused(true)}
+            // onMouseLeave={() => setIsFocused(false)}
+            focused={isCopying}
             color={blockSpec.color}
           >
             {!limitedRender && (
@@ -185,6 +202,8 @@ export const VisualBlock = memo(
                   highlightColor={highlightColor}
                   fieldInfo={fieldInfo}
                   parentId={parentId}
+                  copyFn={copyFn}
+                  cutFn={cutFn}
                   interactionDisabled={interactionDisabled}
                   data={data}
                   blockSpec={blockSpec}
@@ -242,6 +261,13 @@ export const VisualBlock = memo(
                   name={name}
                   canDragBlockRFR={canDragBlockRFR}
                   icon={blockSpec.icon ? blockSpec.icon : FiSquare}
+                  setIsEditing={
+                    data.dataType === DATA_TYPES.REFERENCE ||
+                    data.dataType === DATA_TYPES.CALL
+                      ? (v) => setIsEditing(data.ref, v)
+                      : (v) => setIsEditing(data.id, v)
+                  }
+                  canEdit={data.canEdit}
                 />
               )}
 
@@ -267,6 +293,8 @@ export const VisualBlock = memo(
                   highlightColor={highlightColor}
                   fieldInfo={fieldInfo}
                   parentId={parentId}
+                  copyFn={copyFn}
+                  cutFn={cutFn}
                   interactionDisabled={interactionDisabled}
                   data={data}
                   blockSpec={blockSpec}
@@ -339,31 +367,31 @@ export const VisualBlock = memo(
             <Popper
               id={`${data.id}-doc`}
               open={data.docActive === true && !limitedRender}
-              placement='right'
+              placement="right"
               anchorEl={docReference}
               modifiers={[
                 {
-                  name: 'flip',
+                  name: "flip",
                   enabled: true,
                   options: {
                     altBoundary: true,
-                    rootBoundary: 'viewport',
+                    rootBoundary: "viewport",
                     padding: 8,
                   },
                 },
                 {
-                  name: 'preventOverflow',
+                  name: "preventOverflow",
                   enabled: onCanvas,
                   options: {
                     altAxis: true,
                     altBoundary: true,
                     tether: true,
-                    rootBoundary: 'viewport',
+                    rootBoundary: "viewport",
                     padding: 8,
                   },
                 },
                 {
-                  name: 'arrow',
+                  name: "arrow",
                   enabled: true,
                   // options: {
                   //   element: arrowRef,
@@ -375,7 +403,7 @@ export const VisualBlock = memo(
             >
               {({ TransitionProps }) => (
                 <Fade {...TransitionProps} timeout={350}>
-                  <Doc data={data} typeSpec={typeSpec}/>
+                  <Doc data={data} typeSpec={typeSpec} />
                 </Fade>
               )}
             </Popper>
@@ -452,7 +480,7 @@ export const VisualBlock = memo(
                               accepts: [argInfo.type],
                             }}
                             parentId={data.id}
-                            interactionDisabled={interactionDisabled}
+                            interactionDisabled={interactionDisabled || inDrawer}
                             highlightColor={highlightColor}
                             context={context}
                           />
@@ -468,7 +496,17 @@ export const VisualBlock = memo(
                         ? fieldInfo.name
                         : "";
                       return (
-                        <PropertySection key={fieldKey}>
+                        <PropertySection
+                          key={fieldKey}
+                          // onMouseEnter={() => {
+                          //   // console.log("entering prop");
+                          //   setIsFocused(false);
+                          // }}
+                          // onMouseLeave={() => {
+                          //   // console.log("exiting prop");
+                          //   setIsFocused(true);
+                          // }}
+                        >
                           <Stack
                             key={fieldKey}
                             direction="row"
@@ -501,12 +539,13 @@ export const VisualBlock = memo(
                                 fieldInfo={{
                                   ...fieldInfo,
                                   value: fieldKey,
-                                  name: !fieldInfo.fullWidth
-                                    ? ""
-                                    : fieldInfo.name,
+                                  // name: !fieldInfo.fullWidth
+                                  //   ? ""
+                                  //   : fieldInfo.name,
                                 }}
+                                hideText={!fieldInfo.fullWidth}
                                 parentId={data.id}
-                                interactionDisabled={interactionDisabled}
+                                interactionDisabled={interactionDisabled || inDrawer}
                                 highlightColor={highlightColor}
                                 context={context}
                                 limitedRender={limitedRender}

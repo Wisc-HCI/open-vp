@@ -28,7 +28,48 @@ import {
 } from "@mui/material";
 import { pick, isEqual } from "lodash";
 // import { TextField, InputAdornment } from "@mui/material";
-import { ATTENDED_DATA_PROPERTIES, DATA_TYPES, SIMPLE_PROPERTY_TYPES } from "../Constants";
+import {
+  ATTENDED_DATA_PROPERTIES,
+  DATA_TYPES,
+  SIMPLE_PROPERTY_TYPES,
+  TYPES,
+} from "../Constants";
+import { mapValues } from "lodash";
+import { pickBy } from "lodash";
+
+export const functionTypeSpec = (typeSpec, programData) => {
+  const augmented = pickBy(typeSpec,info=>info.type !== TYPES.FUNCTION);
+  const functionKeys = Object.keys(typeSpec).filter(
+    (typeKey) => typeSpec[typeKey].type === TYPES.FUNCTION
+  );
+  Object.values(programData)
+    .filter(
+      (data) =>
+        data.dataType === DATA_TYPES.INSTANCE &&
+        functionKeys.includes(data.type)
+    )
+    .forEach((functionInstance) => {
+      const initialFunctionDef = {...typeSpec[functionInstance.type],name:functionInstance.name};
+      let newProperties = {};
+      functionInstance.arguments.forEach(arg=>{
+        const argBlock = programData[arg];
+        newProperties[arg] = {
+          name: argBlock.name,
+          accepts: [argBlock.type],
+          default: null,
+          isFunctionArgument: true
+        }
+      })
+      let functionTypeDef = {
+        ...initialFunctionDef,
+        properties:{
+          ...mapValues(initialFunctionDef.properties,(v)=>({...v,isFunctionBlockField:true})),
+          ...newProperties
+        }};
+      augmented[functionInstance.id] = functionTypeDef
+    });
+  return augmented;
+};
 
 const NumberInputField = styled(Input)`
   input[type="number"]::-webkit-inner-spin-button,
@@ -58,11 +99,15 @@ export const compareBlockData = (data1, data2, propInfo) => {
   ) {
     return false;
   } else {
-    const fields = data2.dataType !== DATA_TYPES.CALL ? Object.entries(propInfo ? propInfo : {})
-      .filter(
-        ([_, fieldInfo]) => fieldInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED
-      )
-      .map(([fieldKey, _]) => fieldKey) : data2.refData.arguments;
+    const fields =
+      data2.dataType !== DATA_TYPES.CALL
+        ? Object.entries(propInfo ? propInfo : {})
+            .filter(
+              ([_, fieldInfo]) =>
+                fieldInfo.type !== SIMPLE_PROPERTY_TYPES.IGNORED
+            )
+            .map(([fieldKey, _]) => fieldKey)
+        : data2.refData.arguments;
     return isEqual(
       pick(data1.properties ? data1.properties : {}, fields),
       pick(data2.properties ? data2.properties : {}, fields)
@@ -94,9 +139,11 @@ export const DropdownTrigger = ({
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+    event.stopPropagation();
   };
-  const handleClose = () => {
+  const handleClose = (event) => {
     setAnchorEl(null);
+    event.stopPropagation();
   };
 
   return (
@@ -369,29 +416,32 @@ const VALID_CHARS = [
   "-",
 ];
 
-const SpinnerButton = styled.button({
-  all: "unset",
-  display: "flex",
-  flexDirection: "column",
-  paddingLeft: "0px",
-  paddingTop: "2px",
-  paddingRight: "0px",
-  paddingBottom: "2px",
-  margin: "0px",
-  alignItems: "center",
-  justifyContent: "center",
-  borderRadius: "4px",
-  lineHeight: 1,
-  height: "10px",
-  background: "#22222299",
-  "&:focus": {
-    background: "#222222",
+const SpinnerButton = styled.button(
+  {
+    all: "unset",
+    display: "flex",
+    flexDirection: "column",
+    paddingLeft: "0px",
+    paddingTop: "2px",
+    paddingRight: "0px",
+    paddingBottom: "2px",
+    margin: "0px",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: "4px",
+    lineHeight: 1,
+    height: "10px",
+    background: "#22222299",
+    "&:focus": {
+      background: "#222222",
+    },
+    "&:hover": {
+      background: "#222222",
+    },
+    opacity: `${(props) => (props.disabled ? 0.5 : 1)}`,
   },
-  "&:hover": {
-    background: "#222222",
-  },
-  opacity: `${(props) => (props.disabled ? 0.5 : 1)}`,
-},props=>({opacity:props.disabled ? 0.5:1}));
+  (props) => ({ opacity: props.disabled ? 0.5 : 1 })
+);
 
 export const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
   return (
@@ -428,18 +478,18 @@ export const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
 //   font-size: 12px;
 // `;
 
-const CompoundInput = memo(forwardRef(
-  ({ onChange, value, disabled, min, max, step, ...other }, ref) => {
-    console.log({min,max})
+const CompoundInput = memo(
+  forwardRef(({ onChange, value, disabled, min, max, step, ...other }, ref) => {
+    console.log({ min, max });
     return (
       <Stack
-        style={{padding:1,marginRight:4}}
+        style={{ padding: 1, marginRight: 4 }}
         direction="row"
         // spacing={0}
         ref={ref}
         // justifyContent="space-around"
-        alignItems='center'
-        alignContent='center'
+        alignItems="center"
+        alignContent="center"
       >
         <NumberInputField
           disabled={disabled}
@@ -447,7 +497,7 @@ const CompoundInput = memo(forwardRef(
           className={other.className}
           label={null}
           value={value[0]}
-          style={{marginLeft:1,paddingRight:0}}
+          style={{ marginLeft: 1, paddingRight: 0 }}
           inputProps={{ step: 0.1 }}
           onFocus={other.onFocus}
           onBlur={other.onBlur}
@@ -469,7 +519,7 @@ const CompoundInput = memo(forwardRef(
             onChange({
               target: {
                 name: other.name,
-                value: [strip(Number(value[0]+step)), value[1], value[2]],
+                value: [strip(Number(value[0] + step)), value[1], value[2]],
               },
             });
           }}
@@ -477,7 +527,7 @@ const CompoundInput = memo(forwardRef(
             onChange({
               target: {
                 name: other.name,
-                value: [strip(Number(value[0]-step)), value[1], value[2]],
+                value: [strip(Number(value[0] - step)), value[1], value[2]],
               },
             })
           }
@@ -488,7 +538,7 @@ const CompoundInput = memo(forwardRef(
           className={other.className}
           label={null}
           value={value[1]}
-          style={{marginLeft:1,paddingRight:0}}
+          style={{ marginLeft: 1, paddingRight: 0 }}
           inputProps={{ step: step, type: "number" }}
           onFocus={other.onFocus}
           onBlur={other.onBlur}
@@ -509,7 +559,7 @@ const CompoundInput = memo(forwardRef(
             onChange({
               target: {
                 name: other.name,
-                value: [value[0], strip(Number(value[1]+step)), value[2]],
+                value: [value[0], strip(Number(value[1] + step)), value[2]],
               },
             });
           }}
@@ -517,7 +567,7 @@ const CompoundInput = memo(forwardRef(
             onChange({
               target: {
                 name: other.name,
-                value: [value[0], strip(Number(value[1]-step)), value[2]],
+                value: [value[0], strip(Number(value[1] - step)), value[2]],
               },
             })
           }
@@ -528,7 +578,7 @@ const CompoundInput = memo(forwardRef(
           className={other.className}
           label={null}
           value={value[2]}
-          style={{marginLeft:1,paddingRight:0}}
+          style={{ marginLeft: 1, paddingRight: 0 }}
           inputProps={{ step: step }}
           onFocus={other.onFocus}
           onBlur={other.onBlur}
@@ -544,13 +594,13 @@ const CompoundInput = memo(forwardRef(
           margin="dense"
         />
         <Spinner
-        above={value[2] >= max[2]}
-        below={value[2] <= min[2]}
+          above={value[2] >= max[2]}
+          below={value[2] <= min[2]}
           onClickUp={() => {
             onChange({
               target: {
                 name: other.name,
-                value: [value[0], value[1], strip(Number(value[2]+step))],
+                value: [value[0], value[1], strip(Number(value[2] + step))],
               },
             });
           }}
@@ -558,182 +608,200 @@ const CompoundInput = memo(forwardRef(
             onChange({
               target: {
                 name: other.name,
-                value: [value[0], value[1], strip(Number(value[2]-step))],
+                value: [value[0], value[1], strip(Number(value[2] - step))],
               },
             })
           }
         />
       </Stack>
     );
+  })
+);
+
+export const Vector3Input = memo(
+  ({
+    disabled,
+    label,
+    onChange,
+    value = [0, 0, 0],
+    min = [
+      Number.NEGATIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+      Number.NEGATIVE_INFINITY,
+    ],
+    max = [
+      Number.POSITIVE_INFINITY,
+      Number.POSITIVE_INFINITY,
+      Number.POSITIVE_INFINITY,
+    ],
+    step = 0.1,
+    onBlur = (_) => {},
+    onFocus = (_) => {},
+    endAdornment,
+  }) => {
+    return (
+      <FormControl>
+        <InputLabel htmlFor="outlined-position-vector" color="primary" shrink>
+          {label}
+        </InputLabel>
+        <OutlinedInput
+          notched
+          className="nodrag"
+          size="small"
+          id="outlined-position-vector"
+          label={label}
+          color="primary"
+          onFocus={onFocus}
+          onBlur={onBlur}
+          disabled={disabled}
+          value={value}
+          inputComponent={CompoundInput}
+          inputProps={{ min, max, step }}
+          onChange={onChange}
+          endAdornment={
+            endAdornment ? (
+              <InputAdornment position="end">{endAdornment}</InputAdornment>
+            ) : null
+          }
+        />
+      </FormControl>
+    );
   }
-));
+);
 
-export const Vector3Input = memo(({
-  disabled,
-  label,
-  onChange,
-  value = [0, 0, 0],
-  min = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
-  max = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
-  step = 0.1,
-  onBlur = (_) => {},
-  onFocus = (_) => {},
-  endAdornment,
-}) => {
-  return (
-    <FormControl>
-      <InputLabel htmlFor="outlined-position-vector" color="primary" shrink>
-        {label}
-      </InputLabel>
-      <OutlinedInput
-        notched
-        className="nodrag"
-        size="small"
-        id="outlined-position-vector"
-        label={label}
-        color="primary"
-        onFocus={onFocus}
-        onBlur={onBlur}
-        disabled={disabled}
-        value={value}
-        inputComponent={CompoundInput}
-        inputProps={{min,max,step}}
-        onChange={onChange}
-        endAdornment={
-          endAdornment ? (
-            <InputAdornment position="end">{endAdornment}</InputAdornment>
-          ) : null
+export const NumberInput = memo(
+  ({
+    disabled,
+    label,
+    onChange,
+    step,
+    value = 0,
+    onBlur = (_) => {},
+    onFocus = (_) => {},
+    onMouseEnter = (_) => {},
+    onMouseLeave = (_) => {},
+    suffix = "",
+    prefix = "",
+    min = Number.NEGATIVE_INFINITY,
+    max = Number.POSITIVE_INFINITY,
+  }) => {
+    const [above, setAbove] = useState(false);
+    const [below, setBelow] = useState(false);
+    const valid = !above && !below;
+    const [storedValue, setStoredValue] = useState(0);
+
+    const setNewFromButton = (change) => {
+      const numericNew = plus(value, change);
+      if (numericNew > max) {
+        setAbove(true);
+        setBelow(false);
+        onChange(max);
+      } else if (numericNew < min) {
+        setAbove(false);
+        setBelow(true);
+        onChange(min);
+      } else {
+        setAbove(false);
+        setBelow(false);
+        onChange(numericNew);
+      }
+    };
+
+    const setNewFromInput = (event) => {
+      console.log(event);
+      if (event?.nativeEvent?.data) {
+        if (!VALID_CHARS.includes(event.nativeEvent.data)) {
+          return;
         }
-      />
-    </FormControl>
-  );
-});
+      }
 
-export const NumberInput = memo(({
-  disabled,
-  label,
-  onChange,
-  step,
-  value = 0,
-  onBlur = (_) => {},
-  onFocus = (_) => {},
-  onMouseEnter = (_) => {},
-  onMouseLeave = (_) => {},
-  suffix="",
-  prefix="",
-  min=Number.NEGATIVE_INFINITY,
-  max=Number.POSITIVE_INFINITY
-}) => {
-
-  const [above, setAbove] = useState(false);
-  const [below, setBelow] = useState(false);
-  const valid = !above && !below;
-  const [storedValue, setStoredValue] = useState(0);
-
-  const setNewFromButton = (change) => {
-    const numericNew = plus(value, change);
-    if (numericNew > max) {
-      setAbove(true);
-      setBelow(false);
-      onChange(max);
-    } else if (numericNew < min) {
-      setAbove(false);
-      setBelow(true);
-      onChange(min);
-    } else {
-      setAbove(false);
-      setBelow(false);
-      onChange(numericNew);
-    }
-  };
-
-  const setNewFromInput = (event) => {
-    console.log(event);
-    if (event?.nativeEvent?.data) {
-      if (!VALID_CHARS.includes(event.nativeEvent.data)) {
+      if (event.target.value === "-") {
+        onChange(0);
+        setStoredValue("-");
         return;
       }
-    }
 
-    if (event.target.value === "-") {
-      onChange(0);
-      setStoredValue("-");
+      const numericNew = Number(event.target.value);
+      if (!isNumber(numericNew) || isNaN(numericNew)) {
+        return;
+      }
+
+      if (numericNew > max) {
+        setAbove(true);
+        setBelow(false);
+        onChange(max);
+      } else if (numericNew < min) {
+        setAbove(false);
+        setBelow(true);
+        onChange(min);
+      } else {
+        setAbove(false);
+        setBelow(false);
+        onChange(numericNew);
+        setStoredValue(event.target.value);
+      }
       return;
-    }
+    };
 
-    const numericNew = Number(event.target.value);
-    if (!isNumber(numericNew) || isNaN(numericNew)) {
-      return;
-    }
+    useEffect(() => {
+      if (
+        storedValue !== "-" &&
+        storedValue !== "" &&
+        value !== Number(storedValue)
+      ) {
+        setStoredValue(value);
+      }
+    }, [storedValue, value]);
 
-    if (numericNew > max) {
-      setAbove(true);
-      setBelow(false);
-      onChange(max);
-    } else if (numericNew < min) {
-      setAbove(false);
-      setBelow(true);
-      onChange(min);
-    } else {
-      setAbove(false);
-      setBelow(false);
-      onChange(numericNew);
-      setStoredValue(event.target.value);
-    }
-    return;
-  };
-
-  useEffect(() => {
-    if (
-      storedValue !== "-" &&
-      storedValue !== "" &&
-      value !== Number(storedValue)
-    ) {
-      setStoredValue(value);
-    }
-  }, [storedValue, value]);
-
-  return (
-    <FormControl onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} className="nodrag">
-      <InputLabel className="nodrag" htmlFor="outlined-position-vector" color="primary" shrink>
-        {label}
-      </InputLabel>
-      <OutlinedNumberInput
-        notched
+    return (
+      <FormControl
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
         className="nodrag"
-        size="small"
-        id="outlined-position-vector"
-        label={label}
-        // type='number'
-        color={!valid?'error':"primary"}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        disabled={disabled}
-        value={storedValue}
-        onChange={setNewFromInput}
-        style={{ paddingRight: 4 }}
-        inputProps={{min,max,className: "nodrag"}}
-        startAdornment={
-          <InputAdornment position='start'>{prefix}</InputAdornment>
-        }
-        endAdornment={
-          <InputAdornment position="end">
-            {suffix}
-            <Spinner
-              disabled={disabled}
-              above={value >= max}
-              below={value <= min}
-              onClickDown={() => setNewFromButton(-step)}
-              onClickUp={() => setNewFromButton(step)}
-            />
-          </InputAdornment>
-        }
-      />
-    </FormControl>
-  );
-});
-
-
+      >
+        <InputLabel
+          className="nodrag"
+          htmlFor="outlined-position-vector"
+          color="primary"
+          shrink
+        >
+          {label}
+        </InputLabel>
+        <OutlinedNumberInput
+          notched
+          className="nodrag"
+          size="small"
+          id="outlined-position-vector"
+          label={label}
+          // type='number'
+          color={!valid ? "error" : "primary"}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          disabled={disabled}
+          value={storedValue}
+          onChange={setNewFromInput}
+          style={{ paddingRight: 4 }}
+          inputProps={{ min, max, className: "nodrag" }}
+          startAdornment={
+            <InputAdornment position="start">{prefix}</InputAdornment>
+          }
+          endAdornment={
+            <InputAdornment position="end">
+              {suffix}
+              <Spinner
+                disabled={disabled}
+                above={value >= max}
+                below={value <= min}
+                onClickDown={() => setNewFromButton(-step)}
+                onClickUp={() => setNewFromButton(step)}
+              />
+            </InputAdornment>
+          }
+        />
+      </FormControl>
+    );
+  }
+);
 
 // Exports
 // export const DropdownMenu = DropdownMenuPrimitive.Root;

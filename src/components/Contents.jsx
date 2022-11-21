@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Block } from "./Block";
 // import { useSpring, animated } from "@react-spring/web";
 // import { config } from "react-spring";
@@ -23,7 +22,9 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import shallow from "zustand/shallow";
 import { stringEquality } from "./Block/Utility";
-import { Stack, Box, Collapse } from "@mui/material";
+import { Stack, Box, Collapse, Card, Alert, AlertTitle } from "@mui/material";
+import { CanvasTabs } from "./CanvasTabs";
+import { useViewport, useReactFlow } from "reactflow";
 
 const SectionStrip = ({ setSearchTerm, setActiveDrawer }) => {
   const drawers = useProgrammingStore(
@@ -35,7 +36,7 @@ const SectionStrip = ({ setSearchTerm, setActiveDrawer }) => {
     shallow
   );
   return (
-    <Stack direction="column" sx={{ padding: "5px"}} spacing={1}>
+    <Stack direction="column" sx={{ padding: "5px" }} spacing={1}>
       {/* <Nav gap="xxsmall"> */}
       {drawers.map((drawer, drawerIdx) => {
         // console.log(drawerIdx);
@@ -141,14 +142,27 @@ const BlockPanel = ({
   return (
     <Stack
       ref={drawerRef}
-      direction='column'
-      sx={{width:`${drawerWidth}px`,backgroundColor:"#222222ee",height:'100%'}}
+      direction="column"
+      sx={{
+        width: `${drawerWidth}px`,
+        backgroundColor: "#222222ee",
+        height: "100%",
+      }}
     >
-      <Stack ref={headerRef} sx={{backgroundColor:"#44444499",padding:'10px'}} direction="column" spacing={1}>
-        <Stack direction='row' sx={{alignItems:'center',justify:'space-between',width:'100%'}} justifyContent='space-between'>
-            <Typography color="white">
-              {activeDrawer !== null && drawers[activeDrawer].title}
-            </Typography>
+      <Stack
+        ref={headerRef}
+        sx={{ backgroundColor: "#44444499", padding: "10px" }}
+        direction="column"
+        spacing={1}
+      >
+        <Stack
+          direction="row"
+          sx={{ alignItems: "center", justify: "space-between", width: "100%" }}
+          justifyContent="space-between"
+        >
+          <Typography color="white">
+            {activeDrawer !== null && drawers[activeDrawer].title}
+          </Typography>
           {activeDrawer !== null &&
             drawers[activeDrawer].dataType === DATA_TYPES.REFERENCE && (
               <IconButton
@@ -173,20 +187,19 @@ const BlockPanel = ({
           }}
         />
       </Stack>
-      <Box sx={{flex:1,width:drawerWidth}}>
+      <Box sx={{ flex: 1, width: drawerWidth }}>
         <ScrollRegion
-          height={drawerBounds.height-headerBounds.height}
+          height={drawerBounds.height - headerBounds.height}
           vertical
         >
-          <Stack direction='column' gap={0.5} sx={{padding:'4px'}}>
-          {blocks
-            .filter(
-              (b) =>
-                searchTerm === "" ||
-                b.name.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((block) => (
-              
+          <Stack direction="column" gap={0.5} sx={{ padding: "4px" }}>
+            {blocks
+              .filter(
+                (b) =>
+                  searchTerm === "" ||
+                  b.name.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((block) => (
                 <Block
                   key={block.id}
                   staticData={block}
@@ -202,7 +215,7 @@ const BlockPanel = ({
                     isSpawner: true,
                   }}
                 />
-            ))}
+              ))}
           </Stack>
         </ScrollRegion>
       </Box>
@@ -217,6 +230,7 @@ export const Contents = ({
   animateDrawer,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { project } = useReactFlow();
   const activeDrawer = useProgrammingStore(
     (store) => store.activeDrawer,
     shallow
@@ -225,6 +239,8 @@ export const Contents = ({
     (store) => store.setActiveDrawer,
     shallow
   );
+
+  const activeTab = useProgrammingStore((store) => store.activeTab, shallow);
 
   return (
     <Box
@@ -243,7 +259,10 @@ export const Contents = ({
         setSearchTerm={setSearchTerm}
       />
       {animateDrawer ? (
-        <Collapse in={animateDrawer && activeDrawer !== null} orientation='horizontal'>
+        <Collapse
+          in={animateDrawer && activeDrawer !== null}
+          orientation="horizontal"
+        >
           {activeDrawer !== null && (
             <BlockPanel
               searchTerm={searchTerm}
@@ -265,13 +284,35 @@ export const Contents = ({
       <Box
         sx={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           height: "100%",
           flex: 1,
           padding: 0,
         }}
       >
-        <Canvas highlightColor={highlightColor} snapToGrid={snapToGrid} />
+        <CanvasTabs />
+        {activeTab ? (
+          <Canvas highlightColor={highlightColor} snapToGrid={snapToGrid} drawerWidth={drawerWidth}/>
+        ) : (
+          <div
+            style={{
+              backgroundColor: "black",
+              alignItems: "center",
+              justifyContent: "center",
+              display: "flex",
+              flex: 1,
+              height: "100%",
+              width: "100%",
+            }}
+          >
+            <Card>
+              <Alert variant="outlined" severity="info">
+                <AlertTitle>No Tab Selected</AlertTitle>Create or open a tab to
+                begin.
+              </Alert>
+            </Card>
+          </div>
+        )}
       </Box>
     </Box>
   );

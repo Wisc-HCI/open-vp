@@ -15,7 +15,9 @@ import {
   FiPlus,
   FiInfo,
   FiXCircle,
-  FiChevronRight 
+  FiChevronRight,
+  FiScissors,
+  FiCopy,
 } from "react-icons/fi";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { DATA_TYPES, EXTRA_TYPES } from "..";
@@ -57,7 +59,10 @@ const FunctionButtonExtra = memo(
         <ExtraActionIcon />
       </IconButton>
     ) : (
-      <MenuItem disabled={interactionDisabled} onClick={() => onClick(data, blockSpec)}>
+      <MenuItem
+        disabled={interactionDisabled}
+        onClick={() => onClick(data, blockSpec)}
+      >
         <ListItemIcon>
           <ExtraActionIcon />
         </ListItemIcon>
@@ -169,39 +174,48 @@ const SelectionToggleExtra = memo(
 
 const DocToggleExtra = memo(
   ({ docActive, setDocActive, inTopLevel, data, locked }) => {
-    const Icon = docActive ? FiXCircle :  FiInfo;
+    const Icon = docActive ? FiXCircle : FiInfo;
     const disabled = data.dataType === DATA_TYPES.INSTANCE && locked;
-    const hasFeatured = useProgrammingStore(store=>store?.featuredDocs[data.id] !== undefined, shallow);
+    const hasFeatured = useProgrammingStore(
+      (store) => store?.featuredDocs[data.id] !== undefined,
+      shallow
+    );
     // console.log('hasFeatured',hasFeatured)
 
     return inTopLevel ? (
-      <Badge badgeContent={hasFeatured ? <span style={{fontSize:14}}>!</span>: 0} overlap="circular" color='primary'>
-      <IconButton
-        disabled={disabled}
-        onClick={() => setDocActive(!docActive)}
+      <Badge
+        badgeContent={hasFeatured ? <span style={{ fontSize: 14 }}>!</span> : 0}
+        overlap="circular"
+        color="primary"
       >
-        <Icon />
-      </IconButton>
+        <IconButton
+          disabled={disabled}
+          onClick={() => setDocActive(!docActive)}
+        >
+          <Icon />
+        </IconButton>
       </Badge>
     ) : (
-      
       <MenuItem onClick={() => setDocActive(!docActive)}>
-        
         <ListItemIcon>
           <Icon />
         </ListItemIcon>
-        
-        <Badge badgeContent={hasFeatured ? <span style={{fontSize:14}}>!</span>: 0} color='primary'>
-        <ListItemText
-          primaryTypographyProps={{
-            color: disabled ? "text.secondary" : "text.primary",
-          }}
+
+        <Badge
+          badgeContent={
+            hasFeatured ? <span style={{ fontSize: 14 }}>!</span> : 0
+          }
+          color="primary"
         >
-          {docActive ? "Close Doc" : "Show Doc"}
-        </ListItemText>
+          <ListItemText
+            primaryTypographyProps={{
+              color: disabled ? "text.secondary" : "text.primary",
+            }}
+          >
+            {docActive ? "Close Doc" : "Show Doc"}
+          </ListItemText>
         </Badge>
       </MenuItem>
-      
     );
   }
 );
@@ -256,10 +270,14 @@ const IndicatorTextExtra = memo(({ value, label, inTopLevel }) => {
 const IndicatorIconExtra = memo(({ value, label, inTopLevel }) => {
   const Icon = value;
   return inTopLevel ? (
-    <IconButton><Icon/></IconButton>
+    <IconButton>
+      <Icon />
+    </IconButton>
   ) : (
     <MenuItem>
-      <ListItemIcon><Icon/></ListItemIcon>
+      <ListItemIcon>
+        <Icon />
+      </ListItemIcon>
       <ListItemText primaryTypographyProps={{ color: "text.secondary" }}>
         {label}
       </ListItemText>
@@ -304,9 +322,7 @@ const AddArgumentGroupExtra = memo(
     data,
     allowed,
     interactionDisabled,
-    inTopLevel,
-    highlightColor,
-    menuType,
+    inTopLevel
   }) => {
     return (
       <DropdownExtra
@@ -319,23 +335,13 @@ const AddArgumentGroupExtra = memo(
         inTopLevel={inTopLevel}
         data={data}
         interactionDisabled={interactionDisabled}
-        highlightColor={highlightColor}
-        menuType={menuType}
       />
     );
   }
 );
 
 const DeleteExtra = memo(
-  ({
-    data,
-    inTopLevel,
-    locked,
-    fieldInfo,
-    parentId,
-    highlightColor,
-    menuType,
-  }) => {
+  ({ data, inTopLevel, locked, fieldInfo, parentId }) => {
     const deleteFunc = useProgrammingStore((state) => state.deleteBlock);
     const canDeleteInstance =
       parentId === "spawner" &&
@@ -364,6 +370,45 @@ const DeleteExtra = memo(
   }
 );
 
+const CopyExtra = memo(({ inTopLevel, copyFn }) => {
+  return inTopLevel ? (
+    <IconButton onClick={copyFn}>
+      <FiCopy />
+    </IconButton>
+  ) : (
+    // <Divider style={{fontFamily:'Helvetica'}}>{label}</Divider>
+    <MenuItem
+      onClick={copyFn}
+    >
+      <ListItemIcon>
+      <FiCopy />
+      </ListItemIcon>
+      <ListItemText primary="Copy"></ListItemText>
+    </MenuItem>
+  );
+});
+
+const CutExtra = memo(({ inTopLevel, locked, cutFn }) => {
+  // const cutFunc = useProgrammingStore((state) => state.cut);
+
+  return inTopLevel ? (
+    <IconButton disabled={locked} onClick={cutFn}>
+      <FiScissors />
+    </IconButton>
+  ) : (
+    // <Divider style={{fontFamily:'Helvetica'}}>{label}</Divider>
+    <MenuItem
+    disabled={locked} 
+      onClick={cutFn}
+    >
+      <ListItemIcon>
+      <FiScissors />
+      </ListItemIcon>
+      <ListItemText primary="Cut"></ListItemText>
+    </MenuItem>
+  );
+});
+
 const DropdownExtra = memo(
   ({
     icon,
@@ -385,7 +430,8 @@ const DropdownExtra = memo(
     interactionDisabled,
     parentId,
     fieldInfo,
-    highlightColor,
+    copyFn,
+    cutFn
   }) => {
     const DropIcon = icon
       ? icon
@@ -396,7 +442,6 @@ const DropdownExtra = memo(
     const childProps = {
       data,
       blockSpec,
-      highlightColor,
       isEditing,
       setIsEditing,
       isCollapsed,
@@ -411,6 +456,8 @@ const DropdownExtra = memo(
       fieldInfo,
       parentId,
       inTopLevel: false,
+      copyFn,
+      cutFn
     };
 
     return (
@@ -420,28 +467,27 @@ const DropdownExtra = memo(
         triggerProps={
           inTopLevel
             ? {
-                key:JSON.stringify({id:data.id,contents}),
+                key: JSON.stringify({ id: data.id, contents }),
                 onClick: () => setIsEditing(!isEditing),
-                children: <DropIcon key={JSON.stringify({id:data.id,contents})}/>,
+                children: (
+                  <DropIcon key={JSON.stringify({ id: data.id, contents })} />
+                ),
               }
             : {
-                key:JSON.stringify({id:data.id,contents}),
+                key: JSON.stringify({ id: data.id, contents }),
                 onClick: () => setIsEditing(!isEditing),
-                children: 
+                children: (
                   <>
                     <ListItemIcon>{<DropIcon />}</ListItemIcon>
                     <ListItemText primary={label}></ListItemText>
                   </>
-                ,
+                ),
               }
         }
       >
-        
-        {contents?.map((feature, featureIdx) =>
-          <Item key={featureIdx} {...childProps} feature={feature}/>
-        )}
-        
-        
+        {contents?.map((feature, featureIdx) => (
+          <Item key={featureIdx} {...childProps} feature={feature} />
+        ))}
       </DropdownTrigger>
     );
   }
@@ -450,7 +496,6 @@ const DropdownExtra = memo(
 const Item = ({
   data,
   blockSpec,
-  highlightColor,
   isEditing,
   setIsEditing,
   isCollapsed,
@@ -466,31 +511,27 @@ const Item = ({
   feature,
   fieldInfo,
   parentId,
-  menuType,
+  copyFn,
+  cutFn
 }) => {
-
   if (feature === EXTRA_TYPES.LOCKED_INDICATOR) {
     // return null
     return (
       <LockIndicatorExtra
-        highlightColor={highlightColor}
         locked={!data.canEdit}
         inTopLevel={inTopLevel}
         interactionDisabled={interactionDisabled}
-        menuType={menuType}
       />
     );
   } else if (feature === EXTRA_TYPES.NAME_EDIT_TOGGLE) {
     // return null
     return (
       <NameEditToggleExtra
-        highlightColor={highlightColor}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
         locked={!data.canEdit}
         inTopLevel={inTopLevel}
         interactionDisabled={interactionDisabled}
-        menuType={menuType}
         data={data}
       />
     );
@@ -498,62 +539,76 @@ const Item = ({
     // return null
     return (
       <CollapseToggleExtra
-        highlightColor={highlightColor}
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
         inTopLevel={inTopLevel}
         interactionDisabled={interactionDisabled}
-        menuType={menuType}
       />
     );
   } else if (feature === EXTRA_TYPES.SELECTION_TOGGLE) {
     // return null
     return (
       <SelectionToggleExtra
-        highlightColor={highlightColor}
         locked={interactionDisabled}
         data={data}
         isSelected={isSelected}
         setIsSelected={setIsSelected}
         inTopLevel={inTopLevel}
-        menuType={menuType}
       />
     );
   } else if (feature === EXTRA_TYPES.DOC_TOGGLE) {
     // return null
     return (
       <DocToggleExtra
-        highlightColor={highlightColor}
         locked={interactionDisabled}
         data={data}
         docActive={docActive}
         setDocActive={setDocActive}
         inTopLevel={inTopLevel}
-        menuType={menuType}
       />
     );
   } else if (feature === EXTRA_TYPES.DEBUG_TOGGLE) {
     // return null
     return (
       <DebugToggleExtra
-        highlightColor={highlightColor}
         isDebugging={isDebugging}
         setIsDebugging={setIsDebugging}
         inTopLevel={inTopLevel}
-        menuType={menuType}
       />
     );
   } else if (feature === EXTRA_TYPES.DELETE_BUTTON) {
     // return null
     return (
       <DeleteExtra
-        highlightColor={highlightColor}
         data={data}
         inTopLevel={inTopLevel}
         locked={interactionDisabled}
         fieldInfo={fieldInfo}
         parentId={parentId}
-        menuType={menuType}
+      />
+    );
+  } else if (feature === EXTRA_TYPES.CUT_BUTTON) {
+    // return null
+    return (
+      <CutExtra
+        data={data}
+        inTopLevel={inTopLevel}
+        locked={interactionDisabled}
+        fieldInfo={fieldInfo}
+        parentId={parentId}
+        cutFn={cutFn}
+      />
+    );
+  } else if (feature === EXTRA_TYPES.COPY_BUTTON) {
+    // return null
+    return (
+      <CopyExtra
+        data={data}
+        inTopLevel={inTopLevel}
+        locked={interactionDisabled}
+        fieldInfo={fieldInfo}
+        parentId={parentId}
+        copyFn={copyFn}
       />
     );
   } else if (feature?.type === EXTRA_TYPES.LABEL) {
@@ -562,68 +617,61 @@ const Item = ({
       <LabelExtra
         inTopLevel={inTopLevel}
         label={feature.label}
-        menuType={menuType}
       />
     );
   } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT) {
     // return null
     return (
       <AddArgumentExtra
-        highlightColor={highlightColor}
         data={data}
         argumentType={feature?.argumentType}
         interactionDisabled={interactionDisabled}
         inTopLevel={inTopLevel}
-        menuType={menuType}
       />
     );
   } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT_GROUP) {
     // return null
     return (
       <AddArgumentGroupExtra
-        highlightColor={highlightColor}
         data={data}
         allowed={feature?.allowed}
         interactionDisabled={interactionDisabled}
         inTopLevel={inTopLevel}
-        menuType={menuType}
       />
     );
   } else if (feature?.type === EXTRA_TYPES.FUNCTION_BUTTON) {
     // return null
     return (
       <FunctionButtonExtra
-        highlightColor={highlightColor}
         actionInfo={feature}
         data={data}
         blockSpec={blockSpec}
         interactionDisabled={interactionDisabled}
         inTopLevel={inTopLevel}
-        menuType={menuType}
       />
     );
   } else if (feature?.type === EXTRA_TYPES.INDICATOR_TEXT) {
     // return null
     return (
       <IndicatorTextExtra
-        highlightColor={highlightColor}
         value={feature.accessor(data)}
         label={feature.label}
         inTopLevel={inTopLevel}
         interactionDisabled={interactionDisabled}
-        menuType={menuType}
       />
     );
   } else if (feature?.type === EXTRA_TYPES.INDICATOR_ICON) {
     // return null;
     return (
       <IndicatorIconExtra
-        highlightColor={highlightColor}
         value={feature.accessor(data)}
-        label={typeof feature.label === 'string' ? feature.label : feature.label(data)}
+        label={
+          typeof feature.label === "string"
+            ? feature.label
+            : feature.label(data)
+        }
         inTopLevel={inTopLevel}
         interactionDisabled={interactionDisabled}
-        menuType={menuType}
       />
     );
   } else if (feature?.type === EXTRA_TYPES.DROPDOWN) {
@@ -649,22 +697,21 @@ const Item = ({
         interactionDisabled={interactionDisabled}
         parentId={parentId}
         fieldInfo={fieldInfo}
-        highlightColor={highlightColor}
-        menuType={menuType}
+        cutFn={cutFn}
+        copyFn={copyFn}
       />
     );
   } else if (feature === EXTRA_TYPES.DIVIDER) {
-    return <Divider  />;
+    return <Divider />;
   }
   console.warn("Not Handled", { feature });
-  return <MenuItem >Not Handled</MenuItem>;
+  return <MenuItem>Not Handled</MenuItem>;
 };
 
 export const ExtraBar = memo(
   ({
     data,
     blockSpec,
-    highlightColor,
     isEditing,
     setIsEditing,
     isCollapsed,
@@ -678,12 +725,13 @@ export const ExtraBar = memo(
     interactionDisabled,
     fieldInfo,
     parentId,
+    cutFn,
+    copyFn,
     inDrawer = false,
   }) => {
     const childProps = {
       data,
       blockSpec,
-      highlightColor,
       isEditing,
       setIsEditing,
       isCollapsed,
@@ -697,6 +745,8 @@ export const ExtraBar = memo(
       interactionDisabled,
       fieldInfo,
       parentId,
+      cutFn,
+      copyFn,
       inTopLevel: true,
     };
 
@@ -716,16 +766,16 @@ export const ExtraBar = memo(
         aria-label="outlined button group"
         color="inherit"
       >
-        {extras.map((extra, extraIdx) =>
-          <Item key={extraIdx} {...childProps} feature={extra}/>
-        )}
+        {extras.map((extra, extraIdx) => (
+          <Item key={extraIdx} {...childProps} feature={extra} />
+        ))}
       </ButtonGroup>
     );
   }
 );
 
 const flattenMenuOnce = (extras) => {
-  let pancaked = [];
+  let pancaked = [EXTRA_TYPES.COPY_BUTTON,EXTRA_TYPES.CUT_BUTTON,EXTRA_TYPES.DIVIDER];
   extras?.forEach((extra) => {
     if (extra.type === EXTRA_TYPES.DROPDOWN) {
       if (pancaked[pancaked.length - 1] !== EXTRA_TYPES.DIVIDER) {
@@ -772,7 +822,6 @@ export const RightClickMenu = memo(
   ({
     data,
     blockSpec,
-    highlightColor,
     isEditing,
     setIsEditing,
     isCollapsed,
@@ -786,12 +835,13 @@ export const RightClickMenu = memo(
     interactionDisabled,
     fieldInfo,
     parentId,
+    copyFn,
+    cutFn
   }) => {
     const flattenedExtras = flattenMenuOnce(blockSpec?.extras);
     const childProps = {
       data,
       blockSpec,
-      highlightColor,
       isEditing,
       setIsEditing,
       isCollapsed,
@@ -805,13 +855,15 @@ export const RightClickMenu = memo(
       interactionDisabled,
       fieldInfo,
       parentId,
+      copyFn,
+      cutFn,
       inTopLevel: false,
     };
     return (
       <MenuList key={`${data.id}-rcm`}>
-        {flattenedExtras.map((extra, extraIdx) =>
-          <Item key={extraIdx} {...childProps} feature={extra}/>
-        )}
+        {flattenedExtras.map((extra, extraIdx) => (
+          <Item key={extraIdx} {...childProps} feature={extra} />
+        ))}
       </MenuList>
     );
   }

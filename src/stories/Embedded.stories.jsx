@@ -6,6 +6,8 @@ import basicConfig from "./assets/basicConfig";
 import basicStarter from "./assets/basicStarter";
 import { IconButton, Stack } from "@mui/material";
 import { FiRotateCw } from "react-icons/fi";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -15,7 +17,7 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
-  const { drawers, objectTypes, programData, drawerWidth, ...otherArgs } = args;
+  const { drawers, objectTypes, programData, drawerWidth, tabs, activeTab, ...otherArgs } = args;
 
   const [ref, bounds] = useMeasure();
 
@@ -23,15 +25,17 @@ const Template = (args) => {
     useDefaultProgrammingStore.setState({
       programSpec: { drawers, objectTypes },
       programData,
+      tabs,
+      activeTab,
       featuredDocs: {
-        '2dfsessfs':"> [warn] There was an error!",
+        "2dfsessfs": "> [warn] There was an error!",
         // "45535153s":true
-      }
+      },
     });
-  },[programData,drawers,objectTypes]);
+  }, [programData, drawers, objectTypes]);
 
-  const parse = useDefaultProgrammingStore(state=>state.parse);
-  const [parsed,setParsed] = useState("Compile To View Parsed Code");
+  const parse = useDefaultProgrammingStore((state) => state.parse);
+  const [parsed, setParsed] = useState("// Compile To View Parsed Code");
   // const onFile = useDefaultProgrammingStore(state=>state.programData);
   // console.log(onFile)
 
@@ -44,23 +48,27 @@ const Template = (args) => {
         backgroundColor: "#333",
       }}
     >
-      <div style={{ width:450, backgroundColor: "#111" }}>
+      <div style={{ width: 450, backgroundColor: "#111" }}>
         <Stack
-        justifyContent='space-between'
-        alignItems='center'
-          direction='row'
-
+          justifyContent="space-between"
+          alignItems="center"
+          direction="row"
           style={{
             flex: 1,
             backgroundColor: "#333",
             color: "white",
             fontFamily: "Helvetica",
-            padding:20,
+            padding: 20,
             // width:450
           }}
         >
           <span>Javascript Output</span>
-          <IconButton color='primary' onClick={()=>setParsed(parse('javascript'))}><FiRotateCw/></IconButton>
+          <IconButton
+            color="primary"
+            onClick={() => setParsed(parse("javascript"))}
+          >
+            <FiRotateCw />
+          </IconButton>
         </Stack>
         {/* <TextField
           id="outlined-multiline-flexible"
@@ -68,10 +76,12 @@ const Template = (args) => {
           multiline
           value={parsed}
         /> */}
-        <pre style={{overflow:'scroll',width:450,height:'100%',color:'#ddd'}}>
+        <SyntaxHighlighter language="javascript" style={oneDark}>
           {parsed}
-        </pre>
-
+        </SyntaxHighlighter>
+        {/* <pre style={{overflow:'scroll',width:450,height:'100%',color:'#ddd'}}>
+          {parsed}
+        </pre> */}
       </div>
       <div ref={ref} style={{ flex: 1, margin: 10 }}>
         <Environment

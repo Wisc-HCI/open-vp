@@ -1,7 +1,6 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useEffect } from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { useDrag } from "react-dnd";
-import { useCallback, useEffect } from "react";
 import { getEmptyImage } from "react-dnd-html5-backend";
 import { PreviewBlock } from "./PreviewBlock";
 import { VisualBlock } from "./VisualBlock";
@@ -9,6 +8,7 @@ import { DATA_TYPES } from "..";
 import { combinedBlockData } from "../Generators";
 import { stringEquality } from "./Utility";
 import shallow from "zustand/shallow";
+import { CLIPBOARD_ACTION } from "../Constants";
 
 const Block = memo(
   ({
@@ -34,6 +34,14 @@ const Block = memo(
     );
     
     const locked = useProgrammingStore((state) => state.locked, shallow);
+    // const action = useProgrammingStore(state=>state.clipboard.action,shallow);
+    const isCut = useProgrammingStore(useCallback((state)=>state.clipboard.block?.data?.id === data.id && state.clipboard.action === CLIPBOARD_ACTION.CUT,[data.id]),shallow);
+    const copy = useProgrammingStore(state=>state.copy);
+    const cut = useProgrammingStore(state=>state.cut);
+
+    const copyFn = ()=>copy({data, parentId, fieldInfo, idx, context});
+    const cutFn = ()=>cut({data, parentId, fieldInfo, idx, context});
+    // console.log({isCut,data,action})
 
     const blockContext = data.arguments ? data.arguments : [];
     const wholeContext = [...context, ...blockContext];
@@ -64,13 +72,13 @@ const Block = memo(
             context: wholeContext,
           };
         },
-        canDrag: !dragDisabled && !data.editing && !locked,
+        canDrag: !dragDisabled && !data.editing && !data.docActive && !locked,
         collect: (monitor) => ({ isDragging: monitor.isDragging() }),
       }),
       [data, typeSpec, parentId, fieldInfo, idx, dragDisabled, locked]
     );
 
-    const hidden = !fieldInfo?.isSpawner && dragProps.isDragging;
+    const hidden = (!fieldInfo?.isSpawner && dragProps.isDragging) || isCut;
 
     useEffect(() => {
       preview(getEmptyImage(), { captureDraggingState: false });
@@ -98,6 +106,8 @@ const Block = memo(
               parentId={parentId}
               progress={progress}
               limitedRender={limitedRender}
+              copyFn={copyFn}
+              cutFn={cutFn}
             />
           </div>
           <div hidden={hidden} style={{ display: hidden ? "none" : "flex" }}>

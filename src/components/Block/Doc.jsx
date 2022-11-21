@@ -17,11 +17,10 @@ import {
   Divider,
   Avatar,
   CardHeader,
+  CardContent,
 } from "@mui/material";
-import { Masonry } from "@mui/lab";
-import { emphasize, styled } from "@mui/material/styles";
-import { forwardRef } from "react";
-import { useState } from "react";
+import { darken, emphasize, lighten, styled } from "@mui/material/styles";
+import { forwardRef, useState, useCallback } from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
 import shallow from "zustand/shallow";
 import ReactMarkdown from "react-markdown";
@@ -29,11 +28,22 @@ import {
   FiChevronDown,
   FiCircle,
   FiCode,
+  FiLogIn,
   FiList,
+  FiLogOut,
   FiPaperclip,
   FiStar,
+  FiDownload,
+  FiSquare,
 } from "react-icons/fi";
-import { SIMPLE_PROPERTY_TYPES } from "../Constants";
+import {
+  CONNECTIONS,
+  DOC_FLAG_COLORS,
+  SIMPLE_PROPERTY_TYPES,
+} from "../Constants";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { functionTypeSpec } from "./Utility";
 
 const SHOWN_SIMPLE_TYPES = [
   SIMPLE_PROPERTY_TYPES.BOOLEAN,
@@ -126,18 +136,180 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
     ? "block"
     : SHOWN_SIMPLE_TYPES.includes(fieldInfo?.type)
     ? "simple"
-    : "none";
+    : "na";
 
-  if (variant === "none") {
+  if (variant === "na") {
     return null;
   }
+  // console.log('info',{field,fieldInfo,typeInfo})
+  return (
+    <Card sx={{ padding: 2 }}>
+      <CardHeader
+        variant="h5"
+        color="text.primary"
+        title={fieldInfo.name}
+        sx={{ padding: 0 }}
+        action={
+          fieldInfo.accepts ? (
+            <Stack direction="row" gap={0.5}>
+              {fieldInfo.isList && (
+                <Tooltip
+                  title="This property accepts a set of entries as a list"
+                  sx={{ fontSize: 20 }}
+                  arrow
+                >
+                  <Avatar
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      backgroundColor: DOC_FLAG_COLORS.IS_LIST,
+                    }}
+                  >
+                    <FiList />
+                  </Avatar>
+                </Tooltip>
+              )}
+              {fieldInfo.fullWidth && (
+                <Tooltip
+                  title="This property spans the width of the block"
+                  sx={{ fontSize: 20 }}
+                  arrow
+                >
+                  <Avatar
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      backgroundColor: DOC_FLAG_COLORS.FULL_WIDTH,
+                    }}
+                  >
+                    <FiCode />
+                  </Avatar>
+                </Tooltip>
+              )}
+              {fieldInfo.isRequired && (
+                <Tooltip
+                  title="This property is required"
+                  sx={{ fontSize: 20 }}
+                  arrow
+                >
+                  <Avatar
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      backgroundColor: DOC_FLAG_COLORS.REQUIRED,
+                    }}
+                  >
+                    <FiStar />
+                  </Avatar>
+                </Tooltip>
+              )}
+              {fieldInfo.isFunctionArgument && (
+                <Tooltip
+                  title="This is an argument to the function"
+                  sx={{ fontSize: 20 }}
+                  arrow
+                >
+                  <Avatar
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      backgroundColor: DOC_FLAG_COLORS.FUNCTION_ARGUMENT,
+                    }}
+                  >
+                    <FiDownload />
+                  </Avatar>
+                </Tooltip>
+              )}
+              {fieldInfo.isFunctionBlockField && (
+                <Tooltip
+                  title="This is a property of this function block"
+                  sx={{ fontSize: 20 }}
+                  arrow
+                >
+                  <Avatar
+                    sx={{
+                      width: 30,
+                      height: 30,
+                      backgroundColor: DOC_FLAG_COLORS.FUNCTION_PROPERTY,
+                    }}
+                  >
+                    <FiSquare />
+                  </Avatar>
+                </Tooltip>
+              )}
+            </Stack>
+          ) : (
+            <Typography
+              sx={{ fontSize: 14, textAlign: "center", fontStyle: "italic" }}
+              color="text.secondary"
+              gutterBottom={false}
+            >
+              {fieldInfo.type}
+            </Typography>
+          )
+        }
+      />
+      {fieldInfo?.accepts && (
+        <CardContent
+          sx={{
+            bgcolor: "#252525",
+            borderRadius: 1,
+            padding: 0.5,
+            lineHeight: 1.75,
+          }}
+        >
+          {fieldInfo?.accepts?.map((t) => (
+            <TypeLink
+              label={typeInfo[t]?.name || "Unrecognized"}
+              color={getColor(typeInfo[t])}
+              onClick={(e) => {
+                e.preventDefault();
+                if (typeInfo[t]) {
+                  handleLinkClick(t);
+                }
+              }}
+            />
+          ))}
+        </CardContent>
+      )}
 
+      {/* <Grid container spacing={1}> */}
+      {/* <Grid item xs={4}>
+          <Typography >
+            {fieldInfo.name}
+          </Typography>
+        </Grid> */}
+      {/* <Grid item xs={8}>
+          <Typography
+            sx={{ fontSize: 14, textAlign: "center", fontStyle: "italic" }}
+            color="text.secondary"
+            gutterBottom={false}
+          >
+            {fieldInfo.accepts ? "Accepts" : fieldInfo.type}
+          </Typography>
+        </Grid> */}
+
+      {/* </Grid> */}
+    </Card>
+  );
+};
+
+const ConnectionInfo = ({
+  side,
+  connectionInfo,
+  typeInfo,
+  handleLinkClick,
+}) => {
   return (
     <Card sx={{ padding: 2 }}>
       <Grid container spacing={1}>
         <Grid item xs={4}>
-          <Typography variant="h5" color="text.primary">
-            {fieldInfo.name}
+          <Typography
+            variant="h5"
+            color="text.primary"
+            style={{ textTransform: "capitalize" }}
+          >
+            {side}
           </Typography>
         </Grid>
         <Grid item xs={8}>
@@ -146,65 +318,38 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
             color="text.secondary"
             gutterBottom={false}
           >
-            {fieldInfo.accepts ? "Accepts" : fieldInfo.type}
+            Accepts
           </Typography>
         </Grid>
-        {fieldInfo.accepts && (
+        {connectionInfo.allowed && (
           <>
             <Grid item xs={4}>
-              <Masonry spacing={1} columns={2}>
-                {fieldInfo.isList && (
-                  <Tooltip
-                    title="This property accepts a set of entries as a list"
-                    sx={{ fontSize: 20 }}
-                    arrow
-                  >
-                    <Avatar
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        backgroundColor: "coral",
-                      }}
-                    >
-                      <FiList />
-                    </Avatar>
-                  </Tooltip>
-                )}
-                {fieldInfo.fullWidth && (
-                  <Tooltip
-                    title="This property spans the width of the block"
-                    sx={{ fontSize: 20 }}
-                    arrow
-                  >
-                    <Avatar
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        backgroundColor: "lightblue",
-                      }}
-                    >
-                      <FiCode />
-                    </Avatar>
-                  </Tooltip>
-                )}
-                {fieldInfo.isRequired && (
-                  <Tooltip
-                    title="This property is required"
-                    sx={{ fontSize: 20 }}
-                    arrow
-                  >
-                    <Avatar
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        backgroundColor: "goldenrod",
-                      }}
-                    >
-                      <FiStar />
-                    </Avatar>
-                  </Tooltip>
-                )}
-              </Masonry>
+              <Tooltip
+                title={
+                  connectionInfo.direction === CONNECTIONS.OUTBOUND
+                    ? "This connection is outbound"
+                    : "This connection is inbound"
+                }
+                sx={{ fontSize: 20 }}
+                arrow
+              >
+                <Avatar
+                  sx={{
+                    width: 30,
+                    height: 30,
+                    backgroundColor:
+                      connectionInfo.direction === CONNECTIONS.OUTBOUND
+                        ? DOC_FLAG_COLORS.OUTBOUND_CONNECTION
+                        : DOC_FLAG_COLORS.INBOUND_CONNECTION,
+                  }}
+                >
+                  {connectionInfo.direction === CONNECTIONS.OUTBOUND ? (
+                    <FiLogOut />
+                  ) : (
+                    <FiLogIn />
+                  )}
+                </Avatar>
+              </Tooltip>
             </Grid>
             <Grid
               item
@@ -216,7 +361,7 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
                 lineHeight: 1.75,
               }}
             >
-              {fieldInfo?.accepts?.map((t) => (
+              {connectionInfo.allowed?.map((t) => (
                 <TypeLink
                   label={typeInfo[t].name}
                   color={getColor(typeInfo[t])}
@@ -232,21 +377,6 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
           </>
         )}
       </Grid>
-      {/* <Stack direction="row" spacing={1}>
-        <Stack
-          spacing={1}
-          style={{ alignContent: "center", flex: 1 }}
-          divider={<Divider flexItem />}
-        >
-          
-        </Stack>
-        {variant === "block" && (
-          <Card sx={{ padding: 2, flex: 2 }} variant="outlined">
-            <Divider flexItem />
-            
-          </Card>
-        )}
-      </Stack> */}
     </Card>
   );
 };
@@ -282,10 +412,21 @@ const TypeLink = ({ label, color, onClick }) => {
   );
 };
 
+export const TypeDescription = ({type}) => {
+  const info = useProgrammingStore(useCallback(state=>state.programSpec.objectTypes[type],[type]),shallow);
+  return <TypeLink label={info.name} color={getColor(info)}/>
+}
+
 export const Doc = forwardRef(({ data }, ref) => {
   const { zoom } = useViewport();
   const [path, setPath] = useState([data.type]);
   const activeType = path[path.length - 1];
+  const typeInfo = useProgrammingStore(
+    (state) =>
+      functionTypeSpec(state.programSpec.objectTypes, state.programData),
+    shallow
+  );
+  const haloColor = darken(getColor(typeInfo[activeType]),0.5);
 
   const featuredDoc = useProgrammingStore(
     (state) =>
@@ -298,10 +439,9 @@ export const Doc = forwardRef(({ data }, ref) => {
     ? ["featured", "description", "usage"]
     : ["description", "usage"];
   const [tab, setTab] = useState(tabs[0]);
-  const typeInfo = useProgrammingStore(
-    (state) => state.programSpec.objectTypes,
-    shallow
-  );
+  
+
+  // console.log("typeInfo", typeInfo);
 
   const references = getReferences(typeInfo, activeType);
 
@@ -349,19 +489,30 @@ export const Doc = forwardRef(({ data }, ref) => {
         />
       );
     },
-    code: ({ node, ...props }) => (
-      <Box
-        style={{
-          backgroundColor: "#444",
-          borderRadius: 4,
-          padding: 5,
-        }}
-      >
-        <pre>
-          <code {...props} />
-        </pre>
-      </Box>
-    ),
+    code: ({ node, inline, className, children, ...props }) => {
+      const match = /language-(\w+)/.exec(className || "");
+      return !inline && match ? (
+        <SyntaxHighlighter
+          children={String(children).replace(/\n$/, "")}
+          style={oneDark}
+          language={match[1]}
+          // PreTag="pre"
+          {...props}
+        />
+      ) : (
+        <Box
+          style={{
+            backgroundColor: "#444",
+            borderRadius: 4,
+            padding: 5,
+          }}
+        >
+          <code className={className} {...props}>
+            {children}
+          </code>
+        </Box>
+      );
+    },
     ol: ({ node, ordered, ...props }) => (
       <ol
         {...props}
@@ -440,12 +591,23 @@ export const Doc = forwardRef(({ data }, ref) => {
     },
   };
 
+  const connections = ["instanceBlock", "referenceBlock", "callBlock"].filter(
+    (blockType) =>
+      typeInfo[activeType]?.[blockType]?.onCanvas &&
+      typeInfo[activeType]?.[blockType]?.connections
+  );
+
   return (
     <Card
       ref={ref}
       className="nodrag nowheel"
+      onDragStart={(e)=>{e.preventDefault();e.stopPropagation()}}
+      onDragStartCapture={(e)=>{e.preventDefault();e.stopPropagation()}}
+      onDrag={(e)=>{e.preventDefault();e.stopPropagation()}}
+      onClick={() => console.log("typeinfo", typeInfo)}
       sx={{
         // borderRadius: 4,
+        userDrag: 'none',
         color: "white",
         marginLeft: 2,
         transform: `scale(${1 / zoom})`,
@@ -453,7 +615,8 @@ export const Doc = forwardRef(({ data }, ref) => {
         transformOrigin: "left",
         minWidth: 200,
         maxWidth: 350,
-        boxShadow: "1px 1px 10px 0px #bbbbbbaa",
+        // boxShadow: `0px 0px 3px 3px ${haloColor}`,
+        // backgroundColor: darken(getColor(typeInfo[activeType]),0.5)
       }}
     >
       <Tabs
@@ -463,6 +626,7 @@ export const Doc = forwardRef(({ data }, ref) => {
         textColor="inherit"
         //   variant="fullWidth"
         aria-label="full width tabs example"
+        sx={{backgroundColor:haloColor}}
       >
         {tabs.map((tab) => (
           <Tab key={tab} label={tab} value={tab} />
@@ -617,11 +781,39 @@ export const Doc = forwardRef(({ data }, ref) => {
                 <Typography>Connections</Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ backgroundColor: "#2D2D2D", padding: 1 }}>
-                <Typography>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                  eget.
-                </Typography>
+                {connections.length > 0 ? (
+                  connections.map((blockType) => (
+                    <>
+                      <Divider>
+                        <span
+                          style={{
+                            fontFamily: "Helvetica",
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {blockType.replace("Block", "")}
+                        </span>
+                      </Divider>
+                      {Object.entries(
+                        typeInfo[activeType][blockType].connections
+                      ).map(([side, connectInfo]) => (
+                        <ConnectionInfo
+                          side={side}
+                          connectionInfo={connectInfo}
+                          typeInfo={typeInfo}
+                          handleLinkClick={handleLinkClick}
+                        />
+                      ))}
+                    </>
+                  ))
+                ) : (
+                  <Typography
+                    style={{ textAlign: "center" }}
+                    color="text.secondary"
+                  >
+                    This block has no connections
+                  </Typography>
+                )}
               </AccordionDetails>
             </Accordion>
           </>

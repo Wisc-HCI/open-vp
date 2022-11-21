@@ -58,10 +58,10 @@ You should always follow these steps:
 1. Love
 
 Equivalent code may look like this in javascript:
-  \`\`\`
-   function main() {
+  \`\`\`javascript
+function main() {
     // Contents of the program
-   }
+}
   \`\`\`
       `,
       instanceBlock: {
@@ -246,7 +246,7 @@ Equivalent code may look like this in javascript:
               .map((a) => storeParser("javascript", a, 0, context))
               .join(", ")}) {\n${block.properties.children
               .map((a) => storeParser("javascript", a, depth + 1, context))
-              .join(";\n")};\n};\n\n`;
+              .join(";\n")}\n};\n\n`;
           } else if (block.dataType === DATA_TYPES.CALL) {
             return `${" ".repeat(depth * 3)}${name}()`;
           }
@@ -264,13 +264,13 @@ Equivalent code may look like this in javascript:
 The **Operation** does stuff and things. It can be included in a [Program](programType) as a *child*. 
 
 Equivalent code may look like this in javascript:
-  \`\`\`
-   topic.publish({
+  \`\`\`javascript
+topic.publish({
     hat,
     boot,
     speed,
     isFancy
-  })
+})
   \`\`\`
       `,
       type: TYPES.OBJECT,
@@ -339,7 +339,12 @@ Equivalent code may look like this in javascript:
       },
       parsers: {
         javascript: ({ block, name, depth, context, storeParser }) => {
+          const hat = block.properties.hat ? storeParser("javascript",block.properties?.hat,0,context) : 'undefined';
+          const boot = block.properties.boot ? storeParser("javascript",block.properties?.boot,0,context) : 'undefined';
+          const inner = " ".repeat((depth+1)*3);
+          return " ".repeat(depth * 3) +`console.log("${name}",{\n${inner}hat:${hat},\n${inner}boot:${boot},\n${inner}speed:${block.properties.speed},\n${inner}doFunky:${block.properties.doFunky},\n${inner}greeting:"${block.properties.greeting}",\n${inner}time:"${block.properties.time}"\n${" ".repeat(depth*3)}})`
           if (block.properties.hat && block.properties.boot) {
+            
             return (
               " ".repeat(depth * 3) +
               'console.log("While wearing ${' +

@@ -22,7 +22,7 @@ export const DragLayer = ({ highlightColor }) => {
         opacity: 0.5,
       }}
     >
-      {item && (
+      {item?.data?.dataType && (
         <div
           style={{
             transform: `translate(${currentOffset ? currentOffset.x : 0}px, ${

@@ -76,6 +76,11 @@ export function StyleWrapper({
         dark: "#3a3a3a",
         darker: "#333",
       },
+      mid: {
+        main: "#999",
+        dark: "#777",
+        darker: "#555",
+      },
       vibrant: {
         main: "#fff",
         dark: "#ddd",

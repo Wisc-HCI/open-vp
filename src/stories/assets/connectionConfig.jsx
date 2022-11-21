@@ -49,6 +49,25 @@ const connectionConfig = {
     programType: {
       name: "Root",
       type: TYPES.OBJECT,
+      description: `# The Program
+The **program** does things. It also allows you to include [Operations](operationType) in their set of *children*. It does a lot of fancy things:
+- Basketball
+- Cribbage
+- Snorkelling
+    1. Eating pie
+
+You should always follow these steps:
+1. Live
+1. Laugh
+1. Love
+
+Equivalent code may look like this in javascript:
+  \`\`\`javascript
+function main() {
+    // Contents of the program
+}
+  \`\`\`
+      `,
       instanceBlock: {
         onCanvas: true,
         color: "#3f3f3f",
@@ -72,6 +91,7 @@ const connectionConfig = {
             type: EXTRA_TYPES.DROPDOWN,
             label: "Custom More...",
             contents: [
+              EXTRA_TYPES.DOC_TOGGLE,
               EXTRA_TYPES.NAME_EDIT_TOGGLE,
               EXTRA_TYPES.LOCKED_INDICATOR,
               EXTRA_TYPES.SELECTION_TOGGLE,

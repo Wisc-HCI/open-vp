@@ -6,6 +6,21 @@ const basicStarter = {
     "655sssefs": null,
     "2dfsessfs": (time) => Math.sin(time / 5000) / 2 + 0.3,
   },
+  tabs: [
+    {
+      title:'Main',
+      id: 'default',
+      visible: true,
+      blocks: ["45535153s","655sssefs"]
+    },
+    {
+      title:'Declarations',
+      id: 'declarations',
+      visible: true,
+      blocks: ["6dewwwwww","pspssse32"]
+    }
+  ],
+  activeTab:'default',
   programData: {
     "45535153s": {
       id: "45535153s",

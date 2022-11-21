@@ -51,7 +51,7 @@ const dataToNode = (key,data) => {
     return <StyledTreeItem key={key} nodeId={key} label={<span>{key}:{' '}<span className='label-value'>{data}</span></span>}/>
   } else if (typeof data === 'boolean') {
     return <StyledTreeItem key={key} nodeId={key} label={<span>{key}:{' '}<span style={{boxShadow:`0px 0px 2px 1px inset ${data?'lime':'red'}`}} className='label-value'>{data?'true':'false'}</span></span>}/>
-  } else if (typeof data === 'null') {
+  } else if (data === null) {
     return <StyledTreeItem key={key} nodeId={key} label={<span>{key}:{' '}<span className='label-value'>null</span></span>}/>
   }
 }
