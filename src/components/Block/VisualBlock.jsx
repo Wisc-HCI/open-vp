@@ -23,7 +23,9 @@ import {
   Box,
   Stack,
   Popper,
-  Fade
+  Fade,
+  lighten,
+  darken
 } from "@mui/material";
 import {
   OuterBlockContainer,
@@ -98,11 +100,6 @@ export const VisualBlock = memo(
 
       const [isCollapsed, setIsCollapsed] = useState(false);
       const [isDebugging, setIsDebugging] = useState(false);
-      // const [isFocused, setIsFocused] = useState(false);
-
-      // if (data.dataType === DATA_TYPES.CALL) {
-      //   console.log(data);
-      // }
 
       const setIsEditing = useProgrammingStore(
         (store) => store.updateItemEditing,
@@ -116,8 +113,7 @@ export const VisualBlock = memo(
         (store) => store.updateItemDocActive,
         shallow
       );
-      // const setClipboardBlock = useProgrammingStore( state=> state.setClipboardBlock, shallow);
-      // const inClipboard = useProgrammingStore(useCallback(state=>state.clipboard.block?.data?.id === data.id,[data.id]),shallow);
+      
       const isCopying = useProgrammingStore(useCallback((state)=>state.clipboard.block?.data?.id === data.id && state.clipboard.action === CLIPBOARD_ACTION.COPY,[data.id]),shallow);
 
       const onClick = useProgrammingStore((state) => state.onVPEClick, shallow);
@@ -180,8 +176,6 @@ export const VisualBlock = memo(
             ref={setDocReference}
             minified={minified}
             selected={selected}
-            // onClick={() => setIsFocused(true)}
-            // onMouseLeave={() => setIsFocused(false)}
             focused={isCopying}
             color={blockSpec.color}
           >
@@ -326,13 +320,6 @@ export const VisualBlock = memo(
                   setIsDebugging={setIsDebugging}
                 />
               )}
-
-              {/* {!limitedRender && (
-                <div style={{position:'fixed',left:headerBounds.left,backgroundColor:'red',color:'white',y:0}}>
-                Content for {data.name}
-                {console.log({...headerBounds,name:data.name})}
-              </div>
-              )} */}
             </Stack>
 
             {/* Add Connection Info/Handles here for blocks */}
@@ -352,17 +339,6 @@ export const VisualBlock = memo(
                   ))}
               </>
             )}
-
-            {/* <Menu
-              key={`${data.id}-docmenu`}
-              open={!limitedRender && data.docActive === true}
-              onClose={()=>setDocActive(data.id,false)}
-              anchorReference='anchorPosition'
-              anchorPosition={{left:headerBounds.left,top:headerBounds.top}}
-            >
-              {console.log(headerBounds)}
-              Content for {data.name} {headerBounds.left+400} {headerBounds.top}
-            </Menu> */}
 
             <Popper
               id={`${data.id}-doc`}
@@ -393,9 +369,6 @@ export const VisualBlock = memo(
                 {
                   name: "arrow",
                   enabled: true,
-                  // options: {
-                  //   element: arrowRef,
-                  // },
                 },
               ]}
               disablePortal
@@ -498,14 +471,6 @@ export const VisualBlock = memo(
                       return (
                         <PropertySection
                           key={fieldKey}
-                          // onMouseEnter={() => {
-                          //   // console.log("entering prop");
-                          //   setIsFocused(false);
-                          // }}
-                          // onMouseLeave={() => {
-                          //   // console.log("exiting prop");
-                          //   setIsFocused(true);
-                          // }}
                         >
                           <Stack
                             key={fieldKey}
@@ -539,9 +504,6 @@ export const VisualBlock = memo(
                                 fieldInfo={{
                                   ...fieldInfo,
                                   value: fieldKey,
-                                  // name: !fieldInfo.fullWidth
-                                  //   ? ""
-                                  //   : fieldInfo.name,
                                 }}
                                 hideText={!fieldInfo.fullWidth}
                                 parentId={data.id}

@@ -141,8 +141,8 @@ export const DropRegion = memo(
 
     return (
       <Tooltip
-        disableFocusListener={validClipboard}
-        disableHoverListener={validClipboard}
+        disableFocusListener={validClipboard||limitedRender}
+        disableHoverListener={validClipboard||limitedRender}
         title={
           <div>
             {fieldInfo.accepts?.map((accept) => (

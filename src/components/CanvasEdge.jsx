@@ -83,15 +83,12 @@ export const DrawingCanvasEdge = ({
     targetPosition: toPosition,
   });
 
-  // console.log('edgePath',props)
-
   return (
     <g>
       <path
         fill="none"
         stroke="#ffffff99"
         strokeWidth={1.5}
-        // className="animated"
         d={edgePath}
       />
       <circle
@@ -142,33 +139,15 @@ export const CanvasEdge = ({
     targetY,
     targetPosition,
   });
-  // const [edgeCenterX, edgeCenterY] = getEdgeCenter({
-  //   sourceX,
-  //   sourceY,
-  //   sourcePosition,
-  //   targetX,
-  //   targetY,
-  //   targetPosition,
-  // });
 
-  // const [visible, setVisible] = useState(false);
   const [hoveredLine, setHoveredLine] = useState(false);
   const [hoveredLabel, setHoveredLabel] = useState(false);
   const [coords, setCoords] = useState([labelX, labelY]);
   const gRef = useRef();
   const { project } = useReactFlow();
-  // console.log(gRef?.current?.getBoundingClientRect());
-
-  // console.log(coords, { sourceX, sourceY, targetX, targetY });
-
-  // console.log(groupRef)
 
   const handleHoverLine = (e) => {
-    // console.log("toggleLine", [e.clientX, e.clientY, e]);
     setHoveredLine((prev) => !prev);
-    // if (!hoveredLabel) {
-
-    // }
     const { x, y } = project({
       x: e.nativeEvent.offsetX,
       y: e.nativeEvent.offsetY,
@@ -177,7 +156,6 @@ export const CanvasEdge = ({
   };
 
   const handleHoverLabel = (_) => {
-    // console.log("toggleLabel");
     setHoveredLabel((prev) => !prev);
   };
 
@@ -213,7 +191,6 @@ export const CanvasEdge = ({
         <motion.path
           id={id}
           style={{ ...style, fill: "transparent", userSelect: "none" }}
-          // stroke={visible ? "red" : "grey"}
           opacity={0.5}
           d={edgePath}
           markerEnd={markerEnd}
@@ -232,7 +209,6 @@ export const CanvasEdge = ({
                 transform:`translate(-50%, -50%) translate(${labelX}px,${labelY}px) scale(1)`
               }}
               animate={{
-                // scale: visible ? 1 : 0,
                 opacity: 1,
                 transform:`translate(${coords[0] - bounds.width / 2}px,${
                   coords[1] - bounds.height / 2
@@ -315,8 +291,6 @@ export const CanvasEdge = ({
               </div>
             </motion.div>
             )}
-            
-            {/* </foreignObject> */}
           </EdgeLabelRenderer>
       </g>
     )

@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Skeleton, Tooltip, ClickAwayListener } from "@mui/material";
+import { Skeleton, Tooltip, ClickAwayListener, lighten } from "@mui/material";
 import { ProgressBar } from "./Progress";
 import { useProgrammingStore } from "../ProgrammingContext";
 import shallow from "zustand/shallow";
@@ -68,7 +68,7 @@ export const BlockHeader = memo(
                 tooltip: {
                   sx: {
                     bgcolor: "common.black",
-                    color,
+                    color: lighten(color,0.5),
                     fontSize: 14,
                     "& .MuiTooltip-arrow": {
                       color: "common.black",

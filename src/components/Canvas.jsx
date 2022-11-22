@@ -23,7 +23,7 @@ import { compareBlockData } from "./Block/Utility";
 import "reactflow/dist/style.css";
 // import './canvas.css';
 import { Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
-import { omit } from "lodash";
+import { debounce } from "lodash";
 
 const typeToBlockField = (dataType) =>
   dataType === DATA_TYPES.INSTANCE
@@ -44,6 +44,8 @@ const CanvasNode = memo(
     const copyFn = () => copy({ data, context: rest.context, onCanvas: true });
     const cutFn = () => cut({ data, context: rest.context, onCanvas: true });
 
+    // const {zoom} = useViewport();
+
     return (
       <VisualBlock
         data={rest}
@@ -56,6 +58,7 @@ const CanvasNode = memo(
         progress={progress}
         copyFn={copyFn}
         cutFn={cutFn}
+        // limitedRender={zoom < 0.5}
       />
     );
   },
@@ -91,8 +94,6 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
   const setLocked = useProgrammingStore((state) => state.setLocked, shallow);
   const createEdge = useProgrammingStore((state) => state.createEdge, shallow);
 
-  // const cut = useProgrammingStore((state) => state.cut, shallow);
-  // const copy = useProgrammingStore((state) => state.copy, shallow);
   const paste = useProgrammingStore((state) => state.paste, shallow);
 
   const onCanvasPastable = useProgrammingStore(
@@ -221,7 +222,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     canDrop: (item) => item.onCanvas,
     drop: (item, monitor) => {
       const clientOffset = monitor.getClientOffset();
-      const viewport = getTabViewport(activeTabData?.id);
+      // const viewport = getTabViewport(activeTabData?.id);
       // console.log(monitor)
       // const zoom = getZoom();
       const position = project({
@@ -268,8 +269,6 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     setContextMenu(null);
   };
 
-  console.log('rerender')
-
   return (
     <div
       ref={ref}
@@ -282,10 +281,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         height: "100%",
         width: "100%",
       }}
-      // onKeyDown={handleKeyDown}
-      // onMouseMove={onMouseMove}
       onContextMenu={handleContextMenu}
-      // contentEditable
     >
       <ReactFlow
         ref={drop}
@@ -299,12 +295,12 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
           handleContextMenuClose();
           e.stopPropagation();
         }}
-        onMove={(_, viewport) => {
+        onMove={debounce((_, viewport) => {
           if (activeTabData) {
             setTabViewport(activeTabData.id, viewport);
           }
-        }}
-        // elementsSelectable={false}
+        },3000)}
+        elementsSelectable={false}
         nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}
         edgeTypes={useMemo(() => ({ canvasEdge: CanvasEdge }), [])}
         nodes={nodes}
