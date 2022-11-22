@@ -12,12 +12,12 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
-  const { drawers, objectTypes, programData, executionData, drawerWidth, ...otherArgs } = args;
+  const { drawers, objectTypes, programData, executionData, drawerWidth, activeTab, tabs, ...otherArgs } = args;
 
   const [ref, bounds] = useMeasure();
   
   useLayoutEffect(()=>{
-    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData});
+    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData,tabs,activeTab});
   })
   return (
     <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:'#333'}}>
@@ -35,5 +35,20 @@ Coframe.args = {
   animateDrawer: false,
   ...coframeConfig,
   programData:coframeStarter,
+  activeTab:'default',
+  tabs: [
+    {
+      title:'Main',
+      id: 'default',
+      visible: true,
+      blocks: ["program-484de43e-adaa-4801-a23b-bca38e211365"]
+    },
+    {
+      title:'Declarations',
+      id: 'declarations',
+      visible: true,
+      blocks: []
+    }
+  ],
   executionData:{}
 };

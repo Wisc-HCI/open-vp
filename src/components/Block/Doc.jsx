@@ -414,7 +414,7 @@ const TypeLink = ({ label, color, onClick }) => {
 
 export const TypeDescription = ({type}) => {
   const info = useProgrammingStore(useCallback(state=>state.programSpec.objectTypes[type],[type]),shallow);
-  return <TypeLink label={info.name} color={getColor(info)}/>
+  return <TypeLink label={info?.name||'Unknown Block'} color={getColor(info)}/>
 }
 
 export const Doc = forwardRef(({ data }, ref) => {

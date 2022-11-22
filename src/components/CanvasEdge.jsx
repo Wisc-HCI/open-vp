@@ -1,7 +1,8 @@
-import React, { useCallback, useState, useRef, createPortal } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import {
   getSmoothStepPath,
   useReactFlow,
+  EdgeLabelRenderer,
   // getEdgeCenter,
 } from "reactflow";
 import { useProgrammingStore } from "./ProgrammingContext";
@@ -220,169 +221,103 @@ export const CanvasEdge = ({
           variants={mainVariants}
           animate={visible ? "highlighted" : "default"}
         />
-        {/* {visible && ( */}
-        <motion.g
-          animate={{
-            scale: visible ? 1 : 0,
-            opacity: visible ? 1 : 0,
-            x: coords[0] - bounds.width / 2,
-            y: coords[1] - bounds.height / 2,
-          }}
-        >
-          {/* <motion.rect
-            onMouseEnter={handleHoverLabel}
-            onMouseLeave={handleHoverLabel}
-            width={bounds.width}
-            height={bounds.height}
-            pointerEvents="all"
-            fill={hoveredLabel ? "pink" : "cyan"}
-            rx={10}
-          /> */}
-          {visible && (
-            <foreignObject
-              // style={{ offsetPath: `path(${edgePath})` }}
-              width={`${bounds.width}pt`}
-              height={`${bounds.height}pt`}
-              // x={`-${bounds.width / 2}px`}
-              // y={`-${bounds.height / 2}px`}
-              requiredExtensions="http://www.w3.org/1999/xhtml"
+          <EdgeLabelRenderer>
+            {visible && (
+              <motion.div
+              onMouseEnter={handleHoverLabel}
+              onMouseLeave={handleHoverLabel}
+              className="nodrag nopan"
+              initial={{
+                opacity:0,
+                transform:`translate(-50%, -50%) translate(${labelX}px,${labelY}px) scale(1)`
+              }}
+              animate={{
+                // scale: visible ? 1 : 0,
+                opacity: 1,
+                transform:`translate(${coords[0] - bounds.width / 2}px,${
+                  coords[1] - bounds.height / 2
+                }px)`,
+              }}
+              style={{
+                position: "absolute",
+                backgroundColor: visible ? "#555" : "#333",
+                borderRadius: 5,
+                borderColor: "white",
+                flexDirection: "row",
+                padding: 5,
+                userSelect: "none",
+                pointerEvents: 'all'
+              }}
             >
               <div
-                onMouseEnter={handleHoverLabel}
-                onMouseLeave={handleHoverLabel}
-                className="nodrag"
                 style={{
-                  unset: "all",
-                  display: "inline-block",
-                  width: `${bounds.width}px`,
                   height: `${bounds.height}px`,
-                  backgroundColor: visible ? "#555" : "#333",
-                  borderRadius: 5,
-                  borderColor: "white",
+                  width: `${bounds.width}px`,
+                  justifyContent: "space-around",
+                  display: "flex",
                   flexDirection: "row",
-                  padding: 5,
+                  alignItems: "center",
+                  color: "white",
                   userSelect: "none",
                 }}
               >
-                <div
+                <EdgeField
+                  type={
+                    edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? "number" : null
+                  }
+                  className="nodrag"
+                  value={
+                    edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
+                      ? Number(edge.name)
+                      : edge.name
+                  }
                   style={{
-                    height: `${bounds.height}px`,
-                    width: `${bounds.width}px`,
-                    justifyContent: "space-around",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    color: "white",
-                    userSelect: "none",
+                    maxWidth:
+                      edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
+                        ? bounds.width - 110
+                        : bounds.width - 90,
+                  }}
+                  onChange={(v) => updateEdgeName(edge.id, v.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+                {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER && (
+                  <Spinner
+                    above={false}
+                    below={false}
+                    onClickDown={(v) =>
+                      updateEdgeName(edge.id, strip(Number(edge.name) - 0.1))
+                    }
+                    onClickUp={(v) =>
+                      updateEdgeName(edge.id, strip(Number(edge.name) + 0.1))
+                    }
+                  />
+                )}
+                <EdgeButton
+                  onClick={(e) => {
+                    toggleEdgeMode(edge.id);
+                    e.stopPropagation();
                   }}
                 >
-                  <EdgeField
-                    type={
-                      edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
-                        ? "number"
-                        : null
-                    }
-                    className="nodrag"
-                    value={
-                      edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
-                        ? Number(edge.name)
-                        : edge.name
-                    }
-                    style={{
-                      maxWidth:
-                        edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
-                          ? bounds.width - 110
-                          : bounds.width - 90,
-                    }}
-                    onChange={(v) => updateEdgeName(edge.id, v.target.value)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER && (
-                    <Spinner
-                      above={false}
-                      below={false}
-                      onClickDown={(v) =>
-                        updateEdgeName(edge.id, strip(Number(edge.name) - 0.1))
-                      }
-                      onClickUp={(v) =>
-                        updateEdgeName(edge.id, strip(Number(edge.name) + 0.1))
-                      }
-                    />
+                  {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? (
+                    <FiType />
+                  ) : (
+                    <FiHash />
                   )}
-                  <EdgeButton
-                    onClick={(e) => {
-                      toggleEdgeMode(edge.id);
-                      e.stopPropagation();
-                    }}
-                  >
-                    {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? (
-                      <FiType />
-                    ) : (
-                      <FiHash />
-                    )}
-                  </EdgeButton>
-                  <EdgeButton
-                    onClick={(e) => {
-                      deleteEdge(edge.id);
-                      e.stopPropagation();
-                    }}
-                  >
-                    <FiTrash2 />
-                  </EdgeButton>
-                </div>
+                </EdgeButton>
+                <EdgeButton
+                  onClick={(e) => {
+                    deleteEdge(edge.id);
+                    e.stopPropagation();
+                  }}
+                >
+                  <FiTrash2 />
+                </EdgeButton>
               </div>
-            </foreignObject>
-          )}
-          {/* <text style={{userSelect:'none'}} x={labelX - 100 / 2}
-            y={labelY - 50 / 2} >{edge.name}</text> */}
-          {/* <foreignObject>
-              <input value={edge.name}/></foreignObject> */}
-          {/* <animateMotion
-            dur="30s"
-            repeatCount="indefinite"
-            path={edgePath}
-            // variants={{visible:{dur:"1000s"},invisible:{dur:'30s'}}}
-            // animate={visible?'visible':'invisible'}
-            // transition={{duration:1}}
-          /> */}
-        </motion.g>
-
-        {/* <path
-          id={id}
-          style={{ ...style, strokeWidth: 2 }}
-          className="react-flow__edge-path animated"
-          d={edgePath2}
-          markerEnd={markerEnd}
-        /> */}
-        {/* {["0s", "0.5s", "1.0s", "1.5s", "2.0s", "2.5s"].map((begin) => (
-          <circle key={begin} r="4" fill="grey">
-            <animateMotion
-              dur="3s"
-              begin={begin}
-              repeatCount="indefinite"
-              path={edgePath}
-            />
-          </circle>
-        ))} */}
-        {/* <SvgTooltip.Tooltip triggerRef={pathRef}> */}
-        {/* <motion.g 
-          style={{offsetPath:`path(${edgePath})`}}
-          
-          // animate={{offsetPath:edgePath}}
-          initial={{ offset: "0%"}}
-          animate={{ offset: "100%"}}
-          transition={{ duration: 4, repeat:true, ease: "easeInOut" }}
-        >
-          <circle r="100" fill="green"/> */}
-        {/* <animateMotion
-              ref={groupRef}
-              dur="60s"
-              path={edgePath}
-              repeatCount="indefinite"
-            /> */}
-        {/* <foreignObject width='100px' height='100px'>
-        
-        </foreignObject> */}
+            </motion.div>
+            )}
+            
+            {/* </foreignObject> */}
+          </EdgeLabelRenderer>
       </g>
     )
   );

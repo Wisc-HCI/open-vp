@@ -40,7 +40,7 @@
     "react-markdown": "^8.0.3",
     "react-syntax-highlighter": "^15.5.0",
     "react-use-measure": "^2.1.1",
-    "reactflow": "^11.0.0",
+    "reactflow": "^11.3.0",
     "uuid": "^8.3.2",
     "zustand": "^4.1.0"
   },

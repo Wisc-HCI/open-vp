@@ -425,6 +425,7 @@ export const ProgrammingSlice = (set, get) => ({
     set((state) => ({
       tabs: state.tabs.map((t) => (t.id === id ? { ...t, viewport } : t)),
     })),
+  getTabViewport: (id) => get().tabs.filter(t=>t.id===id)[0]?.viewport,
   setTabVisibility: (id, visible) =>
     set((state) => {
       if (visible) {

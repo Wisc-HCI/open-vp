@@ -23,6 +23,7 @@ import { compareBlockData } from "./Block/Utility";
 import "reactflow/dist/style.css";
 // import './canvas.css';
 import { Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
+import { omit } from "lodash";
 
 const typeToBlockField = (dataType) =>
   dataType === DATA_TYPES.INSTANCE
@@ -85,7 +86,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         return false;
       }
     });
-    return tabData;
+    return {id:tabData.id,blocks:tabData.blocks};
   }, shallow);
   const setLocked = useProgrammingStore((state) => state.setLocked, shallow);
   const createEdge = useProgrammingStore((state) => state.createEdge, shallow);
@@ -115,6 +116,10 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
   );
   const setConnectionInfo = useProgrammingStore(
     (state) => state.setConnectionInfo,
+    shallow
+  );
+  const getTabViewport = useProgrammingStore(
+    (state) => state.getTabViewport,
     shallow
   );
   const nodes = useProgrammingStore(
@@ -206,8 +211,8 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     shallow
   );
 
-  const { project, fitView, setViewport } = useReactFlow();
-  const { zoom } = useViewport();
+  const { project, fitView, setViewport, getViewport } = useReactFlow();
+  // const { zoom } = useViewport();
 
   const [ref, bounds] = useMeasure();
 
@@ -216,6 +221,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     canDrop: (item) => item.onCanvas,
     drop: (item, monitor) => {
       const clientOffset = monitor.getClientOffset();
+      const viewport = getTabViewport(activeTabData?.id);
       // console.log(monitor)
       // const zoom = getZoom();
       const position = project({
@@ -230,13 +236,13 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
   useEffect(() => {
     // console.log('fitting view',activeTabData)
     // fitView();
-    if (activeTabData?.viewport) {
+    const viewport = getTabViewport(activeTabData?.id);
+    if (viewport) {
       // console.log('setting viewport',activeTabData.viewport)
-      setViewport(activeTabData.viewport);
+      setViewport(viewport);
     } else {
       fitView();
     }
-
     return () => {};
   }, [activeTabData?.id]);
 
@@ -262,27 +268,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     setContextMenu(null);
   };
 
-  // const [coords, setCoords] = useState({ x: 0, y: 0 });
-
-  // const onMouseMove = (event) => {
-  //   const { x, y } = project({
-  //     x: event.clientX,
-  //     y: event.clientY,
-  //   });
-  //   setCoords({ x: x - 100 / zoom, y: y - 100 / zoom });
-  // };
-
-  // const handleKeyDown = (event) => {
-  //   event.preventDefault();
-  //   let charCode = String.fromCharCode(event.which).toLowerCase();
-  //   if ((event.ctrlKey || event.metaKey) && charCode === "x") {
-  //     cut();
-  //   } else if ((event.ctrlKey || event.metaKey) && charCode === "c") {
-  //     copy();
-  //   } else if ((event.ctrlKey || event.metaKey) && charCode === "v") {
-  //     paste(coords);
-  //   }
-  // };
+  console.log('rerender')
 
   return (
     <div
@@ -397,12 +383,15 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
       >
         <MenuItem
           onClick={(e) => {
+            // const { zoom } = getViewport();
+            const viewport = getTabViewport(activeTabData?.id);
+            const zoom = viewport?.zoom || 1;
             const { x, y } = project({
               x: e.clientX,
               y: e.clientY,
             });
             const coordinates = { x: x - 100 / zoom, y: y - 100 / zoom };
-            paste({ coordinates, tab:activeTabData?.id });
+            paste({ coordinates, tab: activeTabData?.id });
             handleContextMenuClose();
             e.stopPropagation();
           }}
