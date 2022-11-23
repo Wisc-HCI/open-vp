@@ -10,8 +10,9 @@
       window.LOGLEVEL = 'info';
       window.FRAMEWORK_OPTIONS = {};
       window.CHANNEL_OPTIONS = {};
-      window.FEATURES = {"postcss":true,"emotionAlias":false,"warnOnLegacyHierarchySeparator":true,"buildStoriesJson":false,"storyStoreV7":true,"modernInlineRender":false,"breakingChangesV7":false,"interactionsDebugger":false,"babelModeV7":false,"argTypeTargetsV7":false,"previewMdx2":false};
+      window.FEATURES = {"postcss":true,"warnOnLegacyHierarchySeparator":true,"buildStoriesJson":false,"storyStoreV7":true,"breakingChangesV7":true,"interactionsDebugger":false,"babelModeV7":true,"argTypeTargetsV7":true};
       window.STORIES = [{"titlePrefix":"","directory":"./src","files":"**/*.stories.mdx","importPathMatcher":"^\\.[\\\\/](?:src(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/|\\/|$)(?!\\.)(?=.)[^/]*?\\.stories\\.mdx)$"},{"titlePrefix":"","directory":"./src","files":"**/*.stories.@(js|jsx|ts|tsx)","importPathMatcher":"^\\.[\\\\/](?:src(?:\\/(?!\\.)(?:(?:(?!(?:^|\\/)\\.).)*?)\\/|\\/|$)(?!\\.)(?=.)[^/]*?\\.stories\\.(js|jsx|ts|tsx))$"}];
+      window.DOCS_OPTIONS = {"enabled":true,"defaultName":"Docs","docsPage":true};
       window.SERVER_CHANNEL_URL = undefined;
 
       // We do this so that "module && module.hot" etc. in Storybook source code
@@ -22,7 +23,7 @@
 
 <style>
   /* While we aren't showing the main block yet, but still preparing, we want everything the user
-     has rendered, which may or may not be in #root, to be display none */
+     has rendered, which may or may not be in #storybook-root, to be display none */
   .sb-show-preparing-story:not(.sb-show-main) > :not(.sb-preparing-story) {
     display: none;
   }
@@ -46,7 +47,7 @@
     min-height: 100vh;
   }
 
-  .sb-show-main.sb-main-centered #root {
+  .sb-show-main.sb-main-centered #storybook-root {
     box-sizing: border-box;
     margin: auto;
     padding: 1rem;
@@ -370,26 +371,8 @@
 <script>
   window.global = window;
 </script>
-    <script type="module" crossorigin src="/assets/iframe.7a6172f4.js"></script>
-  <style>
-    .sb-show-preparing-story:not(.sb-show-main) > :not(.sb-preparing-story) {
-      display: none;
-    }
-    .sb-show-preparing-docs:not(.sb-show-main) > :not(.sb-preparing-docs) {
-      display: none;
-    }
-    :not(.sb-show-preparing-story) > .sb-preparing-story,
-    :not(.sb-show-preparing-docs) > .sb-preparing-docs,
-    :not(.sb-show-nopreview) > .sb-nopreview,
-    :not(.sb-show-errordisplay) > .sb-errordisplay {
-      display: none;
-    }
-    #root[hidden],
-    #docs-root[hidden] {
-      display: none !important;
-    }
-  </style>
-</head>
+    <script type="module" crossorigin src="./assets/iframe.9b0cc893.js"></script>
+  </head>
   <body>
     <div class="sb-preparing-story sb-wrapper">
   <div class="sb-loader"></div>
@@ -479,8 +462,8 @@
   <pre class="sb-errordisplay_code"><code id="error-stack"></code></pre>
 </div>
 
-    <div id="root"></div>
-    <div id="docs-root"></div>
+    <div id="storybook-root"></div>
+    <div id="storybook-docs"></div>
     
   </body>
 </html>
