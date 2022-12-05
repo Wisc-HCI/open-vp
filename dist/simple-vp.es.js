@@ -4858,7 +4858,7 @@ const yH = (e, t, n, r) => {
   },
   updateItemEditing: (n, r) => {
     e((o) => {
-      o.programData[n].editing = r;
+      o.programData[n] && (o.programData[n].editing = r);
     });
   },
   updateItemSimpleProperty: (n, r, o) => {
