@@ -226,7 +226,7 @@ function main() {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            contents: [EXTRA_TYPES.DEBUG_TOGGLE,EXTRA_TYPES.DELETE_BUTTON],
+            contents: [EXTRA_TYPES.DEBUG_TOGGLE, EXTRA_TYPES.DELETE_BUTTON],
           },
         ],
       },
@@ -248,7 +248,16 @@ function main() {
               .map((a) => storeParser("javascript", a, depth + 1, context))
               .join(";\n")}\n};\n\n`;
           } else if (block.dataType === DATA_TYPES.CALL) {
-            return `${" ".repeat(depth * 3)}${name}()`;
+            const inst = context[block.ref];
+            console.log({inst,block})
+            return `${" ".repeat(depth * 3)}${name}(${inst.arguments
+              .map((a) =>
+                block.properties[a]
+                  ? storeParser("javascript", block.properties[a], 0, context)
+                  : 'undefined'
+    
+              )
+              .join(", ")})`;
           }
         },
       },
@@ -298,7 +307,7 @@ topic.publish({
           accepts: ["hatType"],
           default: null,
           isList: false,
-          isRequired: true
+          isRequired: true,
         },
         boot: {
           name: "Boot",
@@ -339,68 +348,25 @@ topic.publish({
       },
       parsers: {
         javascript: ({ block, name, depth, context, storeParser }) => {
-          const hat = block.properties.hat ? storeParser("javascript",block.properties?.hat,0,context) : 'undefined';
-          const boot = block.properties.boot ? storeParser("javascript",block.properties?.boot,0,context) : 'undefined';
-          const inner = " ".repeat((depth+1)*3);
-          return " ".repeat(depth * 3) +`console.log("${name}",{\n${inner}hat:${hat},\n${inner}boot:${boot},\n${inner}speed:${block.properties.speed},\n${inner}doFunky:${block.properties.doFunky},\n${inner}greeting:"${block.properties.greeting}",\n${inner}time:"${block.properties.time}"\n${" ".repeat(depth*3)}})`
-          if (block.properties.hat && block.properties.boot) {
-            
-            return (
-              " ".repeat(depth * 3) +
-              'console.log("While wearing ${' +
-              storeParser("javascript", block.properties.hat, 0, context) +
-              "} and ${" +
-              storeParser("javascript", block.properties.boot, 0, context) +
-              "} greet by saying " +
-              block.properties.greeting +
-              " in the " +
-              block.properties.time +
-              " with speed " +
-              block.properties.speed +
-              `${block.properties.doFunky ? " in a funky way." : "."}"` +
-              ")"
-            );
-          } else if (block.properties.hat) {
-            return (
-              " ".repeat(depth * 3) +
-              'console.log("While wearing ${' +
-              storeParser("javascript", block.properties.hat, 0, context) +
-              "} greet by saying " +
-              block.properties.greeting +
-              " in the " +
-              block.properties.time +
-              " with speed " +
-              block.properties.speed +
-              `${block.properties.doFunky ? " in a funky way." : "."}"` +
-              ")"
-            );
-          } else if (block.properties.boot) {
-            return (
-              " ".repeat(depth * 3) +
-              'console.log("While wearing ${' +
-              storeParser("javascript", block.properties.boot, 0, context) +
-              "} greet by saying " +
-              block.properties.greeting +
-              " in the " +
-              block.properties.time +
-              " with speed " +
-              block.properties.speed +
-              `${block.properties.doFunky ? " in a funky way." : "."}"` +
-              ")"
-            );
-          } else {
-            return (
-              " ".repeat(depth * 3) +
-              'console.log("Greet by saying ' +
-              block.properties.greeting +
-              " in the " +
-              block.properties.time +
-              " with speed " +
-              block.properties.speed +
-              `${block.properties.doFunky ? " in a funky way." : "."}"` +
-              ")"
-            );
-          }
+          const hat = block.properties.hat
+            ? storeParser("javascript", block.properties?.hat, 0, context)
+            : "undefined";
+          const boot = block.properties.boot
+            ? storeParser("javascript", block.properties?.boot, 0, context)
+            : "undefined";
+          const inner = " ".repeat((depth + 1) * 3);
+          return (
+            " ".repeat(depth * 3) +
+            `console.log("${name}",{\n${inner}hat:${hat},\n${inner}boot:${boot},\n${inner}speed:${
+              block.properties.speed
+            },\n${inner}doFunky:${
+              block.properties.doFunky
+            },\n${inner}greeting:"${
+              block.properties.greeting
+            }",\n${inner}time:"${block.properties.time}"\n${" ".repeat(
+              depth * 3
+            )}})`
+          );
         },
       },
       namePolicy: {

@@ -97,15 +97,6 @@ export const BlockHeader = memo(
                 }}
                 editing={editing}
                 onDoubleClick={() => setIsEditing(canEdit)}
-                // onMouseLeave={()=>setIsEditing(false)}
-                // sx={{ color: "white", borderColor: 'white' }}
-                // InputProps={{
-                //   style: {
-                //     color: "white",
-                //     borderRadius: 5,
-                //     backgroundColor: editing ? `${highlightColor}99` : "#22222299",
-                //   },
-                // }}
               />
             </Tooltip>
           

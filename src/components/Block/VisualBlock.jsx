@@ -166,6 +166,8 @@ export const VisualBlock = memo(
             // setClipboardBlock({data,fieldInfo,parentId,onCanvas,context});
             e.stopPropagation();
           }}
+          // onMouseEnter={()=>console.log('enter')}
+          // onMouseLeave={()=>console.log('leave')}
           className={canDragBlockRFR ? null : "nodrag"}
           ref={ref}
           onContextMenu={handleContextMenu}

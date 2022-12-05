@@ -423,6 +423,7 @@ export const deepCopy = (programData, typeSpec, id) => {
   let newBlock = {
     ...toCopy,
     id: newId,
+    
     properties: toCopy.properties
       ? mapValues(toCopy.properties, (propValue, propKey) => {
           const fieldInfo = typeSpecCopy.properties[propKey];

@@ -165,7 +165,9 @@ export const CanvasEdge = ({
     edge && (
       <g
         ref={gRef}
-        style={{ zIndex: visible ? 100 : 1, userSelect: "none" }}
+        style={{ zIndex: visible ? 100 : 1, 
+          userSelect: "none" 
+        }}
         onMouseEnter={handleHoverLine}
         onMouseLeave={handleHoverLine}
         onClick={() => {
@@ -186,11 +188,15 @@ export const CanvasEdge = ({
           strokeDasharray="10 6"
           initial={{ strokeDashoffset: 16 }}
           animate={{ strokeDashoffset: 0 }}
+          onMouseEnter={()=>console.log('enter')}
+          onMouseLeave={()=>console.log('leave')}
           transition={{ duration: 0.5, repeat: Infinity, ease: false }}
         />
         <motion.path
-          id={id}
-          style={{ ...style, fill: "transparent", userSelect: "none" }}
+          id={`inner-${id}`}
+          style={{ ...style, fill: "transparent", 
+          userSelect: "none" 
+        }}
           opacity={0.5}
           d={edgePath}
           markerEnd={markerEnd}
@@ -201,8 +207,6 @@ export const CanvasEdge = ({
           <EdgeLabelRenderer>
             {visible && (
               <motion.div
-              onMouseEnter={handleHoverLabel}
-              onMouseLeave={handleHoverLabel}
               className="nodrag nopan"
               initial={{
                 opacity:0,

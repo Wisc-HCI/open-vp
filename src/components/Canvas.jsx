@@ -21,7 +21,7 @@ import { stringEquality } from "./Block/Utility";
 import shallow from "zustand/shallow";
 import { compareBlockData } from "./Block/Utility";
 import "reactflow/dist/style.css";
-// import './canvas.css';
+import './canvas.css';
 import { Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
 import { debounce } from "lodash";
 
@@ -359,7 +359,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         />
         <Controls
           showInteractive={false}
-          style={{ backgroundColor: "#555", borderRadius: 5 }}
+          style={{ backgroundColor: "#33333377", borderRadius: 5 }}
         >
           <ControlButton onClick={() => setLocked(!locked)}>
             {locked ? <FiLock /> : <FiUnlock />}

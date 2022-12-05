@@ -12,12 +12,12 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template = (args) => {
-  const { drawers, objectTypes, programData, drawerWidth, ...otherArgs } = args;
+  const { drawers, objectTypes, programData, drawerWidth, tabs, activeTab, ...otherArgs } = args;
 
   const [ref, bounds] = useMeasure();
   
   useLayoutEffect(()=>{
-    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData});
+    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},tabs, activeTab, programData});
   })
   return (
     <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:'#333'}}>
@@ -288,6 +288,15 @@ Stress.args = {
       }
     }
   },
+  tabs: [
+    {
+      title:'Main',
+      id: 'default',
+      visible: true,
+      blocks: ["45535153s","655sssefs"]
+    }
+  ],
+  activeTab:'default',
   programData: {
     "45535153s": {
       id: "45535153s",

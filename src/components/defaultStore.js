@@ -1,17 +1,14 @@
 import create from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-// import produce from "immer";
-import { v4 as uuidv4 } from "uuid";
-import { DATA_TYPES, TYPES } from ".";
-import { remove, pickBy, omitBy, mapValues } from "lodash";
+import { DATA_TYPES } from ".";
+import { remove, pickBy, omitBy } from "lodash";
 import { instanceTemplateFromSpec } from "./Generators";
 import { Timer } from "./Timer";
 import { SIMPLE_PROPERTY_TYPES } from ".";
 import { CLIPBOARD_ACTION } from "./Constants";
 import {
   generateUuid,
-  move,
   deleteChildren,
   deleteSelfBlock,
   parseBlock,
@@ -54,58 +51,21 @@ export const ProgrammingSlice = (set, get) => ({
     const typeSpec = get().programSpec.objectTypes;
     const programData = get().programData;
     const storeParser = get().parse;
+    const tabs = get().tabs;
     if (!nodeId) {
-      // By Default, parse any instances or functions at the top level that aren't used directly in any node.
-      let unusedIds = Object.keys(
-        pickBy(
-          programData,
-          (v) =>
-            v.dataType === DATA_TYPES.INSTANCE &&
-            !typeSpec[v.type].instanceBlock?.onCanvas &&
-            !typeSpec[v.type].referenceBlock?.onCanvas &&
-            !typeSpec[v.type].callBlock?.onCanvas
-        )
-      );
-      Object.values(programData).forEach((block) => {
-        if (block.properties) {
-          Object.values(block.properties).forEach((prop) => {
-            if (typeof prop === "string") {
-              unusedIds = unusedIds.filter((id) => id !== prop);
-            } else if (typeof prop === "object" && Array.isArray(prop)) {
-              prop.forEach((child) => {
-                unusedIds = unusedIds.filter((id) => id !== child);
-              });
-            }
-          });
-        }
-      });
-      unusedIds.forEach((unusedId) => {
-        parsed += parseBlock(
-          programData[unusedId],
-          typeSpec,
-          language,
-          depth,
-          context,
-          storeParser
-        );
-      });
-      const onCanvasBlocks = pickBy(
-        programData,
-        (v) =>
-          typeSpec[v.type].instanceBlock?.onCanvas ||
-          typeSpec[v.type].referenceBlock?.onCanvas ||
-          typeSpec[v.type].callBlock?.onCanvas
-      );
-      Object.values(onCanvasBlocks).forEach((block) => {
-        parsed += parseBlock(
-          block,
-          typeSpec,
-          language,
-          depth,
-          context,
-          storeParser
-        );
-      });
+      tabs.forEach(tab=>{
+        tab.blocks.map(blockId=>programData[blockId]).forEach((block) => {
+          parsed += parseBlock(
+            block,
+            typeSpec,
+            language,
+            depth,
+            block.ref ? {...context, [block.ref]:programData[block.ref]} : context,
+            storeParser
+          );
+        });
+      })
+      
     } else {
       const block = programData[nodeId];
       parsed += parseBlock(
@@ -113,7 +73,7 @@ export const ProgrammingSlice = (set, get) => ({
         typeSpec,
         language,
         depth,
-        context,
+        block.ref ? {...context, [block.ref]:programData[block.ref]} : context,
         storeParser
       );
     }
@@ -459,25 +419,6 @@ export const ProgrammingSlice = (set, get) => ({
   clipboard: { block: null, fieldInfo: null, action: null },
   copy: ({data, fieldInfo, parentId, idx, context, onCanvas}) =>
     set((state) => {
-      // if (state.clipboard.block?.data?.id) {
-      //   // console.log('copy '+state.clipboard.block.data.id);
-      //   // if (state.clipboard.action === CLIPBOARD_ACTION.CUT) {
-      //   //   // Remove the current block in the clipboard
-      //   //   // Clear from tabs if it is there
-      //   //   state.tabs = state.tabs.map((t) => ({
-      //   //     ...t,
-      //   //     blocks: t.blocks.filter((b) => b !==  state.clipboard.block.data.id),
-      //   //   }));
-      //   //   state = deleteChildren(state, state.clipboard.block.data, state.clipboard.block.parentId, state.clipboard.block.fieldInfo);
-      //   //   // Delete current block
-      //   //   state = deleteSelfBlock(state, state.clipboard.blockdata, state.clipboard.block.parentId, state.clipboard.block.fieldInfo);
-      //   // }
-      //   state.clipboard.block = {data,fieldInfo,parentId};
-      //   state.clipboard.fieldInfo = null;
-      //   state.clipboard.action = CLIPBOARD_ACTION.COPY;
-      // } else {
-      //   console.log("copy failed");
-      // }
       state.clipboard.block = { data, fieldInfo, parentId, idx, context, onCanvas };
       state.clipboard.fieldInfo = null;
       state.clipboard.action = CLIPBOARD_ACTION.COPY;
@@ -572,11 +513,22 @@ export const ProgrammingSlice = (set, get) => ({
         ) {
           state.programData[state.clipboard.block.data.id].position =
             coordinates;
-          state.tabs = state.tabs.map((t) =>
-            t.id === state.activeTab
-              ? { ...t, blocks: [...t.blocks.filter(i=>i!==state.clipboard.block.data.id), state.clipboard.block.data.id] }
-              : { ...t, blocks: t.blocks.filter(i=>i!==state.clipboard.block.data.id) }
-          );
+          state.tabs = state.tabs.map((t) => {
+            if (t.id === state.activeTab) {
+              return { ...t, blocks: [...t.blocks.filter(i=>i!==state.clipboard.block.data.id), state.clipboard.block.data.id] }
+            } else {
+              t.blocks.forEach(b=>{
+                if (b === state.clipboard.block.data.id) {
+                  Object.values(state.programData).forEach(data=>{
+                    if (data.dataType === DATA_TYPES.CONNECTION && (data.parent.id === state.clipboard.block.data.id || data.child.id === state.clipboard.block.data.id)) {
+                      delete state.programData[data.id]
+                    }
+                  })
+                }
+              })
+              return { ...t, blocks: t.blocks.filter(i=>i!==state.clipboard.block.data.id) }
+            }
+          });
         }
 
         state.clipboard.action = CLIPBOARD_ACTION.PASTE;
@@ -590,10 +542,6 @@ export const ProgrammingSlice = (set, get) => ({
       state.clipboard.action = CLIPBOARD_ACTION.SELECT;
       state.clipboard.fieldInfo = null;
     }),
-  // setClipboardFieldInfo: (fieldInfo) =>
-  //   set((state) => {
-  //     state.clipboard.fieldInfo = fieldInfo;
-  //   }),
 });
 
 export const ImmerProgrammingSlice = subscribeWithSelector(

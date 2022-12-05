@@ -164,7 +164,7 @@ const BlockPanel = ({
             {activeDrawer !== null && drawers[activeDrawer].title}
           </Typography>
           {activeDrawer !== null &&
-            drawers[activeDrawer].dataType === DATA_TYPES.REFERENCE && (
+            drawers[activeDrawer].dataType === DATA_TYPES.REFERENCE && !objectTypeInfo?.instanceBlock?.onCanvas && (
               <IconButton
                 onClick={() => addInstance(drawers[activeDrawer].objectType)}
               >
@@ -230,7 +230,6 @@ export const Contents = ({
   animateDrawer,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const { project } = useReactFlow();
   const activeDrawer = useProgrammingStore(
     (store) => store.activeDrawer,
     shallow

@@ -60,9 +60,7 @@ export function UnwrappedEnvironment({
 
 export function StyleWrapper({
   highlightColor,
-  children,
-  muiThemeOverride = null,
-  grommetThemeOverride = null,
+  children
 }) {
   // const theme = grommetThemeOverride ? grommetThemeOverride : getTheme(highlightColor);
   const muiTheme = createTheme({
