@@ -300,7 +300,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
             setTabViewport(activeTabData.id, viewport);
           }
         },3000)}
-        elementsSelectable={false}
+        elementsSelectable={true}
         nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}
         edgeTypes={useMemo(() => ({ canvasEdge: CanvasEdge }), [])}
         nodes={nodes}
