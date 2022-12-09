@@ -11,8 +11,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 export default function Environment({
   store,
   highlightColor,
-  height,
-  width,
   drawerWidth,
   snapToGrid,
   animateDrawer = true,
@@ -28,8 +26,8 @@ export default function Environment({
                 padding: 0,
                 margin: 0,
                 display: "flex",
-                height,
-                width,
+                height: '100%',
+                width: '100%',
               }}
             >
               <Contents

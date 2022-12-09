@@ -5,7 +5,6 @@ import ReactFlow, {
   MiniMap,
   useReactFlow,
   ControlButton,
-  useViewport,
 } from "reactflow";
 import { useDrop } from "react-dnd";
 import { useProgrammingStore } from "./ProgrammingContext";
@@ -21,9 +20,10 @@ import { stringEquality } from "./Block/Utility";
 import shallow from "zustand/shallow";
 import { compareBlockData } from "./Block/Utility";
 import "reactflow/dist/style.css";
-import './canvas.css';
+import "./canvas.css";
 import { Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
 import { debounce } from "lodash";
+import ParentSize from "@visx/responsive/lib/components/ParentSize";
 
 const typeToBlockField = (dataType) =>
   dataType === DATA_TYPES.INSTANCE
@@ -89,7 +89,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
         return false;
       }
     });
-    return {id:tabData.id,blocks:tabData.blocks};
+    return { id: tabData.id, blocks: tabData.blocks };
   }, shallow);
   const setLocked = useProgrammingStore((state) => state.setLocked, shallow);
   const createEdge = useProgrammingStore((state) => state.createEdge, shallow);
@@ -283,121 +283,131 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
       }}
       onContextMenu={handleContextMenu}
     >
-      <ReactFlow
-        ref={drop}
-        maxZoom={1}
-        minZoom={0.25}
-        nodesConnectable
-        // defaultViewport={activeTabData?.viewport}
-        onClick={(e) => {
-          onOffClick();
-          setClipboardBlock(null);
-          handleContextMenuClose();
-          e.stopPropagation();
-        }}
-        onMove={debounce((_, viewport) => {
-          if (activeTabData) {
-            setTabViewport(activeTabData.id, viewport);
-          }
-        },3000)}
-        elementsSelectable={true}
-        nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}
-        edgeTypes={useMemo(() => ({ canvasEdge: CanvasEdge }), [])}
-        nodes={nodes}
-        edges={edges}
-        connectionLineComponent={DrawingCanvasEdge}
-        onConnect={(data) => {
-          if (
-            validateEdge(
-              data.source,
-              data.sourceHandle,
-              data.target,
-              data.targetHandle
-            )
-          ) {
-            // console.log('valid edge found')
-            createEdge(
-              data.source,
-              data.sourceHandle,
-              data.target,
-              data.targetHandle
-            );
-          }
-        }}
-        onConnectStart={(_, data) => {
-          setConnectionInfo(data);
-        }}
-        onConnectEnd={(_) => {
-          setConnectionInfo(null);
-        }}
-        // onConnectStop={(_) => {
-        //   setConnectionInfo(null);
-        // }}
-        onNodesChange={moveNodes}
-        fitView
-        snapToGrid={snapToGrid}
-        snapGrid={[30, 30]}
-      >
-        <MiniMap
-          style={{ opacity: 0.75, borderRadius: 5 }}
-          // maskColor="#1a192b44"
-          maskColor="transparent"
-          nodeStrokeColor={(n) => {
-            // if (n.type==='input') return 'black';
-            if (n.style?.background) return n.style.background;
-            if (n.data.typeSpec.color !== null) return n.data.typeSpec.color;
+      <ParentSize>
+        {({ width, height }) => (
+          <>
+            <ReactFlow
+              ref={drop}
+              maxZoom={1}
+              height={height}
+              width={width}
+              minZoom={0.25}
+              nodesConnectable
+              // defaultViewport={activeTabData?.viewport}
+              onClick={(e) => {
+                onOffClick();
+                setClipboardBlock(null);
+                handleContextMenuClose();
+                e.stopPropagation();
+              }}
+              onMove={debounce((_, viewport) => {
+                if (activeTabData) {
+                  setTabViewport(activeTabData.id, viewport);
+                }
+              }, 3000)}
+              elementsSelectable={true}
+              nodeTypes={useMemo(() => ({ canvasNode: CanvasNode }), [])}
+              edgeTypes={useMemo(() => ({ canvasEdge: CanvasEdge }), [])}
+              nodes={nodes}
+              edges={edges}
+              connectionLineComponent={DrawingCanvasEdge}
+              onConnect={(data) => {
+                if (
+                  validateEdge(
+                    data.source,
+                    data.sourceHandle,
+                    data.target,
+                    data.targetHandle
+                  )
+                ) {
+                  // console.log('valid edge found')
+                  createEdge(
+                    data.source,
+                    data.sourceHandle,
+                    data.target,
+                    data.targetHandle
+                  );
+                }
+              }}
+              onConnectStart={(_, data) => {
+                setConnectionInfo(data);
+              }}
+              onConnectEnd={(_) => {
+                setConnectionInfo(null);
+              }}
+              // onConnectStop={(_) => {
+              //   setConnectionInfo(null);
+              // }}
+              onNodesChange={moveNodes}
+              fitView
+              snapToGrid={snapToGrid}
+              snapGrid={[30, 30]}
+            >
+              <MiniMap
+                style={{ opacity: 0.75, borderRadius: 5 }}
+                // maskColor="#1a192b44"
+                maskColor="transparent"
+                nodeStrokeColor={(n) => {
+                  // if (n.type==='input') return 'black';
+                  if (n.style?.background) return n.style.background;
+                  if (n.data.typeSpec.color !== null)
+                    return n.data.typeSpec.color;
 
-            return "#eee";
-          }}
-          nodeColor={(n) => {
-            if (n.data.typeSpec.color !== null) return n.data.typeSpec.color;
-            if (n.style?.background) return n.style.background;
+                  return "#eee";
+                }}
+                nodeColor={(n) => {
+                  if (n.data.typeSpec.color !== null)
+                    return n.data.typeSpec.color;
+                  if (n.style?.background) return n.style.background;
 
-            return "#fff";
-          }}
-          nodeBorderRadius={3}
-        />
-        <Controls
-          showInteractive={false}
-          style={{ backgroundColor: "#33333377", borderRadius: 5 }}
-        >
-          <ControlButton onClick={() => setLocked(!locked)}>
-            {locked ? <FiLock /> : <FiUnlock />}
-          </ControlButton>
-        </Controls>
-        <Background variant="dots" color="#555" gap={30} size={2} />
-      </ReactFlow>
-      <Menu
-        open={onCanvasPastable && contextMenu !== null}
-        onClose={handleContextMenuClose}
-        anchorReference="anchorPosition"
-        anchorPosition={
-          contextMenu !== null
-            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-            : undefined
-        }
-      >
-        <MenuItem
-          onClick={(e) => {
-            // const { zoom } = getViewport();
-            const viewport = getTabViewport(activeTabData?.id);
-            const zoom = viewport?.zoom || 1;
-            const { x, y } = project({
-              x: e.clientX,
-              y: e.clientY,
-            });
-            const coordinates = { x: x - 100 / zoom, y: y - 100 / zoom };
-            paste({ coordinates, tab: activeTabData?.id });
-            handleContextMenuClose();
-            e.stopPropagation();
-          }}
-        >
-          <ListItemIcon>
-            <FiClipboard />
-          </ListItemIcon>
-          <ListItemText primary="Paste"></ListItemText>
-        </MenuItem>
-      </Menu>
+                  return "#fff";
+                }}
+                nodeBorderRadius={3}
+              />
+              <Controls
+                showInteractive={false}
+                style={{ backgroundColor: "#33333377", borderRadius: 5 }}
+              >
+                <ControlButton onClick={() => setLocked(!locked)}>
+                  {locked ? <FiLock /> : <FiUnlock />}
+                </ControlButton>
+              </Controls>
+              <Background variant="dots" color="#555" gap={30} size={2} />
+            </ReactFlow>
+            <Menu
+              open={onCanvasPastable && contextMenu !== null}
+              onClose={handleContextMenuClose}
+              anchorReference="anchorPosition"
+              anchorPosition={
+                contextMenu !== null
+                  ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                  : undefined
+              }
+            >
+              <MenuItem
+                onClick={(e) => {
+                  // const { zoom } = getViewport();
+                  const viewport = getTabViewport(activeTabData?.id);
+                  const zoom = viewport?.zoom || 1;
+                  const { x, y } = project({
+                    x: e.clientX,
+                    y: e.clientY,
+                  });
+                  const coordinates = { x: x - 100 / zoom, y: y - 100 / zoom };
+                  paste({ coordinates, tab: activeTabData?.id });
+                  handleContextMenuClose();
+                  e.stopPropagation();
+                }}
+              >
+                <ListItemIcon>
+                  <FiClipboard />
+                </ListItemIcon>
+                <ListItemText primary="Paste"></ListItemText>
+              </MenuItem>
+            </Menu>
+          </>
+        )}
+      </ParentSize>
     </div>
   );
 };

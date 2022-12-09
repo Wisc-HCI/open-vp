@@ -19,11 +19,11 @@ import {
   CardHeader,
   CardContent,
 } from "@mui/material";
-import { darken, emphasize, lighten, styled } from "@mui/material/styles";
+import { darken, emphasize, styled } from "@mui/material/styles";
 import { forwardRef, useState, useCallback } from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
 import shallow from "zustand/shallow";
-import ReactMarkdown from "react-markdown";
+import { Remark } from "react-remark";
 import {
   FiChevronDown,
   FiCircle,
@@ -412,10 +412,15 @@ const TypeLink = ({ label, color, onClick }) => {
   );
 };
 
-export const TypeDescription = ({type}) => {
-  const info = useProgrammingStore(useCallback(state=>state.programSpec.objectTypes[type],[type]),shallow);
-  return <TypeLink label={info?.name||'Unknown Block'} color={getColor(info)}/>
-}
+export const TypeDescription = ({ type }) => {
+  const info = useProgrammingStore(
+    useCallback((state) => state.programSpec.objectTypes[type], [type]),
+    shallow
+  );
+  return (
+    <TypeLink label={info?.name || "Unknown Block"} color={getColor(info)} />
+  );
+};
 
 export const Doc = forwardRef(({ data }, ref) => {
   const { zoom } = useViewport();
@@ -426,7 +431,7 @@ export const Doc = forwardRef(({ data }, ref) => {
       functionTypeSpec(state.programSpec.objectTypes, state.programData),
     shallow
   );
-  const haloColor = darken(getColor(typeInfo[activeType]),0.5);
+  const haloColor = darken(getColor(typeInfo[activeType]), 0.5);
 
   const featuredDoc = useProgrammingStore(
     (state) =>
@@ -439,7 +444,6 @@ export const Doc = forwardRef(({ data }, ref) => {
     ? ["featured", "description", "usage"]
     : ["description", "usage"];
   const [tab, setTab] = useState(tabs[0]);
-  
 
   // console.log("typeInfo", typeInfo);
 
@@ -601,13 +605,22 @@ export const Doc = forwardRef(({ data }, ref) => {
     <Card
       ref={ref}
       className="nodrag nowheel"
-      onDragStart={(e)=>{e.preventDefault();e.stopPropagation()}}
-      onDragStartCapture={(e)=>{e.preventDefault();e.stopPropagation()}}
-      onDrag={(e)=>{e.preventDefault();e.stopPropagation()}}
+      onDragStart={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+      onDragStartCapture={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+      onDrag={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
       onClick={() => console.log("typeinfo", typeInfo)}
       sx={{
         // borderRadius: 4,
-        userDrag: 'none',
+        userDrag: "none",
         color: "white",
         marginLeft: 2,
         transform: `scale(${1 / zoom})`,
@@ -626,7 +639,7 @@ export const Doc = forwardRef(({ data }, ref) => {
         textColor="inherit"
         //   variant="fullWidth"
         aria-label="full width tabs example"
-        sx={{backgroundColor:haloColor}}
+        sx={{ backgroundColor: haloColor }}
       >
         {tabs.map((tab) => (
           <Tab key={tab} label={tab} value={tab} />
@@ -672,14 +685,22 @@ export const Doc = forwardRef(({ data }, ref) => {
         }}
       >
         {tab === "featured" && (
-          <ReactMarkdown components={componentLookup}>
+          <Remark
+            rehypeReactOptions={{
+              components: componentLookup,
+            }}
+          >
             {featuredDoc}
-          </ReactMarkdown>
+          </Remark>
         )}
         {tab === "description" && (
-          <ReactMarkdown components={componentLookup}>
+          <Remark
+            rehypeReactOptions={{
+              components: componentLookup,
+            }}
+          >
             {typeInfo[activeType]?.description}
-          </ReactMarkdown>
+          </Remark>
         )}
         {tab === "usage" && (
           <>
@@ -824,3 +845,5 @@ export const Doc = forwardRef(({ data }, ref) => {
     </Card>
   );
 });
+
+// export const Doc = ()=>null
