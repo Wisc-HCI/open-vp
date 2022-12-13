@@ -15,9 +15,13 @@ const Template = (args) => {
   const { drawers, objectTypes, programData, executionData, drawerWidth, activeTab, tabs, ...otherArgs } = args;
 
   const [ref, bounds] = useMeasure();
+
+  const featuredDocs = {
+    'thingType-98892bd01c1911ecbe2600155d1a70a2':'# Error'
+  }
   
   useLayoutEffect(()=>{
-    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData,tabs,activeTab});
+    useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData,tabs,activeTab,featuredDocs});
   })
   return (
     <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:'#333'}}>

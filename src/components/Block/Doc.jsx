@@ -18,6 +18,10 @@ import {
   Avatar,
   CardHeader,
   CardContent,
+  Badge,
+  Button,
+  CardActions,
+  CardActionArea,
 } from "@mui/material";
 import { darken, emphasize, styled } from "@mui/material/styles";
 import { forwardRef, useState, useCallback } from "react";
@@ -35,6 +39,7 @@ import {
   FiStar,
   FiDownload,
   FiSquare,
+  FiX,
 } from "react-icons/fi";
 import {
   CONNECTIONS,
@@ -422,7 +427,7 @@ export const TypeDescription = ({ type }) => {
   );
 };
 
-export const Doc = forwardRef(({ data }, ref) => {
+export const Doc = forwardRef(({ data, inDrawer }, ref) => {
   const { zoom } = useViewport();
   const [path, setPath] = useState([data.type]);
   const activeType = path[path.length - 1];
@@ -437,6 +442,8 @@ export const Doc = forwardRef(({ data }, ref) => {
     (state) =>
       typeof state.featuredDocs[data.id] === "string"
         ? state.featuredDocs[data.id]
+        : typeof state.featuredDocs[data.refData?.id] === "string"
+        ? state.featuredDocs[data.refData?.id]
         : null,
     shallow
   );
@@ -448,6 +455,8 @@ export const Doc = forwardRef(({ data }, ref) => {
   // console.log("typeInfo", typeInfo);
 
   const references = getReferences(typeInfo, activeType);
+
+  console.log(data)
 
   const handleLinkClick = (value) => {
     if (path.includes(value)) {
@@ -602,7 +611,8 @@ export const Doc = forwardRef(({ data }, ref) => {
   );
 
   return (
-    <Card
+    
+      <Card
       ref={ref}
       className="nodrag nowheel"
       onDragStart={(e) => {
@@ -623,7 +633,7 @@ export const Doc = forwardRef(({ data }, ref) => {
         userDrag: "none",
         color: "white",
         marginLeft: 2,
-        transform: `scale(${1 / zoom})`,
+        transform: inDrawer ? `scale(1)` : `scale(${1 / zoom})`,
         zIndex: 100,
         transformOrigin: "left",
         minWidth: 200,
@@ -699,7 +709,7 @@ export const Doc = forwardRef(({ data }, ref) => {
               components: componentLookup,
             }}
           >
-            {typeInfo[activeType]?.description}
+            {typeInfo[activeType]?.description || "No Description"}
           </Remark>
         )}
         {tab === "usage" && (
@@ -842,7 +852,14 @@ export const Doc = forwardRef(({ data }, ref) => {
 
         {/* Content for {data.name} */}
       </Box>
+      <CardActions style={{borderTop:'1px solid #444'}}>
+      <Button size='small' style={{flex:1}} onClick={()=>setActiveDoc(data.id,false)}>
+        Close
+      </Button>
+      </CardActions>
+      
     </Card>
+    
   );
 });
 

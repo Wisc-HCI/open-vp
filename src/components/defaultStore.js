@@ -2,7 +2,7 @@ import create from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { DATA_TYPES } from ".";
-import { remove, pickBy, omitBy } from "lodash";
+import { remove, pickBy, omitBy, mapValues } from "lodash";
 import { instanceTemplateFromSpec } from "./Generators";
 import { Timer } from "./Timer";
 import { SIMPLE_PROPERTY_TYPES } from ".";
@@ -43,6 +43,14 @@ export const ProgrammingSlice = (set, get) => ({
   programSpec: DEFAULT_PROGRAM_SPEC,
   programData: {},
   executionData: {},
+  featuredDocs: {},
+  activeDoc: null,
+  setActiveDoc: (id, value) => {
+    set((state) => {
+      console.log(`setting ${id} doc active to ${value}`);
+      state.activeDoc = value ? id : null
+    });
+  },
   parse: (language, nodeId, depth, context) => {
     let parsed = "";
     if (!depth) {
@@ -190,25 +198,6 @@ export const ProgrammingSlice = (set, get) => ({
       state.programData[usedId].selected = value;
     });
   },
-  updateItemDocActive: (id, value) => {
-    set((state) => {
-      // console.log("setting doc active to ", value);
-      if (value) {
-        Object.keys(state.programData).forEach((v) => {
-          if (v === id) {
-            state.programData[v].docActive = true;
-          } else if (v !== id && state.programData[v].docActive) {
-            state.programData[v].docActive = false;
-          }
-        });
-        // state.programData = mapValues(state.programData,(v)=>v.id === id ? {...v,docActive:true} : {...v,docActive:false})
-      } else {
-        state.programData[id].docActive = false;
-      }
-
-      // state.programData[id].docActive = value;
-    });
-  },
   updateItemEditing: (id, value) => {
     set((state) => {
       if (state.programData[id]) {
@@ -333,7 +322,6 @@ export const ProgrammingSlice = (set, get) => ({
   reset: (time) => {
     get().clock._elapsed = time ? time * 1000 : 0;
   },
-  featuredDocs: {},
   tabs: [],
   setTabs: (newTabs) => set({ tabs: newTabs }),
   activeTab: null,

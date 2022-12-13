@@ -176,8 +176,9 @@ const DocToggleExtra = memo(
   ({ docActive, setDocActive, inTopLevel, data, locked }) => {
     const Icon = docActive ? FiXCircle : FiInfo;
     const disabled = data.dataType === DATA_TYPES.INSTANCE && locked;
+    console.log(data)
     const hasFeatured = useProgrammingStore(
-      (store) => store?.featuredDocs[data.id] !== undefined,
+      (state) => state.featuredDocs[data.id] !== undefined || state?.featuredDocs[data?.refData?.id] !== undefined,
       shallow
     );
     // console.log('hasFeatured',hasFeatured)
@@ -289,14 +290,14 @@ const AddArgumentExtra = memo(
   ({ data, argumentType, interactionDisabled, inTopLevel }) => {
     const typeSpec = useProgrammingStore(
       useCallback(
-        (store) => store.programSpec.objectTypes[argumentType],
+        (state) => state.programSpec.objectTypes[argumentType],
         [argumentType]
       )
     );
     const Icon = typeSpec?.referenceBlock?.icon
       ? typeSpec.referenceBlock.icon
       : FiPlus;
-    const addArgument = useProgrammingStore((store) => store.addArgument);
+    const addArgument = useProgrammingStore((state) => state.addArgument);
 
     return inTopLevel ? (
       <IconButton

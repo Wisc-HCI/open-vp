@@ -7,7 +7,7 @@ import {
   SIMPLE_PROPERTY_TYPES,
   UNRENDERED_PROPS,
   ATTENDED_RENDER_PROPS,
-  CLIPBOARD_ACTION
+  CLIPBOARD_ACTION,
 } from "../Constants";
 import { FiSquare } from "react-icons/fi";
 import { useProgrammingStore } from "../ProgrammingContext";
@@ -25,7 +25,7 @@ import {
   Popper,
   Fade,
   lighten,
-  darken
+  darken,
 } from "@mui/material";
 import {
   OuterBlockContainer,
@@ -56,12 +56,15 @@ export const VisualBlock = memo(
         parentId,
         progress,
         limitedRender,
-        copyFn = ()=>{},
-        cutFn = ()=>{},
+        copyFn = () => {},
+        cutFn = () => {},
         style,
       },
       ref
     ) => {
+
+      const inDrawer = parentId === "spawner";
+
       const [contextMenu, setContextMenu] = useState(null);
       // const headerRef = useRef();
       // const [headerRef, headerBounds] = useMeasure();
@@ -109,12 +112,25 @@ export const VisualBlock = memo(
         (store) => store.updateItemSelected,
         shallow
       );
-      const setDocActive = useProgrammingStore(
-        (store) => store.updateItemDocActive,
+
+      const docActive = useProgrammingStore(
+        (store) => store.activeDoc === data.id,
         shallow
       );
-      
-      const isCopying = useProgrammingStore(useCallback((state)=>state.clipboard.block?.data?.id === data.id && state.clipboard.action === CLIPBOARD_ACTION.COPY,[data.id]),shallow);
+      const setDocActive = useProgrammingStore(
+        (store) => store.setActiveDoc,
+        shallow
+      );
+
+      const isCopying = useProgrammingStore(
+        useCallback(
+          (state) =>
+            state.clipboard.block?.data?.id === data.id &&
+            state.clipboard.action === CLIPBOARD_ACTION.COPY,
+          [data.id]
+        ),
+        shallow
+      );
 
       const onClick = useProgrammingStore((state) => state.onVPEClick, shallow);
 
@@ -156,7 +172,7 @@ export const VisualBlock = memo(
       }
 
       // console.log(ref?.current)
-      const inDrawer = parentId === "spawner";
+      
 
       return (
         <OuterBlockContainer
@@ -207,7 +223,7 @@ export const VisualBlock = memo(
                   isCollapsed={isCollapsed}
                   isSelected={selected}
                   isDebugging={isDebugging}
-                  docActive={data.docActive === true}
+                  docActive={docActive}
                   setDocActive={(v) => setDocActive(data.id, v)}
                   setIsEditing={
                     data.dataType === DATA_TYPES.REFERENCE ||
@@ -294,7 +310,7 @@ export const VisualBlock = memo(
                   interactionDisabled={interactionDisabled}
                   data={data}
                   blockSpec={blockSpec}
-                  docActive={data.docActive === true}
+                  docActive={docActive}
                   isEditing={editing}
                   isCollapsed={isCollapsed}
                   isSelected={selected}
@@ -344,7 +360,7 @@ export const VisualBlock = memo(
 
             <Popper
               id={`${data.id}-doc`}
-              open={data.docActive === true && !limitedRender}
+              open={docActive && !limitedRender}
               placement="right"
               anchorEl={docReference}
               modifiers={[
@@ -373,12 +389,12 @@ export const VisualBlock = memo(
                   enabled: true,
                 },
               ]}
-              disablePortal
+              disablePortal={!inDrawer}
               transition
             >
               {({ TransitionProps }) => (
                 <Fade {...TransitionProps} timeout={350}>
-                  <Doc data={data} typeSpec={typeSpec} />
+                  <Doc data={data} typeSpec={typeSpec} inDrawer={inDrawer}/>
                 </Fade>
               )}
             </Popper>
@@ -455,7 +471,9 @@ export const VisualBlock = memo(
                               accepts: [argInfo.type],
                             }}
                             parentId={data.id}
-                            interactionDisabled={interactionDisabled || inDrawer}
+                            interactionDisabled={
+                              interactionDisabled || inDrawer
+                            }
                             highlightColor={highlightColor}
                             context={context}
                           />
@@ -471,9 +489,7 @@ export const VisualBlock = memo(
                         ? fieldInfo.name
                         : "";
                       return (
-                        <PropertySection
-                          key={fieldKey}
-                        >
+                        <PropertySection key={fieldKey}>
                           <Stack
                             key={fieldKey}
                             direction="row"
@@ -509,7 +525,9 @@ export const VisualBlock = memo(
                                 }}
                                 hideText={!fieldInfo.fullWidth}
                                 parentId={data.id}
-                                interactionDisabled={interactionDisabled || inDrawer}
+                                interactionDisabled={
+                                  interactionDisabled || inDrawer
+                                }
                                 highlightColor={highlightColor}
                                 context={context}
                                 limitedRender={limitedRender}
