@@ -16,7 +16,8 @@ import {
 } from "@mui/material";
 import { TypeDescription } from "./Doc";
 import { CLIPBOARD_ACTION } from "../Constants";
-import { FiClipboard } from "react-icons/fi";
+import { FiCircle, FiClipboard, FiMoreHorizontal } from "react-icons/fi";
+import { useHover } from '@use-gesture/react';
 
 const transferBlockSelector = (state) => state.transferBlock;
 
@@ -55,11 +56,8 @@ export const DropRegion = memo(
     );
 
     const lastAction = useProgrammingStore((state) => state.clipboard.action);
-    
-    const paste = useProgrammingStore(
-      (state) => state.paste,
-      shallow
-    );
+
+    const paste = useProgrammingStore((state) => state.paste, shallow);
     const inClipboard = useProgrammingStore(
       useCallback(
         (state) =>
@@ -139,22 +137,60 @@ export const DropRegion = memo(
       setContextMenu(null);
     };
 
+    const [hoverState, setHoverState] = useState({hovered:false,expanded:false})
+
+    const regionVariants = {
+      hover:{
+        minHeight,
+        height:minHeight+5,
+        backgroundColor:'#88888888'
+      },
+      noHover:{
+        height:'inherit',
+        minHeight,
+        backgroundColor:'#88888800'
+      }
+    };
+
+    const bind = useHover(({hovering,intentional})=>{
+      if (hovering && intentional) {
+        setHoverState({...hoverState,hovered:true})
+      } else {
+        setHoverState({hovered:false,expanded:false})
+      }
+      
+    })
+
+    const accepts = hoverState.expanded ? fieldInfo.accepts : fieldInfo.accepts ? fieldInfo.accepts.slice(0,3) : [];
+
     return (
       <Tooltip
-        disableFocusListener={validClipboard||limitedRender}
-        disableHoverListener={validClipboard||limitedRender}
+        open={hoverState.hovered}
+        // disableFocusListener={validClipboard||limitedRender}
+        // disableHoverListener={validClipboard||limitedRender}
+        // enterDelay={1000}
         title={
           <div>
-            {fieldInfo.accepts?.map((accept) => (
+            {accepts.map((accept) => (
               <TypeDescription key={accept} type={accept} />
             ))}
+            {!hoverState.expanded && (fieldInfo.accepts?.length - accepts.length > 0) && (
+              <span style={{fontSize:13,marginLeft:10}}>+ {fieldInfo.accepts.length - accepts.length}</span>
+            )}
           </div>
         }
         arrow
       >
-        <div
+        <motion.div
           className="nodrag"
           ref={drop}
+          {...bind()}
+          onClick={(e)=>{
+            if (hoverState.hovered) {
+              setHoverState({hovered:true,expanded:!hoverState.expanded})
+            }
+            e.stopPropagation()
+          }}
           style={{
             borderRadius: 4,
             backgroundColor:
@@ -166,7 +202,7 @@ export const DropRegion = memo(
                   (validDropType || (validClipboard && activeClipboard))
                 ? "#88888888"
                 : null,
-            minHeight,
+            // minHeight,
             minWidth: 100,
             display: "flex",
             flex: 1,
@@ -176,7 +212,10 @@ export const DropRegion = memo(
                 ? "inset 0pt 0pt 0pt 3pt #dddddd55"
                 : null,
           }}
-          onContextMenu={validClipboard?handleContextMenu:null}
+          initial={{minHeight,height:'inherit'}}
+          animate={hoverState.hovered === true && !(renderedData || isPreview) ?'hover':'noHover'}
+          variants={regionVariants}
+          onContextMenu={validClipboard ? handleContextMenu : null}
         >
           {renderedData && !isPreview ? (
             <motion.div
@@ -236,18 +275,20 @@ export const DropRegion = memo(
                 : undefined
             }
           >
-            <MenuItem onClick={(e) => {
-              paste({ fieldInfo, idx, context, parentId });
-              handleContextMenuClose();
-              e.stopPropagation();
-              }}>
+            <MenuItem
+              onClick={(e) => {
+                paste({ fieldInfo, idx, context, parentId });
+                handleContextMenuClose();
+                e.stopPropagation();
+              }}
+            >
               <ListItemIcon>
                 <FiClipboard />
               </ListItemIcon>
               <ListItemText primary="Paste"></ListItemText>
             </MenuItem>
           </Menu>
-        </div>
+        </motion.div>
       </Tooltip>
     );
   }

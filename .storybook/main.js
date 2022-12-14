@@ -1,4 +1,4 @@
-const svgrPlugin = require("vite-plugin-svgr");
+// const svgrPlugin = require("vite-plugin-svgr");
 module.exports = {
   "stories": ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
   "addons": ["@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions"],
@@ -13,7 +13,7 @@ module.exports = {
   async viteFinal(config, {
     configType
   }) {
-    config.plugins = [...config.plugins, svgrPlugin.default()], config.assetsInclude = ["**/*.svg"];
+    config.plugins = [...config.plugins], config.assetsInclude = ["**/*.svg"];
     return config;
   }
 };

@@ -1,7 +1,7 @@
 {
   "name": "simple-vp",
   "private": true,
-  "version": "0.8.4",
+  "version": "0.8.5",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -24,8 +24,9 @@
     "generate-all": "npm run build-storybook && vite build"
   },
   "dependencies": {
-    "@mui/lab": "^5.0.0-alpha.103",
+    "@mui/lab": "^5.0.0-alpha.112",
     "@radix-ui/react-scroll-area": "^1.0.0",
+    "@use-gesture/react": "^10.2.23",
     "@visx/responsive": "^2.10.0",
     "framer-motion": "^7.6.19",
     "immer": "^9.0.12",
@@ -49,7 +50,7 @@
     "@babel/core": "^7.18.6",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@mui/material": "5.10.12",
+    "@mui/material": "5.11.0",
     "@storybook/addon-actions": "7.0.0-beta.6",
     "@storybook/addon-essentials": "7.0.0-beta.6",
     "@storybook/addon-interactions": "7.0.0-beta.6",
@@ -73,7 +74,7 @@
   "peerDependencies": {
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@mui/material": "5.10.8",
+    "@mui/material": "5.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

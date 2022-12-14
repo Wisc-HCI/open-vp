@@ -23,9 +23,7 @@ import {
   Box,
   Stack,
   Popper,
-  Fade,
-  lighten,
-  darken,
+  Fade
 } from "@mui/material";
 import {
   OuterBlockContainer,
@@ -39,7 +37,6 @@ import { SettingsSection } from "./SettingsSection";
 import shallow from "zustand/shallow";
 import { compareBlockData } from "./Utility";
 import { Doc } from "./Doc";
-// import useMeasure from "react-use-measure";
 
 export const VisualBlock = memo(
   forwardRef(
@@ -62,7 +59,6 @@ export const VisualBlock = memo(
       },
       ref
     ) => {
-
       const inDrawer = parentId === "spawner";
 
       const [contextMenu, setContextMenu] = useState(null);
@@ -172,7 +168,6 @@ export const VisualBlock = memo(
       }
 
       // console.log(ref?.current)
-      
 
       return (
         <OuterBlockContainer
@@ -368,8 +363,8 @@ export const VisualBlock = memo(
                   name: "flip",
                   enabled: true,
                   options: {
-                    altBoundary: true,
-                    rootBoundary: "viewport",
+                    // altBoundary: true,
+                    rootBoundary: "document",
                     padding: 8,
                   },
                 },
@@ -377,10 +372,10 @@ export const VisualBlock = memo(
                   name: "preventOverflow",
                   enabled: onCanvas,
                   options: {
-                    altAxis: true,
-                    altBoundary: true,
+                    // altAxis: true,
+                    // altBoundary: true,
                     tether: true,
-                    rootBoundary: "viewport",
+                    rootBoundary: "document",
                     padding: 8,
                   },
                 },
@@ -394,7 +389,11 @@ export const VisualBlock = memo(
             >
               {({ TransitionProps }) => (
                 <Fade {...TransitionProps} timeout={350}>
-                  <Doc data={data} typeSpec={typeSpec} inDrawer={inDrawer}/>
+                  <Doc 
+                    data={data} 
+                    typeSpec={typeSpec} 
+                    inDrawer={inDrawer}
+                   />
                 </Fade>
               )}
             </Popper>

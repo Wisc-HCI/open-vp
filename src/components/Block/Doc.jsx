@@ -438,6 +438,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
   );
   const haloColor = darken(getColor(typeInfo[activeType]), 0.5);
 
+  const setActiveDoc = useProgrammingStore(state=>state.setActiveDoc,shallow)
   const featuredDoc = useProgrammingStore(
     (state) =>
       typeof state.featuredDocs[data.id] === "string"
@@ -452,11 +453,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
     : ["description", "usage"];
   const [tab, setTab] = useState(tabs[0]);
 
-  // console.log("typeInfo", typeInfo);
-
   const references = getReferences(typeInfo, activeType);
-
-  console.log(data)
 
   const handleLinkClick = (value) => {
     if (path.includes(value)) {
