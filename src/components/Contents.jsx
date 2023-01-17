@@ -146,7 +146,7 @@ const BlockPanel = ({
       sx={{
         width: `${drawerWidth}px`,
         backgroundColor: "#222222ee",
-        height: "100%",
+        height: "100%"
       }}
     >
       <Stack

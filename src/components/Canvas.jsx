@@ -363,6 +363,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
                   return "#fff";
                 }}
                 nodeBorderRadius={3}
+                zoomable pannable
               />
               <Controls
                 showInteractive={false}

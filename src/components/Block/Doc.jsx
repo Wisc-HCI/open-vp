@@ -18,10 +18,8 @@ import {
   Avatar,
   CardHeader,
   CardContent,
-  Badge,
   Button,
   CardActions,
-  CardActionArea,
 } from "@mui/material";
 import { darken, emphasize, styled } from "@mui/material/styles";
 import { forwardRef, useState, useCallback } from "react";
@@ -38,8 +36,7 @@ import {
   FiPaperclip,
   FiStar,
   FiDownload,
-  FiSquare,
-  FiX,
+  FiSquare
 } from "react-icons/fi";
 import {
   CONNECTIONS,
@@ -438,7 +435,10 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
   );
   const haloColor = darken(getColor(typeInfo[activeType]), 0.5);
 
-  const setActiveDoc = useProgrammingStore(state=>state.setActiveDoc,shallow)
+  const setActiveDoc = useProgrammingStore(
+    (state) => state.setActiveDoc,
+    shallow
+  );
   const featuredDoc = useProgrammingStore(
     (state) =>
       typeof state.featuredDocs[data.id] === "string"
@@ -608,8 +608,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
   );
 
   return (
-    
-      <Card
+    <Card
       ref={ref}
       className="nodrag nowheel"
       onDragStart={(e) => {
@@ -849,14 +848,16 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
 
         {/* Content for {data.name} */}
       </Box>
-      <CardActions style={{borderTop:'1px solid #444'}}>
-      <Button size='small' style={{flex:1}} onClick={()=>setActiveDoc(data.id,false)}>
-        Close
-      </Button>
+      <CardActions style={{ borderTop: "1px solid #444" }}>
+        <Button
+          size="small"
+          style={{ flex: 1 }}
+          onClick={() => setActiveDoc(data.id, false)}
+        >
+          Close
+        </Button>
       </CardActions>
-      
     </Card>
-    
   );
 });
 

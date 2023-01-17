@@ -1,6 +1,7 @@
 import React from "react";
 import { useDragLayer } from "react-dnd";
 import { VisualBlock } from "./Block";
+import { useViewport } from "reactflow";
 
 export const DragLayer = ({ highlightColor }) => {
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
@@ -8,6 +9,9 @@ export const DragLayer = ({ highlightColor }) => {
     currentOffset: monitor.getSourceClientOffset(),
     isDragging: monitor.isDragging(),
   }));
+
+  const { zoom } = useViewport();
+  console.log(zoom)
 
   return (
     <div
@@ -19,15 +23,15 @@ export const DragLayer = ({ highlightColor }) => {
         top: 0,
         width: 0,
         height: 0,
-        opacity: 0.5,
+        opacity: 0.5
       }}
     >
       {item?.data?.dataType && (
         <div
           style={{
-            transform: `translate(${currentOffset ? currentOffset.x : 0}px, ${
-              currentOffset ? currentOffset.y : 0
-            }px)`,
+            transform: `translate(${currentOffset ? currentOffset.x/zoom : 0}px, ${
+              currentOffset ? currentOffset.y/zoom : 0
+            }px) scale(${zoom})`,
           }}
         >
           <VisualBlock
