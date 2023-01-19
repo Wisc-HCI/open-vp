@@ -19,7 +19,7 @@ const Template = (args) => {
   const featuredDocs = {
     'thingType-98892bd01c1911ecbe2600155d1a70a2':'# Error'
   }
-  
+
   useLayoutEffect(()=>{
     useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData,executionData,tabs,activeTab,featuredDocs});
   })
@@ -41,18 +41,25 @@ Coframe.args = {
   programData:coframeStarter,
   activeTab:'default',
   tabs: [
-    {
-      title:'Main',
-      id: 'default',
-      visible: true,
-      blocks: ["program-484de43e-adaa-4801-a23b-bca38e211365"]
-    },
-    {
-      title:'Declarations',
-      id: 'declarations',
-      visible: true,
-      blocks: []
-    }
-  ],
+  {
+    "title":"Main",
+    "id": "default",
+    "visible": true,
+    "blocks": ["program-484de43e-adaa-4801-a23b-bca38e211365"]
+  },
+  {
+    "title":"Skills",
+    "id": "skills",
+    "visible": true,
+    "blocks": [
+      "skillType-d5649c10-9075-4009-b740-0976cff8258c",
+      "skillType-2f3e0a5c-3dbb-4eca-bef6-aecb0568da1d",
+      "skillType-d5649c10-9075-4009-b740-0976cff8258c",
+      "skillType-0b5026c4-4777-4250-b2ce-50214b504202",
+      "skillType-1f4348c8-8b88-441d-95c9-dc9874848629",
+      "skillType-b359d032-0996-444e-8099-4790b97df79e"
+    ]
+  }
+],
   executionData:{}
 };

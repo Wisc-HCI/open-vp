@@ -155,7 +155,9 @@ export const VisualBlock = memo(
               entry.isFunctionArgument
             )
           : typeSpec.type === TYPES.FUNCTION && data.dataType === DATA_TYPES.INSTANCE
-          ? typeSpec.properties
+          ? omitBy(typeSpec.properties, (entry) =>
+              Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)
+            )
           : {};
 
       const dataType = data ? data.dataType : null;

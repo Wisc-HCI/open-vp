@@ -121,7 +121,7 @@ export const DropRegion = memo(
       useCallback((store) => store.programData[id], [id]),
       stringEquality
     );
-
+    
     const validClipboard = useProgrammingStore(
       useCallback(
         (state) =>

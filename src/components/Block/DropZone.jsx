@@ -31,6 +31,7 @@ export const DropZone = ({
         fieldInfo={fieldInfo}
         idx={idx}
         minHeight={30}
+        peripheral={false}
         bounded
         disabled={id || interactionDisabled}
         highlightColor={highlightColor}
