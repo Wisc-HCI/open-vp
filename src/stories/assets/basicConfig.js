@@ -201,7 +201,7 @@ function main() {
               EXTRA_TYPES.NAME_EDIT_TOGGLE,
               EXTRA_TYPES.DELETE_BUTTON,
               EXTRA_TYPES.LOCKED_INDICATOR,
-              EXTRA_TYPES.DEBUG_TOGGLE,
+              EXTRA_TYPES.DOC_TOGGLE,
               {
                 type: EXTRA_TYPES.ADD_ARGUMENT_GROUP,
                 allowed: ["hatType", "bootType"],
@@ -226,7 +226,7 @@ function main() {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            contents: [EXTRA_TYPES.DEBUG_TOGGLE, EXTRA_TYPES.DELETE_BUTTON],
+            contents: [EXTRA_TYPES.DOC_TOGGLE, EXTRA_TYPES.DELETE_BUTTON],
           },
         ],
       },

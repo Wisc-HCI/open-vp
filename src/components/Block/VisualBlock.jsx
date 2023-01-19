@@ -144,11 +144,18 @@ export const VisualBlock = memo(
                 !UNRENDERED_PROPS.includes(entry.type)
             )
           : {};
+      
       const standardProperties =
-        typeSpec && typeSpec.properties
+        typeSpec && typeSpec.properties && typeSpec.type !== TYPES.FUNCTION
           ? omitBy(typeSpec.properties, (entry) =>
               Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)
             )
+          : typeSpec.type === TYPES.FUNCTION && data.dataType === DATA_TYPES.CALL
+          ? pickBy(typeSpec.properties, (entry) =>
+              entry.isFunctionArgument
+            )
+          : typeSpec.type === TYPES.FUNCTION && data.dataType === DATA_TYPES.INSTANCE
+          ? typeSpec.properties
           : {};
 
       const dataType = data ? data.dataType : null;
@@ -175,6 +182,16 @@ export const VisualBlock = memo(
           onClick={(e) => {
             onClick(data);
             // setClipboardBlock({data,fieldInfo,parentId,onCanvas,context});
+            e.stopPropagation();
+          }}
+          onDoubleClick={(e)=>{
+            if (data.dataType === DATA_TYPES.REFERENCE ||
+              data.dataType === DATA_TYPES.CALL) {
+                setIsSelected(data.ref,!selected);
+              } else {
+                setIsSelected(data.id,!selected);
+              }
+            
             e.stopPropagation();
           }}
           // onMouseEnter={()=>console.log('enter')}
@@ -447,7 +464,7 @@ export const VisualBlock = memo(
                     />
                   )}
                 {/* If the block is a function call (the call and not the actual function instance) then show the argument fields */}
-                {data.dataType === DATA_TYPES.CALL &&
+                {/* {data.dataType === DATA_TYPES.CALL &&
                   data.argumentBlockData.map((argInfo, argIdx) => {
                     return (
                       <PropertySection key={`arg-${argIdx}`}>
@@ -479,9 +496,9 @@ export const VisualBlock = memo(
                         </Stack>
                       </PropertySection>
                     );
-                  })}
+                  })} */}
                 {/* For all properties of an instance, show the fields */}
-                {data.dataType === DATA_TYPES.INSTANCE &&
+                {(data.dataType === DATA_TYPES.INSTANCE || data.dataType === DATA_TYPES.CALL) &&
                   Object.entries(standardProperties)?.map(
                     ([fieldKey, fieldInfo]) => {
                       const innerLabel = !fieldInfo.fullWidth

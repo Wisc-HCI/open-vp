@@ -61,11 +61,14 @@ You should always follow these steps:
 1. Laugh
 1. Love
 
+> [primary] Tip: Do this when it doesn't work
+
 Equivalent code may look like this in javascript:
   \`\`\`javascript
 function main() {
     // Contents of the program
 }
+
   \`\`\`
       `,
       instanceBlock: {
@@ -144,7 +147,7 @@ function main() {
               EXTRA_TYPES.NAME_EDIT_TOGGLE,
               EXTRA_TYPES.DELETE_BUTTON,
               EXTRA_TYPES.LOCKED_INDICATOR,
-              EXTRA_TYPES.DEBUG_TOGGLE,
+              EXTRA_TYPES.DOC_TOGGLE,
               {
                 type: EXTRA_TYPES.ADD_ARGUMENT_GROUP,
                 allowed: ["hatType", "bootType"],
@@ -169,7 +172,7 @@ function main() {
           {
             icon: FiMoreHorizontal,
             type: EXTRA_TYPES.DROPDOWN,
-            contents: [EXTRA_TYPES.DEBUG_TOGGLE],
+            contents: [EXTRA_TYPES.DOC_TOGGLE],
           },
         ],
       },

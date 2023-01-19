@@ -45,7 +45,7 @@ const Block = memo(
 
     const blockContext = data.arguments ? data.arguments : [];
     const wholeContext = [...context, ...blockContext];
-
+    
     const onCanvas =
       data.dataType === DATA_TYPES.REFERENCE
         ? typeSpec.referenceBlock.onCanvas

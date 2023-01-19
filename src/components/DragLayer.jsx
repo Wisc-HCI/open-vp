@@ -11,7 +11,6 @@ export const DragLayer = ({ highlightColor }) => {
   }));
 
   const { zoom } = useViewport();
-  console.log(zoom)
 
   return (
     <div
@@ -29,8 +28,8 @@ export const DragLayer = ({ highlightColor }) => {
       {item?.data?.dataType && (
         <div
           style={{
-            transform: `translate(${currentOffset ? currentOffset.x/zoom : 0}px, ${
-              currentOffset ? currentOffset.y/zoom : 0
+            transform: `translate(${currentOffset ? currentOffset.x : 0}px, ${
+              currentOffset ? currentOffset.y : 0
             }px) scale(${zoom})`,
           }}
         >

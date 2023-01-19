@@ -176,12 +176,11 @@ const DocToggleExtra = memo(
   ({ docActive, setDocActive, inTopLevel, data, locked }) => {
     const Icon = docActive ? FiXCircle : FiInfo;
     const disabled = data.dataType === DATA_TYPES.INSTANCE && locked;
-    console.log(data)
+    
     const hasFeatured = useProgrammingStore(
       (state) => state.featuredDocs[data.id] !== undefined || state?.featuredDocs[data?.refData?.id] !== undefined,
       shallow
     );
-    // console.log('hasFeatured',hasFeatured)
 
     return inTopLevel ? (
       <Badge

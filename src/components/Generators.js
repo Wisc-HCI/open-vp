@@ -1,5 +1,6 @@
 import { DATA_TYPES, TYPES } from './Constants';
 import { v4 as uuidv4 } from "uuid";
+import { functionInstanceAsType } from './Block/Utility';
 
 const generateUuid = (type) => {
     return `${type}-${uuidv4()}`;
@@ -78,15 +79,21 @@ export const combinedBlockData = (state,staticData,id) => {
     const data = staticData ? staticData : state.programData[id] ? state.programData[id] : null;
     const progress = state.executionData[id];
     const typeSpec = state.programSpec.objectTypes[data?.type] ? state.programSpec.objectTypes[data?.type] : {instanceBlock:{},referenceBlock:{},callBlock:{}};
+    const robustTypeSpec = 
+        (typeSpec.type === TYPES.FUNCTION && data && data.dataType === DATA_TYPES.INSTANCE) 
+        ? functionInstanceAsType(typeSpec,data,state.programData) 
+        : (typeSpec.type === TYPES.FUNCTION && data && data.dataType === DATA_TYPES.CALL) 
+        ? functionInstanceAsType(typeSpec,state.programData[data.ref],state.programData)
+        : typeSpec;
     const refData = data?.ref ? state.programData[data?.ref] : null;
     const selected = data?.selected || refData?.selected;
     const editing = data?.editing || refData?.editing;
-    const argumentBlocks = data?.arguments ? data.arguments : refData?.arguments ? refData.arguments: [];
-    const argumentBlockData = argumentBlocks.map((instanceId)=>{
-        const inst = state.programData[instanceId];
-        const instType = state.programSpec.objectTypes[inst.type];
-        return referenceTemplateFromSpec(inst.type,inst,instType)
-    })
+    // const argumentBlocks = data?.arguments ? data.arguments : refData?.arguments ? refData.arguments: [];
+    // const argumentBlockData = argumentBlocks.map((instanceId)=>{
+    //     const inst = state.programData[instanceId];
+    //     const instType = state.programSpec.objectTypes[inst.type];
+    //     return referenceTemplateFromSpec(inst.type,inst,instType)
+    // })
     // Package up information on the block, data about the corresponding reference (if applicable), and argument blocks it contains
-    return [{...data,refData,selected,editing,argumentBlockData}, typeSpec, progress]
+    return [{...data,refData,selected,editing}, robustTypeSpec, progress]
 }

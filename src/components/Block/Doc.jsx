@@ -39,6 +39,8 @@ import {
   FiSquare
 } from "react-icons/fi";
 import {
+  TYPES,
+  DATA_TYPES,
   CONNECTIONS,
   DOC_FLAG_COLORS,
   SIMPLE_PROPERTY_TYPES,
@@ -46,6 +48,7 @@ import {
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { functionTypeSpec } from "./Utility";
+import { pickBy } from "lodash";
 
 const SHOWN_SIMPLE_TYPES = [
   SIMPLE_PROPERTY_TYPES.BOOLEAN,
@@ -85,12 +88,13 @@ const getColor = (spec) => {
 };
 
 const getReferences = (typeSpec, usedType) => {
+  const referent = typeSpec[usedType].specificType || usedType
   let references = [];
   Object.keys(typeSpec).forEach((typeValue) => {
     let entry = { parent: typeValue, fields: [] };
     if (typeSpec[typeValue].properties) {
       Object.keys(typeSpec[typeValue].properties).forEach((prop) => {
-        if (typeSpec[typeValue].properties[prop].accepts?.includes(usedType)) {
+        if (typeSpec[typeValue].properties[prop].accepts?.includes(referent)) {
           entry.fields.push(prop);
         }
       });
@@ -110,8 +114,6 @@ const ChipMimic = styled("button")(({ theme }) => {
   return {
     display: "inline-block",
     backgroundColor,
-    // paddingTop: 3,
-    // paddingBottom: 3,
     paddingLeft: 6,
     paddingRight: 4,
     borderRadius: 100,
@@ -124,16 +126,21 @@ const ChipMimic = styled("button")(({ theme }) => {
     fontWeight: theme.typography.fontWeightRegular,
     "&:hover, &:focus": {
       backgroundColor: emphasize(backgroundColor, 0.06),
-    },
-    // "&:active": {
-    //   boxShadow: theme.shadows[1],
-    //   backgroundColor: emphasize(backgroundColor, 0.12),
-    // },
+    }
   };
 });
 
 const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
   const fieldInfo = typeInfo[parent]?.properties?.[field];
+  const fullAccepts = fieldInfo?.accepts 
+    ? fieldInfo.accepts.map(a=>{
+      if (typeInfo[a]) {
+        return [a]
+      } else {
+        return Object.keys(pickBy(typeInfo,(info)=>info.specificType === a))
+      }
+    }).reduce((accumulator,currentValue)=>[...accumulator,...currentValue],[])
+    : [];
   const variant = fieldInfo?.accepts
     ? "block"
     : SHOWN_SIMPLE_TYPES.includes(fieldInfo?.type)
@@ -260,8 +267,9 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
             lineHeight: 1.75,
           }}
         >
-          {fieldInfo?.accepts?.map((t) => (
+          {fullAccepts?.map((t) => (
             <TypeLink
+              key={t}
               label={typeInfo[t]?.name || "Unrecognized"}
               color={getColor(typeInfo[t])}
               onClick={(e) => {
@@ -274,24 +282,6 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
           ))}
         </CardContent>
       )}
-
-      {/* <Grid container spacing={1}> */}
-      {/* <Grid item xs={4}>
-          <Typography >
-            {fieldInfo.name}
-          </Typography>
-        </Grid> */}
-      {/* <Grid item xs={8}>
-          <Typography
-            sx={{ fontSize: 14, textAlign: "center", fontStyle: "italic" }}
-            color="text.secondary"
-            gutterBottom={false}
-          >
-            {fieldInfo.accepts ? "Accepts" : fieldInfo.type}
-          </Typography>
-        </Grid> */}
-
-      {/* </Grid> */}
     </Card>
   );
 };
@@ -426,7 +416,13 @@ export const TypeDescription = ({ type }) => {
 
 export const Doc = forwardRef(({ data, inDrawer }, ref) => {
   const { zoom } = useViewport();
-  const [path, setPath] = useState([data.type]);
+  // console.log(data);
+  const typeKey = data?.typeSpec?.type === TYPES.FUNCTION 
+    ? data.id 
+    : data.dataType === DATA_TYPES.CALL 
+    ? data.ref
+    : data.type;
+  const [path, setPath] = useState([typeKey]);
   const activeType = path[path.length - 1];
   const typeInfo = useProgrammingStore(
     (state) =>
@@ -491,7 +487,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
             e.preventDefault();
             if (typeInfo[props.href]) {
               handleLinkClick(props.href);
-              if (tab === "featured" && props.href !== data.type) {
+              if (tab === "featured" && props.href !== typeKey) {
                 setTab("description");
               }
             }
@@ -561,6 +557,13 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
               severity = "info";
               color = "info";
               child.props.children[idx] = innerChild.replace("[info]", "");
+            } if (
+              typeof innerChild === "string" &&
+              innerChild.includes("[primary]")
+            ) {
+              severity = "info";
+              color = "primary";
+              child.props.children[idx] = innerChild.replace("[primary]", "");
             } else if (
               typeof innerChild === "string" &&
               innerChild.includes("[success]")
@@ -593,7 +596,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
           variant="filled"
           severity={severity}
           color={color}
-          icon={color === "quiet" ? <FiPaperclip /> : undefined}
+          icon={color === "quiet" || color === "primary" ? <FiPaperclip /> : undefined}
         >
           <span children={cleaned} />
         </Alert>

@@ -38,7 +38,7 @@ import { mapValues } from "lodash";
 import { pickBy } from "lodash";
 
 export const functionTypeSpec = (typeSpec, programData) => {
-  const augmented = pickBy(typeSpec,info=>info.type !== TYPES.FUNCTION);
+  const augmented = pickBy(typeSpec, (info) => info.type !== TYPES.FUNCTION);
   const functionKeys = Object.keys(typeSpec).filter(
     (typeKey) => typeSpec[typeKey].type === TYPES.FUNCTION
   );
@@ -49,26 +49,35 @@ export const functionTypeSpec = (typeSpec, programData) => {
         functionKeys.includes(data.type)
     )
     .forEach((functionInstance) => {
-      const initialFunctionDef = {...typeSpec[functionInstance.type],name:functionInstance.name};
-      let newProperties = {};
-      functionInstance.arguments.forEach(arg=>{
-        const argBlock = programData[arg];
-        newProperties[arg] = {
-          name: argBlock.name,
-          accepts: [argBlock.type],
-          default: null,
-          isFunctionArgument: true
-        }
-      })
-      let functionTypeDef = {
-        ...initialFunctionDef,
-        properties:{
-          ...mapValues(initialFunctionDef.properties,(v)=>({...v,isFunctionBlockField:true})),
-          ...newProperties
-        }};
-      augmented[functionInstance.id] = functionTypeDef
+      augmented[functionInstance.id] = functionInstanceAsType(typeSpec[functionInstance.type],functionInstance,programData);
     });
   return augmented;
+};
+
+export const functionInstanceAsType = (functionTypeSpec, functionInstance, programData) => {
+  const initialFunctionDef = { ...functionTypeSpec, name: functionInstance.name, specificType: functionInstance.type };
+  let newProperties = {};
+  functionInstance.arguments?.forEach((arg) => {
+    const argBlock = programData[arg];
+    newProperties[arg] = {
+      name: argBlock.name,
+      accepts: [argBlock.type],
+      default: null,
+      isFunctionArgument: true,
+    };
+  });
+  let functionTypeDef = {
+    ...initialFunctionDef,
+    properties: {
+      ...mapValues(initialFunctionDef.properties, (v) => ({
+        ...v,
+        isFunctionBlockField: true,
+      })),
+      ...newProperties,
+    },
+  };
+  return functionTypeDef;
+  
 };
 
 const NumberInputField = styled(Input)`

@@ -19,6 +19,87 @@ import { CLIPBOARD_ACTION } from "../Constants";
 import { FiCircle, FiClipboard, FiMoreHorizontal } from "react-icons/fi";
 import { useHover } from '@use-gesture/react';
 
+const DISABLED_STYLES = {
+  backgroundColor:'#88888800',
+  boxShadow: 'none'
+}
+
+const VALID_DROP_STYLES = {
+  backgroundColor:'#88888888',
+  boxShadow: "inset 0pt 0pt 0pt 3pt #dddddd55"
+}
+
+const PERIPHERAL_STYLES = {
+  height: 8
+}
+
+const DEFAULT_STYLES = {
+  height: 30,
+}
+
+const FILLED_STYLES = {
+  height: 'auto'
+}
+
+const REGION_VARIANTS = {
+  disabledPeripheralEmpty:{
+    ...DEFAULT_STYLES,
+    ...PERIPHERAL_STYLES,
+    ...DISABLED_STYLES
+  },
+  disabledNonPeripheralEmpty:{
+    ...DEFAULT_STYLES,
+    ...DISABLED_STYLES
+  },
+  validDropPeripheralEmpty:{
+    ...DEFAULT_STYLES,
+    ...PERIPHERAL_STYLES,
+    ...VALID_DROP_STYLES
+  },
+  validDropNonPeripheralEmpty:{
+    ...DEFAULT_STYLES,
+    ...VALID_DROP_STYLES
+  },
+  defaultPeripheralEmpty:{
+    ...DEFAULT_STYLES,
+    ...PERIPHERAL_STYLES
+  },
+  defaultNonPeripheralEmpty:{
+    ...DEFAULT_STYLES
+  },
+  disabledPeripheralFilled:{
+    ...DEFAULT_STYLES,
+    ...PERIPHERAL_STYLES,
+    ...DISABLED_STYLES,
+    ...FILLED_STYLES
+  },
+  disabledNonPeripheralFilled:{
+    ...DEFAULT_STYLES,
+    ...DISABLED_STYLES,
+    ...FILLED_STYLES
+  },
+  validDropPeripheralFilled:{
+    ...DEFAULT_STYLES,
+    ...PERIPHERAL_STYLES,
+    ...VALID_DROP_STYLES,
+    ...FILLED_STYLES
+  },
+  validDropNonPeripheralFilled:{
+    ...DEFAULT_STYLES,
+    ...VALID_DROP_STYLES,
+    ...FILLED_STYLES
+  },
+  defaultPeripheralFilled:{
+    ...DEFAULT_STYLES,
+    ...PERIPHERAL_STYLES,
+    ...FILLED_STYLES
+  },
+  defaultNonPeripheralFilled:{
+    ...DEFAULT_STYLES,
+    ...FILLED_STYLES
+  }
+}
+
 const transferBlockSelector = (state) => state.transferBlock;
 
 export const DropRegion = memo(
@@ -27,7 +108,7 @@ export const DropRegion = memo(
     parentId,
     fieldInfo,
     idx,
-    minHeight,
+    peripheral,
     hideText,
     disabled,
     highlightColor,
@@ -139,19 +220,6 @@ export const DropRegion = memo(
 
     const [hoverState, setHoverState] = useState({hovered:false,expanded:false})
 
-    const regionVariants = {
-      hover:{
-        minHeight,
-        height:minHeight+5,
-        backgroundColor:'#88888888'
-      },
-      noHover:{
-        height:'inherit',
-        minHeight,
-        backgroundColor:'#88888800'
-      }
-    };
-
     const bind = useHover(({hovering,intentional})=>{
       if (hovering && intentional) {
         setHoverState({...hoverState,hovered:true})
@@ -160,6 +228,36 @@ export const DropRegion = memo(
       }
       
     })
+
+    const filled = renderedData || !hideText;
+
+    const matched = validDropType || (validClipboard && activeClipboard);
+    
+    const variant = 
+      filled && disabled && peripheral
+      ? 'disabledPeripheralFilled'
+      : filled && disabled && !peripheral
+      ? 'disabledNonPeripheralFilled'
+      : filled && matched && peripheral
+      ? 'validDropPeripheralFilled'
+      : filled && matched && !peripheral
+      ? 'validDropNonPeripheralFilled'
+      : filled && peripheral
+      ? 'defaultPeripheralFilled'
+      : filled 
+      ? 'defaultNonPeripheralFilled'
+      : !filled && disabled && peripheral
+      ? 'disabledPeripheralEmpty'
+      : !filled && disabled && !peripheral
+      ? 'disabledNonPeripheralEmpty'
+      : !filled && matched && peripheral
+      ? 'validDropPeripheralEmpty'
+      : !filled && matched && !peripheral
+      ? 'validDropNonPeripheralEmpty'
+      : !filled && peripheral
+      ? 'defaultPeripheralEmpty'
+      : 'defaultNonPeripheralEmpty';
+
 
     const accepts = hoverState.expanded ? fieldInfo.accepts : fieldInfo.accepts ? fieldInfo.accepts.slice(0,3) : [];
 
@@ -193,28 +291,12 @@ export const DropRegion = memo(
           }}
           style={{
             borderRadius: 4,
-            backgroundColor:
-              !disabled &&
-              ((dropProps.isOver && validDropType) ||
-                (inClipboard && validClipboard && activeClipboard))
-                ? "#44884488"
-                : !disabled &&
-                  (validDropType || (validClipboard && activeClipboard))
-                ? "#88888888"
-                : null,
-            // minHeight,
             minWidth: 100,
             display: "flex",
-            flex: 1,
-            boxShadow:
-              !disabled &&
-              (validDropType || (validClipboard && activeClipboard))
-                ? "inset 0pt 0pt 0pt 3pt #dddddd55"
-                : null,
+            flex: 1
           }}
-          initial={{minHeight,height:'inherit'}}
-          animate={hoverState.hovered === true && !(renderedData || isPreview) ?'hover':'noHover'}
-          variants={regionVariants}
+          animate={variant}
+          variants={REGION_VARIANTS}
           onContextMenu={validClipboard ? handleContextMenu : null}
         >
           {renderedData && !isPreview ? (
@@ -222,7 +304,7 @@ export const DropRegion = memo(
               initial={{ scaleY: 0 }}
               animate={{ scaleY: 1 }}
               // exit={{ scaleY: 0 }}
-              style={{ flex: 1, minHeight, paddingTop: 4, paddingBottom: 4 }}
+              style={{ flex: 1, minHeight: peripheral ? 8 : 30, paddingTop: 4, paddingBottom: 4 }}
               key="not-preview-rendered-data"
             >
               <Block

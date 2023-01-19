@@ -22,8 +22,8 @@ export const InnerBlockContainer = styled(Card,{shouldForwardProp: prop=>!['mini
     padding: minified ? 0 : "4px",
     backgroundColor: focused ? lighten(color,0.1) : color,
     boxShadow: 
-      (selected && focused) ? `0pt 0pt 0pt 5pt ${lighten(theme.palette.primary.main,0.5)}`
-      : selected ? `0pt 0pt 0pt 5pt ${theme.palette.primary.main}` 
+      (selected && focused) ? `0pt 0pt 2pt 1pt #ffffffaa, 0pt 0pt 0pt 5pt ${lighten(theme.palette.primary.main,0.5)}, 0pt 0pt 4pt 7pt black`
+      : selected ? `0pt 0pt 2pt 1pt #ffffffaa, 0pt 0pt 0pt 5pt ${theme.palette.primary.main}, 0pt 0pt 4pt 7pt black` 
       : focused ? `0pt 0pt 0pt 3pt ${lighten(color,0.5)}}` 
       : null,
     // '&:hover' : {
