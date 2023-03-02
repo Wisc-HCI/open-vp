@@ -14,10 +14,10 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { TypeDescription } from "./Doc";
+import { TypeDescription, ChipMimic } from "./Doc";
 import { CLIPBOARD_ACTION } from "../Constants";
 import { FiCircle, FiClipboard, FiMoreHorizontal } from "react-icons/fi";
-import { useHover } from '@use-gesture/react';
+// import { useHover } from '@use-gesture/react';
 
 const DISABLED_STYLES = {
   backgroundColor:'#88888800',
@@ -139,16 +139,16 @@ export const DropRegion = memo(
     const lastAction = useProgrammingStore((state) => state.clipboard.action);
 
     const paste = useProgrammingStore((state) => state.paste, shallow);
-    const inClipboard = useProgrammingStore(
-      useCallback(
-        (state) =>
-          state.clipboard.fieldInfo?.parentId === parentId &&
-          state.clipboard.fieldInfo?.fieldInfo === fieldInfo &&
-          state.clipboard.fieldInfo?.idx === idx,
-        [parentId, fieldInfo, idx]
-      ),
-      shallow
-    );
+    // const inClipboard = useProgrammingStore(
+    //   useCallback(
+    //     (state) =>
+    //       state.clipboard.fieldInfo?.parentId === parentId &&
+    //       state.clipboard.fieldInfo?.fieldInfo === fieldInfo &&
+    //       state.clipboard.fieldInfo?.idx === idx,
+    //     [parentId, fieldInfo, idx]
+    //   ),
+    //   shallow
+    // );
 
     const [dropProps, drop] = useDrop(
       () => ({
@@ -218,16 +218,8 @@ export const DropRegion = memo(
       setContextMenu(null);
     };
 
-    const [hoverState, setHoverState] = useState({hovered:false,expanded:false})
+    const [expandedTooltip, setExpandedTooltip] = useState(false);
 
-    const bind = useHover(({hovering,intentional})=>{
-      if (hovering && intentional) {
-        setHoverState({...hoverState,hovered:true})
-      } else {
-        setHoverState({hovered:false,expanded:false})
-      }
-      
-    })
 
     const filled = renderedData || !hideText;
 
@@ -259,36 +251,26 @@ export const DropRegion = memo(
       : 'defaultNonPeripheralEmpty';
 
 
-    const accepts = hoverState.expanded ? fieldInfo.accepts : fieldInfo.accepts ? fieldInfo.accepts.slice(0,3) : [];
+    const accepts = expandedTooltip ? fieldInfo.accepts : fieldInfo.accepts ? fieldInfo.accepts.slice(0,3) : [];
 
     return (
       <Tooltip
-        open={hoverState.hovered}
-        // disableFocusListener={validClipboard||limitedRender}
-        // disableHoverListener={validClipboard||limitedRender}
-        // enterDelay={1000}
+        onClose={()=>setExpandedTooltip(false)}
         title={
           <div>
             {accepts.map((accept) => (
               <TypeDescription key={accept} type={accept} />
             ))}
-            {!hoverState.expanded && (fieldInfo.accepts?.length - accepts.length > 0) && (
-              <span style={{fontSize:13,marginLeft:10}}>+ {fieldInfo.accepts.length - accepts.length}</span>
+            {!expandedTooltip && (fieldInfo.accepts?.length - accepts.length > 0) && (
+              <ChipMimic onClick={()=>setExpandedTooltip(true)}>+ {fieldInfo.accepts.length - accepts.length}</ChipMimic>
             )}
           </div>
         }
-        arrow
+        arrow disabled={Boolean(contextMenu)}
       >
         <motion.div
           className="nodrag"
           ref={drop}
-          {...bind()}
-          onClick={(e)=>{
-            if (hoverState.hovered) {
-              setHoverState({hovered:true,expanded:!hoverState.expanded})
-            }
-            e.stopPropagation()
-          }}
           style={{
             borderRadius: 4,
             minWidth: 100,
