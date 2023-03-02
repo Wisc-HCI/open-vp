@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useRef } from "react";
 import {
   getSmoothStepPath,
-  useReactFlow,
   EdgeLabelRenderer,
   // getEdgeCenter,
 } from "reactflow";
@@ -13,6 +12,7 @@ import { Spinner } from "./Block/Utility";
 import shallow from "zustand/shallow";
 import { strip } from "number-precision";
 import { motion } from "framer-motion";
+import { Fade, Stack } from "@mui/material";
 
 const EdgeButton = styled.button({
   all: "unset",
@@ -124,6 +124,8 @@ export const CanvasEdge = ({
     shallow
   );
 
+  const [isOpen, setIsOpen] = useState(false);
+
   const bounds = { width: 165, height: 35 };
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
@@ -135,29 +137,13 @@ export const CanvasEdge = ({
     targetPosition,
   });
 
-  const [hoveredLine, setHoveredLine] = useState(false);
-  const [coords, setCoords] = useState([labelX, labelY]);
-  const gRef = useRef();
-  const { project } = useReactFlow();
-
-  const handleHoverLine = (e) => {
-    setHoveredLine((prev) => !prev);
-    const { x, y } = project({
-      x: e.nativeEvent.offsetX,
-      y: e.nativeEvent.offsetY,
-    });
-    setCoords([x, y]);
-  };
-
   return (
     edge && (
       <g
-        ref={gRef}
-        style={{ zIndex: hoveredLine ? 100 : 1, userSelect: "none" }}
-        onMouseEnter={handleHoverLine}
-        onMouseLeave={handleHoverLine}
+        style={{ zIndex: isOpen ? 100 : 1, userSelect: "none" }}
         onClick={() => {
-          onClick(edge);
+          console.log("click");
+          setIsOpen(!isOpen);
         }}
       >
         <motion.path
@@ -168,7 +154,7 @@ export const CanvasEdge = ({
             fill: "transparent",
             userSelect: "none",
           }}
-          stroke={hoveredLine ? "#ccc" : "#aaa"}
+          stroke={open ? "#ccc" : "#aaa"}
           d={edgePath}
           markerEnd={markerEnd}
           strokeDasharray="10 6"
@@ -184,31 +170,16 @@ export const CanvasEdge = ({
           markerEnd={markerEnd}
           strokeLinecap="round"
           variants={mainVariants}
-          animate={hoveredLine ? "highlighted" : "default"}
+          animate={isOpen ? "highlighted" : "default"}
         />
         <EdgeLabelRenderer>
-          <motion.div
+          <Fade in={isOpen}>
+            <div
             className="nodrag nopan"
-            variants={{
-              visible: {
-                backgroundColor: "#333",
-                opacity: 1,
-                scale: 0,
-                transform: `translate(${coords[0] - bounds.width / 2}px,${
-                  coords[1] - bounds.height / 2
-                }px)`,
-              },
-              invisible: {
-                backgroundColor: "#555",
-                opacity: 0,
-                scale: 1,
-                transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-              },
-            }}
-            animate={hoveredLine ? "visible" : "invisible"}
             style={{
+              backgroundColor: "#333",
               position: "absolute",
-
+              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
               borderRadius: 5,
               borderColor: "white",
               flexDirection: "row",
@@ -216,73 +187,67 @@ export const CanvasEdge = ({
               userSelect: "none",
               pointerEvents: "all",
             }}
-          >
-            <div
-              style={{
-                height: `${bounds.height}px`,
-                width: `${bounds.width}px`,
-                justifyContent: "space-around",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                color: "white",
-                userSelect: "none",
-              }}
             >
-              <EdgeField
-                type={
-                  edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? "number" : null
-                }
-                className="nodrag"
-                value={
-                  edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
-                    ? Number(edge.name)
-                    : edge.name
-                }
-                style={{
-                  maxWidth:
-                    edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
-                      ? bounds.width - 110
-                      : bounds.width - 90,
-                }}
-                onChange={(v) => updateEdgeName(edge.id, v.target.value)}
+              <Stack
+                direction="row"
+                alignItems="center"
                 onClick={(e) => e.stopPropagation()}
-              />
-              {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER && (
-                <Spinner
-                  above={false}
-                  below={false}
-                  onClickDown={(v) =>
-                    updateEdgeName(edge.id, strip(Number(edge.name) - 0.1))
+              >
+                <EdgeField
+                  type={
+                    edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? "number" : null
                   }
-                  onClickUp={(v) =>
-                    updateEdgeName(edge.id, strip(Number(edge.name) + 0.1))
+                  className="nodrag"
+                  value={
+                    edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
+                      ? Number(edge.name)
+                      : edge.name
                   }
+                  style={{
+                    maxWidth:
+                      edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER
+                        ? bounds.width - 110
+                        : bounds.width - 90,
+                  }}
+                  onChange={(v) => updateEdgeName(edge.id, v.target.value)}
+                  onClick={(e) => e.stopPropagation()}
                 />
-              )}
-              <EdgeButton
-                onClick={(e) => {
-                  toggleEdgeMode(edge.id);
-                  e.stopPropagation();
-                }}
-              >
-                {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? (
-                  <FiType />
-                ) : (
-                  <FiHash />
+                {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER && (
+                  <Spinner
+                    above={false}
+                    below={false}
+                    onClickDown={(v) =>
+                      updateEdgeName(edge.id, strip(Number(edge.name) - 0.1))
+                    }
+                    onClickUp={(v) =>
+                      updateEdgeName(edge.id, strip(Number(edge.name) + 0.1))
+                    }
+                  />
                 )}
-              </EdgeButton>
-              <EdgeButton
-                onClick={(e) => {
-                  deleteEdge(edge.id);
-                  e.stopPropagation();
-                }}
-              >
-                <FiTrash2 />
-              </EdgeButton>
+                <EdgeButton
+                  onClick={(e) => {
+                    toggleEdgeMode(edge.id);
+                    e.stopPropagation();
+                  }}
+                >
+                  {edge.mode === SIMPLE_PROPERTY_TYPES.NUMBER ? (
+                    <FiType />
+                  ) : (
+                    <FiHash />
+                  )}
+                </EdgeButton>
+                <EdgeButton
+                  onClick={(e) => {
+                    deleteEdge(edge.id);
+                    e.stopPropagation();
+                  }}
+                >
+                  <FiTrash2 />
+                </EdgeButton>
+              </Stack>
             </div>
-          </motion.div>
-        </EdgeLabelRenderer>
+            </Fade>
+          </EdgeLabelRenderer>
       </g>
     )
   );
