@@ -106,7 +106,7 @@ const getReferences = (typeSpec, usedType) => {
   return references;
 };
 
-const ChipMimic = styled("button")(({ theme }) => {
+export const ChipMimic = styled("button")(({ theme }) => {
   const backgroundColor =
     theme.palette.mode === "light"
       ? theme.palette.grey[100]
