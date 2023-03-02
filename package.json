@@ -1,7 +1,7 @@
 {
   "name": "simple-vp",
   "private": true,
-  "version": "0.8.8",
+  "version": "0.8.9",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -20,7 +20,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build -s public --output-dir docs",
+    "build-storybook": "storybook build --output-dir docs",
     "generate-all": "npm run build-storybook && vite build"
   },
   "dependencies": {
