@@ -21,8 +21,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build --output-dir docs",
-    "generate-all": "npm run build-storybook && vite build",
-    "chromatic": "npx chromatic --project-token=91fe49bed19f"
+    "generate-all": "npm run build-storybook && vite build"
   },
   "dependencies": {
     "@mui/lab": "^5.0.0-alpha.112",
