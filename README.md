@@ -1,7 +1,7 @@
 # Simple-VP
 *A highly customizable visual programming environment for React*
 
-Try out examples in the [Storybook](https://wisc-hci.github.io/simple-vp/)
+Try out examples in the [Storybook](https://6404f678cd3c67a156715458-pyohcpyhiw.chromatic.com/)
 
 ## Usage
 
