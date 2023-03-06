@@ -8,6 +8,8 @@ import { IconButton, Stack } from "@mui/material";
 import { FiRotateCw } from "react-icons/fi";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { ErrorBoundary } from 'react-error-boundary';
+import ErrorFallback from './ErrorFallback';
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -40,6 +42,7 @@ const Template = (args) => {
   // console.log(onFile)
 
   return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
     <div
       style={{
         display: "flex",
@@ -93,6 +96,7 @@ const Template = (args) => {
         />
       </div>
     </div>
+    </ErrorBoundary>
   );
 };
 

@@ -1,8 +1,10 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDefaultProgrammingStore, referenceTemplateFromSpec } from '../components';
 import { ExternalBlock } from '../components';
 import basicConfig from './assets/basicConfig';
 import basicStarter from './assets/basicStarter';
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallback from "./ErrorFallback";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -14,13 +16,14 @@ export default {
 const Template = (args) => {
   const { drawers, objectTypes, programData, highlightColor } = args;
 
-  useLayoutEffect(()=>{
+  useEffect(()=>{
     useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},programData});
-  })
+  },[drawers,objectTypes,programData])
 
   const instRef = referenceTemplateFromSpec('hatType',programData['6dewwwwww'],objectTypes.hatType)
 
   return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
     <div style={{width:300,padding:4}}>
       <div style={{paddingBottom:4}}>
         <ExternalBlock 
@@ -40,6 +43,7 @@ const Template = (args) => {
       </div>
       
     </div>
+    </ErrorBoundary>
     )
 };
 

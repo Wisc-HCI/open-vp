@@ -1,8 +1,10 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import {Environment, useDefaultProgrammingStore, DATA_TYPES, TYPES, EXTRA_TYPES } from '../components';
 import { FiClipboard, FiBriefcase, FiGrid, FiBox, FiLogOut, FiMoreHorizontal, FiLayers, FiFeather } from "react-icons/fi";
 import { SIMPLE_PROPERTY_TYPES } from '../components/Constants';
 import useMeasure from 'react-use-measure';
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallback from "./ErrorFallback";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -16,13 +18,16 @@ const Template = (args) => {
 
   const [ref, bounds] = useMeasure();
   
-  useLayoutEffect(()=>{
+  useEffect(()=>{
     useDefaultProgrammingStore.setState({programSpec:{drawers,objectTypes},tabs, activeTab, programData});
-  })
+  },[programData,activeTab,tabs,objectTypes,drawers])
+  
   return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
     <div ref={ref} style={{display:'flex',height:'100vh',flexDirection:'row',backgroundColor:'#333'}}>
       <Environment {...otherArgs} store={useDefaultProgrammingStore} height={bounds.height} width={bounds.width} drawerWidth={drawerWidth}/>
     </div>
+    </ErrorBoundary>
     )
 };
 
