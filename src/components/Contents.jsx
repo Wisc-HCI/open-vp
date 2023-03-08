@@ -20,7 +20,7 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { stringEquality } from "./Block/Utility";
 import { Stack, Box, Collapse, Card, Alert, AlertTitle } from "@mui/material";
 import { CanvasTabs } from "./CanvasTabs";

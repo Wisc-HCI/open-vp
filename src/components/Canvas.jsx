@@ -17,7 +17,7 @@ import useMeasure from "react-use-measure";
 import { FiLock, FiUnlock, FiClipboard } from "react-icons/fi";
 // import { isEqual, pick } from "lodash";
 import { stringEquality } from "./Block/Utility";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { compareBlockData } from "./Block/Utility";
 import "reactflow/dist/style.css";
 import "./canvas.css";

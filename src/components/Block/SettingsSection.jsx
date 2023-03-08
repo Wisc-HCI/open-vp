@@ -11,7 +11,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { SettingsContainer } from "./BlockContainers";
 import { ExpandCarrot } from "./ExpandCarrot";
 import { NumberInput, Vector3Input } from "./Utility";

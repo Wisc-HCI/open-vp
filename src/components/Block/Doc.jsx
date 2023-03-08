@@ -24,7 +24,7 @@ import {
 import { darken, emphasize, styled } from "@mui/material/styles";
 import { forwardRef, useState, useCallback } from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { Remark } from "react-remark";
 import {
   FiChevronDown,

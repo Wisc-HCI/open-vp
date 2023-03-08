@@ -7,7 +7,7 @@ import { VisualBlock } from "./VisualBlock";
 import { DATA_TYPES } from "..";
 import { combinedBlockData } from "../Generators";
 import { stringEquality } from "./Utility";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { CLIPBOARD_ACTION } from "../Constants";
 
 const Block = memo(

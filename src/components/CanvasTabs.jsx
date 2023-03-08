@@ -1,7 +1,7 @@
 import React, { memo, useState, forwardRef } from "react";
 import { Reorder, AnimatePresence, motion, calcLength } from "framer-motion";
 import { useProgrammingStore } from "./ProgrammingContext";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import {
   FiX,
   FiPlus,

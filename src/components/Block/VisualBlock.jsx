@@ -34,7 +34,7 @@ import {
 import { BlockHeader } from "./BlockHeader";
 import { MinifiedBar } from "./MinifiedBar";
 import { SettingsSection } from "./SettingsSection";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { compareBlockData } from "./Utility";
 import { Doc } from "./Doc";
 

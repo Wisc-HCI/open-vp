@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import {Environment, useDefaultProgrammingStore } from '../components';
 import useMeasure from 'react-use-measure';
 import coframeConfig from './assets/coframeConfig';

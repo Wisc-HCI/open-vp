@@ -5,7 +5,7 @@ import { Block, PreviewBlock } from "./index";
 import { isEqual, intersection } from "lodash";
 import { motion } from "framer-motion";
 import { stringEquality } from "./Utility";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import {
   Tooltip,
   Typography,
@@ -268,17 +268,18 @@ export const DropRegion = memo(
         }
         arrow disabled={Boolean(contextMenu)}
       >
-        <motion.div
+        <div
           className="nodrag"
           ref={drop}
           style={{
             borderRadius: 4,
             minWidth: 100,
             display: "flex",
-            flex: 1
+            flex: 1,
+            ...REGION_VARIANTS[variant]
           }}
-          animate={variant}
-          variants={REGION_VARIANTS}
+          // animate={variant}
+          // variants={REGION_VARIANTS}
           onContextMenu={validClipboard ? handleContextMenu : null}
         >
           {renderedData && !isPreview ? (
@@ -352,7 +353,7 @@ export const DropRegion = memo(
               <ListItemText primary="Paste"></ListItemText>
             </MenuItem>
           </Menu>
-        </motion.div>
+        </div>
       </Tooltip>
     );
   }

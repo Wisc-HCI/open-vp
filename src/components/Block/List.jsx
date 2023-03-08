@@ -2,7 +2,7 @@ import React, {memo} from 'react';
 import { Block } from ".";
 import { DropRegion } from "./DropRegion";
 
-export const List = ({ ids, parentId, fieldInfo, interactionDisabled, highlightColor, context, limitedRender }) => {
+export const List = memo(({ ids, parentId, fieldInfo, interactionDisabled, highlightColor, context, limitedRender }) => {
   // const setField = useStore((store) => store.setField);
   if (ids.length === 0) {
     return (
@@ -94,4 +94,4 @@ export const List = ({ ids, parentId, fieldInfo, interactionDisabled, highlightC
       </div>
     );
   }
-};
+});

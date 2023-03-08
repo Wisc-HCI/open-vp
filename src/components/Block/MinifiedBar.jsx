@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { SIMPLE_PROPERTY_TYPES, UNRENDERED_PROPS } from "../Constants";
 import { useProgrammingStore } from "../ProgrammingContext";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import {
   Box,
   Tooltip,

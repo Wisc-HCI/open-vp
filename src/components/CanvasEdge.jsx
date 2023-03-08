@@ -9,7 +9,7 @@ import { FiTrash2, FiType, FiHash } from "react-icons/fi";
 import styled from "@emotion/styled";
 import { SIMPLE_PROPERTY_TYPES } from "./Constants";
 import { Spinner } from "./Block/Utility";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { strip } from "number-precision";
 import { motion } from "framer-motion";
 import { Fade, Stack } from "@mui/material";

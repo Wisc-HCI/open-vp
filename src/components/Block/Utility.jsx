@@ -1,19 +1,8 @@
-import React, { useState, useEffect, forwardRef, memo } from "react";
-// import { styled, keyframes } from "@stitches/react";
-// import styled from "styled-components";
+import React, { useState, forwardRef, memo } from "react";
 import styled from "@emotion/styled";
-// import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-// import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
-// import * as SeparatorPrimitive from "@radix-ui/react-separator";
-// import * as SwitchPrimitive from "@radix-ui/react-switch";
-// import * as LabelPrimitive from "@radix-ui/react-label";
-// import * as TooltipPrimitive from "@radix-ui/react-tooltip";
-// import * as SliderPrimitive from "@radix-ui/react-slider";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import { plus, strip } from "number-precision";
-// import { debounce } from "lodash";
-// import { NumberInput as MuiNumberInput } from "@mui-treasury/component-numberinput";
 import { isNumber, isNaN } from "lodash";
 import {
   Menu,
@@ -26,16 +15,162 @@ import {
   Input,
   Stack,
 } from "@mui/material";
-import { pick, isEqual } from "lodash";
-// import { TextField, InputAdornment } from "@mui/material";
+import { pick, isEqual, mapValues, pickBy } from "lodash";
 import {
   ATTENDED_DATA_PROPERTIES,
   DATA_TYPES,
   SIMPLE_PROPERTY_TYPES,
   TYPES,
 } from "../Constants";
-import { mapValues } from "lodash";
-import { pickBy } from "lodash";
+
+export const NUMERIC_STATUS = {
+  BELOW: "BELOW",
+  LOWER_BOUND: "LOWER",
+  WITHIN: "WITHIN",
+  UPPER_BOUND: "UPPER",
+  ABOVE: "ABOVE",
+  INVALID: "INVALID"
+};
+
+const PASSABLE_NUMERIC_STATUSES = [
+  NUMERIC_STATUS.LOWER_BOUND,
+  NUMERIC_STATUS.WITHIN,
+  NUMERIC_STATUS.UPPER_BOUND
+];
+
+const VALID_CHARS = [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  ".",
+  "-"
+];
+
+export const useNumeric = ({
+  initial = 0,
+  stepSize = 1,
+  min = Number.NEGATIVE_INFINITY,
+  max = Number.POSITIVE_INFINITY,
+  onValidChange = (value) => {}
+}) => {
+  const getStatus = (v) => {
+    if (v < max && v > min) {
+      return NUMERIC_STATUS.WITHIN;
+    } else if (v > max) {
+      return NUMERIC_STATUS.ABOVE;
+    } else if (v === max) {
+      return NUMERIC_STATUS.UPPER_BOUND;
+    } else if (v === min) {
+      return NUMERIC_STATUS.LOWER_BOUND;
+    } else if (v < min) {
+      return NUMERIC_STATUS.BELOW;
+    }
+  };
+
+  const parse = (v) => {
+    if (typeof v === "number") {
+      return { numeric: v, status: getStatus(v), textValue: v.toString() };
+    } else if (typeof v === "string") {
+      const parsed = Number(v);
+      if (v === "-") {
+        return { numeric: 0, status: getStatus(0), textValue: v };
+      }
+      if (isNumber(parsed) && !isNaN(parsed)) {
+        return { numeric: parsed, status: getStatus(parsed), textValue: v };
+      }
+    }
+    console.log("failed with ", v, typeof v);
+  };
+
+  const [state, setState] = useState(parse(initial));
+
+  const onChange = (event) => {
+    if (event?.nativeEvent?.data) {
+      if (!VALID_CHARS.includes(event.nativeEvent.data)) {
+        setState((prev) => ({
+          numeric: prev.numeric,
+          status: prev.status,
+          textValue: prev.textValue
+        }));
+        return;
+      }
+    }
+    if (event.target.value === "-") {
+      console.log("dash input");
+      setState({
+        numeric: 0,
+        status: getStatus(0),
+        textValue: event.target.value
+      });
+      return;
+    }
+
+    if (event.target.value === "") {
+      console.log("empty input");
+      setState({
+        numeric: 0,
+        status: getStatus(0),
+        textValue: event.target.value
+      });
+      return;
+    }
+
+    const newState = parse(event.target.value);
+    if (!newState) {
+      setState((prev) => ({
+        numeric: prev.numeric,
+        status: NUMERIC_STATUS.INVALID,
+        textValue: event.target.value
+      }));
+      return;
+    } else if (PASSABLE_NUMERIC_STATUSES.includes(newState.status)) {
+      setState(newState);
+      onValidChange(newState.numeric);
+      return;
+    } else if (newState.status === NUMERIC_STATUS.BELOW) {
+      setState(newState);
+      onValidChange(min);
+      return;
+    } else if (newState.status === NUMERIC_STATUS.ABOVE) {
+      setState(newState);
+      onValidChange(max);
+      return;
+    }
+    console.log("not handled", event.target.value);
+  };
+
+  const onStepUp = () => {
+    const newState = parse(strip(state.numeric + stepSize));
+    setState(newState);
+    if (PASSABLE_NUMERIC_STATUSES.includes(newState.status)) {
+      onValidChange(newState.numeric);
+    }
+  };
+
+  const onStepDown = () => {
+    const newState = parse(strip(state.numeric - stepSize));
+    setState(newState);
+    if (PASSABLE_NUMERIC_STATUSES.includes(newState.status)) {
+      onValidChange(newState.numeric);
+    }
+  };
+
+  return {
+    textValue: state.textValue,
+    status: state.status,
+    onChange,
+    onStepUp,
+    onStepDown
+  };
+};
+
 
 export const functionTypeSpec = (typeSpec, programData) => {
   const augmented = pickBy(typeSpec, (info) => info.type !== TYPES.FUNCTION);
@@ -410,21 +545,6 @@ export const ScrollRegion = ({
   </StyledScrollArea>
 );
 
-const VALID_CHARS = [
-  "0",
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  ".",
-  "-",
-];
-
 const SpinnerButton = styled.button(
   {
     all: "unset",
@@ -489,7 +609,7 @@ export const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
 
 const CompoundInput = memo(
   forwardRef(({ onChange, value, disabled, min, max, step, ...other }, ref) => {
-    console.log({ min, max });
+    
     return (
       <Stack
         style={{ padding: 1, marginRight: 4 }}
@@ -694,73 +814,20 @@ export const NumberInput = memo(
     min = Number.NEGATIVE_INFINITY,
     max = Number.POSITIVE_INFINITY,
   }) => {
-    const [above, setAbove] = useState(false);
-    const [below, setBelow] = useState(false);
-    const valid = !above && !below;
-    const [storedValue, setStoredValue] = useState(0);
 
-    const setNewFromButton = (change) => {
-      const numericNew = plus(value, change);
-      if (numericNew > max) {
-        setAbove(true);
-        setBelow(false);
-        onChange(max);
-      } else if (numericNew < min) {
-        setAbove(false);
-        setBelow(true);
-        onChange(min);
-      } else {
-        setAbove(false);
-        setBelow(false);
-        onChange(numericNew);
-      }
-    };
-
-    const setNewFromInput = (event) => {
-      console.log(event);
-      if (event?.nativeEvent?.data) {
-        if (!VALID_CHARS.includes(event.nativeEvent.data)) {
-          return;
-        }
-      }
-
-      if (event.target.value === "-") {
-        onChange(0);
-        setStoredValue("-");
-        return;
-      }
-
-      const numericNew = Number(event.target.value);
-      if (!isNumber(numericNew) || isNaN(numericNew)) {
-        return;
-      }
-
-      if (numericNew > max) {
-        setAbove(true);
-        setBelow(false);
-        onChange(max);
-      } else if (numericNew < min) {
-        setAbove(false);
-        setBelow(true);
-        onChange(min);
-      } else {
-        setAbove(false);
-        setBelow(false);
-        onChange(numericNew);
-        setStoredValue(event.target.value);
-      }
-      return;
-    };
-
-    useEffect(() => {
-      if (
-        storedValue !== "-" &&
-        storedValue !== "" &&
-        value !== Number(storedValue)
-      ) {
-        setStoredValue(value);
-      }
-    }, [storedValue, value]);
+    const {
+      textValue,
+      status,
+      onChange:onChangeInner,
+      onStepUp,
+      onStepDown
+    } = useNumeric({
+      initial:value,
+      stepSize:step,
+      min,
+      max,
+      onValidChange:onChange
+    });
 
     return (
       <FormControl
@@ -783,12 +850,12 @@ export const NumberInput = memo(
           id="outlined-position-vector"
           label={label}
           // type='number'
-          color={!valid ? "error" : "primary"}
+          color={PASSABLE_NUMERIC_STATUSES.includes(status) ? "primary" : "error"}
           onFocus={onFocus}
           onBlur={onBlur}
           disabled={disabled}
-          value={storedValue}
-          onChange={setNewFromInput}
+          value={textValue}
+          onChange={onChangeInner}
           style={{ paddingRight: 4 }}
           inputProps={{ min, max, className: "nodrag" }}
           startAdornment={
@@ -801,8 +868,8 @@ export const NumberInput = memo(
                 disabled={disabled}
                 above={value >= max}
                 below={value <= min}
-                onClickDown={() => setNewFromButton(-step)}
-                onClickUp={() => setNewFromButton(step)}
+                onClickDown={onStepDown}
+                onClickUp={onStepUp}
               />
             </InputAdornment>
           }

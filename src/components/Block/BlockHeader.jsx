@@ -1,8 +1,8 @@
 import React, { memo } from "react";
-import { Skeleton, Tooltip, ClickAwayListener, lighten } from "@mui/material";
+import { Skeleton, Tooltip, lighten } from "@mui/material";
 import { ProgressBar } from "./Progress";
 import { useProgrammingStore } from "../ProgrammingContext";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import {
   OuterAvatarContainer,
   InnerAvatarContainer,
@@ -35,7 +35,12 @@ export const BlockHeader = memo(
     const Icon = icon;
 
     return (
-      <FullWidthStack align="center" direction="row" spacing={1} onMouseLeave={(_) => setIsEditing(false)}>
+      <FullWidthStack
+        align="center"
+        direction="row"
+        spacing={1}
+        onMouseLeave={(_) => setIsEditing(false)}
+      >
         {!limitedRender ? (
           <OuterAvatarContainer>
             <InnerAvatarContainer variant="rounded">
@@ -56,50 +61,48 @@ export const BlockHeader = memo(
 
         {/* <div style={{display:'flex',flexDirection:1,flex:1,backgroundColor:'red'}}> */}
         {!limitedRender ? (
-          
-            <Tooltip
-              key={`${id}-title`}
-              title={name ? name : ""}
-              enterDelay={2000}
-              arrow
-              placement="top"
-              sx={{ color, fontSize: 50 }}
-              componentsProps={{
-                tooltip: {
-                  sx: {
-                    bgcolor: "common.black",
-                    color: lighten(color,0.5),
-                    fontSize: 14,
-                    "& .MuiTooltip-arrow": {
-                      color: "common.black",
-                    },
+          <Tooltip
+            key={`${id}-title`}
+            title={name ? name : ""}
+            enterDelay={2000}
+            arrow
+            placement="top"
+            sx={{ color, fontSize: 50 }}
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  bgcolor: "common.black",
+                  color: lighten(color, 0.5),
+                  fontSize: 14,
+                  "& .MuiTooltip-arrow": {
+                    color: "common.black",
                   },
                 },
+              },
+            }}
+          >
+            <HeaderField
+              key={`${id}-title`}
+              hiddenLabel
+              fullWidth
+              active={editing}
+              // label='Name'
+              size="small"
+              margin="none"
+              variant="outlined"
+              color="primary"
+              className={canDragBlockRFR ? null : "nodrag"}
+              onMouseEnter={editing ? (_) => setLocked(true) : null}
+              onMouseLeave={editing ? (_) => setLocked(false) : null}
+              disabled={!editing}
+              value={name ? name : ""}
+              onChange={(e) => {
+                updateItemName(nameId, e.target.value);
               }}
-            >
-              <HeaderField
-                key={`${id}-title`}
-                hiddenLabel
-                fullWidth
-                active={editing}
-                // label='Name'
-                size="small"
-                margin="none"
-                variant="outlined"
-                color="primary"
-                className={canDragBlockRFR ? null : "nodrag"}
-                onMouseEnter={editing ? (_) => setLocked(true) : null}
-                onMouseLeave={editing ? (_) => setLocked(false): null}
-                disabled={!editing}
-                value={name ? name : ""}
-                onChange={(e) => {
-                  updateItemName(nameId, e.target.value);
-                }}
-                editing={editing}
-                onDoubleClick={() => setIsEditing(canEdit)}
-              />
-            </Tooltip>
-          
+              editing={editing}
+              onDoubleClick={() => setIsEditing(canEdit)}
+            />
+          </Tooltip>
         ) : (
           <Skeleton
             variant="rectangular"

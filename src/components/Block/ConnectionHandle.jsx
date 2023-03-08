@@ -2,7 +2,7 @@ import React from "react";
 import { useProgrammingStore } from "../ProgrammingContext";
 import { Handle } from "reactflow";
 import { CONNECTIONS, DATA_TYPES } from "../Constants";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { stringEquality } from "./Utility";
 
 const handleTypeToDirection = (handleType) =>

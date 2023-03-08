@@ -32,7 +32,7 @@ import Divider from "@mui/material/Divider";
 import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
-import shallow from "zustand/shallow";
+import { shallow } from "zustand/shallow";
 import { Badge } from "@mui/material";
 
 const FunctionButtonExtra = memo(
