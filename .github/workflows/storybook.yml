@@ -4,7 +4,10 @@
 name: 'Chromatic'
 
 # Event for the workflow
-on: push
+on:
+  release:
+    types: [created]
+    workflow_dispatch:
 
 # List of jobs
 jobs:
@@ -23,4 +26,4 @@ jobs:
         # Chromatic GitHub Action options
         with:
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN_SIMPLEVP }}
