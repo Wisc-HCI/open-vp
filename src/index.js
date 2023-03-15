@@ -1,7 +1,4 @@
 import { 
-    ProgrammingSlice, 
-    ImmerProgrammingSlice, 
-    useDefaultProgrammingStore, 
     Environment, 
     DATA_TYPES, 
     TYPES, 
@@ -13,7 +10,7 @@ import {
     referenceTemplateFromSpec,
     callTemplateFromSpec
 } from './components';
-
+import { ProgrammingSlice, ImmerProgrammingSlice, useDefaultProgrammingStore } from './components/defaultStore';
 
 export { 
     ProgrammingSlice, 
