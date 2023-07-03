@@ -415,8 +415,6 @@ export const TypeDescription = ({ type }) => {
 };
 
 export const Doc = forwardRef(({ data, inDrawer }, ref) => {
-  const { zoom } = useViewport();
-  // console.log(data);
   const typeKey = data?.typeSpec?.type === TYPES.FUNCTION 
     ? data.id 
     : data.dataType === DATA_TYPES.CALL 
@@ -628,17 +626,12 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
       }}
       onClick={() => console.log("typeinfo", typeInfo)}
       sx={{
-        // borderRadius: 4,
         userDrag: "none",
         color: "white",
-        marginLeft: 2,
-        transform: inDrawer ? `scale(1)` : `scale(${1 / zoom})`,
         zIndex: 100,
         transformOrigin: "left",
         minWidth: 200,
         maxWidth: 350,
-        // boxShadow: `0px 0px 3px 3px ${haloColor}`,
-        // backgroundColor: darken(getColor(typeInfo[activeType]),0.5)
       }}
     >
       <Tabs

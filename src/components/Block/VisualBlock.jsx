@@ -18,13 +18,7 @@ import { pickBy, omitBy, pick, isEqual } from "lodash";
 import { ConnectionHandle } from "./ConnectionHandle";
 import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
-import {
-  Collapse,
-  Box,
-  Stack,
-  Popper,
-  Fade
-} from "@mui/material";
+import { Collapse, Box, Stack, Popover, Fade, Dialog } from "@mui/material";
 import {
   OuterBlockContainer,
   InnerBlockContainer,
@@ -37,6 +31,7 @@ import { SettingsSection } from "./SettingsSection";
 import { shallow } from "zustand/shallow";
 import { compareBlockData } from "./Utility";
 import { Doc } from "./Doc";
+import { NodeToolbar } from "reactflow";
 
 export const VisualBlock = memo(
   forwardRef(
@@ -144,17 +139,17 @@ export const VisualBlock = memo(
                 !UNRENDERED_PROPS.includes(entry.type)
             )
           : {};
-      
+
       const standardProperties =
         typeSpec && typeSpec.properties && typeSpec.type !== TYPES.FUNCTION
           ? omitBy(typeSpec.properties, (entry) =>
               Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)
             )
-          : typeSpec.type === TYPES.FUNCTION && data.dataType === DATA_TYPES.CALL
-          ? pickBy(typeSpec.properties, (entry) =>
-              entry.isFunctionArgument
-            )
-          : typeSpec.type === TYPES.FUNCTION && data.dataType === DATA_TYPES.INSTANCE
+          : typeSpec.type === TYPES.FUNCTION &&
+            data.dataType === DATA_TYPES.CALL
+          ? pickBy(typeSpec.properties, (entry) => entry.isFunctionArgument)
+          : typeSpec.type === TYPES.FUNCTION &&
+            data.dataType === DATA_TYPES.INSTANCE
           ? omitBy(typeSpec.properties, (entry) =>
               Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type)
             )
@@ -186,14 +181,16 @@ export const VisualBlock = memo(
             // setClipboardBlock({data,fieldInfo,parentId,onCanvas,context});
             e.stopPropagation();
           }}
-          onDoubleClick={(e)=>{
-            if (data.dataType === DATA_TYPES.REFERENCE ||
-              data.dataType === DATA_TYPES.CALL) {
-                setIsSelected(data.ref,!selected);
-              } else {
-                setIsSelected(data.id,!selected);
-              }
-            
+          onDoubleClick={(e) => {
+            if (
+              data.dataType === DATA_TYPES.REFERENCE ||
+              data.dataType === DATA_TYPES.CALL
+            ) {
+              setIsSelected(data.ref, !selected);
+            } else {
+              setIsSelected(data.id, !selected);
+            }
+
             e.stopPropagation();
           }}
           // onMouseEnter={()=>console.log('enter')}
@@ -204,6 +201,13 @@ export const VisualBlock = memo(
           bounded={bounded}
           style={style}
         >
+          <NodeToolbar
+            className="nodrag nopan"
+            isVisible={docActive && !limitedRender}
+            position="right"
+          >
+            <Doc data={data} typeSpec={typeSpec} inDrawer={inDrawer} />
+          </NodeToolbar>
           <InnerBlockContainer
             ref={setDocReference}
             minified={minified}
@@ -372,50 +376,18 @@ export const VisualBlock = memo(
               </>
             )}
 
-            <Popper
-              id={`${data.id}-doc`}
-              open={docActive && !limitedRender}
-              placement="right"
-              anchorEl={docReference}
-              modifiers={[
-                {
-                  name: "flip",
-                  enabled: true,
-                  options: {
-                    // altBoundary: true,
-                    rootBoundary: "document",
-                    padding: 8,
-                  },
-                },
-                {
-                  name: "preventOverflow",
-                  enabled: onCanvas,
-                  options: {
-                    // altAxis: true,
-                    // altBoundary: true,
-                    tether: true,
-                    rootBoundary: "document",
-                    padding: 8,
-                  },
-                },
-                {
-                  name: "arrow",
-                  enabled: true,
-                },
-              ]}
-              disablePortal={!inDrawer}
-              transition
-            >
-              {({ TransitionProps }) => (
-                <Fade {...TransitionProps} timeout={350}>
-                  <Doc 
-                    data={data} 
-                    typeSpec={typeSpec} 
-                    inDrawer={inDrawer}
-                   />
-                </Fade>
-              )}
-            </Popper>
+            {inDrawer && (
+              <Dialog
+                id={`${data.id}-doc`}
+                open={docActive && !limitedRender}
+                onClose={() => setDocActive(data.id, false)}
+                aria-labelledby="doc-dialog"
+                transition
+                style={{marign:0}}
+              >
+                <Doc data={data} typeSpec={typeSpec} />
+              </Dialog>
+            )}
 
             {/* If the block is a function instance (the actual function and not a call) then render the spawn area for arguments */}
             <Collapse in={!isCollapsed && !minified} orientation="vertical">
@@ -465,42 +437,10 @@ export const VisualBlock = memo(
                       properties={data.properties}
                     />
                   )}
-                {/* If the block is a function call (the call and not the actual function instance) then show the argument fields */}
-                {/* {data.dataType === DATA_TYPES.CALL &&
-                  data.argumentBlockData.map((argInfo, argIdx) => {
-                    return (
-                      <PropertySection key={`arg-${argIdx}`}>
-                        <Stack
-                          direction="row"
-                          justifyContent="space-between"
-                          alignItems="center"
-                        >
-                          <Typography
-                            color="#eee"
-                            style={{ margin: "2px 2px 2px 5px" }}
-                          >
-                            {argInfo.name}
-                          </Typography>
-                          <DropZone
-                            id={data.properties[argInfo.ref]}
-                            fieldInfo={{
-                              name: "",
-                              value: argInfo.ref,
-                              accepts: [argInfo.type],
-                            }}
-                            parentId={data.id}
-                            interactionDisabled={
-                              interactionDisabled || inDrawer
-                            }
-                            highlightColor={highlightColor}
-                            context={context}
-                          />
-                        </Stack>
-                      </PropertySection>
-                    );
-                  })} */}
+                
                 {/* For all properties of an instance, show the fields */}
-                {(data.dataType === DATA_TYPES.INSTANCE || data.dataType === DATA_TYPES.CALL) &&
+                {(data.dataType === DATA_TYPES.INSTANCE ||
+                  data.dataType === DATA_TYPES.CALL) &&
                   Object.entries(standardProperties)?.map(
                     ([fieldKey, fieldInfo]) => {
                       const innerLabel = !fieldInfo.fullWidth
