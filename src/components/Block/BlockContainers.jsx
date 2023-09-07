@@ -1,5 +1,6 @@
 import { Avatar, Box, Card, lighten, Stack } from "@mui/material";
 import styled from "@emotion/styled";
+import { motion } from "framer-motion";
 
 export const OuterBlockContainer = styled('div',{shouldForwardProp: prop=>prop!=='bounded'})(
   {
@@ -13,7 +14,7 @@ export const OuterBlockContainer = styled('div',{shouldForwardProp: prop=>prop!=
   })
 );
 
-export const BlockContainer = styled('div',{shouldForwardProp: prop=>!['minified', 'highlightColor', 'selected', 'color', 'focused', 'bounded'].includes(prop)})(
+export const BlockContainer = motion(styled('div',{shouldForwardProp: prop=>!['minified', 'highlightColor', 'selected', 'color', 'focused', 'bounded'].includes(prop)})(
   {
     minWidth: 175,
     borderRadius: 3,
@@ -29,11 +30,10 @@ export const BlockContainer = styled('div',{shouldForwardProp: prop=>!['minified
       : selected ? `0pt 0pt 2pt 1pt #ffffffaa, 0pt 0pt 0pt 5pt ${theme.palette.primary.main}, 0pt 0pt 4pt 7pt black` 
       : focused ? `0pt 0pt 0pt 3pt ${lighten(color,0.5)}}` 
       : null,
-    // '&:hover' : {
-    //   boxShadow: selected ? `0pt 0pt 7pt 7pt ${theme.palette.primary.main}` : '0pt 0pt 1pt 1pt #ffffff'
-    // }
   })
-);
+));
+
+
 
 export const InnerBlockContainer = styled(Card,{shouldForwardProp: prop=>!['minified', 'highlightColor', 'selected', 'color', 'focused', 'bounded'].includes(prop)})(
   {

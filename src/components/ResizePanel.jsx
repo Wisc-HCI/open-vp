@@ -9,7 +9,7 @@ import {
 
 export default function ResizePanel() {
   const { zoom } = useViewport();
-  const { fitView, zoomIn, zoomOut } = useReactFlow();
+  const { fitView, zoomIn, zoomOut, setViewport } = useReactFlow();
 
   return (
     <Panel position="bottom-left">

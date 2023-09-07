@@ -343,12 +343,13 @@ const Tab = ({ item, onClick, onRemove, isSelected, peerCount = 2 }) => {
         > */}
         <TextField
           value={item.title}
-          disabled={!editing}
+          // disabled={!editing}
           fullWidth
           onChange={(e) => renameTab(item.id, e.target.value)}
           size="small"
           variant="standard"
           InputProps={{
+            readOnly: !editing,
             disableUnderline: true,
             style: {
               backgroundColor: "transparent",
