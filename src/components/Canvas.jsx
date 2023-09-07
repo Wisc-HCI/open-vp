@@ -5,6 +5,8 @@ import ReactFlow, {
   MiniMap,
   useReactFlow,
   ControlButton,
+  Panel,
+  useViewport
 } from "reactflow";
 import { useDrop } from "react-dnd";
 import { useProgrammingStore } from "./ProgrammingContext";
@@ -14,16 +16,17 @@ import { CanvasEdge, DrawingCanvasEdge } from "./CanvasEdge";
 import { CLIPBOARD_ACTION, DATA_TYPES } from "./Constants";
 import { referenceTemplateFromSpec } from "./Generators";
 import useMeasure from "react-use-measure";
-import { FiLock, FiUnlock, FiClipboard } from "react-icons/fi";
+import { FiClipboard, FiPlus, FiMinus, FiMaximize } from "react-icons/fi";
 // import { isEqual, pick } from "lodash";
-import { stringEquality } from "./Block/Utility";
+import { FancyMenu, stringEquality, FancyStack, FancyIconButton } from "./Block/Utility";
 import { shallow } from "zustand/shallow";
 import { compareBlockData } from "./Block/Utility";
 import "reactflow/dist/style.css";
 import "./canvas.css";
-import { Menu, MenuItem, ListItemIcon, ListItemText } from "@mui/material";
+import { MenuItem, ListItemIcon, ListItemText } from "@mui/material";
 import { debounce } from "lodash";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
+import ResizePanel from "./ResizePanel";
 
 const typeToBlockField = (dataType) =>
   dataType === DATA_TYPES.INSTANCE
@@ -69,7 +72,7 @@ const CanvasNode = memo(
 // return stringEquality(current.data,previous.data)});
 
 export const Canvas = ({ highlightColor, snapToGrid }) => {
-  const locked = useProgrammingStore((state) => state.locked, shallow);
+  
   const setTabViewport = useProgrammingStore(
     (state) => state.setTabViewport,
     shallow
@@ -91,7 +94,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     });
     return { id: tabData.id, blocks: tabData.blocks };
   }, shallow);
-  const setLocked = useProgrammingStore((state) => state.setLocked, shallow);
+  // const setLocked = useProgrammingStore((state) => state.setLocked, shallow);
   const createEdge = useProgrammingStore((state) => state.createEdge, shallow);
 
   const paste = useProgrammingStore((state) => state.paste, shallow);
@@ -161,6 +164,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
               id: data.id,
               position: data.position,
               type: "canvasNode",
+              selected: data.selected,
               // draggable:!locked,
               data: {
                 ...data,
@@ -212,8 +216,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     shallow
   );
 
-  const { project, fitView, setViewport, getViewport } = useReactFlow();
-  // const { zoom } = useViewport();
+  const { project, fitView, setViewport } = useReactFlow();
 
   const [ref, bounds] = useMeasure();
 
@@ -222,9 +225,6 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     canDrop: (item) => item.onCanvas,
     drop: (item, monitor) => {
       const clientOffset = monitor.getClientOffset();
-      // const viewport = getTabViewport(activeTabData?.id);
-      // console.log(monitor)
-      // const zoom = getZoom();
       const position = project({
         x: clientOffset.x - bounds.left - 50,
         y: clientOffset.y - bounds.top,
@@ -233,10 +233,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
     },
   })[1];
 
-  // console.log({ nodes, edges });
   useEffect(() => {
-    // console.log('fitting view',activeTabData)
-    // fitView();
     const viewport = getTabViewport(activeTabData?.id);
     if (viewport) {
       // console.log('setting viewport',activeTabData.viewport)
@@ -294,6 +291,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
               minZoom={0.25}
               nodesConnectable
               // defaultViewport={activeTabData?.viewport}
+              elevateNodesOnSelect
               onClick={(e) => {
                 onOffClick();
                 setClipboardBlock(null);
@@ -344,9 +342,10 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
               snapGrid={[30, 30]}
             >
               <MiniMap
-                style={{ opacity: 0.75, borderRadius: 5 }}
-                // maskColor="#1a192b44"
-                maskColor="transparent"
+                style={{backgroundColor:'transparent', WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)', borderRadius: 5}}
+                // style={{ opacity: 0.75, borderRadius: 5, WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}
+                maskColor="#20202070"
+                node
                 nodeStrokeColor={(n) => {
                   // if (n.type==='input') return 'black';
                   if (n.style?.background) return n.style.background;
@@ -365,17 +364,10 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
                 nodeBorderRadius={3}
                 zoomable pannable
               />
-              <Controls
-                showInteractive={false}
-                style={{ backgroundColor: "#33333377", borderRadius: 5 }}
-              >
-                <ControlButton onClick={() => setLocked(!locked)}>
-                  {locked ? <FiLock /> : <FiUnlock />}
-                </ControlButton>
-              </Controls>
+              <ResizePanel/>
               <Background variant="dots" color="#555" gap={30} size={2} />
             </ReactFlow>
-            <Menu
+            <FancyMenu
               open={onCanvasPastable && contextMenu !== null}
               onClose={handleContextMenuClose}
               anchorReference="anchorPosition"
@@ -405,7 +397,7 @@ export const Canvas = ({ highlightColor, snapToGrid }) => {
                 </ListItemIcon>
                 <ListItemText primary="Paste"></ListItemText>
               </MenuItem>
-            </Menu>
+            </FancyMenu>
           </>
         )}
       </ParentSize>

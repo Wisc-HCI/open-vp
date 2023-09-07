@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { Block } from "./Block";
-// import { useSpring, animated } from "@react-spring/web";
-// import { config } from "react-spring";
 import { useProgrammingStore } from "./ProgrammingContext";
-// import { Button, Box, Text, Sidebar, Nav } from "grommet";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { DATA_TYPES } from "./Constants";
 import {
@@ -14,7 +11,6 @@ import {
 import { Canvas } from "./Canvas";
 import useMeasure from "react-use-measure";
 import { ScrollRegion } from "./Block/Utility";
-// import { styled } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -24,7 +20,6 @@ import { shallow } from "zustand/shallow";
 import { stringEquality } from "./Block/Utility";
 import { Stack, Box, Collapse, Card, Alert, AlertTitle } from "@mui/material";
 import { CanvasTabs } from "./CanvasTabs";
-import { useViewport, useReactFlow } from "reactflow";
 
 const SectionStrip = ({ setSearchTerm, setActiveDrawer }) => {
   const drawers = useProgrammingStore(

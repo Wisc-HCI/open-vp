@@ -22,7 +22,7 @@ export const DragLayer = ({ highlightColor }) => {
         top: 0,
         width: 0,
         height: 0,
-        opacity: 0.5
+        opacity: 0.5,
       }}
     >
       {item?.data?.dataType && (

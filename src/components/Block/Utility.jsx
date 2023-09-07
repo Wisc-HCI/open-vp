@@ -3,7 +3,6 @@ import styled from "@emotion/styled";
 import * as ScrollArea from "@radix-ui/react-scroll-area";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
 import { plus, strip } from "number-precision";
-import { isNumber, isNaN } from "lodash";
 import {
   Menu,
   Fade,
@@ -14,8 +13,12 @@ import {
   FormControl,
   Input,
   Stack,
+  IconButton,
+  Slider,
+  alpha,
+  Tooltip
 } from "@mui/material";
-import { pick, isEqual, mapValues, pickBy } from "lodash";
+import { pick, isEqual, mapValues, pickBy, isNumber, isNaN } from "lodash";
 import {
   ATTENDED_DATA_PROPERTIES,
   DATA_TYPES,
@@ -29,13 +32,13 @@ export const NUMERIC_STATUS = {
   WITHIN: "WITHIN",
   UPPER_BOUND: "UPPER",
   ABOVE: "ABOVE",
-  INVALID: "INVALID"
+  INVALID: "INVALID",
 };
 
 const PASSABLE_NUMERIC_STATUSES = [
   NUMERIC_STATUS.LOWER_BOUND,
   NUMERIC_STATUS.WITHIN,
-  NUMERIC_STATUS.UPPER_BOUND
+  NUMERIC_STATUS.UPPER_BOUND,
 ];
 
 const VALID_CHARS = [
@@ -50,7 +53,7 @@ const VALID_CHARS = [
   "8",
   "9",
   ".",
-  "-"
+  "-",
 ];
 
 export const useNumeric = ({
@@ -58,7 +61,7 @@ export const useNumeric = ({
   stepSize = 1,
   min = Number.NEGATIVE_INFINITY,
   max = Number.POSITIVE_INFINITY,
-  onValidChange = (value) => {}
+  onValidChange = (value) => {},
 }) => {
   const getStatus = (v) => {
     if (v < max && v > min) {
@@ -97,7 +100,7 @@ export const useNumeric = ({
         setState((prev) => ({
           numeric: prev.numeric,
           status: prev.status,
-          textValue: prev.textValue
+          textValue: prev.textValue,
         }));
         return;
       }
@@ -107,7 +110,7 @@ export const useNumeric = ({
       setState({
         numeric: 0,
         status: getStatus(0),
-        textValue: event.target.value
+        textValue: event.target.value,
       });
       return;
     }
@@ -117,7 +120,7 @@ export const useNumeric = ({
       setState({
         numeric: 0,
         status: getStatus(0),
-        textValue: event.target.value
+        textValue: event.target.value,
       });
       return;
     }
@@ -127,7 +130,7 @@ export const useNumeric = ({
       setState((prev) => ({
         numeric: prev.numeric,
         status: NUMERIC_STATUS.INVALID,
-        textValue: event.target.value
+        textValue: event.target.value,
       }));
       return;
     } else if (PASSABLE_NUMERIC_STATUSES.includes(newState.status)) {
@@ -167,10 +170,9 @@ export const useNumeric = ({
     status: state.status,
     onChange,
     onStepUp,
-    onStepDown
+    onStepDown,
   };
 };
-
 
 export const functionTypeSpec = (typeSpec, programData) => {
   const augmented = pickBy(typeSpec, (info) => info.type !== TYPES.FUNCTION);
@@ -184,13 +186,25 @@ export const functionTypeSpec = (typeSpec, programData) => {
         functionKeys.includes(data.type)
     )
     .forEach((functionInstance) => {
-      augmented[functionInstance.id] = functionInstanceAsType(typeSpec[functionInstance.type],functionInstance,programData);
+      augmented[functionInstance.id] = functionInstanceAsType(
+        typeSpec[functionInstance.type],
+        functionInstance,
+        programData
+      );
     });
   return augmented;
 };
 
-export const functionInstanceAsType = (functionTypeSpec, functionInstance, programData) => {
-  const initialFunctionDef = { ...functionTypeSpec, name: functionInstance.name, specificType: functionInstance.type };
+export const functionInstanceAsType = (
+  functionTypeSpec,
+  functionInstance,
+  programData
+) => {
+  const initialFunctionDef = {
+    ...functionTypeSpec,
+    name: functionInstance.name,
+    specificType: functionInstance.type,
+  };
   let newProperties = {};
   functionInstance.arguments?.forEach((arg) => {
     const argBlock = programData[arg];
@@ -212,7 +226,6 @@ export const functionInstanceAsType = (functionTypeSpec, functionInstance, progr
     },
   };
   return functionTypeDef;
-  
 };
 
 const NumberInputField = styled(Input)`
@@ -300,7 +313,7 @@ export const DropdownTrigger = ({
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       />
-      <Menu
+      <FancyMenu
         key={`${triggerProps.key}-menu`}
         id="fade-menu"
         MenuListProps={{
@@ -322,167 +335,10 @@ export const DropdownTrigger = ({
         {/* <MenuList> */}
         {children}
         {/* </MenuList> */}
-      </Menu>
+      </FancyMenu>
     </div>
   );
 };
-
-// export const ContextTrigger = ({ triggerComponent, children }) => {
-//   const [contextMenu, setContextMenu] = React.useState(null);
-
-//   const handleContextMenu = (event) => {
-//     event.preventDefault();
-//     setContextMenu(
-//       contextMenu === null
-//         ? {
-//             mouseX: event.clientX + 2,
-//             mouseY: event.clientY - 6,
-//           }
-//         : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-//           // Other native context menus might behave different.
-//           // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-//           null
-//     );
-//   };
-
-//   const handleClose = () => {
-//     setContextMenu(null);
-//   };
-
-//   return (
-//     <div style={{ display: "flex" }} onContextMenu={handleContextMenu}>
-//       {triggerComponent}
-//       <Menu
-//         open={contextMenu !== null}
-//         onClose={handleClose}
-//         anchorReference="anchorPosition"
-//         anchorPosition={
-//           contextMenu !== null
-//             ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-//             : undefined
-//         }
-//       >
-//         {children}
-//       </Menu>
-//     </div>
-//   );
-// };
-
-// const slideUpAndFade = keyframes`
-//   from {
-//     opacity: 0;
-//     transform: translateY(2px);
-//   }
-//   to {
-//     opacity: 1;
-//     transform: translateY(0)
-//   }
-// `;
-
-// const slideRightAndFade = keyframes`
-//   from {
-//     opacity: 0;
-//     transform: translateX(-2px);
-//   }
-//   to {
-//     opacity: 1;
-//     transform: translateX(0)
-//   }
-// `;
-
-// const slideDownAndFade = keyframes`
-//   from {
-//     opacity: 0;
-//     transform: translateY(-2px);
-//   }
-//   to {
-//     opacity: 1;
-//     transform: translateY(0)
-//   }
-// `;
-
-// const slideLeftAndFade = keyframes`
-//   from {
-//     opacity: 0;
-//     transform: translateX(2px);
-//   }
-//   to {
-//     opacity: 1;
-//     transform: translateX(0)
-//   }
-// `;
-
-// const contentStyle = {
-//   zIndex: 100,
-//   position: "fixed",
-//   display: "block",
-//   fontFamily: "Helvetica",
-//   minWidth: "120px",
-//   backgroundColor: "#303030f5",
-//   color: "#efefef",
-//   borderRadius: "6px",
-//   padding: "5px",
-//   boxShadow:
-//     "0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)",
-//   animationFillMode: "forwards",
-//   willChange: "transform, opacity",
-//   '&[data-state="open"]': {
-//     '&[data-side="top"]': {
-//       animation: css`
-//         ${slideDownAndFade} 400ms cubic-bezier(0.16, 1, 0.3, 1)
-//       `,
-//     },
-//     '&[data-side="right"]': {
-//       animation: css`
-//         ${slideLeftAndFade} 400ms cubic-bezier(0.16, 1, 0.3, 1)
-//       `,
-//     },
-//     '&[data-side="bottom"]': {
-//       animation: css`
-//         ${slideUpAndFade} 400ms cubic-bezier(0.16, 1, 0.3, 1)
-//       `,
-//     },
-//     '&[data-side="left"]': {
-//       animation: css`
-//         ${slideRightAndFade} 400ms cubic-bezier(0.16, 1, 0.3, 1)
-//       `,
-//     },
-//   },
-// };
-
-// const itemStyle = (props) => ({
-//   all: "unset",
-//   fontSize: "12px",
-//   lineHeight: 1,
-//   color: "#efefef",
-//   borderRadius: "3px",
-//   display: "flex",
-//   alignItems: "center",
-//   // height: '25px',
-//   padding: "0 5px",
-//   position: "relative",
-//   paddingLeft: "25px",
-//   userSelect: "none",
-//   "&[data-disabled]": {
-//     color: "#dedede",
-//     pointerEvents: "none",
-//   },
-
-//   '&[data-state="open"]': {
-//     background: `${props.$highlightColor}77`,
-//     color: "#efefef",
-//   },
-
-//   "&:focus": {
-//     background: props.$highlightColor,
-//     color: "#efefef",
-//   },
-
-//   "&:hover": {
-//     background: props.$highlightColor,
-//     color: "#efefef",
-//   },
-// });
 
 const StyledScrollArea = styled(ScrollArea.Root)(
   { overflow: "hidden" },
@@ -609,7 +465,6 @@ export const Spinner = ({ onClickUp, onClickDown, disabled, above, below }) => {
 
 const CompoundInput = memo(
   forwardRef(({ onChange, value, disabled, min, max, step, ...other }, ref) => {
-    
     return (
       <Stack
         style={{ padding: 1, marginRight: 4 }}
@@ -814,19 +669,18 @@ export const NumberInput = memo(
     min = Number.NEGATIVE_INFINITY,
     max = Number.POSITIVE_INFINITY,
   }) => {
-
     const {
       textValue,
       status,
-      onChange:onChangeInner,
+      onChange: onChangeInner,
       onStepUp,
-      onStepDown
+      onStepDown,
     } = useNumeric({
-      initial:value,
-      stepSize:step,
+      initial: value,
+      stepSize: step,
       min,
       max,
-      onValidChange:onChange
+      onValidChange: onChange,
     });
 
     return (
@@ -850,7 +704,9 @@ export const NumberInput = memo(
           id="outlined-position-vector"
           label={label}
           // type='number'
-          color={PASSABLE_NUMERIC_STATUSES.includes(status) ? "primary" : "error"}
+          color={
+            PASSABLE_NUMERIC_STATUSES.includes(status) ? "primary" : "error"
+          }
           onFocus={onFocus}
           onBlur={onBlur}
           disabled={disabled}
@@ -879,27 +735,173 @@ export const NumberInput = memo(
   }
 );
 
-// Exports
-// export const DropdownMenu = DropdownMenuPrimitive.Root;
-// export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
-// export const DropdownMenuContent = StyledDropdownContent;
-// export const DropdownMenuItem = HoverDropdownItem;
-// export const DropdownMenuCheckboxItem = HoverDropdownCheckboxItem;
-// export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
-// export const DropdownMenuRadioItem = HoverDropdownRadioItem;
-// export const DropdownMenuItemIndicator = StyledDropdownItemIndicator;
-// export const DropdownMenuTriggerItem = HoverDropdownTriggerItem;
-// export const DropdownMenuLabel = StyledDropdownLabel;
-// export const DropdownMenuSeparator = StyledDropdownSeparator;
+export const FancyMenu = styled(Menu)(({}) => ({
+  "& .MuiPaper-root": {
+    backgroundColor: "rgba(0,0,0,0.5)",
+    WebkitBackdropFilter: "blur(15px)",
+    backdropFilter: "blur(15px)",
+  },
+}));
 
-// export const ContextMenu = ContextMenuPrimitive.Root;
-// export const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
-// export const ContextMenuContent = StyledContextContent;
-// export const ContextMenuItem = HoverContextItem;
-// export const ContextMenuCheckboxItem = HoverContextCheckboxItem;
-// export const ContextMenuRadioGroup = ContextMenuPrimitive.RadioGroup;
-// export const ContextMenuRadioItem = HoverContextRadioItem;
-// export const ContextMenuItemIndicator = StyledContextItemIndicator;
-// export const ContextMenuTriggerItem = HoverContextTriggerItem;
-// export const ContextMenuLabel = StyledContextLabel;
-// export const ContextMenuSeparator = StyledContextSeparator;
+export const FancyStack = styled(Stack)(({}) => ({
+  backgroundColor: "rgba(200,200,200,0.5)",
+  WebkitBackdropFilter: "blur(15px)",
+  backdropFilter: "blur(15px)",
+  borderRadius: 5,
+  padding: 5,
+}));
+
+export const FancyIconButton = styled(IconButton)(
+  {
+    backgroundColor: "rgba(0,0,0,0.5)",
+    color: "white",
+    fontSize: "1.4rem",
+    "&.Mui-disabled": {
+      backgroundColor: "rgba(0,0,0,0.25)",
+      color: "#ccc",
+    }
+  },
+  ({ theme, size }) => ({
+    borderRadius: theme.shape.borderRadius * 0.66,
+    height: size === "small" ? 32 : 40,
+    minWidth: size === "small" ? 32 : 40,
+    // backgroundColor: disabled ? "transparent" : "rgba(0,0,0,0.5)",
+  })
+);
+
+export const FancyVerticalSlider = styled((props) => (
+  <Slider {...props} orientation="vertical"/>
+))(
+  {
+    width: 8,
+    marginTop: 7,
+    marginBottom: 7,
+    '& input[type="range"]': {
+      WebkitAppearance: "slider-vertical",
+    },
+    '& .MuiSlider-track': {
+      border: 'none',
+      backgroundColor: '#dddddd',
+    },
+    '& .MuiSlider-rail': {
+      backgroundColor: '#222',
+    },
+    '& .MuiSlider-thumb': {
+      height: 14,
+      width: 14,
+      backgroundColor: '#90909050',
+      WebkitBackdropFilter: "blur(15px)",
+      backdropFilter: "blur(15px)",
+      // border: '2px solid currentColor',
+      '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+        boxShadow: 'inherit',
+      },
+      '&:before': {
+        display: 'none',
+      },
+      "&:hover, &.Mui-active": {
+        height: 20,
+        width: 20,
+      }
+    },
+    '& .MuiSlider-valueLabel': {
+      lineHeight: 1.2,
+      fontSize: 12,
+      background: 'unset',
+      padding: 0,
+      width: 32,
+      height: 32,
+      borderRadius: '50% 50% 50% 0',
+      backgroundColor: "#70707050",
+      WebkitBackdropFilter: "blur(15px)",
+      backdropFilter: "blur(15px)",
+      transformOrigin: 'center right',
+      transform: 'translate(200%, -50%) rotate(45deg) scale(0)',
+      '&:before': { display: 'none' },
+      '&.MuiSlider-valueLabelOpen': {
+        transform: 'translate(200%, -50%) rotate(45deg) scale(1)',
+      },
+      '& > *': {
+        transform: 'rotate(-45deg)',
+      },
+    },
+  }
+);
+
+const ToolbarButton = styled(IconButton, {
+  shouldForwardProp: (prop) => !["canToggle","toggled","flex"].includes(prop),
+
+})(({ theme, canToggle, toggled,  }) => ({
+  borderRadius: theme.shape.borderRadius * 0.66,
+  // fontSize: {md: "0.875rem", sm: "1rem"},
+  fontSize: "1.4rem",
+  height: 40,
+  width: 40,
+  flex: 1,
+  backgroundColor: toggled ? alpha(theme.palette.primary.main, 0.4) : "transparent",
+  "&:hover": {
+    borderColor: theme.palette.primary.main,
+    backgroundColor: canToggle
+      ? alpha(theme.palette.primary.main, toggled ? 0.5 : 0.3)
+      : "#ffffff30",
+    color: theme.palette.primary.main,
+  },
+  // "&:focus": {
+  //   borderColor: theme.palette.primary.main,
+  //   backgroundColor: canToggle && alpha(theme.palette.primary.main, 0.3),
+  //   color: theme.palette.primary.main,
+  // },
+  // firefox
+  "&:focus-visible": {
+    userSelect: "none",
+    outline: 0,
+  },
+  "& .Mui-selected": {
+    backgroundColor: alpha(theme.palette.primary.main, 0.5),
+    color: theme.palette.primary.main,
+  },
+  "&.Mui-disabled": {
+    backgroundColor: "transparent",
+    color: "#ccc",
+  }
+}));
+
+
+export const ToolbarButtonWrapper = styled("span")(({}) => ({
+  display: "flex",
+}));
+
+export const TooltippedToolbarButton = ({
+  title = "Button",
+  onClick = () => {},
+  disabled = false,
+  placement = "top",
+  toggled = false,
+  canToggle = false,
+  children = [],
+  flex = false,
+  ...props
+}) => (
+  <Tooltip
+    className="no-outline"
+    title={title}
+    color="primary"
+    placement={placement}
+  >
+    <ToolbarButtonWrapper className="no-outline">
+      <FancyIconButton
+        className="no-outline"
+        disabled={disabled}
+        aria-label={title}
+        onClick={onClick}
+        toggled={toggled}
+        canToggle={canToggle}
+        flex={flex}
+        {...props}
+      >
+        {children}
+      </FancyIconButton>
+    </ToolbarButtonWrapper>
+  </Tooltip>
+);
+

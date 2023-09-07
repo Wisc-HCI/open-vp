@@ -1,4 +1,3 @@
-import { useViewport } from "reactflow";
 import {
   Card,
   Box,
@@ -49,6 +48,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { functionTypeSpec } from "./Utility";
 import { pickBy } from "lodash";
+import { motion } from "framer-motion";
 
 const SHOWN_SIMPLE_TYPES = [
   SIMPLE_PROPERTY_TYPES.BOOLEAN,
@@ -57,6 +57,8 @@ const SHOWN_SIMPLE_TYPES = [
   SIMPLE_PROPERTY_TYPES.OPTIONS,
   SIMPLE_PROPERTY_TYPES.VECTOR3,
 ];
+
+const MotionCard = motion(Card);
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -88,7 +90,7 @@ const getColor = (spec) => {
 };
 
 const getReferences = (typeSpec, usedType) => {
-  const referent = typeSpec[usedType].specificType || usedType
+  const referent = typeSpec[usedType]?.specificType || usedType
   let references = [];
   Object.keys(typeSpec).forEach((typeValue) => {
     let entry = { parent: typeValue, fields: [] };
@@ -414,7 +416,7 @@ export const TypeDescription = ({ type }) => {
   );
 };
 
-export const Doc = forwardRef(({ data, inDrawer }, ref) => {
+export const Doc = ({ data }) => {
   const typeKey = data?.typeSpec?.type === TYPES.FUNCTION 
     ? data.id 
     : data.dataType === DATA_TYPES.CALL 
@@ -609,24 +611,10 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
   );
 
   return (
-    <Card
-      ref={ref}
+    <div
       className="nodrag nowheel"
-      onDragStart={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
-      onDragStartCapture={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
-      onDrag={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      }}
-      onClick={() => console.log("typeinfo", typeInfo)}
-      sx={{
-        userDrag: "none",
+      style={{
+        // userDrag: "none",
         color: "white",
         zIndex: 100,
         transformOrigin: "left",
@@ -635,6 +623,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
       }}
     >
       <Tabs
+        key="tabs"
         value={tab}
         onChange={(_, tab) => setTab(tab)}
         indicatorColor="primary"
@@ -648,7 +637,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
         ))}
       </Tabs>
       {(tab === "description" || tab === "usage") && (
-        <Box style={{ padding: 2, backgroundColor: "#252525" }}>
+        <Box key={tab} style={{ padding: 2, backgroundColor: "#252525" }}>
           <Breadcrumbs>
             {path.map((item) => (
               <StyledBreadcrumb
@@ -678,10 +667,10 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
         </Box>
       )}
       <Box
+        key="content"
         style={{
           minHeight: 100,
           maxHeight: 400,
-
           padding: 10,
           overflowY: "scroll",
         }}
@@ -706,7 +695,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
         )}
         {tab === "usage" && (
           <>
-            <Accordion sx={{ backgroundColor: "#333" }}>
+            <Accordion key="fields" sx={{ backgroundColor: "#333" }}>
               <AccordionSummary
                 expandIcon={<FiChevronDown />}
                 aria-controls="panel1a-content"
@@ -744,7 +733,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
                 </Stack>
               </AccordionDetails>
             </Accordion>
-            <Accordion sx={{ backgroundColor: "#333" }}>
+            <Accordion key="as-field" sx={{ backgroundColor: "#333" }}>
               <AccordionSummary
                 expandIcon={<FiChevronDown />}
                 aria-controls="panel1a-content"
@@ -795,7 +784,7 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
                 </Stack>
               </AccordionDetails>
             </Accordion>
-            <Accordion sx={{ backgroundColor: "#333" }}>
+            <Accordion key='connections' sx={{ backgroundColor: "#333" }}>
               <AccordionSummary
                 expandIcon={<FiChevronDown />}
                 aria-controls="panel1a-content"
@@ -853,8 +842,8 @@ export const Doc = forwardRef(({ data, inDrawer }, ref) => {
           Close
         </Button>
       </CardActions>
-    </Card>
+    </div>
   );
-});
+};
 
 // export const Doc = ()=>null

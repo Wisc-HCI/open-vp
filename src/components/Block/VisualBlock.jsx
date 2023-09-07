@@ -18,10 +18,9 @@ import { pickBy, omitBy, pick, isEqual } from "lodash";
 import { ConnectionHandle } from "./ConnectionHandle";
 import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
-import { Collapse, Box, Stack, Popover, Fade, Dialog } from "@mui/material";
+import { Collapse, Box, Stack, Dialog, Card } from "@mui/material";
 import {
-  OuterBlockContainer,
-  InnerBlockContainer,
+  BlockContainer,
   FullWidthStack,
   PropertySection,
 } from "./BlockContainers";
@@ -29,9 +28,12 @@ import { BlockHeader } from "./BlockHeader";
 import { MinifiedBar } from "./MinifiedBar";
 import { SettingsSection } from "./SettingsSection";
 import { shallow } from "zustand/shallow";
-import { compareBlockData } from "./Utility";
+import { compareBlockData, FancyMenu } from "./Utility";
 import { Doc } from "./Doc";
 import { NodeToolbar } from "reactflow";
+import { motion } from "framer-motion";
+
+const MotionCard = motion(Card);
 
 export const VisualBlock = memo(
   forwardRef(
@@ -55,11 +57,10 @@ export const VisualBlock = memo(
       ref
     ) => {
       const inDrawer = parentId === "spawner";
+      const external = parentId === "outside";
 
       const [contextMenu, setContextMenu] = useState(null);
-      // const headerRef = useRef();
-      // const [headerRef, headerBounds] = useMeasure();
-      const [docReference, setDocReference] = useState();
+      // const [docReference, setDocReference] = useState();
 
       const handleContextMenu = (event) => {
         event.preventDefault();
@@ -174,7 +175,7 @@ export const VisualBlock = memo(
       // console.log(ref?.current)
 
       return (
-        <OuterBlockContainer
+        <BlockContainer
           // contentEditable
           onClick={(e) => {
             onClick(data);
@@ -199,24 +200,44 @@ export const VisualBlock = memo(
           ref={ref}
           onContextMenu={handleContextMenu}
           bounded={bounded}
+          minified={minified}
+          selected={selected}
+          focused={isCopying}
+          color={blockSpec.color}
           style={style}
         >
-          <NodeToolbar
+          {!inDrawer && !external && (
+            <NodeToolbar
             className="nodrag nopan"
             isVisible={docActive && !limitedRender}
             position="right"
           >
-            <Doc data={data} typeSpec={typeSpec} inDrawer={inDrawer} />
+            <MotionCard 
+              variants={{
+                visible: { opacity: 1, x: 0 },
+                hidden: { opacity: 0, x: -10 },
+              }}
+              initial="hidden"
+              animate={
+                docActive && !limitedRender
+                  ? "visible"
+                  : "hidden"
+              }
+              sx={{
+                backgroundColor: 'rgba(0,0,0,0.52)',
+                WebkitBackdropFilter: 'blur(15px)',
+                backdropFilter: 'blur(15px)',
+              }}
+            >
+              <Doc data={data} typeSpec={typeSpec}/>
+            </MotionCard>
+            
           </NodeToolbar>
-          <InnerBlockContainer
-            ref={setDocReference}
-            minified={minified}
-            selected={selected}
-            focused={isCopying}
-            color={blockSpec.color}
-          >
+          )}
+          
+          
             {!limitedRender && (
-              <Menu
+              <FancyMenu
                 key={`${data.id}-contextmenu`}
                 open={contextMenu !== null}
                 onClose={handleContextMenuClose}
@@ -264,7 +285,7 @@ export const VisualBlock = memo(
                   setIsCollapsed={setIsCollapsed}
                   setIsDebugging={setIsDebugging}
                 />
-              </Menu>
+              </FancyMenu>
             )}
             {/* The 'Selectable' component just handles the highlighting, but is essentially a div */}
             <Stack
@@ -382,10 +403,29 @@ export const VisualBlock = memo(
                 open={docActive && !limitedRender}
                 onClose={() => setDocActive(data.id, false)}
                 aria-labelledby="doc-dialog"
-                transition
-                style={{marign:0}}
+                PaperComponent={'div'}
+                sx={{marign:0, backgroundColor: 'transparent'}}
               >
-                <Doc data={data} typeSpec={typeSpec} />
+                <Card
+                  variants={{
+                    visible: { opacity: 1, y: 0 },
+                    hidden: { opacity: 0, y: 10 },
+                  }}
+                  initial="hidden"
+                  animate={
+                    docActive && !limitedRender
+                      ? "visible"
+                      : "hidden"
+                  }
+                  sx={{
+                    backgroundColor: 'rgba(0,0,0,0.5)',
+                    WebkitBackdropFilter: 'blur(15px)',
+                    backdropFilter: 'blur(15px)',
+                  }}
+                >
+                  <Doc data={data} typeSpec={typeSpec} />
+                </Card>
+                
               </Dialog>
             )}
 
@@ -508,8 +548,7 @@ export const VisualBlock = memo(
                 />
               )}
             </Collapse>
-          </InnerBlockContainer>
-        </OuterBlockContainer>
+        </BlockContainer>
       );
     }
   ),

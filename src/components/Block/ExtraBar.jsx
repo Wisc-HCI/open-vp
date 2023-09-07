@@ -22,10 +22,9 @@ import {
 import { useProgrammingStore } from "../ProgrammingContext";
 import { DATA_TYPES, EXTRA_TYPES } from "..";
 import { ExpandCarrot } from "./ExpandCarrot";
-import { DropdownTrigger } from "./Utility";
+import { DropdownTrigger, TooltippedToolbarButton } from "./Utility";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
@@ -33,7 +32,7 @@ import Chip from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import { shallow } from "zustand/shallow";
-import { Badge } from "@mui/material";
+import { Badge, Stack } from "@mui/material";
 
 const FunctionButtonExtra = memo(
   ({ actionInfo, data, blockSpec, inTopLevel, interactionDisabled }) => {
@@ -52,12 +51,13 @@ const FunctionButtonExtra = memo(
 
     const ExtraActionIcon = actionInfo.icon ? actionInfo.icon : FiCircle;
     return inTopLevel ? (
-      <IconButton
+      <TooltippedToolbarButton
         disabled={interactionDisabled}
         onClick={() => onClick(data, blockSpec)}
+        title={actionInfo.label}
       >
         <ExtraActionIcon />
-      </IconButton>
+      </TooltippedToolbarButton>
     ) : (
       <MenuItem
         disabled={interactionDisabled}
@@ -96,9 +96,15 @@ const LockIndicatorExtra = memo(({ locked, inTopLevel }) => {
   const Icon = locked ? FiLock : FiUnlock;
 
   return inTopLevel ? (
-    <IconButton disableFocusRipple disableTouchRipple>
+    <TooltippedToolbarButton
+      disabled
+      canToggle
+      toggled={locked}
+      icon={<Icon />}
+      title={locked ? "Locked" : "Unlocked"}
+    >
       <Icon />
-    </IconButton>
+    </TooltippedToolbarButton>
   ) : (
     <MenuItem>
       <ListItemIcon>
@@ -125,9 +131,15 @@ const NameEditToggleExtra = memo(
       locked || (interactionDisabled && data.dataType !== DATA_TYPES.REFERENCE);
 
     return inTopLevel ? (
-      <IconButton disabled={disabled} onClick={() => setIsEditing(!isEditing)}>
+      <TooltippedToolbarButton
+        toggled={isEditing}
+        canToggle
+        disabled={disabled}
+        onClick={() => setIsEditing(!isEditing)}
+        title={isEditing ? "Save" : "Edit Name"}
+      >
         <Icon />
-      </IconButton>
+      </TooltippedToolbarButton>
     ) : (
       <MenuItem onClick={() => setIsEditing(!isEditing)}>
         <ListItemIcon>{<Icon />}</ListItemIcon>
@@ -149,12 +161,13 @@ const SelectionToggleExtra = memo(
     const disabled = data.dataType === DATA_TYPES.INSTANCE && locked;
 
     return inTopLevel ? (
-      <IconButton
+      <TooltippedToolbarButton
         disabled={disabled}
         onClick={() => setIsSelected(!isSelected)}
+        title={isSelected ? "Deselect" : "Select"}
       >
         <Icon />
-      </IconButton>
+      </TooltippedToolbarButton>
     ) : (
       <MenuItem onClick={() => setIsSelected(!isSelected)}>
         <ListItemIcon>
@@ -176,9 +189,11 @@ const DocToggleExtra = memo(
   ({ docActive, setDocActive, inTopLevel, data, locked }) => {
     const Icon = docActive ? FiXCircle : FiInfo;
     const disabled = data.dataType === DATA_TYPES.INSTANCE && locked;
-    
+
     const hasFeatured = useProgrammingStore(
-      (state) => state.featuredDocs[data.id] !== undefined || state?.featuredDocs[data?.refData?.id] !== undefined,
+      (state) =>
+        state.featuredDocs[data.id] !== undefined ||
+        state?.featuredDocs[data?.refData?.id] !== undefined,
       shallow
     );
 
@@ -188,12 +203,15 @@ const DocToggleExtra = memo(
         overlap="circular"
         color="primary"
       >
-        <IconButton
+        <TooltippedToolbarButton
           disabled={disabled}
+          toggled={docActive}
+          canToggle
           onClick={() => setDocActive(!docActive)}
+          title={docActive ? "Close Doc" : "Show Doc"}
         >
           <Icon />
-        </IconButton>
+        </TooltippedToolbarButton>
       </Badge>
     ) : (
       <MenuItem onClick={() => setDocActive(!docActive)}>
@@ -223,9 +241,12 @@ const DocToggleExtra = memo(
 const CollapseToggleExtra = memo(
   ({ isCollapsed, setIsCollapsed, inTopLevel }) => {
     return inTopLevel ? (
-      <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+      <TooltippedToolbarButton
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        title={isCollapsed ? "Expand" : "Collapse"}
+      >
         <ExpandCarrot expanded={!isCollapsed} />
-      </IconButton>
+      </TooltippedToolbarButton>
     ) : (
       <MenuItem onClick={() => setIsCollapsed(!isCollapsed)}>
         <ListItemIcon>{<ExpandCarrot expanded={!isCollapsed} />}</ListItemIcon>
@@ -239,9 +260,14 @@ const DebugToggleExtra = memo(({ isDebugging, setIsDebugging, inTopLevel }) => {
   const Icon = isDebugging ? FiZapOff : FiZap;
 
   return inTopLevel ? (
-    <IconButton onClick={() => setIsDebugging(!isDebugging)}>
+    <TooltippedToolbarButton
+      toggled={isDebugging}
+      canToggle
+      onClick={() => setIsDebugging(!isDebugging)}
+      title={isDebugging ? "Cancel Debug" : "Debug"}
+    >
       <Icon />
-    </IconButton>
+    </TooltippedToolbarButton>
   ) : (
     <MenuItem onClick={() => setIsDebugging(!isDebugging)}>
       <ListItemIcon>{<Icon />}</ListItemIcon>
@@ -252,9 +278,9 @@ const DebugToggleExtra = memo(({ isDebugging, setIsDebugging, inTopLevel }) => {
 
 const IndicatorTextExtra = memo(({ value, label, inTopLevel }) => {
   return inTopLevel ? (
-    <IconButton>
-      <Chip size="small" label={value} />
-    </IconButton>
+    <TooltippedToolbarButton title={label} disabled>
+      {value}
+    </TooltippedToolbarButton>
   ) : (
     <MenuItem>
       <ListItemIcon>
@@ -270,9 +296,9 @@ const IndicatorTextExtra = memo(({ value, label, inTopLevel }) => {
 const IndicatorIconExtra = memo(({ value, label, inTopLevel }) => {
   const Icon = value;
   return inTopLevel ? (
-    <IconButton>
+    <TooltippedToolbarButton disabled title={label}>
       <Icon />
-    </IconButton>
+    </TooltippedToolbarButton>
   ) : (
     <MenuItem>
       <ListItemIcon>
@@ -299,12 +325,13 @@ const AddArgumentExtra = memo(
     const addArgument = useProgrammingStore((state) => state.addArgument);
 
     return inTopLevel ? (
-      <IconButton
+      <TooltippedToolbarButton
         disabled={interactionDisabled}
         onClick={() => addArgument(data.id, argumentType)}
+        title={`Add ${typeSpec.name} Argument`}
       >
         <Icon />
-      </IconButton>
+      </TooltippedToolbarButton>
     ) : (
       <MenuItem
         disabled={interactionDisabled}
@@ -318,12 +345,7 @@ const AddArgumentExtra = memo(
 );
 
 const AddArgumentGroupExtra = memo(
-  ({
-    data,
-    allowed,
-    interactionDisabled,
-    inTopLevel
-  }) => {
+  ({ data, allowed, interactionDisabled, inTopLevel }) => {
     return (
       <DropdownExtra
         icon={FiPlus}
@@ -350,12 +372,13 @@ const DeleteExtra = memo(
     const canDelete = (!locked && data.canDelete) || canDeleteInstance;
 
     return inTopLevel ? (
-      <IconButton
+      <TooltippedToolbarButton
         disabled={!canDelete}
         onClick={() => deleteFunc(data, parentId, fieldInfo)}
+        title='Delete'
       >
         <FiTrash2 />
-      </IconButton>
+      </TooltippedToolbarButton>
     ) : (
       <MenuItem
         disabled={!canDelete}
@@ -372,16 +395,14 @@ const DeleteExtra = memo(
 
 const CopyExtra = memo(({ inTopLevel, copyFn }) => {
   return inTopLevel ? (
-    <IconButton onClick={copyFn}>
+    <TooltippedToolbarButton onClick={copyFn} title="Copy">
       <FiCopy />
-    </IconButton>
+    </TooltippedToolbarButton>
   ) : (
     // <Divider style={{fontFamily:'Helvetica'}}>{label}</Divider>
-    <MenuItem
-      onClick={copyFn}
-    >
+    <MenuItem onClick={copyFn}>
       <ListItemIcon>
-      <FiCopy />
+        <FiCopy />
       </ListItemIcon>
       <ListItemText primary="Copy"></ListItemText>
     </MenuItem>
@@ -392,17 +413,14 @@ const CutExtra = memo(({ inTopLevel, locked, cutFn }) => {
   // const cutFunc = useProgrammingStore((state) => state.cut);
 
   return inTopLevel ? (
-    <IconButton disabled={locked} onClick={cutFn}>
+    <TooltippedToolbarButton disabled={locked} onClick={cutFn} title="Cut">
       <FiScissors />
-    </IconButton>
+    </TooltippedToolbarButton>
   ) : (
     // <Divider style={{fontFamily:'Helvetica'}}>{label}</Divider>
-    <MenuItem
-    disabled={locked} 
-      onClick={cutFn}
-    >
+    <MenuItem disabled={locked} onClick={cutFn}>
       <ListItemIcon>
-      <FiScissors />
+        <FiScissors />
       </ListItemIcon>
       <ListItemText primary="Cut"></ListItemText>
     </MenuItem>
@@ -431,7 +449,7 @@ const DropdownExtra = memo(
     parentId,
     fieldInfo,
     copyFn,
-    cutFn
+    cutFn,
   }) => {
     const DropIcon = icon
       ? icon
@@ -457,17 +475,18 @@ const DropdownExtra = memo(
       parentId,
       inTopLevel: false,
       copyFn,
-      cutFn
+      cutFn,
     };
 
     return (
       <DropdownTrigger
         isChild={!inTopLevel}
-        triggerComponent={inTopLevel ? IconButton : MenuItem}
+        triggerComponent={inTopLevel ? TooltippedToolbarButton : MenuItem}
         triggerProps={
           inTopLevel
             ? {
                 key: JSON.stringify({ id: data.id, contents }),
+                title: label,
                 onClick: () => setIsEditing(!isEditing),
                 children: (
                   <DropIcon key={JSON.stringify({ id: data.id, contents })} />
@@ -512,7 +531,7 @@ const Item = ({
   fieldInfo,
   parentId,
   copyFn,
-  cutFn
+  cutFn,
 }) => {
   if (feature === EXTRA_TYPES.LOCKED_INDICATOR) {
     // return null
@@ -613,12 +632,7 @@ const Item = ({
     );
   } else if (feature?.type === EXTRA_TYPES.LABEL) {
     // return null
-    return (
-      <LabelExtra
-        inTopLevel={inTopLevel}
-        label={feature.label}
-      />
-    );
+    return <LabelExtra inTopLevel={inTopLevel} label={feature.label} />;
   } else if (feature?.type === EXTRA_TYPES.ADD_ARGUMENT) {
     // return null
     return (
@@ -761,21 +775,25 @@ export const ExtraBar = memo(
         ]
       : blockSpec.extras;
     return (
-      <ButtonGroup
-        variant="outlined"
-        aria-label="outlined button group"
-        color="inherit"
+      <Stack
+        direction="row"
+        gap={0.5}
+        alignItems='center'
       >
         {extras.map((extra, extraIdx) => (
           <Item key={extraIdx} {...childProps} feature={extra} />
         ))}
-      </ButtonGroup>
+      </Stack>
     );
   }
 );
 
 const flattenMenuOnce = (extras) => {
-  let pancaked = [EXTRA_TYPES.COPY_BUTTON,EXTRA_TYPES.CUT_BUTTON,EXTRA_TYPES.DIVIDER];
+  let pancaked = [
+    EXTRA_TYPES.COPY_BUTTON,
+    EXTRA_TYPES.CUT_BUTTON,
+    EXTRA_TYPES.DIVIDER,
+  ];
   extras?.forEach((extra) => {
     if (extra.type === EXTRA_TYPES.DROPDOWN) {
       if (pancaked[pancaked.length - 1] !== EXTRA_TYPES.DIVIDER) {
@@ -836,7 +854,7 @@ export const RightClickMenu = memo(
     fieldInfo,
     parentId,
     copyFn,
-    cutFn
+    cutFn,
   }) => {
     const flattenedExtras = flattenMenuOnce(blockSpec?.extras);
     const childProps = {

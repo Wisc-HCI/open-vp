@@ -1,5 +1,5 @@
-import React, { memo, useState, forwardRef } from "react";
-import { Reorder, AnimatePresence, motion, calcLength } from "framer-motion";
+import React, { useState, forwardRef } from "react";
+import { Reorder, AnimatePresence } from "framer-motion";
 import { useProgrammingStore } from "./ProgrammingContext";
 import { shallow } from "zustand/shallow";
 import {
@@ -7,11 +7,10 @@ import {
   FiPlus,
   FiFolder,
   FiFile,
-  FiDelete,
   FiTrash,
   FiEyeOff,
 } from "react-icons/fi";
-import { emphasize, styled, darken } from "@mui/material/styles";
+import { styled, darken } from "@mui/material/styles";
 import {
   ClickAwayListener,
   IconButton,
@@ -26,8 +25,10 @@ import {
   Button,
   Slide,
   DialogContent,
+  InputAdornment,
 } from "@mui/material";
 import { DropdownTrigger } from "./Block/Utility";
+import { useTheme } from "@emotion/react";
 
 const SlideUpTransition = forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props} />
@@ -35,65 +36,66 @@ const SlideUpTransition = forwardRef((props, ref) => (
 
 const PlusButton = styled(IconButton)(
   {
-    borderRadius: 0,
-    borderLeft: "1.5px solid #222",
+    borderRadius: 5,
+    // borderLeft: "1.5px solid #222",
+    height: 35,
+    width: 35,
+    margin: 5,
+    backgroundColor: "#333",
   },
   ({ theme }) => ({
-    "&:hover": { backgroundColor: darken(theme.palette.primary.main, 0.8) },
+    "&:hover": { backgroundColor: darken(theme.palette.primary.main, 0.5) },
+    color: theme.palette.primary.main
   })
 );
 
 const Bar = styled("div")({
   background: "black",
-  //   display:'flex',
   width: "100%",
   display: "grid",
-  //   padding: "5px 5px 0",
   borderBottom: "1px solid #333",
   height: "45px",
-  //   display: "grid",
   gridTemplateColumns: "auto 46px",
-  //   maxWidth: "480px",
 });
 
-const TabButton = styled("div", {
-  shouldForwardProp: (prop) => prop !== "selected",
-})(
-  {
-    fontFamily: "helvetica",
-    flex: 1,
-    alignContent: "center",
-    // width: "100%",
-    padding: "10px 15px",
-    // position: "relative",
-    cursor: "pointer",
-    height: 24,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    minWidth: 0,
-    borderLeft: "0.5px solid #222",
-    borderRight: "0.5px solid #222",
-    // overflow: "hidden",
-    userSelect: "none",
-    overflowY: "none",
-    //   minWidth: 175,
-    //   borderRadius: 3,
-    //   display: "block"
-  },
-  ({ selected, theme }) => ({
-    //   width: bounded ? "inherit" : "max-content",
-    //   flex: bounded ? 1 : null,
-    "&:hover": {
-      backgroundColor: "#222",
-    },
-    borderBottom: selected
-      ? `1px solid ${theme.palette.primary.main}`
-      : `1px solid ${theme.palette.mid.main}`,
-    // color: selected ? "black" : theme.palette.primary.main,
-    color: selected ? theme.palette.primary.main : theme.palette.mid.main,
-  })
-);
+// const TabButton = styled("div", {
+//   shouldForwardProp: (prop) => prop !== "selected",
+// })(
+//   {
+//     fontFamily: "helvetica",
+//     flex: 1,
+//     alignContent: "center",
+//     // width: "100%",
+//     padding: "10px 15px",
+//     // position: "relative",
+//     cursor: "pointer",
+//     height: 24,
+//     display: "flex",
+//     justifyContent: "space-between",
+//     alignItems: "center",
+//     minWidth: 0,
+//     borderLeft: "0.5px solid #222",
+//     borderRight: "0.5px solid #222",
+//     // overflow: "hidden",
+//     userSelect: "none",
+//     overflowY: "none",
+//     //   minWidth: 175,
+//     //   borderRadius: 3,
+//     //   display: "block"
+//   },
+//   ({ selected, theme }) => ({
+//     //   width: bounded ? "inherit" : "max-content",
+//     //   flex: bounded ? 1 : null,
+//     "&:hover": {
+//       backgroundColor: "#222",
+//     },
+//     borderBottom: selected
+//       ? `1px solid ${theme.palette.primary.main}`
+//       : `1px solid ${theme.palette.mid.main}`,
+//     // color: selected ? "black" : theme.palette.primary.main,
+//     color: selected ? theme.palette.primary.main : theme.palette.mid.main,
+//   })
+// );
 
 export const CanvasTabs = ({}) => {
   const tabs = useProgrammingStore(
@@ -133,17 +135,17 @@ export const CanvasTabs = ({}) => {
         axis="x"
         values={tabs}
         onReorder={setTabs}
-        layoutScroll
+        // layoutScroll
         style={{
           listStyle: "none",
-          //   flexGrow: 1,
+          // flexGrow: 1,
           display: "flex",
           //   justifyContent: "flex-start",
           //   alignItems: "flex-end",
           flexWrap: "nowrap",
-          padding: 0,
+          padding: 5,
           margin: 0,
-          overflowX: "scroll",
+          // overflowX: "scroll",
           //   paddingRight: "10px",
         }}
       >
@@ -152,10 +154,13 @@ export const CanvasTabs = ({}) => {
             <Tab
               key={tab.id}
               item={tab}
-              onClick={() => {setActiveTab(tab)}}
+              onClick={() => {
+                setActiveTab(tab);
+              }}
               isSelected={activeTab === tab.id}
               onRemove={() => handleRemoveClick(tab.id)}
               removable={tabs.length > 1}
+              peerCount={tabs.length - 1}
             />
           ))}
         </AnimatePresence>
@@ -237,7 +242,7 @@ export const CanvasTabs = ({}) => {
   );
 };
 
-const Tab = ({ item, onClick, onRemove, isSelected, removable }) => {
+const Tab = ({ item, onClick, onRemove, isSelected, peerCount = 2 }) => {
   const [editing, setEditing] = useState(false);
   const renameTab = useProgrammingStore((state) => state.renameTab);
   const setTabVisibility = useProgrammingStore(
@@ -245,24 +250,166 @@ const Tab = ({ item, onClick, onRemove, isSelected, removable }) => {
     shallow
   );
 
+  const theme = useTheme();
+
+  const darkerPrimary = darken(theme.palette.primary.main,0.5);
+
+  const TABVARIANTS = {
+    inactiveFocused: {
+      backgroundColor: "#444",
+      // border: "1px solid #444",
+      boxShadow: "inset 0px 0px 0px 2px #444",
+      flex: 1,
+      transition: {
+        type: "tween",
+        duration: 0.4,
+      },
+    },
+    inactive: {
+      backgroundColor: "#333",
+      // border: "1px solid #333",
+      boxShadow: "inset 0px 0px 0px 2px #333",
+      flex: 1,
+      transition: {
+        type: "tween",
+        duration: 0.4,
+      },
+    },
+    activeFocused: {
+      backgroundColor: "#444",
+      // border: "1px solid lightblue",
+      boxShadow: `inset 0px 0px 0px 2px ${theme.palette.primary.main}`,
+      flex: peerCount,
+      transition: {
+        type: "tween",
+        duration: 0.4,
+      },
+    },
+    active: {
+      backgroundColor: "#333",
+      // border: "1px solid cyan",
+      boxShadow: `inset 0px 0px 0px 2px ${darkerPrimary}`,
+      flex: peerCount,
+      transition: {
+        type: "tween",
+        duration: 0.4,
+      },
+    },
+  };
+
   return (
-    <Reorder.Item
-      value={item}
-      id={item.id}
-      dragListener={!editing}
-      initial={{ opacity: 0 }}
-      animate={{
-        opacity: 1,
-        //   backgroundColor: isSelected ? "#f3f3f3" : "#fff",
-        y: 0,
-        transition: { duration: 0.15 },
-      }}
-      exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
-      whileDrag={{ backgroundColor: "#333" }}
-      className={isSelected ? "selected" : ""}
-    >
-      <ClickAwayListener onClickAway={() => setEditing(false)}>
-        <TabButton
+    <ClickAwayListener onClickAway={() => setEditing(false)}>
+      <Reorder.Item
+        value={item}
+        id={item.id}
+        dragListener={!editing}
+        onClick={onClick}
+        onDoubleClick={() => setEditing(true)}
+        // initial={{ opacity: 0 }}
+        style={{ borderRadius: 5, marginRight: 5 }}
+        // animate={{
+        //   opacity: 1,
+        //   y: 0,
+        //   transition: { duration: 0.15 },
+        // }}
+        animate={
+          isSelected && editing
+            ? "activeFocused"
+            : isSelected && !editing
+            ? "active"
+            : !isSelected && editing
+            ? "inactiveFocused"
+            : "inactive"
+        }
+        variants={TABVARIANTS}
+        exit={{ opacity: 0, y: 20, transition: { duration: 0.3 } }}
+        whileDrag={"activeFocused"}
+        className={isSelected ? "selected" : ""}
+      >
+        {/* <motion.div
+          variants={TABVARIANTS}
+          onClick={onClick}
+          onDoubleClick={() => setEditing(true)}
+          style={{ borderRadius: 3 }}
+          animate={
+            isSelected && editing
+              ? "activeFocused"
+              : isSelected && !editing
+              ? "active"
+              : !isSelected && editing
+              ? "inactiveFocused"
+              : "inactive"
+          }
+        > */}
+        <TextField
+          value={item.title}
+          disabled={!editing}
+          fullWidth
+          onChange={(e) => renameTab(item.id, e.target.value)}
+          size="small"
+          variant="standard"
+          InputProps={{
+            disableUnderline: true,
+            style: {
+              backgroundColor: "transparent",
+              paddingLeft: 10,
+              paddingTop: 4,
+              readOnly: !editing,
+            },
+            endAdornment: (
+              <InputAdornment position="end">
+                <DropdownTrigger
+                  triggerComponent={IconButton}
+                  triggerProps={{
+                    children: <FiX />,
+                    size: "small",
+                    color: isSelected ? "primary" : "mid",
+                    sx: {
+                      borderRadius: 1,
+                      marginRight: 0.5,
+                      height: 26,
+                      marginBottom: 0.2,
+                      color: isSelected && editing ? theme.palette.primary.main : isSelected ? darkerPrimary : "#777",
+                      backgroundColor: isSelected ? "#00000050" : "#50505020"
+                      // boxShadow: `inset 0px 0px 0px 1px ${
+                      //   isSelected ? theme.palette.primary.main : "#555"
+                      // }`,
+                    },
+                  }}
+                >
+                  <MenuItem
+                    key="hide"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      setTabVisibility(item.id, false);
+                    }}
+                  >
+                    <ListItemIcon>
+                      <FiEyeOff />
+                    </ListItemIcon>
+                    <ListItemText>Hide</ListItemText>
+                  </MenuItem>
+                  <MenuItem
+                    key="delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      onRemove();
+                    }}
+                  >
+                    <ListItemIcon>
+                      <FiTrash />
+                    </ListItemIcon>
+                    <ListItemText>Delete</ListItemText>
+                  </MenuItem>
+                </DropdownTrigger>
+              </InputAdornment>
+            ),
+          }}
+        />
+        {/* </motion.div> */}
+        {/* <TabButton
           selected={isSelected}
           onClick={onClick}
           onDoubleClick={() => setEditing(true)}
@@ -320,8 +467,8 @@ const Tab = ({ item, onClick, onRemove, isSelected, removable }) => {
               <ListItemText>Delete</ListItemText>
             </MenuItem>
           </DropdownTrigger>
-        </TabButton>
-      </ClickAwayListener>
-    </Reorder.Item>
+        </TabButton> */}
+      </Reorder.Item>
+    </ClickAwayListener>
   );
 };

@@ -13,7 +13,29 @@ export const OuterBlockContainer = styled('div',{shouldForwardProp: prop=>prop!=
   })
 );
 
-export const InnerBlockContainer = styled(Card,{shouldForwardProp: prop=>!['minified', 'highlightColor', 'selected', 'color', 'focused'].includes(prop)})(
+export const BlockContainer = styled('div',{shouldForwardProp: prop=>!['minified', 'highlightColor', 'selected', 'color', 'focused', 'bounded'].includes(prop)})(
+  {
+    minWidth: 175,
+    borderRadius: 3,
+    display: "block"
+  },
+  ({ minified, selected, color, focused, theme, bounded }) => ({
+    padding: minified ? 0 : "4px",
+    backgroundColor: focused ? lighten(color,0.1) : color,
+    width: bounded ? "inherit" : "max-content",
+    flex: bounded ? 1 : null,
+    boxShadow: 
+      (selected && focused) ? `0pt 0pt 2pt 1pt #ffffffaa, 0pt 0pt 0pt 5pt ${lighten(theme.palette.primary.main,0.5)}, 0pt 0pt 4pt 7pt black`
+      : selected ? `0pt 0pt 2pt 1pt #ffffffaa, 0pt 0pt 0pt 5pt ${theme.palette.primary.main}, 0pt 0pt 4pt 7pt black` 
+      : focused ? `0pt 0pt 0pt 3pt ${lighten(color,0.5)}}` 
+      : null,
+    // '&:hover' : {
+    //   boxShadow: selected ? `0pt 0pt 7pt 7pt ${theme.palette.primary.main}` : '0pt 0pt 1pt 1pt #ffffff'
+    // }
+  })
+);
+
+export const InnerBlockContainer = styled(Card,{shouldForwardProp: prop=>!['minified', 'highlightColor', 'selected', 'color', 'focused', 'bounded'].includes(prop)})(
   {
     minWidth: 175,
     width: "inherit"

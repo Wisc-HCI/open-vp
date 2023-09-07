@@ -14,7 +14,7 @@ import {
 import { shallow } from "zustand/shallow";
 import { SettingsContainer } from "./BlockContainers";
 import { ExpandCarrot } from "./ExpandCarrot";
-import { NumberInput, Vector3Input } from "./Utility";
+import { NumberInput, TooltippedToolbarButton, Vector3Input } from "./Utility";
 import { SIMPLE_PROPERTY_TYPES } from "../Constants";
 import { useProgrammingStore } from "../ProgrammingContext";
 
@@ -46,7 +46,8 @@ export const SettingsSection = ({
               }
         }
         action={
-          <IconButton
+          <TooltippedToolbarButton
+            title={collapsed ? "Expand" : "Collapse"}
             onClick={
               interactionDisabled
                 ? (e) => {
@@ -59,7 +60,7 @@ export const SettingsSection = ({
             }
           >
             <ExpandCarrot expanded={!collapsed} />
-          </IconButton>
+          </TooltippedToolbarButton>
         }
       />
       <Collapse in={!collapsed} orientation="vertical">

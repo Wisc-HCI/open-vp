@@ -6,7 +6,7 @@
   animation-play-state: running;
 } */
 
-.react-flow__controls button {
+/* .react-flow__controls button {
   background-color: var(--bg-color);
   color: #999;
   border: 1px solid #999;
@@ -28,4 +28,9 @@
 
 .react-flow__controls button path {
   fill: #999;
+} */
+
+.no-outline:focus {
+  outline: none;
+  user-select: none;
 }
