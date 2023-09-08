@@ -9,8 +9,8 @@ export default defineConfig({
     // minify: 'esnext',
     lib: {
       entry: path.resolve(__dirname,'src/index.js'),
-      name: 'simple-vp',
-      fileName: (format) => `simple-vp.${format}.js`
+      name: 'open-vp',
+      fileName: (format) => `open-vp.${format}.js`
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

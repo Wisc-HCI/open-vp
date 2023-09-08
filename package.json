@@ -1,7 +1,7 @@
 {
-  "name": "simple-vp",
+  "name": "open-vp",
   "private": true,
-  "version": "0.8.14",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
@@ -10,8 +10,8 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/simple-vp.es.js",
-      "require": "./dist/simple-vp.umd.js"
+      "import": "./dist/open-vp.es.js",
+      "require": "./dist/open-vp.umd.js"
     }
   },
   "scripts": {
