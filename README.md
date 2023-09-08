@@ -1,4 +1,4 @@
-# Simple-VP
+# OpenVP
 *A highly customizable visual programming environment for React*
 
 Try out examples in the [Storybook](https://6404f678cd3c67a156715458-pyohcpyhiw.chromatic.com/)
@@ -18,7 +18,7 @@ The main entry for the editor is the `Environment` component:
 />
 ```
 
-The environment uses a [Zustand](https://github.com/pmndrs/zustand) store to contian the data. This is where you will specify what the drawers, types, and entries are. If you compose your store with slices, you can use the existing store as a starting point by importing the `Programming Slice` from the library:
+The environment uses a [Zustand](https://github.com/pmndrs/zustand) store to contain the data. This is where you will specify what the drawers, types, and entries are. If you compose your store with slices, you can use the existing store as a starting point by importing the `Programming Slice` from the library:
 
 ```javascript
 import {ProgrammingSlice} from 'simple-vp';
