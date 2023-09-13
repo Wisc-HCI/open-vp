@@ -207,7 +207,7 @@ export const VisualBlock = memo(
           style={style}
           whileHover={{
             transform: 'translateY(-1px)',
-            boxShadow: '0px 0px 0px 2px #00000030, 0px 0px 0px 4px #00000030, 0px 0px 0px 6px #00000030',
+            // boxShadow: '0px 0px 0px 2px #00000030, 0px 0px 0px 4px #00000030, 0px 0px 0px 6px #00000030',
           }}
         >
           {!inDrawer && !external && (

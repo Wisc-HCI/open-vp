@@ -1,7 +1,7 @@
 {
   "name": "open-vp",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.8.014",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "files": [
