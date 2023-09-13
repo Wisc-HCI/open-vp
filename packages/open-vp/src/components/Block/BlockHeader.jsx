@@ -8,7 +8,7 @@ import {
   InnerAvatarContainer,
   OuterProgressContainer,
   FullWidthStack,
-} from "./BlockContainers";
+} from "../../../../open-blocks/src/BlockContainers";
 import { HeaderField } from "./Utility";
 
 export const BlockHeader = memo(

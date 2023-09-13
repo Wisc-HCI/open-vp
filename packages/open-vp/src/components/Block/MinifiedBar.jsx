@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { NumberInput, Vector3Input } from "./Utility";
 import { DropZone } from "./DropZone";
-import { FullWidthStack, PropertySection } from "./BlockContainers";
+import { FullWidthStack, PropertySection } from "../../../../open-blocks/src/BlockContainers";
 
 export const MinifiedBar = memo(
   ({

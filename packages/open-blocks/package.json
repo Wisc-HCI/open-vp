@@ -1,26 +1,22 @@
 {
-  "name": "open-blocks",
+  "name": "@people_and_robots/open-blocks",
   "private": true,
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.es.js",
   "files": [
-    "dist",
-    "README.md"
+    "dist/**"
   ],
-  "exports": {
-    ".": {
-      "import": "./dist/open-vp.es.js",
-      "require": "./dist/open-vp.umd.js"
-    }
-  },
   "scripts": {
-    "build": "tsup src/index.tsx --format esm,cjs --dts --external react",
-    "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react",
+    "build": "tsup src/index.js --format esm,cjs --dts --external react",
+    "dev": "tsup src/index.js --format esm,cjs --watch --dts --external react",
     "lint": "TIMING=1 eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
+    "@mui/x-tree-view": "^6.0.0-alpha.2",
+    "@people_and_robots/open-core": "workspace:*",
+    "@people_and_robots/open-gui": "workspace:*",
     "@radix-ui/react-scroll-area": "^1.0.0",
     "@use-gesture/react": "^10.2.23",
     "@visx/responsive": "^2.10.0",
@@ -65,7 +61,7 @@
     "react-error-boundary": "^3.1.4",
     "rollup-plugin-terser": "^7.0.2",
     "storybook": "^7.0.0-rc.1",
-    "ts-config-open-vp": "*",
+    "tsup": "5.10.1",
     "typescript": "^4.7.4",
     "vite": "^4.1.4",
     "vite-plugin-svgr": "^2.2.0"
@@ -77,6 +73,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
-  "readme": "ERROR: No README data found!",
-  "_id": "open-vp@1.0.0"
+  "publishConfig": {
+    "access": "public"
+  }
 }

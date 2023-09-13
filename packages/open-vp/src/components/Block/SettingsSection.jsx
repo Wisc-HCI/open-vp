@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { shallow } from "zustand/shallow";
-import { SettingsContainer } from "./BlockContainers";
+import { SettingsContainer } from "../../../../open-blocks/src/BlockContainers";
 import { ExpandCarrot } from "./ExpandCarrot";
 import { NumberInput, TooltippedToolbarButton, Vector3Input } from "./Utility";
 import { SIMPLE_PROPERTY_TYPES } from "../Constants";

@@ -1,6 +1,0 @@
-import { PARAM_KEY, ADDON_ID } from './chunk-2DMOCDBJ.mjs';
-import React, { memo, useCallback, useEffect } from 'react';
-import { useGlobals, useStorybookApi, addons, types } from '@storybook/manager-api';
-import { IconButton, Icons } from '@storybook/components';
-
-var OutlineSelector=memo(function(){let[globals,updateGlobals]=useGlobals(),api=useStorybookApi(),isActive=[!0,"true"].includes(globals[PARAM_KEY]),toggleOutline=useCallback(()=>updateGlobals({[PARAM_KEY]:!isActive}),[isActive]);return useEffect(()=>{api.setAddonShortcut(ADDON_ID,{label:"Toggle Outline [O]",defaultShortcut:["O"],actionName:"outline",showInMenu:!1,action:toggleOutline});},[toggleOutline,api]),React.createElement(IconButton,{key:"outline",active:isActive,title:"Apply outlines to the preview",onClick:toggleOutline},React.createElement(Icons,{icon:"outline"}))});addons.register(ADDON_ID,()=>{addons.add(ADDON_ID,{title:"Outline",id:"outline",type:types.TOOL,match:({viewMode})=>!!(viewMode&&viewMode.match(/^(story|docs)$/)),render:()=>React.createElement(OutlineSelector,null)});});

@@ -23,7 +23,7 @@ import {
   BlockContainer,
   FullWidthStack,
   PropertySection,
-} from "./BlockContainers";
+} from "../../../../open-blocks/src/BlockContainers";
 import { BlockHeader } from "./BlockHeader";
 import { MinifiedBar } from "./MinifiedBar";
 import { SettingsSection } from "./SettingsSection";
@@ -207,7 +207,7 @@ export const VisualBlock = memo(
           style={style}
           whileHover={{
             transform: 'translateY(-1px)',
-            boxShadow: '0px 0px 0px 2px #00000030, 0px 0px 0px 4px #00000030, 0px 0px 0px 6px #00000030',
+            // boxShadow: '0px 0px 0px 2px #00000030, 0px 0px 0px 4px #00000030, 0px 0px 0px 6px #00000030',
           }}
         >
           {!inDrawer && !external && (

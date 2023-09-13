@@ -1,7 +1,0 @@
-import { require_cshtml } from './chunk-RRMGQHHH.mjs';
-import './chunk-EPYG763S.mjs';
-import './chunk-NNAAFZ4U.mjs';
-
-var cshtmlF6LSHNOX = require_cshtml();
-
-export { cshtmlF6LSHNOX as default };
