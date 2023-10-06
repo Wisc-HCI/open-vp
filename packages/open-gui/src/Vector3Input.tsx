@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, forwardRef, memo } from "react";
+import React, { SyntheticEvent, forwardRef, memo, ReactNode } from "react";
 import styled from "@emotion/styled";
 import { strip } from "number-precision";
 import {
@@ -10,6 +10,7 @@ import {
   Stack,
 } from "@mui/material";
 import { NumberSpinner } from "./NumberSpinner";
+import { NumberInput } from "./NumberInput";
 
 const NumberInputField = styled(Input)`
   input[type="number"]::-webkit-inner-spin-button,
@@ -32,21 +33,21 @@ interface CompoundInputProps {
 };
 
 const CompoundInput = memo(
-  forwardRef(({ 
-    onChange = () => {}, 
-    value = [0, 0, 0], 
-    disabled = false, 
+  forwardRef(({
+    onChange = () => { },
+    value = [0, 0, 0],
+    disabled = false,
     min = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
     max = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
-    step = 0.1, 
-    className = "", 
-    onFocus = () => {}, 
-    onBlur = () => {},
-  } : CompoundInputProps, ref) => {
+    step = 0.1,
+    className = "",
+    onFocus = () => { },
+    onBlur = () => { },
+  }: CompoundInputProps, ref) => {
     return (
       <Stack
         sx={{ padding: 1, marginRight: 4 }}
-        direction="row"
+        direction="column"
         // ref={ref}
         alignItems="center"
         alignContent="center"
@@ -143,7 +144,52 @@ interface Vector3InputProps {
   endAdornment?: React.ReactNode;
 }
 
-export const Vector3Input = memo(
+export const Vector3Input = ({
+  disabled = false,
+  label = "Vector",
+  onChange = (_) => { },
+  value = [0, 0, 0],
+  min = [
+    Number.NEGATIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+    Number.NEGATIVE_INFINITY,
+  ],
+  max = [
+    Number.POSITIVE_INFINITY,
+    Number.POSITIVE_INFINITY,
+    Number.POSITIVE_INFINITY,
+  ],
+  step = 0.1,
+  onBlur = (_) => { },
+  onFocus = (_) => { }
+}: Vector3InputProps) => {
+  return (<div>
+    <NumberInput label="X" value={value[0]} step={step} min={min[0]} max={max[0]} onChange={v => {
+        if (v) {
+          let newValue: number[] = [...value];
+          newValue[0] = v;
+          return newValue;
+        }
+      }} style={{marginBottom:2}}/>
+      <NumberInput label="Y" value={value[1]} min={min[1]} max={max[1]} onChange={v => {
+        if (v) {
+          let newValue: number[] = [...value];
+          newValue[1] = v;
+          return newValue;
+        }
+      }} style={{marginBottom:2}}/>
+      <NumberInput label="Z" value={value[2]} min={min[2]} max={max[2]} onChange={v => {
+        if (v) {
+          let newValue: number[] = [...value];
+          newValue[2] = v;
+          return newValue;
+        }
+      }} />
+  </div>)
+}
+
+
+export const Vector3InputOld = memo(
   ({
     disabled = false,
     label = "Vector",

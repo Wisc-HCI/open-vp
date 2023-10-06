@@ -1,41 +1,30 @@
 {
   "name": "@people_and_robots/open-core",
-  "private": true,
-  "version": "1.0.0",
-  "main": "./dist/index.js",
-  "module": "./dist/index.es.js",
-  "files": [
-    "dist/**"
-  ],
+  "version": "0.0.0",
+  "main": "./index.tsx",
+  "types": "./index.tsx",
+  "license": "MIT",
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react",
-    "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
-    "lint": "TIMING=1 eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "lint": "eslint .",
+    "generate:component": "turbo gen react-component"
   },
   "dependencies": {
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
-    "@mui/material": "^5.14.0",
-    "@radix-ui/react-scroll-area": "^1.0.0",
-    "framer-motion": "^9.1.6",
+    "immer": "10.0.3",
     "lodash": "^4.17.21",
-    "number-precision": "^1.5.2",
-    "react-icons": "^4.4.0",
-    "react-use-measure": "^2.1.1",
-    "ts-config-open-vp": "*",
-    "uuid": "^8.3.2"
+    "reactflow": "^11.7.2",
+    "uuid": "^8.3.2",
+    "zustand": "^4.4.2"
   },
   "devDependencies": {
-    "@types/react": "18.0.9",
-    "@types/react-dom": "18.0.4",
-    "eslint": "8.15.0",
-    "eslint-config-open-vp": "*",
-    "react": "18.1.0",
-    "ts-config-open-vp": "*",
-    "tsup": "5.10.1"
-  },
-  "publishConfig": {
-    "access": "public"
+    "@turbo/gen": "^1.10.12",
+    "@types/lodash": "^4.14.199",
+    "@types/node": "^20.5.2",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/uuid": "^9.0.4",
+    "eslint-config-custom": "*",
+    "react": "^18.2.0",
+    "tsconfig": "*",
+    "typescript": "^4.5.2"
   }
 }

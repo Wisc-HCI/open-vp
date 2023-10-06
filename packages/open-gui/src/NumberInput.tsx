@@ -1,21 +1,7 @@
 import React, { SyntheticEvent, memo } from "react";
-import styled from "@emotion/styled";
-import {
-  InputAdornment,
-  OutlinedInput,
-  InputLabel,
-  FormControl,
-} from "@mui/material";
 import { NumberSpinner } from "./NumberSpinner";
-import { useNumeric, PASSABLE_NUMERIC_STATUSES } from "./useNumeric";
-
-const OutlinedNumberInput = styled(OutlinedInput)`
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`;
+import { useNumeric } from "./useNumeric";
+import { TextInput } from "./TextInput";
 
 interface NumberInputProps {
   disabled?: boolean,
@@ -30,24 +16,25 @@ interface NumberInputProps {
   suffix?: string,
   prefix?: string,
   min?: number,
-  max?: number
+  max?: number, 
+  style?: any
 }
 
 export const NumberInput = memo(
   ({
     disabled,
     label,
-    onChange = (_) => {},
+    onChange = (_) => { },
     step,
     value = 0,
-    onBlur = (_) => {},
-    onFocus = (_) => {},
-    onMouseEnter = (_) => {},
-    onMouseLeave = (_) => {},
+    onBlur = (_) => { },
+    onFocus = (_) => { },
+    onMouseEnter = (_) => { },
+    onMouseLeave = (_) => { },
     suffix = "",
-    prefix = "",
     min = Number.NEGATIVE_INFINITY,
     max = Number.POSITIVE_INFINITY,
+    style = {}
   }: NumberInputProps) => {
     const {
       textValue,
@@ -64,52 +51,22 @@ export const NumberInput = memo(
     });
 
     return (
-      <FormControl
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        className="nodrag"
-      >
-        <InputLabel
-          className="nodrag"
-          htmlFor="outlined-position-vector"
-          color="primary"
-          shrink
-        >
-          {label}
-        </InputLabel>
-        <OutlinedNumberInput
-          notched
-          className="nodrag"
-          size="small"
-          id="outlined-position-vector"
-          label={label}
-          color={
-            PASSABLE_NUMERIC_STATUSES.includes(status) ? "primary" : "error"
-          }
-          onFocus={onFocus}
-          onBlur={onBlur}
+      <TextInput
+        disabled={disabled}
+        value={textValue}
+        label={label}
+        suffix={suffix}
+        onChange={onChangeInner}
+        extra={<NumberSpinner
           disabled={disabled}
-          value={textValue}
-          onChange={onChangeInner}
-          style={{ paddingRight: 4 }}
-          inputProps={{ min, max, className: "nodrag" }}
-          startAdornment={
-            <InputAdornment position="start">{prefix}</InputAdornment>
-          }
-          endAdornment={
-            <InputAdornment position="end">
-              {suffix}
-              <NumberSpinner
-                disabled={disabled}
-                above={value >= max}
-                below={value <= min}
-                onClickDown={onStepDown}
-                onClickUp={onStepUp}
-              />
-            </InputAdornment>
-          }
-        />
-      </FormControl>
+          above={value >= max}
+          below={value <= min}
+          onClickDown={onStepDown}
+          onClickUp={onStepUp}
+        />}
+        style={style}
+      />
+
     );
   }
 );

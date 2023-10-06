@@ -2,13 +2,13 @@ import React from "react";
 import { styled, alpha } from '@mui/material/styles';
 import { IconButton as MuiIconButton, Tooltip, TooltipProps } from "@mui/material";
 
-interface IconButtonProps {
+export interface IconButtonProps {
   size?: 'small' | 'medium' | 'large' | string;
   toggled?: boolean;
   canToggle?: boolean;
 }
 
-const sizeMap = {
+const sizeMap: {[key: string]: number} = {
   small: 32,
   medium: 40,
   large: 48,
@@ -18,11 +18,11 @@ export const IconButton = styled(MuiIconButton, {
   shouldForwardProp: (prop: string) =>
     !['canToggle', 'toggled'].includes(prop)
 })<IconButtonProps>(({ theme, size = 'small', toggled, canToggle }) => ({
-  backgroundColor: canToggle && toggled 
-    ? alpha(theme.palette.primary.main, 0.4) 
+  backgroundColor: canToggle && toggled
+    ? alpha(theme.palette.primary.main, 0.4)
     : canToggle && !toggled
-    ? "transparent"
-    : "rgba(0,0,0,0.5)",
+      ? "transparent"
+      : "rgba(0,0,0,0.5)",
   color: "white",
   fontSize: "1.4rem",
   "&.Mui-disabled": {
@@ -34,11 +34,11 @@ export const IconButton = styled(MuiIconButton, {
   minWidth: size === size ? sizeMap[size] : sizeMap.medium,
   flex: 1,
   "&:hover": {
-    backgroundColor: canToggle && toggled 
-    ? alpha(theme.palette.primary.main, 0.5) 
-    : canToggle && !toggled
-    ? alpha(theme.palette.primary.main, 0.25) 
-    : "rgba(0,0,0,0.7)",
+    backgroundColor: canToggle && toggled
+      ? alpha(theme.palette.primary.main, 0.5)
+      : canToggle && !toggled
+        ? alpha(theme.palette.primary.main, 0.25)
+        : "rgba(0,0,0,0.7)",
     color: theme.palette.primary.main,
   },
   "&:focus-visible": {
@@ -59,8 +59,7 @@ export interface ActionIconButtonProps {
   placement?: TooltipProps["placement"];
   toggled?: boolean;
   canToggle?: boolean;
-  children?: React.ReactNode;
-  flex?: boolean;
+  children?: React.ReactNode
 }
 
 export const ActionIconButton = ({

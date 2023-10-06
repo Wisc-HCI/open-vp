@@ -1,334 +1,192 @@
-# OpenVP
-*A highly customizable visual programming environment for React*
+# Turborepo Design System Starter
 
-Try out examples in the [Storybook](https://6404f678cd3c67a156715458-pyohcpyhiw.chromatic.com/)
+This guide explains how to use a React design system starter powered by:
 
-## Usage
+- 🏎 [Turborepo](https://turbo.build/repo) — High-performance build system for Monorepos
+- 🚀 [React](https://reactjs.org/) — JavaScript library for user interfaces
+- 🛠 [Tsup](https://github.com/egoist/tsup) — TypeScript bundler powered by esbuild
+- 📖 [Storybook](https://storybook.js.org/) — UI component environment powered by Vite
 
-### Environment
-The main entry for the editor is the `Environment` component:
+As well as a few others tools preconfigured:
 
-```javascript
-<Environment
-    drawerWidth={235} // Number, defaults to 235, width of the drawers when expanded
-    height={300} // Number or string, height of the component
-    width={400} // Number or string, width of the component
-    store={useStore} // A zustand store. Not supplying a store uses the internal store.
-    highlightColor='#d604f2' // Highlight color, used for button, input, and block highlighting
-/>
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+- [Changesets](https://github.com/changesets/changesets) for managing versioning and changelogs
+- [GitHub Actions](https://github.com/changesets/action) for fully automated package publishing
+
+## Using this example
+
+Run the following command:
+
+```sh
+npx create-turbo@latest -e design-system
 ```
 
-The environment uses a [Zustand](https://github.com/pmndrs/zustand) store to contain the data. This is where you will specify what the drawers, types, and entries are. If you compose your store with slices, you can use the existing store as a starting point by importing the `Programming Slice` from the library:
+### Useful Commands
 
-```javascript
-import {ProgrammingSlice} from 'simple-vp';
-import produce from "immer";
-import create from 'zustand';
+- `pnpm build` - Build all packages, including the Storybook site
+- `pnpm dev` - Run all packages locally and preview with Storybook
+- `pnpm lint` - Lint all packages
+- `pnpm changeset` - Generate a changeset
+- `pnpm clean` - Clean up all `node_modules` and `dist` folders (runs each package's clean script)
 
-// Not defined here, but generates a middleware for immer
-const immer = (config)=>(set,get,api)=> config({...}) 
+## Turborepo
 
-const wholeStore = (get,set) => ({
-    ...SomeOtherSlice,
-    ...ProgrammingSlice
-})
+[Turborepo](https://turbo.build/repo) is a high-performance build system for JavaScript and TypeScript codebases. It was designed after the workflows used by massive software engineering organizations to ship code at scale. Turborepo abstracts the complex configuration needed for monorepos and provides fast, incremental builds with zero-configuration remote caching.
 
-export const useStore = create(immer(wholeStore))
+Using Turborepo simplifies managing your design system monorepo, as you can have a single lint, build, test, and release process for all packages. [Learn more](https://vercel.com/blog/monorepos-are-changing-how-teams-build-software) about how monorepos improve your development workflow.
+
+## Apps & Packages
+
+This Turborepo includes the following packages and applications:
+
+- `apps/docs`: Component documentation site with Storybook
+- `packages/ui`: Core React components
+- `packages/utils`: Shared React utilities
+- `packages/tsconfig`: Shared `tsconfig.json`s used throughout the Turborepo
+- `packages/eslint-config-custom`: ESLint preset
+
+Each package and app is 100% [TypeScript](https://www.typescriptlang.org/). Workspaces enables us to "hoist" dependencies that are shared between packages to the root `package.json`. This means smaller `node_modules` folders and a better local dev experience. To install a dependency for the entire monorepo, use the `-w` workspaces flag with `pnpm add`.
+
+This example sets up your `.gitignore` to exclude all generated files, other folders like `node_modules` used to store your dependencies.
+
+### Compilation
+
+To make the core library code work across all browsers, we need to compile the raw TypeScript and React code to plain JavaScript. We can accomplish this with `tsup`, which uses `esbuild` to greatly improve performance.
+
+Running `pnpm build` from the root of the Turborepo will run the `build` command defined in each package's `package.json` file. Turborepo runs each `build` in parallel and caches & hashes the output to speed up future builds.
+
+For `acme-core`, the `build` command is the following:
+
+```bash
+tsup src/index.tsx --format esm,cjs --dts --external react
 ```
-### Constants
 
-A number of useful constants are exported as enums. They are as follows:
+`tsup` compiles `src/index.tsx`, which exports all of the components in the design system, into both ES Modules and CommonJS formats as well as their TypeScript types. The `package.json` for `acme-core` then instructs the consumer to select the correct format:
 
-*TYPES*: Either `FUNCTION` or `OBJECT`. These are the main types that your defined types can inherit from.
-
-*DATA_TYPES*: The type of data that is encoded by a given data entry. For example, for a given type that has been defined by the user, you can have an `INSTANCE` or `ARGUMENT` of that type, or `REFERENCE` or a reference to either of the others. `INSTANCES` behave similarly, except that `REFERENCE` doesn't appear in the drawer, and can only be instantiated from a function. For things that inherit from `TYPES.FUNCTION`, you can either have a `DATA_TYPE` of `INSTANCE` or `CALL`. 
-
-*SIMPLE_PROPERTY_TYPES*: A number of simple properties that can be specified as fields in a user-defined type (as opposed to another block argument). These include `BOOLEAN` (true/false), `NUMBER` (numerical value), `STRING` (text), `OPTIONS` (one-of-multiple), or `IGNORED` (not visible, useful if you have non-rendered data you are tracking).
-
-*EXTRA_TYPES* A large number of options for what buttons and behaviors can be engaged from the "Extra Bar" at the top-right of each block. These are as follows:
-
-| Enum Value            | Notes/Description                                | Usage |
-|-----------------------|--------------------------------------------------|-------|
-| `LOCKED_INDICATOR`    | Shows if the block data `canEdit` is false       | `EXTRA_TYPES.LOCKED_INDICATOR` |
-| `NAME_EDIT_TOGGLE`    | Allows the user to edit the name of the instance | `EXTRA_TYPES.NAME_EDIT_TOGGLE` |
-| `SELECTION_TOGGLE`    | Allows the user to select/deselect the block     | `EXTRA_TYPES.SELECTION_TOGGLE` |
-| `COLLAPSE_TOGGLE`     | Allows the user to collapse/expand the block     | `EXTRA_TYPES.COLLAPSE_TOGGLE` |
-| `FUNCTION_BUTTON`     | Allows the user to execute a function in the store from the block | `{type: EXTRA_TYPES.FUNCTION_BUTTON, onClick: 'updateItemBlockColors', label: 'Cycle Color', icon: FiFeather}` |
-| `INDICATOR_TEXT`      | Pipe simple information into a pill | `{type: EXTRA_TYPES.INDICATOR_TEXT, accessor: (data)=>data.properties.children.length, label: 'Size' }` |
-| `INDICATOR_ICON`      | Pipe icon into block | `{type: EXTRA_TYPES.INDICATOR_ICON, accessor: (data)=>data.properties.children.length, label: 'Size' }` |
-| `DROPDOWN`            | Creates a dropdown with nested extras inside (can be nested in other dropdowns) | `{ icon: FiMoreHorizontal, label: 'More Options', type: EXTRA_TYPES.DROPDOWN, contents: [ EXTRA_TYPES.NAME_EDIT_TOGGLE, EXTRA_TYPES.COLLAPSE_TOGGLE ] }` |
-| `DELETE_BUTTON`       | Allows the user to delete the block or instance | `EXTRA_TYPES.DELETE_BUTTON` |
-| `ADD_ARGUMENT`        | Allows the user add an argument to a function definition | `{type: EXTRA_TYPES.ADD_ARGUMENT, argumentType: 'hatType'}` |
-| `ADD_ARGUMENT_GROUP`  | A macro for specifying arguments that can be added to a function definition | `{type: EXTRA_TYPES.ADD_ARGUMENT_GROUP, allowed: ['hatType','bootType']}` |
-| `DEBUG_TOGGLE`        | Shows the data for a given block, useful in debugging | `EXTRA_TYPES.DEBUG_TOGGLE` |
-| `DIVIDER`             | Shows a simple divider to separate groups | `EXTRA_TYPES.DIVIDER` |
-| `LABEL`               | Shows a simple, non-interactive label | `{type: EXTRA_TYPES.LABEL}, label: 'Sizes'` |
-
-### Store Data
-
-The structure of the data in the store is as follows:
-
-```javascript
-const initialStoreData = {
-    activeDrawer: null,
-    programSpec: {
-        drawers: [],
-        objectTypes: {}
-    },
-    programData: {},
-    /* 
-        There are also functions which support modifying the store data that are needed.
-        See the default store for more details if looking to replicate the behavior.
-    */
+```json:acme-core/package.json
+{
+  "name": "@acme/core",
+  "version": "0.0.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
 }
 ```
 
-Drawers are specified as entries in the `drawers` field. They have the following structure:
+Run `pnpm build` to confirm compilation is working correctly. You should see a folder `acme-core/dist` which contains the compiled output.
 
-_Instance Drawers_
-Show a set of instances. When one of these is dragged from the drawer into the canvas and placed, a new item is spawned in the programData of the store.
+```bash
+acme-core
+└── dist
+    ├── index.d.ts  <-- Types
+    ├── index.js    <-- CommonJS version
+    └── index.mjs   <-- ES Modules version
+```
 
-```javascript
-const instanceDrawer = { 
-    title: "Structures", 
-    dataType: DATA_TYPES.INSTANCE, 
-    objectTypes: ["functionType", "operationType", "blockType"], 
-    icon: FiClipboard 
+## Components
+
+Each file inside of `acme-core/src` is a component inside our design system. For example:
+
+```tsx:acme-core/src/Button.tsx
+import * as React from 'react';
+
+export interface ButtonProps {
+  children: React.ReactNode;
 }
-```
 
-_Function Call Drawers_
-Show a set of calls to available functions. The current set of entries that belong to that function type will automatically populate the drawer. Note, you can actually define multiple different function sub-types, and thereby have different acceptance logic based on that, and show them in separate drawers.
-
-```javascript
-const functionCallDrawer = { 
-    title: "Functions", 
-    dataType: DATA_TYPES.CALL, 
-    objectType: 'functionType', 
-    icon: FiLogOut }
-```
-
-_Reference Drawers_
-Show a set of references that can be dragged into the canvas. These are populated based on the entries in the programData of the store that are an instance of the specified `objectType`. Thus, for every entry of dataType:`DATA_TYPE.INSTANCE`, a spawnable entry of the same type but of dataType:`DATA_TYPE.REFERENCE` is created in the drawer.
-
-```javascript
-const functionDrawer = { 
-    title: "Hats", 
-    dataType: DATA_TYPES.REFERENCE, 
-    objectType: 'hatType', 
-    icon: FiGrid }
-```
-
-### Object Type Specification
-
-The main fields of each objectType are as follows: 
-
-| Field | Notes |
-|-------|-------|
-|`name`   | The human-readable name of that type (e.g. "Hat") |
-|`type`   | The parent type (`TYPE.OBJECT` or `TYPE.FUNCTION`) |
-|`properties`| Where you define the properties that this objectType can take |
-|`instanceBlock`| The specification section for how an instance of this type is shown. For `OBJECT` types, this is the instance, and for `FUNCTION` types this specifies the appearance of function body |
-|`referenceBlock`| Relevant only for `OBJECT` types, how references to an instance are rendered |
-|`callBlock`| Relevant only for `FUNCTION` types, how calls to a function are rendered |
-
-#### Properties
-
-An example set of properties for an `OBJECT`-based type is as follows:
-
-```javascript
-const properties = {
-    /* A field called 'Hat' that stores a value in 
-    each instance's `properties.hat` field. It accepts 
-    blocks of `hatType` and is by default null.
-     */
-    hat: {
-        name: "Hat",
-        accepts: ["hatType"],
-        default: null,
-        isList: false
-    },
-    /* A field called 'Boot' that stores a value in 
-    each instance's `properties.boot` field. It accepts 
-    blocks of `bootType` and is by default null.
-     */
-    boot: {
-        name: "Boot",
-        accepts: ["bootType"],
-        default: null,
-        isList: false
-    },
-    /* A list-based set of block values called 'Children'
-    that stores its values in each instance's `properties.children`
-    field. It accepts types of `functionType`, `blockType`, 
-    and `operationType` and defaults to an empty list. 
-    It takes up the full width of the block.
-     */
-    children: {
-        name: 'Children',
-        accepts: ['functionType', 'blockType', 'operationType'],
-        default: [],
-        isList: true,
-        fullWidth: true
-    }
-    /* A field called 'Speed' that stores a numerical 
-    value in each instance's `properties.speed` field. 
-    It must be between 0 and 20, and is by default 1. 
-    It is visually scaled by 0.1, so appears to the user
-    to range between 0 and 2, incrementing by steps of 0.1. 
-    Units are in 'm/s'. Visual Precision indicates the 
-    number of decimal places to use when displaying 
-    the number to the users, so this would show values 
-    to one decimal place.
-     */
-    speed: {
-        name: "Speed",
-        type: SIMPLE_PROPERTY_TYPES.NUMBER,
-        default: 1,
-        min: 0,
-        max: 20,
-        step: 1,
-        units: 'm/s',
-        visualScaling: 0.1,
-        visualPrecision: 1
-    },
-    /* A field called 'Do Funky' that stores a boolean 
-    value in each instance's `properties.doFunky` field. 
-    It is by default false.
-     */
-    doFunky: {
-        name: "Do Funky",
-        type: SIMPLE_PROPERTY_TYPES.BOOLEAN,
-        default: false
-    },
-    /* A field called 'Greeting' that stores a text 
-    value in each instance's `properties.greeting` field. 
-    It is by default the empty string ''.
-     */
-    greeting: {
-        name: "Greeting",
-        type: SIMPLE_PROPERTY_TYPES.STRING,
-        default: ''
-    },
-    /* A field called 'Time' that stores a text 
-    value in each instance's `properties.time` field. 
-    It must be either 'am' or 'pm' and default is 'am'.
-     */
-    time: {
-        name: "Time",
-        type: SIMPLE_PROPERTY_TYPES.OPTIONS,
-        options: [{value:'am',label:'AM'},{value:'pm',label:'PM'}],
-        default: 'am'
-    },
-    /* A hidden field called 'Description' that stores 
-    some value in each instance's `properties.description` 
-    field. It defaults to the value specified.
-     */
-    description: {
-        name: "Description",
-        type: SIMPLE_PROPERTY_TYPES.IGNORED,
-        default: 'Some description text'
-    }
+export function Button(props: ButtonProps) {
+  return <button>{props.children}</button>;
 }
+
+Button.displayName = 'Button';
 ```
 
-#### Instance Block Specification
+When adding a new file, ensure the component is also exported from the entry `index.tsx` file:
 
-```javascript
-const instanceBlock = {
-    /* This block is tied to the canvas
-    and cannot be dragged into other blocks.
-    */
-    onCanvas: true,
-    /* The color of the block */
-    color: "#62869e",
-    /* The icon shown in the top-left */
-    icon: FiLogOut,
-    /* Extras shown in the top-right */
-    extras: [
-        /* Show a locked icon if you can't edit */
-        EXTRA_TYPES.LOCKED_INDICATOR,
-        /* Show a dropdown for the rest */
-        {
-            type: EXTRA_TYPES.DROPDOWN,
-            icon: FiMoreHorizontal,
-            contents: [
-                EXTRA_TYPES.SELECTION_TOGGLE,
-                EXTRA_TYPES.NAME_EDIT_TOGGLE,
-                EXTRA_TYPES.DELETE_BUTTON
-            ]
-        }
-    ],
-    /* Connections are optional fields that can be specified for onCanvas blocks */
-    connections: {
-        /* Keys are either top, bottom, left, or right */
-        bottom: {
-                direction: CONNECTIONS.OUTBOUND,
-                allowed: ["operationType"]
-            }
-    }
-    /* In the drawer, whether to prevent automatically 
-    pre-pending "New" in front of each instance that 
-    can be dragged in.
-    */
-    hideNewPrefix: true
-}
+```tsx:acme-core/src/index.tsx
+import * as React from "react";
+export { Button, type ButtonProps } from "./Button";
+// Add new component exports here
 ```
 
-#### Reference Block Specification
+## Storybook
 
-```javascript
-const referenceBlock = {
-    /* This block is must be dragged
-    into another block.
-    */
-    onCanvas: false,
-    /* The color of the block */
-    color: "#AD1FDE",
-    /* The icon shown in the top-left */
-    icon: FiGrid,
-    /* Extras shown in the top-right */
-    extras: [
-        EXTRA_TYPES.LOCKED_INDICATOR,
-        {
-        type: EXTRA_TYPES.DROPDOWN,
-        icon: FiMoreHorizontal,
-        contents: [
-            /* In the drawer, this deletes the instance */
-            EXTRA_TYPES.DELETE_BUTTON,
-            /* Renames the corresponding referenced instance */
-            EXTRA_TYPES.NAME_EDIT_TOGGLE
-        ]
-        }
-    ]
-}
+Storybook provides us with an interactive UI playground for our components. This allows us to preview our components in the browser and instantly see changes when developing locally. This example preconfigures Storybook to:
+
+- Use Vite to bundle stories instantly (in milliseconds)
+- Automatically find any stories inside the `stories/` folder
+- Support using module path aliases like `@acme-core` for imports
+- Write MDX for component documentation pages
+
+For example, here's the included Story for our `Button` component:
+
+```js:apps/docs/stories/button.stories.mdx
+import { Button } from '@acme-core/src';
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+
+<Meta title="Components/Button" component={Button} />
+
+# Button
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget consectetur tempor, nisl nunc egestas nisi, euismod aliquam nisl nunc euismod.
+
+## Props
+
+<Props of={Box} />
+
+## Examples
+
+<Preview>
+  <Story name="Default">
+    <Button>Hello</Button>
+  </Story>
+</Preview>
 ```
 
-#### Call Block Specification
+This example includes a few helpful Storybook scripts:
 
-```javascript 
-const callBlock = {
-    /* This block is must be dragged
-    into another block.
-    */
-    onCanvas: false,
-    /* The color of the block */
-    color: "#62869e",
-    /* The icon shown in the top-left */
-    icon: FiLogOut,
-    /* Extras shown in the top-right */
-    extras:[
-        {
-            type: EXTRA_TYPES.DROPDOWN,
-            icon: FiMoreHorizontal,
-            contents:[
-                EXTRA_TYPES.DEBUG_TOGGLE
-            ]
-        }
-    ]
-},
+- `pnpm dev`: Starts Storybook in dev mode with hot reloading at `localhost:6006`
+- `pnpm build`: Builds the Storybook UI and generates the static HTML files
+- `pnpm preview-storybook`: Starts a local server to view the generated Storybook UI
+
+## Versioning & Publishing Packages
+
+This example uses [Changesets](https://github.com/changesets/changesets) to manage versions, create changelogs, and publish to npm. It's preconfigured so you can start publishing packages immediately.
+
+You'll need to create an `NPM_TOKEN` and `GITHUB_TOKEN` and add it to your GitHub repository settings to enable access to npm. It's also worth installing the [Changesets bot](https://github.com/apps/changeset-bot) on your repository.
+
+### Generating the Changelog
+
+To generate your changelog, run `pnpm changeset` locally:
+
+1. **Which packages would you like to include?** – This shows which packages and changed and which have remained the same. By default, no packages are included. Press `space` to select the packages you want to include in the `changeset`.
+1. **Which packages should have a major bump?** – Press `space` to select the packages you want to bump versions for.
+1. If doing the first major version, confirm you want to release.
+1. Write a summary for the changes.
+1. Confirm the changeset looks as expected.
+1. A new Markdown file will be created in the `changeset` folder with the summary and a list of the packages included.
+
+### Releasing
+
+When you push your code to GitHub, the [GitHub Action](https://github.com/changesets/action) will run the `release` script defined in the root `package.json`:
+
+```bash
+turbo run build --filter=docs^... && changeset publish
 ```
 
-## Contributing
+Turborepo runs the `build` script for all publishable packages (excluding docs) and publishes the packages to npm. By default, this example includes `acme` as the npm organization. To change this, do the following:
 
-Interested in helping out? Send a pull request or create an issue!
+- Rename folders in `packages/*` to replace `acme` with your desired scope
+- Search and replace `acme` with your desired scope
+- Re-run `pnpm install`
+
+To publish packages to a private npm organization scope, **remove** the following from each of the `package.json`'s
+
+```diff
+- "publishConfig": {
+-  "access": "public"
+- },
+```

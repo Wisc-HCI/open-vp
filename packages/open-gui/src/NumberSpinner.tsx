@@ -1,6 +1,7 @@
 import React, { SyntheticEvent } from "react";
 import styled from "@emotion/styled";
 import { FiChevronUp, FiChevronDown } from "react-icons/fi";
+import { Style } from "util";
 
 const SpinnerButton = styled.button(
   {
@@ -20,10 +21,12 @@ const SpinnerButton = styled.button(
     background: "#22222299",
     "&:focus": {
       background: "#222222",
+      color: "#bbb"
     },
     "&:hover": {
       background: "#222222",
-    }
+      color: "#bbb"
+    },
   },
   ({disabled}) => ({ opacity: disabled ? 0.5 : 1 })
 );
@@ -34,6 +37,7 @@ interface NumberSpinnerProps {
   disabled?: boolean;
   above?: boolean;
   below?: boolean;
+  style?: any
 }
 
 export const NumberSpinner = ({
@@ -42,6 +46,7 @@ export const NumberSpinner = ({
   disabled = false,
   above = false,
   below = false,
+  style = {}
 }: NumberSpinnerProps) => {
   return (
     <div
@@ -52,7 +57,9 @@ export const NumberSpinner = ({
         borderRadius: 3,
         justifyContent: "center",
         alignItems: "center",
+        ...style
       }}
+      role='button'
     >
       <SpinnerButton
         disabled={disabled || above}

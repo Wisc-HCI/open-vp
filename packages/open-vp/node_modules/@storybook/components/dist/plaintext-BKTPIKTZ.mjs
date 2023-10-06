@@ -1,5 +1,0 @@
-import { __commonJS } from './chunk-NNAAFZ4U.mjs';
-
-var require_plaintext=__commonJS({"../../node_modules/highlight.js/lib/languages/plaintext.js"(exports,module){function plaintext(hljs){return {name:"Plain text",aliases:["text","txt"],disableAutodetect:!0}}module.exports=plaintext;}});var plaintextBKTPIKTZ = require_plaintext();
-
-export { plaintextBKTPIKTZ as default };

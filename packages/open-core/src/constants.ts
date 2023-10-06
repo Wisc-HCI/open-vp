@@ -1,3 +1,8 @@
+import { BlockData } from "./types";
+
+export const SPAWNER = "SPAWNER";
+export const CANVAS = "CANVAS";
+
 export type DataType = "INSTANCE" | "REFERENCE" | "CALL" | "ARGUMENT" | "CONNECTION";
 
 export const DATA_TYPES = {
@@ -29,10 +34,72 @@ export type ExtraType =
   | "ADD_ARGUMENT" 
   | "ADD_ARGUMENT_GROUP" 
   | "DEBUG_TOGGLE" 
-  | "INDICATOR_TEXT" 
-  | "INDICATOR_ICON" 
-  | "DIVIDER" 
-  | "LABEL";
+  | "INDICATOR" 
+  | "DIVIDER"
+
+export type LockedIndicatorExtra = "LOCKED_INDICATOR";
+export type NameEditToggleExtra = "NAME_EDIT_TOGGLE";
+export type SelectionToggleExtra = "SELECTION_TOGGLE";
+export type DocToggleExtra = "DOC_TOGGLE";
+export type CollapseToggleExtra = "COLLAPSE_TOGGLE";
+export type DebugToggleExtra = "DEBUG_TOGGLE";
+export type DeleteButtonExtra = "DELETE_BUTTON";
+export type CopyButtonExtra = "COPY_BUTTON";
+export type CutButtonExtra = "CUT_BUTTON";
+export type DividerExtra = "DIVIDER";
+
+export type FunctionButtonExtra = {
+  label: string;
+  type: "FUNCTION_BUTTON";
+  icon: React.ReactNode;
+  onClick: string | ((block: BlockData) => void);
+}
+
+export type DropdownExtra = {
+  label: string;
+  type: "DROPDOWN";
+  icon: React.ReactNode;
+  contents: Extra[];
+}
+
+export type AddArgumentExtra = {
+  label: string;
+  type: "ADD_ARGUMENT";
+  icon: React.ReactNode;
+  argumentType: string;
+}
+
+export type AddArgumentGroupExtra = {
+  label: string;
+  type: "ADD_ARGUMENT_GROUP";
+  icon: React.ReactNode;
+  allowed: string[];
+}
+
+export type IndicatorExtra = {
+  label: string | React.ReactNode | ((block: BlockData) => React.ReactNode);
+  type: "INDICATOR";
+  icon: null | undefined | React.ReactNode | ((block: BlockData) => React.ReactNode);
+}
+
+export type Extra = 
+  LockedIndicatorExtra 
+  | NameEditToggleExtra 
+  | SelectionToggleExtra 
+  | DocToggleExtra 
+  | CollapseToggleExtra 
+  | FunctionButtonExtra 
+  | DropdownExtra 
+  | DeleteButtonExtra 
+  | CopyButtonExtra 
+  | CutButtonExtra 
+  | DebugToggleExtra 
+  | DividerExtra
+  | AddArgumentExtra
+  | AddArgumentGroupExtra
+  | DebugToggleExtra
+  | IndicatorExtra
+  | DividerExtra;
 
 export const EXTRA_TYPES = {
   LOCKED_INDICATOR: "LOCKED_INDICATOR" as ExtraType,
@@ -48,10 +115,8 @@ export const EXTRA_TYPES = {
   ADD_ARGUMENT: "ADD_ARGUMENT" as ExtraType,
   ADD_ARGUMENT_GROUP: "ADD_ARGUMENT_GROUP" as ExtraType,
   DEBUG_TOGGLE: "DEBUG_TOGGLE" as ExtraType,
-  INDICATOR_TEXT: "INDICATOR_TEXT" as ExtraType,
-  INDICATOR_ICON: "INDICATOR_ICON" as ExtraType,
-  DIVIDER: "DIVIDER" as ExtraType,
-  LABEL: "LABEL" as ExtraType,
+  INDICATOR: "INDICATOR" as ExtraType,
+  DIVIDER: "DIVIDER" as ExtraType
 };
 
 export type SimplePropertyType = "BOOLEAN" | "NUMBER" | "STRING" | "OPTIONS" | "IGNORED" | "METADATA" | "VECTOR3";

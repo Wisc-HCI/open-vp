@@ -1,19 +1,24 @@
-import React, {useRef} from 'react';
-import {createContext, useContext} from 'react';
-import { useDefaultProgrammingStore } from './store';
-import { useStore } from 'zustand';
+"use client"
 
-const ProgrammingContext = createContext(null);
+import { createContext, useContext, ReactNode, Context, useRef } from "react";
+import { useStore } from "zustand";
+import { useStoreWithEqualityFn } from "zustand/traditional";
+import { ProgrammingState, ProgrammingStore } from "./types";
+import { DefaultSlice, createProgrammingStore } from "./store";
+import { create } from "lodash";
 
-export const useProgrammingStore = (selector: (store:any)=>any, equalityFn: (value:any)=>boolean) => {
-    const store = useContext(ProgrammingContext);
-    return useStore(store, selector, equalityFn)
+export const ProgrammingContext = createContext<ProgrammingStore | null>(null);
+
+export function useProgrammingStore(selector: (state: ProgrammingState) => any) {
+  const store = useContext(ProgrammingContext);
+  if (!store) throw new Error("Missing ProgrammingProvider in the tree");
+  return useStore(store, selector);
 }
 
-export const ProgrammingProvider = ({store, children}) => {
-    return (
-        <ProgrammingContext.Provider value={store ? store : useDefaultProgrammingStore}>
-            {children}
-        </ProgrammingContext.Provider>
-    )
+export function ProgrammingProvider({ store, children }: {store: ProgrammingStore | undefined, children: ReactNode}) {
+  return (
+    <ProgrammingContext.Provider value={store ? store : createProgrammingStore}>
+      {children}
+    </ProgrammingContext.Provider>
+  );
 }
