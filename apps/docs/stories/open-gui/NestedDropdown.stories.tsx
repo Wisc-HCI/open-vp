@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
-import { NestedDropdown } from "@people_and_robots/open-gui";
+import { NestedDropdown, DropdownData } from "@people_and_robots/open-gui";
 import { FiMoreHorizontal, FiStar } from "react-icons/fi";
 
 const meta: Meta<typeof NestedDropdown> = {
@@ -45,8 +45,8 @@ export const Primary: Story = {
       {
         type: "ENTRY",
         label: "Toggle Mode",
-        left: (d: DataType) =>
-          <FiStar style={{ color: d.color }} />,
+        /* @ts-ignore */
+        left: (data: DataType) => <FiStar style={{ color: data.color }} />, // eslint-disable-line no-eval
         onClick: () => {
           alert("Clicked Button")
         },
@@ -55,7 +55,8 @@ export const Primary: Story = {
       {
         type: "ENTRY",
         right: "⇧+⌘+N",
-        label: (d: DataType) => `Piped Name: ${d.name}`,
+        /* @ts-ignore */
+        label: (data: DataType) => `Piped Name: ${data.name}`, // eslint-disable-line no-eval
       },
       { type: "DIVIDER" },
       {
@@ -66,7 +67,8 @@ export const Primary: Story = {
           {
             type: "ENTRY",
             right: "⇧+⌘+N",
-            label: (d: DataType) => `Piped Name: ${d.name}`,
+            /* @ts-ignore */
+            label: (data: DataType) => `Piped Name: ${data.name}`, // eslint-disable-line no-eval
           },
         ],
       },

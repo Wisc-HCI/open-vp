@@ -1,38 +1,45 @@
-import React from "react";
+import React, { MouseEventHandler, ReactNode} from "react";
 import { styled, alpha } from '@mui/material/styles';
-import { IconButton as MuiIconButton, Tooltip, TooltipProps } from "@mui/material";
+import { IconButton as MuiIconButton, Button as MuiButton, Tooltip, TooltipProps } from "@mui/material";
 
 export interface IconButtonProps {
-  size?: 'small' | 'medium' | 'large' | string;
+  // size?: Size;
+  size?: "small" | "medium" | "large" | undefined;
   toggled?: boolean;
   canToggle?: boolean;
 }
 
-const sizeMap: {[key: string]: number} = {
-  small: 32,
-  medium: 40,
-  large: 48,
+const sizeMap = {
+  small: 24,
+  medium: 32,
+  large: 48
 }
 
-export const IconButton = styled(MuiIconButton, {
+const fontSizeMap = {
+  small: "1rem",
+  medium: "1.4rem",
+  large: "2rem"
+}
+
+export const IconButton = styled(MuiButton, {
   shouldForwardProp: (prop: string) =>
     !['canToggle', 'toggled'].includes(prop)
-})<IconButtonProps>(({ theme, size = 'small', toggled, canToggle }) => ({
+})<IconButtonProps>(({ theme, toggled, size = "medium", canToggle }) => ({
   backgroundColor: canToggle && toggled
     ? alpha(theme.palette.primary.main, 0.4)
     : canToggle && !toggled
       ? "transparent"
-      : "rgba(0,0,0,0.5)",
-  color: "white",
-  fontSize: "1.4rem",
+      : "rgba(100,100,100,0.5)",
+  color: theme.palette.text.primary,
+  fontSize: size ? fontSizeMap[size] : "1.4rem",
   "&.Mui-disabled": {
     backgroundColor: "rgba(0,0,0,0.25)",
     color: "#ccc",
   },
   borderRadius: theme.shape.borderRadius * 0.66,
-  height: size === size ? sizeMap[size] : sizeMap.medium,
-  minWidth: size === size ? sizeMap[size] : sizeMap.medium,
-  flex: 1,
+  height: size ? sizeMap[size] : 24,
+  minWidth: size ? sizeMap[size] : 24,
+  // flex: 1,
   "&:hover": {
     backgroundColor: canToggle && toggled
       ? alpha(theme.palette.primary.main, 0.5)
@@ -54,11 +61,12 @@ export const ToolbarButtonWrapper = styled("span")(({ }) => ({
 
 export interface ActionIconButtonProps {
   title?: string;
-  onClick?: () => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   placement?: TooltipProps["placement"];
   toggled?: boolean;
   canToggle?: boolean;
+  size?: "small" | "medium" | "large";
   children?: React.ReactNode
 }
 
@@ -69,7 +77,8 @@ export const ActionIconButton = ({
   placement = "top" as TooltipProps["placement"],
   toggled = false,
   canToggle = false,
-  children = [],
+  children = null,
+  size = "medium",
   ...props
 }: ActionIconButtonProps) => (
   <Tooltip
@@ -87,6 +96,7 @@ export const ActionIconButton = ({
         onClick={onClick}
         toggled={toggled}
         canToggle={canToggle}
+        size={size}
         {...props}
       >
         {children}

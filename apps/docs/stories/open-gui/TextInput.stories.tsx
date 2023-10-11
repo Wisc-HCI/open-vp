@@ -1,18 +1,31 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { ThemeProvider, createTheme, CssBaseline, Stack, Button } from "@mui/material";
 import { TextInput } from "@people_and_robots/open-gui";
 import { FiMoreHorizontal, FiCheck } from "react-icons/fi";
+import React from 'react';
 
 const meta: Meta<typeof TextInput> = {
   component: TextInput,
   decorators: [
-    (Story) => (
-      <ThemeProvider theme={createTheme()}>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
-    )
-  ]
+    (Story) => {
+      const [mode, setMode] = React.useState<"light" | "dark">("light");
+
+      const muiTheme = createTheme({ palette: { mode } });
+
+      return (
+        <ThemeProvider theme={muiTheme}>
+          <CssBaseline />
+          <Stack direction='column' alignItems='center' gap={1} style={{backgroundColor:muiTheme.palette.background.paper}}>
+          <Button onClick={()=>mode === "light" ? setMode("dark") : setMode("light")}>Toggle Mode</Button>
+          <div>
+          <Story/>
+          </div>
+          
+          </Stack>
+        </ThemeProvider>
+      );
+    },
+  ],
 };
 
 export default meta;

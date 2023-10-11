@@ -1,51 +1,39 @@
-import { OnConnectStartParams, NodeChange, Viewport } from "reactflow";
+import { OnConnectStartParams, NodeChange, Viewport, Position } from "reactflow";
 import { Timer } from "./timer";
 import { createProgrammingStore } from "./store";
-
-export type MetaType = "OBJECT" | "FUNCTION";
-
-export type LockedIndicatorExtra = "LOCKED_INDICATOR";
-export type NameEditToggleExtra = "NAME_EDIT_TOGGLE";
-export type SelectionToggleExtra = "SELECTION_TOGGLE";
-export type DocToggleExtra = "DOC_TOGGLE";
-export type CollapseToggleExtra = "COLLAPSE_TOGGLE";
-export type DebugToggleExtra = "DEBUG_TOGGLE";
-export type DeleteButtonExtra = "DELETE_BUTTON";
-export type CopyButtonExtra = "COPY_BUTTON";
-export type CutButtonExtra = "CUT_BUTTON";
-export type DividerExtra = "DIVIDER";
+import { PrimitiveType, MetaType, ConnectionDirection, ClipboardAction, PropertyType, ConnectionType, DrawerType, ExtraType } from "./constants";
 
 export type FunctionButtonExtra = {
   label: string;
-  type: "FUNCTION_BUTTON";
+  type: ExtraType.FunctionButton;
   icon: React.ReactNode;
   onClick: string | ((block: BlockData) => void);
 };
 
 export type DropdownExtra = {
   label: string;
-  type: "DROPDOWN";
+  type: ExtraType.Dropdown;
   icon: React.ReactNode;
   contents: Extra[];
 };
 
 export type AddArgumentExtra = {
   label: string;
-  type: "ADD_ARGUMENT";
+  type: ExtraType.AddArgument;
   icon: React.ReactNode;
   argumentType: string;
 };
 
 export type AddArgumentGroupExtra = {
   label: string;
-  type: "ADD_ARGUMENT_GROUP";
+  type: ExtraType.AddArgumentGroup;
   icon: React.ReactNode;
   allowed: string[];
 };
 
 export type IndicatorExtra = {
   label: string | React.ReactNode | ((block: BlockData) => React.ReactNode);
-  type: "INDICATOR";
+  type: ExtraType.Indicator;
   icon:
     | null
     | undefined
@@ -54,53 +42,32 @@ export type IndicatorExtra = {
 };
 
 export type Extra =
-  | LockedIndicatorExtra
-  | NameEditToggleExtra
-  | SelectionToggleExtra
-  | DocToggleExtra
-  | CollapseToggleExtra
-  | FunctionButtonExtra
-  | DropdownExtra
-  | DeleteButtonExtra
-  | CopyButtonExtra
-  | CutButtonExtra
-  | DebugToggleExtra
-  | DividerExtra
+  ExtraType.SelectionToggle
+  | ExtraType.DocToggle
+  | ExtraType.CollapseToggle
+  | ExtraType.DeleteButton
+  | ExtraType.CopyButton
+  | ExtraType.CutButton
+  | ExtraType.Divider
+  | ExtraType.DebugToggle
   | AddArgumentExtra
   | AddArgumentGroupExtra
-  | DebugToggleExtra
-  | IndicatorExtra
-  | DividerExtra;
-
-export type SimpleProperty =
-  | "BOOLEAN"
-  | "NUMBER"
-  | "STRING"
-  | "OPTIONS"
-  | "IGNORED"
-  | "METADATA"
-  | "VECTOR3";
-
-export type ConnectionDirection = "OUTBOUND" | "INBOUND";
-
-export type ConnectionHandle = "top" | "bottom" | "left" | "right";
-
-export type ClipboardAction = "COPY" | "CUT" | "PASTE" | "SELECT";
+  | DropdownExtra
+  | FunctionButtonExtra
+  | IndicatorExtra;
 
 export interface ClipboardProps {
   data?: BlockData;
-  fieldInfo: FieldInfo;
-  parentId: string;
-  idx?: number;
-  context: string[];
-  onCanvas: boolean;
+  typeSpec?: TypeSpec;
+  regionInfo?: RegionInfo;
+  context?: string[];
   coordinates?: { x: number; y: number };
 }
 
 export interface ObjectData {
   id: string;
   name: string;
-  metaType: "OBJECT-INSTANCE";
+  metaType: MetaType.ObjectInstance;
   type: string;
   properties: any;
   position?: { x: number; y: number };
@@ -114,7 +81,7 @@ export interface ObjectData {
 export interface ObjectReferenceData {
   id: string;
   name: string;
-  metaType: "OBJECT-REFERENCE";
+  metaType: MetaType.ObjectReference;
   type: string;
   ref: string;
   position?: { x: number; y: number };
@@ -123,13 +90,13 @@ export interface ObjectReferenceData {
   editing: boolean;
   selected: boolean;
   docActive: boolean;
-  refData?: BlockData;
+  // refData?: BlockData;
 }
 
 export interface ArgumentData {
   id: string;
   name: string;
-  metaType: "ARGUMENT";
+  metaType: MetaType.Argument;
   type: string;
   canDelete: boolean;
   canEdit: boolean;
@@ -141,7 +108,7 @@ export interface ArgumentData {
 export interface FunctionCallData {
   id: string;
   name: string;
-  metaType: "FUNCTION-CALL";
+  metaType: MetaType.FunctionCall;
   type: string;
   ref: string;
   properties: any;
@@ -151,13 +118,13 @@ export interface FunctionCallData {
   editing: boolean;
   selected: boolean;
   docActive: boolean;
-  refData?: BlockData;
+  // refData?: BlockData;
 }
 
 export interface FunctionDeclarationData {
   id: string;
   name: string;
-  metaType: "FUNCTION-DECLARATION";
+  metaType: MetaType.FunctionDeclaration;
   type: string;
   properties: any;
   arguments: string[];
@@ -182,7 +149,7 @@ export interface BlockSpec {
   icon: any;
   extras: any[];
   connections?: {
-    [key in ConnectionHandle] : {
+    [key in Position]? : {
       direction: ConnectionDirection,
       allowed: string[]
     }
@@ -200,14 +167,25 @@ export interface BlockSpec {
   };
 }
 
-export interface ConnectionData {
+export interface NumberConnectionData {
   id: string;
-  name: number | string;
-  metaType: "CONNECTION";
-  parent: { id: string; handle: ConnectionHandle };
-  child: { id: string; handle: ConnectionHandle };
-  mode: "NUMBER" | "STRING";
+  value: number;
+  metaType: MetaType.Connection;
+  parent: { id: string; handle: Position };
+  child: { id: string; handle: Position };
+  type: ConnectionType.Number;
 }
+
+export interface StringConnectionData {
+  id: string;
+  value: string;
+  metaType: MetaType.Connection;
+  parent: { id: string; handle: Position };
+  child: { id: string; handle: Position };
+  type: ConnectionType.String;
+}
+
+export type ConnectionData = NumberConnectionData | StringConnectionData;
 
 export interface ParserProps {
   block: BlockData;
@@ -226,23 +204,25 @@ export interface BlockFieldInfo {
   name: string;
   accepts: string[];
   default: any;
-  isList: boolean;
-  fullWidth: boolean;
-  type: "BLOCK";
+  isList?: boolean;
+  fullWidth?: boolean;
+  type: PropertyType.Block;
+  isFunctionArgument?: boolean;
+  isRequired?: boolean;
 }
 
 export interface SimpleBooleanFieldInfo {
   id: string;
   name: string;
   default: boolean;
-  type: "BOOLEAN";
+  type: PropertyType.Boolean;
 }
 
 export interface SimpleNumberFieldInfo {
   id: string;
   name: string;
   default: number;
-  type: "NUMBER";
+  type: PropertyType.Number;
   min?: number;
   max?: number;
   step?: number;
@@ -253,14 +233,14 @@ export interface SimpleStringFieldInfo {
   id: string;
   name: string;
   default: string;
-  type: "STRING";
+  type: PropertyType.String;
 }
 
 export interface SimpleOptionsFieldInfo {
   id: string;
   name: string;
   default: string;
-  type: "OPTIONS";
+  type: PropertyType.Options;
   options: { value: string; label: string }[];
 }
 
@@ -268,22 +248,22 @@ export interface SimpleIgnoredFieldInfo {
   id: string;
   name: string;
   default: any;
-  type: "IGNORED";
+  type: PropertyType.Ignored;
 }
 
 export interface SimpleMetadataFieldInfo {
   id: string;
   name: string;
   default: any;
-  type: "METADATA";
+  type: PropertyType.Metadata;
 }
 
 export interface SimpleVector3FieldInfo {
   id: string;
   name: string;
   default: number[];
-  type: "VECTOR3";
-}
+  type: PropertyType.Vector3;
+} 
 
 export type SimpleFieldInfo =
   | SimpleBooleanFieldInfo
@@ -298,7 +278,7 @@ export type FieldInfo = BlockFieldInfo | SimpleFieldInfo;
 
 export interface ObjectTypeSpec {
   name: string;
-  metaType: "OBJECT";
+  primitiveType: PrimitiveType.Object;
   description: string;
   instanceBlock: BlockSpec;
   referenceBlock: BlockSpec;
@@ -309,7 +289,7 @@ export interface ObjectTypeSpec {
 
 export interface FunctionTypeSpec {
   name: string;
-  metaType: "FUNCTION";
+  primitiveType: PrimitiveType.Function;
   description: string;
   functionBlock: BlockSpec;
   callBlock: BlockSpec;
@@ -321,17 +301,19 @@ export interface FunctionTypeSpec {
 export type TypeSpec = ObjectTypeSpec | FunctionTypeSpec;
 
 export interface ObjectDrawerSpec {
+  type: DrawerType.Multiple,
   title: string;
   icon: any;
   objectTypes: string[];
-  metaType: "OBJECT-INSTANCE" | "FUNCTION-DECLARATION";
+  metaType: MetaType.ObjectInstance | MetaType.FunctionDeclaration;
 }
 
 export interface ReferenceDrawerSpec {
+  type: DrawerType.Singular
   title: string;
   icon: any;
   objectType: string;
-  metaType: "OBJECT-REFERENCE" | "FUNCTION-CALL";
+  metaType: MetaType.ObjectReference | MetaType.FunctionCall;
 }
 
 export type DrawerSpec = ObjectDrawerSpec | ReferenceDrawerSpec;
@@ -369,9 +351,7 @@ export interface ProgrammingStateStructures {
   activeDoc: string | null;
   clipboard: {
     block?: BlockData;
-    fieldInfo?: FieldInfo;
-    parentId?: string;
-    idx?: number;
+    regionInfo?: RegionInfo;
     context?: string[];
     onCanvas?: boolean;
     action?: ClipboardAction;
@@ -385,6 +365,13 @@ export interface ProgrammingStateActions {
   setConnectionInfo: (info: OnConnectStartParams | null) => void;
   setActiveDrawer: (activeDrawer: string | null) => void;
   setTabs: (newTabs: Tab[]) => void;
+  setTabViewport: (id: string, viewport: Viewport) => void;
+  getTabViewport: (id: string) => Viewport | undefined;
+  renameTab: (id: string, name: string) => void;
+  setTabVisibility: (id: string, visible: boolean) => void;
+  removeTab: (id: string) => void;
+  addTab: (id: string, title: string, visible: boolean) => void;
+  setActiveTab: (tab: Tab) => void;
   setActiveDoc: (id: string, value: boolean) => void;
   parse: (
     language: string,
@@ -410,19 +397,19 @@ export interface ProgrammingStateActions {
   updateItemSelected: (id: string, value: boolean) => void;
   updateItemEditing: (id: string, value: boolean) => void;
   updateItemSimpleProperty: (id: string, property: string, value: any) => void;
-  updateEdgeName: (id: string, value: string) => void;
+  updateEdgeValue: (id: string, value: string) => void;
   deleteEdge: (id: string) => void;
   createEdge: (
     source: string,
-    sourceHandle: ConnectionHandle,
+    sourceHandle: Position,
     target: string,
-    targetHandle: ConnectionHandle
+    targetHandle: Position
   ) => void;
   validateEdge: (
     source: string,
-    sourceHandle: ConnectionHandle,
+    sourceHandle: Position,
     target: string,
-    targetHandle: ConnectionHandle
+    targetHandle: Position
   ) => boolean;
   toggleEdgeMode: (id: string) => void;
   pause: () => void;
@@ -440,14 +427,14 @@ export interface ProgrammingState
 
 export type ProgrammingStore = typeof createProgrammingStore;
 
-export interface BackReference {
-  id: string;
-  regionInfo: RegionInfo;
-  pattern:
-    | "EMBEDDED-OBJECT"
-    | "REFERENCE-OBJECT"
-    | "CALL-FUNCTION"
-    | "REFERENCE-ARGUMENT"
-    | "REFERENCE-REFERENCE"
-    | "ARGUMENT-SPECIFICATION";
-}
+// export interface BackReference {
+//   id: string;
+//   regionInfo: RegionInfo;
+//   pattern:
+//     | "EMBEDDED-OBJECT"
+//     | "REFERENCE-OBJECT"
+//     | "CALL-FUNCTION"
+//     | "REFERENCE-ARGUMENT"
+//     | "REFERENCE-REFERENCE"
+//     | "ARGUMENT-SPECIFICATION";
+// }

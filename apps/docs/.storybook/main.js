@@ -26,10 +26,6 @@ const config = {
       resolve: {
         alias: [
           {
-            find: "ui",
-            replacement: resolve(__dirname, "../../../packages/ui/"),
-          },
-          {
             find: "@people_and_robots/open-core",
             replacement: resolve(__dirname, "../../../packages/open-core/"),
           },

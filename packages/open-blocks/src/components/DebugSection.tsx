@@ -1,12 +1,12 @@
 import React from "react";
 import { styled } from '@mui/material/styles';
 import { Collapse, Box } from "@mui/material";
-import TreeView from '@mui/lab/TreeView';
-import TreeItem, { treeItemClasses } from '@mui/lab/TreeItem';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import { FiChevronDown, FiChevronRight } from "react-icons/fi";
 
 const StyledTreeItem = styled(TreeItem)(({theme})=>({
-  color:'#ddd',
+  color: theme.palette.text.secondary,
   [`& .${treeItemClasses.content}`]: {
     color: theme.palette.text.secondary,
     borderRadius: 3,
@@ -38,25 +38,33 @@ const StyledTreeItem = styled(TreeItem)(({theme})=>({
   }
 }))
 
-const dataToNode = (key,data) => {
+interface DataNodeProps {
+  dataKey: string;
+  data: any;
+}
+const DataNode = ({dataKey, data}: DataNodeProps) => {
   if (typeof data === 'object' && data !== null) {
     return (
-      <StyledTreeItem key={key} nodeId={key} label={`${key} `} disabled={Object.keys(data).length === 0}>
-        {Object.keys(data).map(d=>dataToNode(d,data[d]))}
+      <StyledTreeItem key={dataKey} nodeId={dataKey} label={`${dataKey} `} disabled={Object.keys(data).length === 0}>
+        {Object.keys(data).map(d=><DataNode key={d} dataKey={d} data={data[d]}/>)}
       </StyledTreeItem>
     )
   } else if (typeof data === 'string') {
-    return <StyledTreeItem key={key} nodeId={key} label={<span>{key}:{' '}<span className='label-value'>"{data}"</span></span>}/>
+    return <StyledTreeItem key={dataKey} nodeId={dataKey} label={<span>{dataKey}:{' '}<span className='label-value'>"{data}"</span></span>}/>
   } else if (typeof data === 'number') {
-    return <StyledTreeItem key={key} nodeId={key} label={<span>{key}:{' '}<span className='label-value'>{data}</span></span>}/>
+    return <StyledTreeItem key={dataKey} nodeId={dataKey} label={<span>{dataKey}:{' '}<span className='label-value'>{data}</span></span>}/>
   } else if (typeof data === 'boolean') {
-    return <StyledTreeItem key={key} nodeId={key} label={<span>{key}:{' '}<span style={{boxShadow:`0px 0px 2px 1px inset ${data?'lime':'red'}`}} className='label-value'>{data?'true':'false'}</span></span>}/>
+    return <StyledTreeItem key={dataKey} nodeId={dataKey} label={<span>{dataKey}:{' '}<span style={{boxShadow:`0px 0px 2px 1px inset ${data?'lime':'red'}`}} className='label-value'>{data?'true':'false'}</span></span>}/>
   } else if (data === null) {
-    return <StyledTreeItem key={key} nodeId={key} label={<span>{key}:{' '}<span className='label-value'>null</span></span>}/>
+    return <StyledTreeItem key={dataKey} nodeId={dataKey} label={<span>{dataKey}:{' '}<span className='label-value'>null</span></span>}/>
   }
 }
 
-export const DebugSection = ({ interactionDisabled, data }) => {
+export interface DebugSectionProps {
+  interactionDisabled?: boolean;
+  data: any;
+}
+export const DebugSection = ({ interactionDisabled, data }: DebugSectionProps) => {
 
   const renderedData = {
     ...data,
@@ -79,7 +87,7 @@ export const DebugSection = ({ interactionDisabled, data }) => {
       }}
     >
       <TreeView sx={{flex:1}} defaultCollapseIcon={<FiChevronDown/>} defaultExpandIcon={<FiChevronRight/>}>
-        {dataToNode('root',renderedData)}
+        <DataNode dataKey='root' data={renderedData}/>
       </TreeView>
     </Box>
   );

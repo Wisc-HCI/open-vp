@@ -54,8 +54,8 @@ const StyledScrollThumb = styled(ScrollArea.Thumb)({
 
 export interface ScrollRegionProps {
   children: React.ReactNode;
-  horizontal: boolean;
-  vertical: boolean;
+  horizontal?: boolean;
+  vertical?: boolean;
   height: number | string;
   width: number | string;
   scrollbarSize?: Size

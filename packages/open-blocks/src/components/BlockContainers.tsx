@@ -1,6 +1,8 @@
 import { Avatar, Box, Card, lighten, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
+import Draggable from 'react-draggable';
+import Paper from '@mui/material/Paper';
 
 export interface BlockContainerProps {
   'minified'?: boolean;
@@ -14,7 +16,7 @@ export const BlockContainer = motion(styled('div', {
   shouldForwardProp: (prop:string) => !['minified', 'selected', 'color', 'focused', 'bounded'].includes(prop)
 })<BlockContainerProps>(
   {
-    minWidth: 175,
+    minWidth: 150,
     borderRadius: 3,
     display: "block"
   },
@@ -42,8 +44,8 @@ export const BlockContainer = motion(styled('div', {
 export const BlockAvatarContainer = motion(styled(Avatar)({
   boxShadow: `0 0 0 1px #dddddd55`,
   color: "white",
-  height: "39px",
-  width: "39px",
+  height: 35,
+  width: 35,
   position: "relative",
 }));
 
@@ -72,3 +74,14 @@ export const PropertySection = styled(Card)({
 
 export const FullWidthStack = styled(Stack)({ width: '100%' })
 export const FullHeightStack = styled(Stack)({ height: '100%' })
+
+export function DraggablePaperComponent(props: any) {
+  return (
+    <Draggable
+      handle="#draggable-dialog-title"
+      cancel={'[class*="MuiDialogContent-root"]'}
+    >
+      <Paper {...props} style={{backgroundColor: "transparent"}}/>
+    </Draggable>
+  );
+}

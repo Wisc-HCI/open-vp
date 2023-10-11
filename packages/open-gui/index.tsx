@@ -5,7 +5,11 @@ export { ActionIconButton } from "./src/ActionIconButton";
 export { useNumeric } from "./src/useNumeric";
 export { TextInput } from "./src/TextInput";
 export { NestedDropdown } from "./src/NestedDropdown";
+export { NestedContextMenu } from "./src/NestedContextMenu";
 export { ScrollRegion } from "./src/ScrollRegion";
+export { VerticalSlider } from "./src/Slider";
+export { Select } from "./src/Select";
+export { Toggle } from "./src/Toggle";
 export type {
   NestedDropdownProps, DropdownData, DropdownDivider, DropdownHeader, DropdownEntry } from "./src/NestedDropdown";
 // import { ScrollRegion } from "./ScrollRegion";

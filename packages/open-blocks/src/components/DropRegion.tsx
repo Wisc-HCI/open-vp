@@ -1,7 +1,8 @@
 import React, { memo, useCallback, useState } from "react";
-import { useProgrammingStore, ProgrammingState, RegionInfo } from "@people_and_robots/open-core";
+import { useProgrammingStore, ProgrammingState, RegionInfo, CANVAS, ClipboardAction } from "@people_and_robots/open-core";
 import { useDrop } from "react-dnd";
-import { Block, PreviewBlock } from "../index";
+import { Block } from "../Block";
+import { PreviewBlock } from "../PreviewBlock";
 import { isEqual, intersection } from "lodash";
 import { motion } from "framer-motion";
 // import { stringEquality } from "../Utility";
@@ -17,7 +18,8 @@ import {
 import { TypeDescription, ChipMimic } from "./Doc";
 // import { CLIPBOARD_ACTION } from "../Constants";
 import { FiClipboard } from "react-icons/fi";
-import { BlockFieldInfo } from "@people_and_robots/open-core/src/types";
+import { BlockData, BlockFieldInfo } from "@people_and_robots/open-core";
+import { NestedContextMenu } from "@people_and_robots/open-gui";
 // import { useHover } from '@use-gesture/react';
 
 const DISABLED_STYLES = {
@@ -104,35 +106,37 @@ const REGION_VARIANTS = {
 const transferBlockSelector = (state: ProgrammingState) => state.transferBlock;
 
 export interface DropRegionProps {
-  id: string;
-  regionInfo: RegionInfo,
-  context: string[],
-  peripheral: boolean,
-  hideText: boolean,
-  disabled: boolean,
-  limitedRender: boolean
+  id?: string;
+  regionInfo: RegionInfo;
+  context: string[];
+  peripheral?: boolean;
+  hideText?: boolean;
+  disabled?: boolean;
+  limitedRender?: boolean;
 }
 
 export const DropRegion = memo(
   ({
     id,
     regionInfo,
-    peripheral,
-    hideText,
-    disabled,
-    context,
-    limitedRender,
+    peripheral = false,
+    hideText = false,
+    disabled = false,
+    context = [],
+    limitedRender = false
   }: DropRegionProps) => {
     const transferBlock = useProgrammingStore(transferBlockSelector);
 
-    const data = useProgrammingStore(
-      useCallback((state:ProgrammingState) => state.programData[id], [id])
+    const fieldInfo = regionInfo.fieldInfo as BlockFieldInfo;
+
+    const data: BlockData | null = useProgrammingStore(
+      useCallback((state:ProgrammingState) => id ? state.programData[id] : null, [id])
     );
     
     const validClipboard = useProgrammingStore(
       useCallback(
         (state: ProgrammingState) =>
-          (regionInfo.fieldInfo as BlockFieldInfo).accepts.includes(state.clipboard.block?.type || "") &&
+          fieldInfo.accepts.includes(state.clipboard.block?.type || "") &&
           !state.clipboard.onCanvas &&
           isEqual(
             intersection(context, state.clipboard.context),
@@ -142,32 +146,32 @@ export const DropRegion = memo(
       )
     );
 
-    const lastAction = useProgrammingStore((state) => state.clipboard.action);
+    const lastAction = useProgrammingStore((state: ProgrammingState) => state.clipboard.action);
 
-    const paste = useProgrammingStore((state) => state.paste);
+    const paste = useProgrammingStore((state: ProgrammingState) => state.paste);
 
     const [dropProps, drop] = useDrop(
       () => ({
-        accept: (regionInfo.fieldInfo as BlockFieldInfo).accepts,
-        drop: (item, _) => {
-          // console.log(item)
-          transferBlock(item.data, item, regionInfo);
+        accept: fieldInfo.accepts,
+        drop: (item: {data: BlockData, regionInfo: RegionInfo, }, _) => {
+          console.log("DROP",item)
+          transferBlock(item.data, item.regionInfo, regionInfo);
         },
-        canDrop: (item) =>
+        canDrop: (item:{data: BlockData, regionInfo: RegionInfo, context: string[] }) =>
           !disabled &&
-          !item.onCanvas &&
+          item.regionInfo.parentId !== CANVAS && 
           isEqual(intersection(context, item.context), item.context),
         collect: (monitor) => ({
           isOver: monitor.isOver(),
           item: monitor.getItem(),
         }),
       }),
-      [fieldInfo, parentId, idx, disabled]
+      [fieldInfo, regionInfo, context, disabled]
     );
 
     const validDropType =
       fieldInfo.accepts.includes(dropProps.item?.data?.type) &&
-      !dropProps.item?.onCanvas &&
+      dropProps.item?.regionInfo.parentId !== CANVAS &&
       isEqual(
         intersection(context, dropProps.item.context),
         dropProps.item.context
@@ -184,31 +188,31 @@ export const DropRegion = memo(
 
     // console.log({ ...fieldInfo, hideText });
     const activeClipboard =
-      lastAction === CLIPBOARD_ACTION.COPY ||
-      lastAction === CLIPBOARD_ACTION.PASTE ||
-      lastAction === CLIPBOARD_ACTION.CUT;
+      lastAction === ClipboardAction.Copy ||
+      lastAction === ClipboardAction.Paste ||
+      lastAction === ClipboardAction.Cut;
     // console.log({activeClipboard,lastAction,validClipboard,inClipboard})
     const [contextMenu, setContextMenu] = useState(null);
 
-    const handleContextMenu = (event) => {
-      event.preventDefault();
-      setContextMenu(
-        contextMenu === null
-          ? {
-              mouseX: event.clientX + 2,
-              mouseY: event.clientY - 6,
-            }
-          : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-            // Other native context menus might behave different.
-            // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-            null
-      );
-      event.stopPropagation();
-    };
+    // const handleContextMenu = (event) => {
+    //   event.preventDefault();
+    //   setContextMenu(
+    //     contextMenu === null
+    //       ? {
+    //           mouseX: event.clientX + 2,
+    //           mouseY: event.clientY - 6,
+    //         }
+    //       : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
+    //         // Other native context menus might behave different.
+    //         // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
+    //         null
+    //   );
+    //   event.stopPropagation();
+    // };
 
-    const handleContextMenuClose = () => {
-      setContextMenu(null);
-    };
+    // const handleContextMenuClose = () => {
+    //   setContextMenu(null);
+    // };
 
     const [expandedTooltip, setExpandedTooltip] = useState(false);
 
@@ -258,8 +262,14 @@ export const DropRegion = memo(
             )}
           </div>
         }
-        arrow disabled={Boolean(contextMenu)}
+        arrow disableFocusListener={Boolean(contextMenu)}
       >
+        <NestedContextMenu data={{}} inner={[
+          { disabled: !validClipboard, left:FiClipboard, type: "ENTRY", label: "Paste", onClick: (d,e) => {
+            paste({ fieldInfo, idx: 0, context, parentId: regionInfo.parentId });
+            e.stopPropagation();
+          }}
+        ]}>
         <div
           className="nodrag"
           ref={drop}
@@ -272,7 +282,7 @@ export const DropRegion = memo(
           }}
           // animate={variant}
           // variants={REGION_VARIANTS}
-          onContextMenu={validClipboard ? handleContextMenu : null}
+          // onContextMenu={validClipboard ? handleContextMenu : null}
         >
           {renderedData && !isPreview ? (
             <motion.div
@@ -284,14 +294,11 @@ export const DropRegion = memo(
             >
               <Block
                 staticData={renderedData}
-                idx={idx}
-                parentId={parentId}
-                fieldInfo={fieldInfo}
+                regionInfo={regionInfo}
                 bounded
-                // style={{ marginTop: 4, marginBottom: 4 }}
-                highlightColor={highlightColor}
                 context={context}
                 limitedRender={limitedRender}
+
               />
             </motion.div>
           ) : renderedData ? (
@@ -303,13 +310,10 @@ export const DropRegion = memo(
               key="preview-rendered-data"
             >
               <PreviewBlock
+                id={renderedData.id}
                 staticData={renderedData}
-                idx={idx}
-                parentId={parentId}
-                fieldInfo={fieldInfo}
-                bounded
-                highlightColor={highlightColor}
                 context={context}
+                bounded
               />
             </motion.div>
           ) : hideText ? null : (
@@ -322,9 +326,9 @@ export const DropRegion = memo(
               <Typography>{fieldInfo.name}</Typography>
             </motion.span>
           )}
-          <Menu
+          {/* <Menu
             open={contextMenu !== null}
-            onClose={handleContextMenuClose}
+            // onClose={handleContextMenuClose}
             anchorReference="anchorPosition"
             anchorPosition={
               contextMenu !== null
@@ -335,7 +339,7 @@ export const DropRegion = memo(
             <MenuItem
               onClick={(e) => {
                 paste({ fieldInfo, idx, context, parentId });
-                handleContextMenuClose();
+                // handleContextMenuClose();
                 e.stopPropagation();
               }}
             >
@@ -344,8 +348,9 @@ export const DropRegion = memo(
               </ListItemIcon>
               <ListItemText primary="Paste"></ListItemText>
             </MenuItem>
-          </Menu>
+          </Menu> */}
         </div>
+        </NestedContextMenu>
       </Tooltip>
     );
   }

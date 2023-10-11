@@ -1,17 +1,23 @@
 import React from 'react';
 import { DropRegion } from "./DropRegion";
+import { RegionInfo } from '@people_and_robots/open-core';
 
+export interface DropZoneProps {
+  id?: string;
+  regionInfo: RegionInfo;
+  interactionDisabled?: boolean;
+  context: string[];
+  limitedRender?: boolean;
+  hideText?: boolean;
+}
 export const DropZone = ({
   id,
-  parentId,
-  fieldInfo,
-  idx,
+  regionInfo,
   interactionDisabled,
-  highlightColor,
   context,
   limitedRender,
   hideText
-}) => {
+}: DropZoneProps) => {
   return (
     <div
       className="nodrag"
@@ -27,17 +33,12 @@ export const DropZone = ({
     >
       <DropRegion
         id={id}
-        parentId={parentId}
-        fieldInfo={fieldInfo}
-        idx={idx}
-        minHeight={30}
+        regionInfo={regionInfo}
         peripheral={false}
-        bounded
-        disabled={id || interactionDisabled}
-        highlightColor={highlightColor}
+        disabled={interactionDisabled || false}
         context={context}
-        limitedRender={limitedRender}
-        hideText={hideText}
+        limitedRender={limitedRender || false}
+        hideText={hideText || false}
       />
     </div>
   );

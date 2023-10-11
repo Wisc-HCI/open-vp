@@ -8,11 +8,11 @@ import {
   FunctionDeclarationData,
   FunctionCallData,
   ObjectReferenceData,
-  SPAWNER,
   ConnectionData,
   ObjectData,
   ProgrammingState
 } from "./types";
+import { SPAWNER, MetaType } from "./constants";
 
 export const generateId = (type: string) => {
   return `${type}-${uuidv4()}`;
@@ -61,7 +61,7 @@ export function pruneEdgesFromBlock(
     state.programData,
     (data: BlockData | ConnectionData) => {
       if (
-        data.metaType === "CONNECTION" &&
+        data.metaType === MetaType.Connection &&
         (data.parent.id === blockId || data.child.id === blockId)
       ) {
         return true;
@@ -79,7 +79,7 @@ export function deleteFromChildren(
   parentData: BlockData | ConnectionData
 ): ProgrammingState {
   // Corner case for call blocks (don't look at parent's information)
-  if (parentData && parentData.metaType === "FUNCTION-CALL") {
+  if (parentData && parentData.metaType === MetaType.FunctionCall) {
     Object.keys(parentData.properties)?.forEach((propName) => {
       if (
         idsToDelete.includes(
@@ -94,7 +94,7 @@ export function deleteFromChildren(
     for (let i = 0; i < idsToDelete.length; i++) {
       delete (state.programData[parentData.id] as FunctionCallData).properties[idsToDelete[i]];
     }
-  } else if (parentData && parentData.metaType === "OBJECT-INSTANCE" || parentData.metaType === "FUNCTION-DECLARATION") {
+  } else if (parentData && parentData.metaType === MetaType.ObjectInstance || parentData.metaType === MetaType.FunctionDeclaration) {
     // Clear children and properties (if applicable)
     if (state.programSpec.objectTypes[parentData.type]?.properties) {
       Object.keys(
@@ -120,16 +120,16 @@ export function deleteFromChildren(
                 propName
               ].filter((field: string) => 
                 (
-                  state.programData[field].metaType === "OBJECT-REFERENCE" 
-                  ||  state.programData[field].metaType === "FUNCTION-CALL"
+                  state.programData[field].metaType === MetaType.ObjectReference 
+                  ||  state.programData[field].metaType === MetaType.FunctionCall
                 ) && (state.programData[field] as ObjectReferenceData | FunctionCallData).ref !== idToDelete);
               (state.programData[parentData.id] as ObjectData | FunctionDeclarationData | FunctionCallData).properties[propName] = newList;
             });
           } else if (
             property &&
             parentData.properties[propName] &&
-            state.programData[parentData.properties[propName]].metaType === "OBJECT-REFERENCE" 
-            || state.programData[parentData.properties[propName]].metaType === "FUNCTION-CALL" &&
+            state.programData[parentData.properties[propName]].metaType === MetaType.ObjectReference 
+            || state.programData[parentData.properties[propName]].metaType === MetaType.FunctionCall &&
             idsToDelete.includes(
               (state.programData[parentData.properties[propName]] as ObjectReferenceData | FunctionCallData).ref
             )
@@ -154,7 +154,7 @@ export function deleteFromProgram(
 ): ProgrammingState {
   const searches = pickBy(
     state.programData,
-    (entry) => entry.metaType === "OBJECT-INSTANCE" || entry.metaType === "FUNCTION-DECLARATION"
+    (entry) => entry.metaType === MetaType.ObjectInstance || entry.metaType === MetaType.FunctionDeclaration
   );
   // Search through all instances for occurances of the ids we're deleting
   Object.keys(searches).forEach((entry) => {
@@ -173,12 +173,12 @@ export function deleteSelfBlock(
   fieldInfo?: FieldInfo,
   isSpawner?: boolean
 ): ProgrammingState {
-  if (data.metaType === "FUNCTION-DECLARATION") {
+  if (data.metaType === MetaType.FunctionDeclaration) {
     // Find all references to the function
     const callReferences: {[key: string]: FunctionCallData} = pickBy(
       state.programData,
       (entry) =>
-        entry.metaType === "FUNCTION-CALL" &&
+        entry.metaType === MetaType.FunctionCall &&
         (entry as FunctionCallData).ref === data.id
     ) as {[key: string]: FunctionCallData};
 
@@ -203,7 +203,7 @@ export function deleteSelfBlock(
       if (!entry) {
         return;
       }
-      if (entry.metaType !== "CONNECTION" && state.programSpec.objectTypes[entry.type]?.properties) {
+      if (entry.metaType !== MetaType.Connection && state.programSpec.objectTypes[entry.type]?.properties) {
         // Iterate through properties
         Object.keys(
           state.programSpec.objectTypes[entry.type].properties
@@ -219,9 +219,9 @@ export function deleteSelfBlock(
               // Iterate through property list and remove all applicable references
               Object.values(callReferences).forEach((callRef:FunctionCallData)=>{
                 if (
-                  (entry.metaType === "OBJECT-INSTANCE" 
-                  || entry.metaType === "FUNCTION-CALL" 
-                  || entry.metaType === "FUNCTION-DECLARATION") &&
+                  (entry.metaType === MetaType.ObjectInstance 
+                  || entry.metaType === MetaType.FunctionCall 
+                  || entry.metaType === MetaType.FunctionDeclaration) &&
                   entry.properties[propName]?.includes(callRef.id)
                 ) {
                   remove(
@@ -234,9 +234,9 @@ export function deleteSelfBlock(
               })
             } else if (
               (
-                entry.metaType === "OBJECT-INSTANCE" 
-                || entry.metaType === "FUNCTION-DECLARATION" 
-                || entry.metaType === "FUNCTION-CALL"
+                entry.metaType === MetaType.ObjectInstance 
+                || entry.metaType === MetaType.FunctionDeclaration 
+                || entry.metaType === MetaType.FunctionCall
               ) &&
               entry.properties[propName]
             ) {
@@ -256,14 +256,14 @@ export function deleteSelfBlock(
     if (parentId === SPAWNER) {
       // Drawer deletion
       if (
-        data.metaType === "OBJECT-INSTANCE"
+        data.metaType === MetaType.ObjectInstance
       ) {
         state = deleteFromProgram(state, [data.id]);
         delete state.programData[data.id];
         state = pruneEdgesFromBlock(state, data.id);
       } else if (
-        data.metaType === "FUNCTION-CALL" ||
-        data.metaType === "OBJECT-REFERENCE"
+        data.metaType === MetaType.FunctionCall ||
+        data.metaType === MetaType.ObjectReference
       ) {
         state = deleteFromProgram(state, [
           (data as FunctionCallData | ObjectReferenceData).ref,
@@ -285,7 +285,7 @@ export function deleteSelfBlock(
       );
 
       // Remove argument from function
-      if (state.programData[parentId].metaType === "FUNCTION-DECLARATION") {
+      if (state.programData[parentId].metaType === MetaType.FunctionDeclaration) {
         remove(
           (state.programData[parentId] as FunctionDeclarationData).arguments,
           (field) => field === (data as FunctionCallData).ref
@@ -307,8 +307,11 @@ export function deleteChildren(
   parentId?: string,
   fieldInfo?: FieldInfo
 ): ProgrammingState {
+  if (!data) {
+    return state
+  }
   // Clear children and properties (if applicable)
-  if (data.metaType === "FUNCTION-CALL") {
+  if (data && data.metaType === MetaType.FunctionCall) {
     let decl: FunctionDeclarationData = state.programData[
       data.ref
     ] as FunctionDeclarationData;
@@ -326,7 +329,7 @@ export function deleteChildren(
       }
     });
   } else if (
-    (data.metaType === "OBJECT-INSTANCE" || data.metaType === "FUNCTION-DECLARATION") &&
+    (data.metaType === MetaType.ObjectInstance || data.metaType === MetaType.FunctionDeclaration) &&
     parentId !== SPAWNER
   ) {
     Object.keys(state.programSpec.objectTypes[data.type].properties).forEach(
@@ -394,13 +397,13 @@ export function parseBlock(
   ) => string
 ): string {
   if (
-    (block.metaType === "OBJECT-REFERENCE" || block.metaType === "FUNCTION-CALL" || block.metaType === "ARGUMENT") &&
+    (block.metaType === MetaType.ObjectReference || block.metaType === MetaType.FunctionCall || block.metaType === MetaType.Argument) &&
       typeSpec[block.type]?.namePolicy?.[language]
   ) {
     return typeSpec[block.type].namePolicy[language](block);
   } else if (
-    (block.metaType === "OBJECT-INSTANCE" ||
-      block.metaType === "FUNCTION-DECLARATION") &&
+    (block.metaType === MetaType.ObjectInstance ||
+      block.metaType === MetaType.FunctionDeclaration) &&
     typeSpec[block.type]?.parsers?.[language] &&
     typeSpec[block.type]?.namePolicy?.[language]
   ) {
@@ -426,6 +429,9 @@ export function applyTransfer(
   sourceInfo: RegionInfo,
   destInfo: RegionInfo
 ): void {
+
+  console.log("applyTransfer", data, sourceInfo, destInfo)
+
   let newSpawn = false;
   let id = data.id;
 
@@ -444,10 +450,10 @@ export function applyTransfer(
   // If both source and dest are the same list, handle this specially
   if (destIsList && sourceIsList && sourceInfo.parentId === destInfo.parentId) {
     (state.programData[destInfo.parentId] as FunctionDeclarationData | ObjectData | FunctionCallData).properties[
-      destInfo.fieldInfo.name
+      destInfo.fieldInfo.id
     ] = move(
       (state.programData[destInfo.parentId] as FunctionDeclarationData | ObjectData | FunctionCallData).properties[
-        destInfo.fieldInfo.name
+        destInfo.fieldInfo.id
       ],
       sourceInfo.idx || 0,
       destInfo.idx || 0
@@ -456,11 +462,12 @@ export function applyTransfer(
     // Place the value in its new location
     if (destIsList) {
       (state.programData[destInfo.parentId] as FunctionDeclarationData | ObjectData | FunctionCallData).properties[
-        destInfo.fieldInfo.name
+        destInfo.fieldInfo.id
       ].splice(destInfo.idx, 0, id);
     } else {
+      console.log("Placing value...?");
       (state.programData[destInfo.parentId] as FunctionDeclarationData | ObjectData | FunctionCallData).properties[
-        destInfo.fieldInfo.name
+        destInfo.fieldInfo.id
       ] = id;
     }
     // If existing, remove from the previous location
@@ -473,12 +480,12 @@ export function applyTransfer(
     } else if (!newSpawn && sourceIsList) {
       // Insert at the right location
       (state.programData[sourceInfo.parentId] as FunctionDeclarationData | ObjectData | FunctionCallData).properties[
-        destInfo.fieldInfo.name
+        destInfo.fieldInfo.id
       ].splice(sourceInfo.idx, 1);
-    } else if (!newSpawn && !sourceIsList) {
+    } else if (!newSpawn && !sourceIsList && sourceInfo.parentId !== SPAWNER) {
       console.log("removing from previous by setting to null");
       (state.programData[sourceInfo.parentId] as FunctionDeclarationData | ObjectData | FunctionCallData).properties[
-        sourceInfo.fieldInfo.name
+        sourceInfo.fieldInfo.id
       ] = null;
     }
   }
@@ -491,7 +498,7 @@ export function deepCopy(
 ): [{ [key: string]: BlockData }, string] {
   let newBlocks = {};
   const toCopy = programData[id];
-  if (toCopy.metaType === "CONNECTION") {
+  if (toCopy.metaType === MetaType.Connection) {
     // This shouldn't happen, but just in case, return an empty set
     return [newBlocks, ""];
   }
@@ -500,7 +507,7 @@ export function deepCopy(
   let newBlock = {
     ...toCopy,
     id: newId,
-    properties: toCopy.metaType === "OBJECT-INSTANCE" || toCopy.metaType === "FUNCTION-DECLARATION" || toCopy.metaType === "FUNCTION-CALL"
+    properties: toCopy.metaType === MetaType.ObjectInstance || toCopy.metaType === MetaType.FunctionDeclaration || toCopy.metaType === MetaType.FunctionCall
       ? mapValues(toCopy.properties, (propValue: any, propKey: string) => {
           const fieldInfo: FieldInfo = typeSpecCopy.properties[propKey];
           if (fieldInfo.type === "BLOCK" && fieldInfo.isList) {
@@ -533,7 +540,7 @@ export function deepCopy(
         })
       : undefined,
     arguments:
-      toCopy.metaType === "FUNCTION-DECLARATION"
+      toCopy.metaType === MetaType.FunctionDeclaration
         ? toCopy.arguments.map((arg) => {
             const [newInnerBlocks, newInnerId] = deepCopy(
               programData,
@@ -561,7 +568,7 @@ export function deepCopy(
 //     return false;
 //   } else {
 //     const fields =
-//       data2.metaType !== "FUNCTION-CALL"
+//       data2.metaType !== MetaType.FunctionCall
 //         ? Object.entries(propInfo ? propInfo : {})
 //             .filter(
 //               ([_, fieldInfo]) =>

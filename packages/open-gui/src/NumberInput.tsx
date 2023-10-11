@@ -5,14 +5,12 @@ import { TextInput } from "./TextInput";
 
 interface NumberInputProps {
   disabled?: boolean,
+  readonly?: boolean,
   label?: string,
   onChange?: (value?: number) => void,
+  onDoubleClick?: (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void,
   step?: number,
   value?: number,
-  onBlur?: (event: SyntheticEvent) => void,
-  onFocus?: (event: SyntheticEvent) => void,
-  onMouseEnter?: (event: SyntheticEvent) => void,
-  onMouseLeave?: (event: SyntheticEvent) => void,
   suffix?: string,
   prefix?: string,
   min?: number,
@@ -23,18 +21,17 @@ interface NumberInputProps {
 export const NumberInput = memo(
   ({
     disabled,
+    readonly,
     label,
     onChange = (_) => { },
+    onDoubleClick,
     step,
     value = 0,
-    onBlur = (_) => { },
-    onFocus = (_) => { },
-    onMouseEnter = (_) => { },
-    onMouseLeave = (_) => { },
     suffix = "",
     min = Number.NEGATIVE_INFINITY,
     max = Number.POSITIVE_INFINITY,
-    style = {}
+    style = {},
+    ...props
   }: NumberInputProps) => {
     const {
       textValue,
@@ -53,10 +50,12 @@ export const NumberInput = memo(
     return (
       <TextInput
         disabled={disabled}
+        readonly={readonly}
         value={textValue}
         label={label}
         suffix={suffix}
         onChange={onChangeInner}
+        onDoubleClick={onDoubleClick}
         extra={<NumberSpinner
           disabled={disabled}
           above={value >= max}

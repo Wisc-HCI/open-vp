@@ -13,9 +13,10 @@ export interface DropdownEntry<T> {
   left?: ReactNode | ((data: T) => ReactNode);
   right?: ReactNode | ((data: T) => ReactNode);
   label: string | ((data: T) => string);
-  onClick?: (data: T) => void;
+  onClick?: (data: T, event: MouseEvent) => void;
   inner?: DropdownData<T>[];
   type: "ENTRY";
+  disabled?: boolean;
   preventCloseOnClick?: boolean;
 }
 
@@ -37,11 +38,12 @@ export interface NestedDropdownProps<T> {
   data: T;
   label?: string | ((data: T) => string);
   icon?: ReactNode | ((data: T) => ReactNode);
-  onClick?: (data: T) => void;
+  size?: "small" | "medium" | "large";
+  onClick?: (data: T, event: MouseEvent) => void;
   inner: DropdownData<T>[];
 }
 
-const CONTENT_STYLES = {
+export const CONTENT_STYLES = {
   minWidth: "220px",
   backgroundColor: "#000000a0",
   padding: "5px",
@@ -54,13 +56,13 @@ const CONTENT_STYLES = {
   WebkitBackdropFilter: "blur(8pt)",
 };
 
-const ITEM_STYLES = {
+export const ORIGIN_STYLES = {
   fontSize: "0.8em",
   lineHeight: 1,
   display: "flex",
   alignItems: "center",
-  height: "25pt",
-  padding: "0 5pt",
+  // height: "25pt",
+  // padding: "0 5pt",
   // position: "relative",
   // paddingLeft: "25pt",
   // userSelect: "none",
@@ -68,9 +70,15 @@ const ITEM_STYLES = {
   "&[data-disabled]": {
     pointerEvents: "none",
   },
+}
+
+export const ITEM_STYLES = {
+  ...ORIGIN_STYLES,
+  height: "25pt",
+  padding: "0 5pt",
 };
 
-const ITEM_THEMED_STYLES = ({ theme }: { theme: Theme }) => ({
+export const ITEM_THEMED_STYLES = ({ theme }: { theme: Theme }) => ({
   color: theme.palette.primary.main,
   borderRadius: theme.shape.borderRadius * 0.66,
   "&[data-highlighted]": {
@@ -82,7 +90,7 @@ const ITEM_THEMED_STYLES = ({ theme }: { theme: Theme }) => ({
   },
 });
 
-const TRIGGER_THEMED_STYLES = ({ theme }: { theme: Theme }) => ({
+export const TRIGGER_THEMED_STYLES = ({ theme }: { theme: Theme }) => ({
   ...ITEM_THEMED_STYLES({ theme }),
   '&[data-state="open"]': {
     backgroundColor: alpha(theme.palette.primary.main, 0.7),
@@ -91,7 +99,7 @@ const TRIGGER_THEMED_STYLES = ({ theme }: { theme: Theme }) => ({
 });
 
 const DropdownMenuTrigger = styled(DropdownMenu.Trigger)(
-  ITEM_STYLES,
+  ORIGIN_STYLES,
   TRIGGER_THEMED_STYLES,
 );
 const DropdownMenuSubTrigger = styled(DropdownMenu.SubTrigger)(
@@ -115,11 +123,6 @@ const DropdownMenuSubContent = styled(DropdownMenu.SubContent)(
 );
 
 const DropdownMenuItem = styled(DropdownMenu.Item)(
-  ITEM_STYLES,
-  ITEM_THEMED_STYLES,
-);
-
-const DropdownMenuCheckBoxItem = styled(DropdownMenu.CheckboxItem)(
   ITEM_STYLES,
   ITEM_THEMED_STYLES,
 );
@@ -149,7 +152,7 @@ const DropdownMenuArrow = styled(DropdownMenu.Arrow)({}, ({ theme }) => ({
   fill: alpha(theme.palette.background.paper, 0.7),
 }));
 
-const RightSlot = styled("div")(
+export const RightSlot = styled("div")(
   {
     marginLeft: "auto",
     paddingLeft: "20pt",
@@ -168,7 +171,7 @@ const RightSlot = styled("div")(
   }),
 );
 
-const LeftSlot = styled("div")(
+export const LeftSlot = styled("div")(
   {
     // marginRight: "auto",
     paddingRight: "7pt",
@@ -237,13 +240,25 @@ function InnerDropdown<T>({
   } else {
     return (
       <DropdownMenuItem
-        onSelect={(e: Event) => {
+        disabled={inner.disabled}
+        // @ts-ignore
+        // onSelect={(e: MouseEvent) => {
+        //   if (typeof inner.onClick === "function") {
+        //     inner.onClick(data,e);
+        //     if (inner.preventCloseOnClick) {
+        //       e.preventDefault();
+        //     }
+        //   }
+        //   e.stopPropagation()
+        // }}
+        onClick={(e: MouseEvent) => {
           if (typeof inner.onClick === "function") {
-            inner.onClick(data);
+            inner.onClick(data,e);
             if (inner.preventCloseOnClick) {
               e.preventDefault();
             }
           }
+          e.stopPropagation()
         }}
       >
         {inner.left && (
@@ -278,7 +293,8 @@ export function NestedDropdown<T>(props: NestedDropdownProps<T>): ReactNode {
   return (
     <DropdownMenu.Root>
       <DropdownMenuTrigger asChild>
-        <IconButton>
+        <span>
+        <IconButton size={props.size} style={{backgroundColor:'transparent'}}>
           {isValidElement(props.icon) ? (
             (props.icon as ReactNode)
           ) : typeof props.icon == "function" ? (
@@ -289,6 +305,7 @@ export function NestedDropdown<T>(props: NestedDropdownProps<T>): ReactNode {
             <FiMoreHorizontal />
           )}
         </IconButton>
+        </span>
       </DropdownMenuTrigger>
 
       <DropdownMenu.Portal>

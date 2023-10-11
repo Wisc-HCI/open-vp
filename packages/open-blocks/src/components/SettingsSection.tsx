@@ -7,27 +7,28 @@ import {
   Typography,
   Switch,
   Box,
-  TextField,
-  Select,
   MenuItem,
 } from "@mui/material";
-import { shallow } from "zustand/shallow";
 import { SettingsContainer } from "./BlockContainers";
 import { ExpandCarrot } from "./ExpandCarrot";
-import { NumberInput, TooltippedToolbarButton, Vector3Input } from "../Utility";
-import { SIMPLE_PROPERTY_TYPES } from "../Constants";
-import { useProgrammingStore } from "../ProgrammingContext";
+import { ProgrammingState, SimpleFieldInfo, PropertyType, useProgrammingStore } from "@people_and_robots/open-core";
+import { NumberInput, Vector3Input, ActionIconButton, TextInput, Select, Toggle } from "@people_and_robots/open-gui";
 
+export interface SettingsSectionProps {
+  id: string;
+  interactionDisabled?: boolean;
+  simpleProperties: {[key: string]: SimpleFieldInfo}
+  properties: {[key: string]: any};
+}
 export const SettingsSection = ({
   id,
   interactionDisabled,
   simpleProperties,
   properties,
-}) => {
-  const setLocked = useProgrammingStore((state) => state.setLocked, shallow);
+}: SettingsSectionProps) => {
+  // const setLocked = useProgrammingStore((state: ProgrammingState) => state.setLocked, shallow);
   const updateItemSimpleProperty = useProgrammingStore(
-    (store) => store.updateItemSimpleProperty,
-    shallow
+    (state: ProgrammingState) => state.updateItemSimpleProperty
   );
   const [collapsed, setCollapsed] = useState(true);
 
@@ -46,7 +47,7 @@ export const SettingsSection = ({
               }
         }
         action={
-          <TooltippedToolbarButton
+          <ActionIconButton
             title={collapsed ? "Expand" : "Collapse"}
             onClick={
               interactionDisabled
@@ -59,60 +60,56 @@ export const SettingsSection = ({
                   }
             }
           >
-            <ExpandCarrot expanded={!collapsed} />
-          </TooltippedToolbarButton>
+            <ExpandCarrot expanded={!collapsed} onClick={()=>{}}/>
+          </ActionIconButton>
         }
       />
       <Collapse in={!collapsed} orientation="vertical">
+      <Stack direction='column' justifyContent='flex' gap={1} style={{paddingTop:4,paddingBottom:4}}>
         {!collapsed &&
+       
           Object.entries(simpleProperties).map(([propKey, propInfo]) => (
-            <Stack
-              key={propKey}
-              direction="row"
-              justifyContent="space-between"
-              sx={{
-                backgroundColor: "#00000055",
-                borderRadius: 2,
-                display: "flex",
-                align: "center",
-                marginBottom: 1,
-                padding: 2,
-                alignItems: "center",
-              }}
-              round="xsmall"
-              flex
-              pad="small"
-              justify="between"
-              align="center"
-              margin={{ bottom: "xsmall" }}
-            >
-              <Typography size="small" color="#ffffff">
-                {propInfo.name}
-              </Typography>
-              {propInfo.type === SIMPLE_PROPERTY_TYPES.BOOLEAN && (
-                <Switch
-                  checked={properties[propKey]}
-                  onChange={(event) =>
-                    updateItemSimpleProperty(id, propKey, event.target.checked)
+            // <Stack
+            //   key={propKey}
+            //   direction="row"
+            //   justifyContent="space-between"
+            //   sx={{
+            //     backgroundColor: "#00000055",
+            //     borderRadius: 2,
+            //     display: "flex",
+            //     align: "center",
+            //     marginBottom: 1,
+            //     padding: 2,
+            //     alignItems: "center",
+            //   }}
+            //   justifyItems="between"
+            //   alignItems="center"
+            //   margin={{ bottom: "xsmall" }}
+            // >
+            <>
+              {propInfo.type === PropertyType.Boolean && (
+                <Toggle
+                  label={propInfo.name}
+                  value={properties[propKey]}
+                  onChange={(v) =>
+                    updateItemSimpleProperty(id, propKey, v)
                   }
-                  color="primary"
                   disabled={interactionDisabled}
                 />
               )}
-              {propInfo.type === SIMPLE_PROPERTY_TYPES.NUMBER && (
-                <Box key={propKey} sx={{ maxWidth: 130, padding: "3px" }}>
+              {propInfo.type === PropertyType.Number && (
+                  <Box key={propKey} width="xsmall">
                   <NumberInput
-                    onMouseEnter={(_) => setLocked(true)}
-                    onMouseLeave={(_) => setLocked(false)}
-                    className="nodrag"
+                    // onMouseEnter={(_) => setLocked(true)}
+                    // onMouseLeave={(_) => setLocked(false)}
+                    label={propInfo.name}
                     min={propInfo.min !== undefined ? propInfo.min : 0}
                     max={propInfo.max !== undefined ? propInfo.max : 10}
-                    style={{ width: 105 }}
+                    // style={{ width: 105 }}
                     step={propInfo.step}
                     suffix={propInfo.units}
                     value={properties[propKey]}
                     disabled={interactionDisabled}
-                    visualScaling={propInfo.visualScaling}
                     onChange={(value) => {
                       console.log(value);
                       updateItemSimpleProperty(id, propKey, value);
@@ -120,15 +117,10 @@ export const SettingsSection = ({
                   />
                 </Box>
               )}
-              {propInfo.type === SIMPLE_PROPERTY_TYPES.STRING && (
+              {propInfo.type === PropertyType.String && (
                 <Box key={propKey} width="xsmall">
-                  <TextField
-                    className="nodrag"
-                    color="primary"
-                    onMouseEnter={(_) => setLocked(true)}
-                    onMouseLeave={(_) => setLocked(false)}
-                    size="small"
-                    // style={{ color: "#00000088" }}
+                  <TextInput
+                    label={propInfo.name}
                     value={properties[propKey] ? properties[propKey] : ""}
                     disabled={interactionDisabled}
                     onChange={(e) =>
@@ -137,42 +129,34 @@ export const SettingsSection = ({
                   />
                 </Box>
               )}
-              {propInfo.type === SIMPLE_PROPERTY_TYPES.OPTIONS && (
+              {propInfo.type === PropertyType.Options && (
                 <Select
                   key={propKey}
+                  label={propInfo.name}
                   disabled={interactionDisabled}
-                  size="small"
-                  color="primary"
                   value={properties[propKey] ? properties[propKey] : ""}
-                  onChange={(e) =>
-                    updateItemSimpleProperty(id, propKey, e.target.value)
+                  onChange={(v) =>
+                    updateItemSimpleProperty(id, propKey,v)
                   }
-                >
-                  {propInfo.options.map((option, optionIdx) => (
-                    <MenuItem key={optionIdx} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
+                  options={propInfo.options}
+                />
               )}
-              {propInfo.type === SIMPLE_PROPERTY_TYPES.VECTOR3 && (
+              {propInfo.type === PropertyType.Vector3 && (
                 <Box key={propKey} sx={{ maxWidth: 200, padding: "3px" }}>
                   <Vector3Input
                     key={propKey}
                     disabled={interactionDisabled}
-                    size="small"
-                    color="primary"
                     value={
                       properties[propKey] ? properties[propKey] : [0, 0, 0]
                     }
-                    onChange={(e) =>
-                      updateItemSimpleProperty(id, propKey, e.target.value)
+                    onChange={(v) =>
+                      updateItemSimpleProperty(id, propKey, v)
                     }
                   />
                 </Box>
               )}
-            </Stack>
-          ))}
+            </>
+          ))}</Stack>
       </Collapse>
     </SettingsContainer>
   );

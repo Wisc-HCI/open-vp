@@ -38,6 +38,7 @@ export const Primary: Story = {
     placement: 'bottom',
     toggled: false,
     canToggle: false,
+    size: 'small',
     children: "Button Contents"
   },
 };

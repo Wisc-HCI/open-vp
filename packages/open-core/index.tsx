@@ -1,34 +1,47 @@
-export { Card } from './src/card';
+export { Card } from "./src/card";
 export type {
-    ObjectData,
-    ArgumentData,
-    FunctionDeclarationData,
-    FunctionCallData,
-    ConnectionData,
-    BlockData,
-    TypeSpec,
-    BlockSpec,
-    ParserProps,
-    MetaType,
-    Extra,
-    SimpleProperty,
-    ConnectionDirection,
-    ConnectionHandle,
-    ClipboardAction,
-    ProgrammingState,
-    ExecutionState,
-    ClipboardProps,
-    ObjectTypeSpec,
-    FunctionTypeSpec,
-    FieldInfo,
-    RegionInfo
-  } from "./src/types";
+  ObjectData,
+  ObjectReferenceData,
+  ArgumentData,
+  FunctionDeclarationData,
+  FunctionCallData,
+  ConnectionData,
+  BlockData,
+  TypeSpec,
+  BlockSpec,
+  DrawerSpec,
+  ParserProps,
+  Extra,
+  ProgrammingState,
+  ExecutionState,
+  ClipboardProps,
+  ObjectTypeSpec,
+  FunctionTypeSpec,
+  FieldInfo,
+  BlockFieldInfo,
+  SimpleFieldInfo,
+  RegionInfo,
+  ProgrammingStore,
+  Tab
+} from "./src/types";
 export {
-    instanceTemplateFromSpec,
-    referenceTemplateFromSpec,
-    combinedBlockData,
-  } from "./src/generators";
-export { SPAWNER, CANVAS } from './src/constants';
+  instanceTemplateFromSpec,
+  functionInstanceAsType,
+  referenceTemplateFromSpec,
+  combinedBlockData,
+} from "./src/generators";
+export {
+  SPAWNER,
+  CANVAS,
+  OUTSIDE,
+  PrimitiveType,
+  MetaType,
+  DrawerType,
+  ClipboardAction,
+  ConnectionDirection,
+  PropertyType,
+  ExtraType
+} from "./src/constants";
 export { generateId } from "./src/functions";
 export { Timer } from "./src/timer";
-export { useProgrammingStore, ProgrammingContext } from "./src/context";
+export { useProgrammingStore, ProgrammingContext, ProgrammingProvider } from "./src/context";

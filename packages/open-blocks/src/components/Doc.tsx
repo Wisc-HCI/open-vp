@@ -19,11 +19,11 @@ import {
   CardContent,
   Button,
   CardActions,
+  AlertColor,
 } from "@mui/material";
-import { darken, emphasize, styled } from "@mui/material/styles";
+import { darken, emphasize, styled, useTheme } from "@mui/material/styles";
 import { forwardRef, useState, useCallback } from "react";
-import { useProgrammingStore } from "../ProgrammingContext";
-import { shallow } from "zustand/shallow";
+import { useProgrammingStore, functionInstanceAsType, TypeSpec, BlockData, ConnectionDirection, MetaType, ProgrammingState, FunctionCallData, PropertyType, PrimitiveType } from "@people_and_robots/open-core";
 import { Remark } from "react-remark";
 import {
   FiChevronDown,
@@ -37,25 +37,31 @@ import {
   FiDownload,
   FiSquare
 } from "react-icons/fi";
-import {
-  TYPES,
-  DATA_TYPES,
-  CONNECTIONS,
-  DOC_FLAG_COLORS,
-  SIMPLE_PROPERTY_TYPES,
-} from "../Constants";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { functionTypeSpec } from "../Utility";
 import { pickBy } from "lodash";
 import { motion } from "framer-motion";
+import { blockSpecQuery } from "../util";
+import { Position } from 'reactflow';
+import { FieldInfo, ObjectReferenceData } from "@people_and_robots/open-core";
+import { functionTypeSpec } from "@people_and_robots/open-core/src/generators";
+
+const DOC_FLAG_COLORS = {
+  INBOUND_CONNECTION: "#DDA0DD",
+  OUTBOUND_CONNECTION: "#8FBC8F",
+  IS_LIST: "#6495ED",
+  FULL_WIDTH: "#ADD8E6",
+  REQUIRED: "#FF6347",
+  FUNCTION_ARGUMENT: "#F5DEB3",
+  FUNCTION_PROPERTY: "#00CED1",
+};
 
 const SHOWN_SIMPLE_TYPES = [
-  SIMPLE_PROPERTY_TYPES.BOOLEAN,
-  SIMPLE_PROPERTY_TYPES.NUMBER,
-  SIMPLE_PROPERTY_TYPES.STRING,
-  SIMPLE_PROPERTY_TYPES.OPTIONS,
-  SIMPLE_PROPERTY_TYPES.VECTOR3,
+  "BOOLEAN",
+  "NUMBER",
+  "STRING",
+  "OPTIONS",
+  "VECTOR3",
 ];
 
 const MotionCard = motion(Card);
@@ -80,28 +86,23 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   };
 });
 
-const getColor = (spec) => {
-  return (
-    spec?.instanceBlock?.color ||
-    spec?.referenceBlock?.color ||
-    spec?.callBlock?.color ||
-    "#bbb"
-  );
-};
-
-const getReferences = (typeSpec, usedType) => {
+function getReferences(typeSpec: {[key:string]: TypeSpec}, usedType: string): {parent:string,fields:string[]}[] {
+  // @ts-ignore
   const referent = typeSpec[usedType]?.specificType || usedType
-  let references = [];
-  Object.keys(typeSpec).forEach((typeValue) => {
+  let references: {parent:string,fields:string[]}[] = [];
+  Object.keys(typeSpec).forEach((typeValue:string) => {
     let entry = { parent: typeValue, fields: [] };
     if (typeSpec[typeValue].properties) {
-      Object.keys(typeSpec[typeValue].properties).forEach((prop) => {
-        if (typeSpec[typeValue].properties[prop].accepts?.includes(referent)) {
+      Object.keys(typeSpec[typeValue].properties).forEach((prop: string) => {
+        let propValue = typeSpec[typeValue].properties[prop];
+        if (propValue.type === PropertyType.Block && propValue.accepts?.includes(referent)) {
+          // @ts-ignore
           entry.fields.push(prop);
         }
       });
     }
     if (entry.fields.length > 0) {
+      // @ts-ignore
       references.push(entry);
     }
   });
@@ -132,18 +133,26 @@ export const ChipMimic = styled("button")(({ theme }) => {
   };
 });
 
-const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
+export interface FieldInfoSectionProps {
+  parent: string;
+  field: string;
+  typeInfo: {[key:string]:TypeSpec};
+  handleLinkClick: (value: string) => void;
+}
+const FieldInfoSection = ({ parent, field, typeInfo, handleLinkClick }: FieldInfoSectionProps) => {
   const fieldInfo = typeInfo[parent]?.properties?.[field];
-  const fullAccepts = fieldInfo?.accepts 
+  const theme = useTheme();
+  const fullAccepts = fieldInfo.type === PropertyType.Block && fieldInfo?.accepts 
     ? fieldInfo.accepts.map(a=>{
       if (typeInfo[a]) {
         return [a]
       } else {
+        // @ts-ignore
         return Object.keys(pickBy(typeInfo,(info)=>info.specificType === a))
       }
     }).reduce((accumulator,currentValue)=>[...accumulator,...currentValue],[])
     : [];
-  const variant = fieldInfo?.accepts
+  const variant = fieldInfo.type === PropertyType.Block && fieldInfo?.accepts
     ? "block"
     : SHOWN_SIMPLE_TYPES.includes(fieldInfo?.type)
     ? "simple"
@@ -161,7 +170,7 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
         title={fieldInfo.name}
         sx={{ padding: 0 }}
         action={
-          fieldInfo.accepts ? (
+          fieldInfo.type === PropertyType.Block && fieldInfo.accepts ? (
             <Stack direction="row" gap={0.5}>
               {fieldInfo.isList && (
                 <Tooltip
@@ -231,6 +240,7 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
                   </Avatar>
                 </Tooltip>
               )}
+              {/* @ts-ignore */}
               {fieldInfo.isFunctionBlockField && (
                 <Tooltip
                   title="This is a property of this function block"
@@ -260,20 +270,21 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
           )
         }
       />
-      {fieldInfo?.accepts && (
+      {fieldInfo.type === PropertyType.Block && fieldInfo?.accepts && (
         <CardContent
           sx={{
-            bgcolor: "#252525",
+            // bgcolor: "#252525",
+            backgroundColor: theme.palette.mode === "dark" ? "#252525" : "#ccc",
             borderRadius: 1,
             padding: 0.5,
             lineHeight: 1.75,
           }}
         >
-          {fullAccepts?.map((t) => (
+          {fullAccepts?.map((t:string) => (
             <TypeLink
               key={t}
               label={typeInfo[t]?.name || "Unrecognized"}
-              color={getColor(typeInfo[t])}
+              color={blockSpecQuery(typeInfo[t], "color")}
               onClick={(e) => {
                 e.preventDefault();
                 if (typeInfo[t]) {
@@ -288,12 +299,24 @@ const FieldInfo = ({ parent, field, typeInfo, handleLinkClick }) => {
   );
 };
 
-const ConnectionInfo = ({
+interface ConnectionInfo {
+  allowed: string[],
+  direction: string,
+}
+
+interface ConnectionInfoSectionProps {
+  side: Position,
+  connectionInfo: ConnectionInfo,
+  typeInfo: {[key:string]:TypeSpec},
+  handleLinkClick: (value: string) => void,
+}
+const ConnectionInfoSection = ({
   side,
   connectionInfo,
   typeInfo,
   handleLinkClick,
-}) => {
+}: ConnectionInfoSectionProps) => {
+  const theme = useTheme();
   return (
     <Card sx={{ padding: 2 }}>
       <Grid container spacing={1}>
@@ -320,7 +343,7 @@ const ConnectionInfo = ({
             <Grid item xs={4}>
               <Tooltip
                 title={
-                  connectionInfo.direction === CONNECTIONS.OUTBOUND
+                  connectionInfo.direction === ConnectionDirection.Outbound
                     ? "This connection is outbound"
                     : "This connection is inbound"
                 }
@@ -332,12 +355,12 @@ const ConnectionInfo = ({
                     width: 30,
                     height: 30,
                     backgroundColor:
-                      connectionInfo.direction === CONNECTIONS.OUTBOUND
+                      connectionInfo.direction === ConnectionDirection.Outbound
                         ? DOC_FLAG_COLORS.OUTBOUND_CONNECTION
                         : DOC_FLAG_COLORS.INBOUND_CONNECTION,
                   }}
                 >
-                  {connectionInfo.direction === CONNECTIONS.OUTBOUND ? (
+                  {connectionInfo.direction === ConnectionDirection.Outbound ? (
                     <FiLogOut />
                   ) : (
                     <FiLogIn />
@@ -349,7 +372,7 @@ const ConnectionInfo = ({
               item
               xs={8}
               sx={{
-                bgcolor: "#252525",
+                backgroundColor: theme.palette.mode === "dark" ? "#252525" : "#ccc",
                 borderRadius: 1,
                 padding: 3,
                 lineHeight: 1.75,
@@ -358,7 +381,7 @@ const ConnectionInfo = ({
               {connectionInfo.allowed?.map((t) => (
                 <TypeLink
                   label={typeInfo[t].name}
-                  color={getColor(typeInfo[t])}
+                  color={blockSpecQuery(typeInfo[t], "color")}
                   onClick={(e) => {
                     e.preventDefault();
                     if (typeInfo[t]) {
@@ -375,7 +398,12 @@ const ConnectionInfo = ({
   );
 };
 
-const TypeLink = ({ label, color, onClick }) => {
+export interface TypeLinkProps {
+  label: string;
+  color: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}
+const TypeLink = ({ label, color, onClick }: TypeLinkProps) => {
   return (
     <ChipMimic onClick={onClick}>
       {label}{" "}
@@ -406,43 +434,46 @@ const TypeLink = ({ label, color, onClick }) => {
   );
 };
 
-export const TypeDescription = ({ type }) => {
+export const TypeDescription = ({type}:{type: string}) => {
   const info = useProgrammingStore(
-    useCallback((state) => state.programSpec.objectTypes[type], [type]),
-    shallow
+    useCallback((state) => state.programSpec.objectTypes[type], [type])
   );
   return (
-    <TypeLink label={info?.name || "Unknown Block"} color={getColor(info)} />
+    <TypeLink label={info?.name || "Unknown Block"} color={blockSpecQuery(info, "color")} />
   );
 };
 
-export const Doc = ({ data }) => {
-  const typeKey = data?.typeSpec?.type === TYPES.FUNCTION 
+export interface DocProps {
+  data: BlockData;
+  typeSpec: TypeSpec;
+}
+export const Doc = ({ data, typeSpec }: DocProps) => {
+  const theme = useTheme();
+  const typeKey = data?.metaType === MetaType.FunctionDeclaration
     ? data.id 
-    : data.dataType === DATA_TYPES.CALL 
+    : data.metaType === MetaType.FunctionCall
     ? data.ref
     : data.type;
   const [path, setPath] = useState([typeKey]);
   const activeType = path[path.length - 1];
-  const typeInfo = useProgrammingStore(
-    (state) =>
-      functionTypeSpec(state.programSpec.objectTypes, state.programData),
-    shallow
+
+  const typeInfo: {[key:string]: TypeSpec} = useProgrammingStore(
+    (state: ProgrammingState) =>
+      functionTypeSpec(state.programSpec.objectTypes, state.programData)
   );
-  const haloColor = darken(getColor(typeInfo[activeType]), 0.5);
+
+  const haloColor = darken(blockSpecQuery(typeInfo[data.type], "color"), 0.5);
 
   const setActiveDoc = useProgrammingStore(
-    (state) => state.setActiveDoc,
-    shallow
+    (state: ProgrammingState) => state.setActiveDoc
   );
   const featuredDoc = useProgrammingStore(
-    (state) =>
+    (state: ProgrammingState) =>
       typeof state.featuredDocs[data.id] === "string"
         ? state.featuredDocs[data.id]
-        : typeof state.featuredDocs[data.refData?.id] === "string"
-        ? state.featuredDocs[data.refData?.id]
-        : null,
-    shallow
+        : [MetaType.FunctionCall,MetaType.ObjectReference].includes(data.metaType) && typeof state.featuredDocs[(data as FunctionCallData | ObjectReferenceData).ref] === "string"
+        ? state.featuredDocs[(data as FunctionCallData | ObjectReferenceData).ref]
+        : null
   );
   const tabs = featuredDoc
     ? ["featured", "description", "usage"]
@@ -451,7 +482,7 @@ export const Doc = ({ data }) => {
 
   const references = getReferences(typeInfo, activeType);
 
-  const handleLinkClick = (value) => {
+  const handleLinkClick = (value: string) => {
     if (path.includes(value)) {
       let found = false;
       const newPath = path.filter((item) => {
@@ -471,18 +502,26 @@ export const Doc = ({ data }) => {
   };
 
   const componentLookup = {
-    h1: ({ node, ...props }) => <Typography variant="h3" {...props} />,
-    h2: ({ node, ...props }) => <Typography variant="h4" {...props} />,
-    h3: ({ node, ...props }) => <Typography variant="h5" {...props} />,
-    h4: ({ node, ...props }) => <Typography variant="h6" {...props} />,
-    h5: ({ node, ...props }) => <Typography variant="body1" {...props} />,
-    h6: ({ node, ...props }) => <Typography variant="body1" {...props} />,
-    p: ({ node, ...props }) => <Typography variant="body1" {...props} />,
+    // @ts-ignore
+    h1: ({ node, ...props }) => <Typography variant="h3" {...props} color="text.primary"/>,
+    // @ts-ignore
+    h2: ({ node, ...props }) => <Typography variant="h4" {...props} color="text.primary"/>,
+    // @ts-ignore
+    h3: ({ node, ...props }) => <Typography variant="h5" {...props} color="text.primary"/>,
+    // @ts-ignore
+    h4: ({ node, ...props }) => <Typography variant="h6" {...props} color="text.primary"/>,
+    // @ts-ignore
+    h5: ({ node, ...props }) => <Typography variant="body1" {...props} color="text.primary"/>,
+    // @ts-ignore
+    h6: ({ node, ...props }) => <Typography variant="body1" {...props} color="text.primary"/>,
+    // @ts-ignore
+    p: ({ node, ...props }) => <Typography variant="body1" {...props} color="text.primary"/>,
+    // @ts-ignore
     a: ({ node, ...props }) => {
       return (
         <TypeLink
           label={props.children[0]}
-          color={getColor(typeInfo[props.href])}
+          color={blockSpecQuery(typeInfo[props.href], "color")}
           onClick={(e) => {
             e.preventDefault();
             if (typeInfo[props.href]) {
@@ -495,6 +534,7 @@ export const Doc = ({ data }) => {
         />
       );
     },
+    // @ts-ignore
     code: ({ node, inline, className, children, ...props }) => {
       const match = /language-(\w+)/.exec(className || "");
       return !inline && match ? (
@@ -508,7 +548,7 @@ export const Doc = ({ data }) => {
       ) : (
         <Box
           style={{
-            backgroundColor: "#444",
+            backgroundColor: theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
             borderRadius: 4,
             padding: 5,
           }}
@@ -519,36 +559,44 @@ export const Doc = ({ data }) => {
         </Box>
       );
     },
+    // @ts-ignore
     ol: ({ node, ordered, ...props }) => (
       <ol
         {...props}
         style={{
           fontFamily: "helvetica",
-          backgroundColor: "#44444444",
+          backgroundColor: theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
+          color: theme.palette.text.primary,
           borderRadius: 4,
           paddingTop: 5,
           paddingBottom: 5,
         }}
       />
     ),
+    // @ts-ignore
     ul: ({ node, ordered, ...props }) => (
       <ul
         {...props}
         style={{
           fontFamily: "helvetica",
-          backgroundColor: "#44444480",
+          backgroundColor: theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
+          color: theme.palette.text.primary,
           borderRadius: 4,
           paddingTop: 5,
           paddingBottom: 5,
         }}
       />
     ),
+    // @ts-ignore
     blockquote: ({ node, ...props }) => {
-      let severity = "info";
-      let color = "quiet";
-      let cleaned = [];
+      let severity: AlertColor = "info";
+      let color: AlertColor = "info";
+      let cleaned: string[] = [];
+      // @ts-ignore
       props.children.forEach((child) => {
+        // @ts-ignore
         if (typeof child === "object" && child.props?.children) {
+          // @ts-ignore
           child.props.children.forEach((innerChild, idx) => {
             if (
               typeof innerChild === "string" &&
@@ -556,13 +604,15 @@ export const Doc = ({ data }) => {
             ) {
               severity = "info";
               color = "info";
+              // @ts-ignore
               child.props.children[idx] = innerChild.replace("[info]", "");
             } if (
               typeof innerChild === "string" &&
               innerChild.includes("[primary]")
             ) {
               severity = "info";
-              color = "primary";
+              color = "info";
+              // @ts-ignore
               child.props.children[idx] = innerChild.replace("[primary]", "");
             } else if (
               typeof innerChild === "string" &&
@@ -570,6 +620,7 @@ export const Doc = ({ data }) => {
             ) {
               severity = "success";
               color = "success";
+              // @ts-ignore
               child.props.children[idx] = innerChild.replace("[success]", "");
             } else if (
               typeof innerChild === "string" &&
@@ -577,6 +628,7 @@ export const Doc = ({ data }) => {
             ) {
               severity = "warning";
               color = "warning";
+              // @ts-ignore
               child.props.children[idx] = innerChild.replace("[warn]", "");
             } else if (
               typeof innerChild === "string" &&
@@ -584,6 +636,7 @@ export const Doc = ({ data }) => {
             ) {
               severity = "error";
               color = "error";
+              // @ts-ignore
               child.props.children[idx] = innerChild.replace("[error]", "");
             } else {
             }
@@ -596,19 +649,32 @@ export const Doc = ({ data }) => {
           variant="filled"
           severity={severity}
           color={color}
-          icon={color === "quiet" || color === "primary" ? <FiPaperclip /> : undefined}
         >
-          <span children={cleaned} />
+          <span>{cleaned}</span>
         </Alert>
       );
     },
   };
 
-  const connections = ["instanceBlock", "referenceBlock", "callBlock"].filter(
-    (blockType) =>
-      typeInfo[activeType]?.[blockType]?.onCanvas &&
-      typeInfo[activeType]?.[blockType]?.connections
-  );
+  let connections = [];
+  let connectionData: {[key:string]:ConnectionInfo}[] = []
+  const activeTypeSpec = typeInfo[activeType];
+  if (activeTypeSpec.primitiveType === PrimitiveType.Object && activeTypeSpec?.instanceBlock?.onCanvas && activeTypeSpec?.instanceBlock?.connections) {
+    connections.push("instanceBlock");
+    connectionData.push(activeTypeSpec.instanceBlock.connections)
+  }
+  if (activeTypeSpec.primitiveType === PrimitiveType.Object && activeTypeSpec?.referenceBlock?.onCanvas && activeTypeSpec?.referenceBlock?.connections) {
+    connections.push("referenceBlock");
+    connectionData.push(activeTypeSpec.referenceBlock.connections)
+  }
+  if (activeTypeSpec.primitiveType === PrimitiveType.Function && activeTypeSpec?.functionBlock?.onCanvas && activeTypeSpec?.functionBlock?.connections) {
+    connections.push("functionBlock");
+    connectionData.push(activeTypeSpec.functionBlock.connections)
+  }
+  if (activeTypeSpec.primitiveType === PrimitiveType.Function && activeTypeSpec?.callBlock?.onCanvas && activeTypeSpec?.callBlock?.connections) {
+    connections.push("callBlock");
+    connectionData.push(activeTypeSpec.callBlock.connections)
+  }
 
   return (
     <div
@@ -637,12 +703,11 @@ export const Doc = ({ data }) => {
         ))}
       </Tabs>
       {(tab === "description" || tab === "usage") && (
-        <Box key={tab} style={{ padding: 2, backgroundColor: "#252525" }}>
+        <Box key={tab} style={{ padding: 2, backgroundColor: theme.palette.mode === "dark" ? "#252525" : "#cccccccc", }}>
           <Breadcrumbs>
             {path.map((item) => (
               <StyledBreadcrumb
                 key={item}
-                underline="hover"
                 label={typeInfo[item]?.name || "Unrecognized"}
                 onClick={(e) => {
                   e.preventDefault();
@@ -657,7 +722,7 @@ export const Doc = ({ data }) => {
                     style={{
                       height: 13,
                       width: 13,
-                      fill: getColor(typeInfo[item]),
+                      fill: blockSpecQuery(typeInfo[item], "color")
                     }}
                   />
                 }
@@ -678,6 +743,7 @@ export const Doc = ({ data }) => {
         {tab === "featured" && (
           <Remark
             rehypeReactOptions={{
+              // @ts-ignore
               components: componentLookup,
             }}
           >
@@ -687,6 +753,7 @@ export const Doc = ({ data }) => {
         {tab === "description" && (
           <Remark
             rehypeReactOptions={{
+              // @ts-ignore
               components: componentLookup,
             }}
           >
@@ -695,7 +762,7 @@ export const Doc = ({ data }) => {
         )}
         {tab === "usage" && (
           <>
-            <Accordion key="fields" sx={{ backgroundColor: "#333" }}>
+            <Accordion key="fields">
               <AccordionSummary
                 expandIcon={<FiChevronDown />}
                 aria-controls="panel1a-content"
@@ -708,7 +775,7 @@ export const Doc = ({ data }) => {
                   Fields
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ backgroundColor: "#2D2D2D", padding: 1 }}>
+              <AccordionDetails sx={{ backgroundColor: theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2", padding: 1 }}>
                 {Object.keys(typeInfo[activeType]?.properties || {}).length ===
                   0 && (
                   <Typography
@@ -721,7 +788,7 @@ export const Doc = ({ data }) => {
                 <Stack spacing={1}>
                   {Object.keys(typeInfo[activeType]?.properties || {}).map(
                     (key) => (
-                      <FieldInfo
+                      <FieldInfoSection
                         key={key}
                         parent={activeType}
                         field={key}
@@ -733,7 +800,7 @@ export const Doc = ({ data }) => {
                 </Stack>
               </AccordionDetails>
             </Accordion>
-            <Accordion key="as-field" sx={{ backgroundColor: "#333" }}>
+            <Accordion key="as-field">
               <AccordionSummary
                 expandIcon={<FiChevronDown />}
                 aria-controls="panel1a-content"
@@ -746,7 +813,7 @@ export const Doc = ({ data }) => {
                   as a Field
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ backgroundColor: "#2D2D2D", padding: 1 }}>
+              <AccordionDetails sx={{ backgroundColor: theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2", padding: 1 }}>
                 <Stack spacing={1}>
                   {references.length === 0 && (
                     <Typography
@@ -761,7 +828,7 @@ export const Doc = ({ data }) => {
                       <Divider>
                         <TypeLink
                           label={typeInfo[block.parent]?.name}
-                          color={getColor(typeInfo[block.parent])}
+                          color={blockSpecQuery(typeInfo[block.parent], "color")}
                           onClick={(e) => {
                             e.preventDefault();
                             if (typeInfo[block.parent]) {
@@ -770,8 +837,8 @@ export const Doc = ({ data }) => {
                           }}
                         />
                       </Divider>
-                      {block.fields.map((field) => (
-                        <FieldInfo
+                      {block.fields.map((field: string) => (
+                        <FieldInfoSection
                           key={`${block.parent}-${field}`}
                           parent={block.parent}
                           field={field}
@@ -784,7 +851,7 @@ export const Doc = ({ data }) => {
                 </Stack>
               </AccordionDetails>
             </Accordion>
-            <Accordion key='connections' sx={{ backgroundColor: "#333" }}>
+            <Accordion key='connections'>
               <AccordionSummary
                 expandIcon={<FiChevronDown />}
                 aria-controls="panel1a-content"
@@ -792,9 +859,9 @@ export const Doc = ({ data }) => {
               >
                 <Typography>Connections</Typography>
               </AccordionSummary>
-              <AccordionDetails sx={{ backgroundColor: "#2D2D2D", padding: 1 }}>
+              <AccordionDetails sx={{ backgroundColor: theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2", padding: 1 }}>
                 {connections.length > 0 ? (
-                  connections.map((blockType) => (
+                  connections.map((blockType,i) => (
                     <>
                       <Divider>
                         <span
@@ -807,11 +874,11 @@ export const Doc = ({ data }) => {
                         </span>
                       </Divider>
                       {Object.entries(
-                        typeInfo[activeType][blockType].connections
+                        connectionData[i]
                       ).map(([side, connectInfo]) => (
-                        <ConnectionInfo
-                          side={side}
-                          connectionInfo={connectInfo}
+                        <ConnectionInfoSection
+                          side={side as Position}
+                          connectionInfo={connectInfo as ConnectionInfo}
                           typeInfo={typeInfo}
                           handleLinkClick={handleLinkClick}
                         />
