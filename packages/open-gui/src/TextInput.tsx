@@ -28,6 +28,7 @@ import { styled, alpha, lighten, darken } from "@mui/material/styles";
 export interface TextInputProps {
   wrapped?: boolean;
   disabled?: boolean;
+  defaultValue?: number | string | readonly string[]
   readonly?: boolean;
   value?: number | string | readonly string[];
   label?: string;
@@ -36,6 +37,8 @@ export interface TextInputProps {
   extra?: ReactNode;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   onDoubleClick?: (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   disableDrag?: boolean;
   style?: CSSProperties;
 }
@@ -47,7 +50,7 @@ export interface TextInputWrapperProps {
 }
 
 export const TextInputWrapper = styled("label", {
-  shouldForwardProp: (prop: string) => !["wrapped"].includes(prop),
+  shouldForwardProp: (prop: string) => !["wrapped","focused"].includes(prop),
 })<TextInputWrapperProps>(
   {
     height: 35,
@@ -103,6 +106,7 @@ export const TextInputExtra = styled("span")<TextInputExtraProps>(
     height: 35,
     alignItems: "center",
     display: "flex",
+    whiteSpace: "nowrap",
   },
   ({ theme, wrapped, side }) => ({
     background: alpha(theme.palette.background.paper,side==='left'?.2:.1),
@@ -162,6 +166,7 @@ const TextInputField = styled("input")(
 
 export const TextInput = ({
   disabled,
+  defaultValue,
   readonly,
   hideLabelPrefix = false,
   label,
@@ -170,9 +175,12 @@ export const TextInput = ({
   suffix,
   style = {},
   disableDrag = false,
+  onBlur,
+  onFocus,
   ...props
 }: TextInputProps) => {
   const [focused, setFocused] = useState(false);
+  const hidePrefix = hideLabelPrefix || label === undefined || label === "";
   return (
     <TextInputWrapper
       className={disableDrag ? "nodrag" : undefined}
@@ -182,10 +190,9 @@ export const TextInput = ({
       wrapped={wrapped}
       style={style}
     >
-      {!hideLabelPrefix && (
+      {!hidePrefix && (
         <TextInputExtra
           side="left"
-          hidden={hideLabelPrefix || label === undefined}
           wrapped={wrapped}
         >
           {label}
@@ -193,11 +200,23 @@ export const TextInput = ({
       )}
       <TextInputField
         readOnly={readonly}
+        defaultValue={defaultValue}
         disabled={disabled}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
+        onFocus={(e) => {
+          setFocused(true);
+          if (onFocus) {
+            onFocus(e);
+          }
+        }}
+        onBlur={(e) => {
+          setFocused(false);
+          if (onBlur) {
+            onBlur(e);
+          }
+        }}
         value={props.value}
         onChange={props.onChange}
+
       />
       {suffix && (
         <TextInputExtra side={extra ? undefined : "right"} wrapped={wrapped}>

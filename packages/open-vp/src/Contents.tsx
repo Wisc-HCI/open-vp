@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Block } from "@people_and_robots/open-blocks";
 import { FiPlus, FiSearch } from "react-icons/fi";
 import { Canvas } from "./Canvas";
-import useMeasure from "react-use-measure";
+import useMeasure, { RectReadOnly } from "react-use-measure";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -12,11 +12,16 @@ import {
   Box,
   Collapse,
   Card,
+  CardHeader,
+  CardActionArea,
   Alert,
   AlertTitle,
   useTheme,
   darken,
-  lighten
+  lighten,
+  CardContent,
+  CardActions,
+  Icon,
 } from "@mui/material";
 import { CanvasTabs } from "./CanvasTabs";
 import {
@@ -31,9 +36,14 @@ import {
   TypeSpec,
   PrimitiveType,
   PropertyType,
-  MetaType
+  MetaType,
 } from "@people_and_robots/open-core";
-import { ActionIconButton, ScrollRegion, TextInput } from "@people_and_robots/open-gui";
+import {
+  ActionIconButton,
+  IconTextButton,
+  ScrollRegion,
+  TextInput,
+} from "@people_and_robots/open-gui";
 import { pick, pickBy } from "lodash";
 import { Backdrop } from "./Canvas";
 
@@ -117,7 +127,10 @@ const BlockPanel = ({
         } else if (drawer.type === DrawerType.Singular) {
           let blockData = pickBy(
             state.programData,
-            (d) => d.type === drawer.objectType && (d.metaType === MetaType.ObjectInstance || d.metaType === MetaType.FunctionDeclaration)
+            (d) =>
+              d.type === drawer.objectType &&
+              (d.metaType === MetaType.ObjectInstance ||
+                d.metaType === MetaType.FunctionDeclaration)
           );
           return [
             blockData,
@@ -154,15 +167,21 @@ const BlockPanel = ({
       direction="column"
       sx={{
         width: drawerWidth,
-        backgroundColor: theme.palette.mode === "light" ? darken(theme.palette.background.paper,0.1) : lighten(theme.palette.background.paper,0.1),
+        backgroundColor:
+          theme.palette.mode === "light"
+            ? darken(theme.palette.background.paper, 0.1)
+            : lighten(theme.palette.background.paper, 0.1),
         height: "100%",
       }}
     >
       <Stack
         ref={headerRef}
-        sx={{ 
-          backgroundColor: theme.palette.mode === "light" ? darken(theme.palette.background.paper,0.15) : lighten(theme.palette.background.paper,0.15),
-          padding: "10px" 
+        sx={{
+          backgroundColor:
+            theme.palette.mode === "light"
+              ? darken(theme.palette.background.paper, 0.15)
+              : lighten(theme.palette.background.paper, 0.15),
+          padding: "10px",
         }}
         direction="column"
         spacing={1}
@@ -172,13 +191,17 @@ const BlockPanel = ({
           sx={{ alignItems: "center", justify: "space-between", width: "100%" }}
           justifyContent="space-between"
         >
-          <Typography>
+          <Typography style={{color:theme.palette.text.secondary}}>
             {activeDrawer !== null && drawers[activeDrawer].title}
           </Typography>
           {activeDrawer !== null &&
             drawers[activeDrawer].type === DrawerType.Singular &&
-            (objectTypeInfo?.primitiveType === PrimitiveType.Object && !objectTypeInfo.instanceBlock.onCanvas) && (
+            objectTypeInfo?.primitiveType === PrimitiveType.Object &&
+            !objectTypeInfo.instanceBlock.onCanvas && (
               <ActionIconButton
+                size="small"
+                placement="bottom"
+                title={`Add ${objectTypeInfo.name}`}
                 onClick={() => addInstance(drawers[activeDrawer].objectType)}
               >
                 <FiPlus />
@@ -186,18 +209,18 @@ const BlockPanel = ({
             )}
         </Stack>
         <div>
-        <TextInput
-          label="Search"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          // InputProps={{
-          //   startAdornment: (
-          //     <InputAdornment position="start">
-          //       <FiSearch style={{ height: 15 }} />
-          //     </InputAdornment>
-          //   ),
-          // }}
-        />
+          <TextInput
+            label="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            // InputProps={{
+            //   startAdornment: (
+            //     <InputAdornment position="start">
+            //       <FiSearch style={{ height: 15 }} />
+            //     </InputAdornment>
+            //   ),
+            // }}
+          />
         </div>
       </Stack>
       <Box sx={{ flex: 1, width: drawerWidth }}>
@@ -226,9 +249,9 @@ const BlockPanel = ({
                       name: "",
                       accepts: [block.type],
                       default: null,
-                      type: PropertyType.Block
+                      type: PropertyType.Block,
                     },
-                    parentId: SPAWNER
+                    parentId: SPAWNER,
                   }}
                 />
               ))}
@@ -243,12 +266,14 @@ export interface ContentsProps {
   drawerWidth?: number;
   snapToGrid?: boolean;
   animateDrawer?: boolean;
+  bounds: RectReadOnly;
 }
 export const Contents = ({
   drawerWidth = 235,
   snapToGrid = true,
   animateDrawer = true,
-}) => {
+  bounds,
+}: ContentsProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const activeDrawer = useProgrammingStore(
     (state: ProgrammingState) => state.activeDrawer
@@ -261,6 +286,8 @@ export const Contents = ({
     (state: ProgrammingState) => state.activeTab
   );
 
+  const addTab = useProgrammingStore((state:ProgrammingState) => state.addTab);
+
   const theme = useTheme();
 
   return (
@@ -272,7 +299,10 @@ export const Contents = ({
         height: "100%",
         flex: 1,
         padding: 0,
-        backgroundColor: theme.palette.mode === "light" ? darken(theme.palette.background.paper,0.2) : lighten(theme.palette.background.paper,0.2)
+        backgroundColor:
+          theme.palette.mode === "light"
+            ? darken(theme.palette.background.paper, 0.2)
+            : lighten(theme.palette.background.paper, 0.2),
       }}
     >
       <SectionStrip
@@ -306,19 +336,28 @@ export const Contents = ({
           flexDirection: "column",
           height: "100%",
           flex: 1,
-          padding: 0
+          padding: 0,
         }}
       >
         <CanvasTabs />
         {activeTab ? (
-          <Canvas snapToGrid={snapToGrid} />
+          <Canvas
+            drawerWidth={drawerWidth}
+            snapToGrid={snapToGrid}
+            bounds={bounds}
+          />
         ) : (
-          <Backdrop>
+          <Backdrop sx={{backgroundColor:theme.palette.mode === 'dark' ? lighten(theme.palette.background.default,.05) : darken(theme.palette.background.default,.05)}}>
             <Card>
-              <Alert variant="outlined" severity="info">
-                <AlertTitle>No Tab Selected</AlertTitle>Create or open a tab to
-                begin.
-              </Alert>
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  No Tab Selected
+                </Typography>
+                Create or open a tab to begin
+              </CardContent>
+              <CardActions>
+                <IconTextButton title="Create Tab" startIcon={<FiPlus/>} onClick={addTab}>Create Tab</IconTextButton>
+              </CardActions>
             </Card>
           </Backdrop>
         )}

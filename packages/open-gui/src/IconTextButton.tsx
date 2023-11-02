@@ -1,6 +1,6 @@
 import React, { MouseEventHandler, ReactNode} from "react";
 import { styled, alpha } from '@mui/material/styles';
-import { IconButton as MuiIconButton, Button as MuiButton } from "@mui/material";
+import { Button as MuiButton } from "@mui/material";
 import { Tooltip } from "./Tooltip";
 
 export interface IconButtonProps {
@@ -22,7 +22,7 @@ const fontSizeMap = {
   large: "2rem"
 }
 
-export const IconButton = styled(MuiButton, {
+const InnerIconTextButton = styled(MuiButton, {
   shouldForwardProp: (prop: string) =>
     !['canToggle', 'toggled'].includes(prop)
 })<IconButtonProps>(({ theme, toggled, size = "medium", canToggle }) => ({
@@ -37,9 +37,11 @@ export const IconButton = styled(MuiButton, {
     backgroundColor: "rgba(0,0,0,0.25)",
     color: "#ccc",
   },
+  flex: 1,
   borderRadius: theme.shape.borderRadius * 0.66,
   height: size ? sizeMap[size] : 24,
   minWidth: size ? sizeMap[size] : 24,
+  textTransform: "none",
   // flex: 1,
   "&:hover": {
     backgroundColor: canToggle && toggled
@@ -53,26 +55,30 @@ export const IconButton = styled(MuiButton, {
     userSelect: "none",
     outline: 0,
   }
-}))
-  ;
+}));
 
 export const ToolbarButtonWrapper = styled("span")(({ }) => ({
   display: "flex",
+  flex:1
 }));
 
-export interface ActionIconButtonProps {
+export interface IconTextButtonProps {
   title?: string;
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   placement?: "top" | "bottom" | "left" | "right";
   toggled?: boolean;
   canToggle?: boolean;
   size?: "small" | "medium" | "large";
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
-export const ActionIconButton = ({
+export const IconTextButton = ({
   title = "Button",
+  startIcon = null,
+  endIcon = null,
   onClick = () => { },
   disabled = false,
   placement = "top",
@@ -81,7 +87,7 @@ export const ActionIconButton = ({
   children = null,
   size = "medium",
   ...props
-}: ActionIconButtonProps) => (
+}: IconTextButtonProps) => (
   <Tooltip
     // className="no-outline"
     title={title}
@@ -90,8 +96,10 @@ export const ActionIconButton = ({
     // arrow
   >
     <ToolbarButtonWrapper className="no-outline">
-      <IconButton
+      <InnerIconTextButton
         className="no-outline"
+        startIcon={startIcon}
+        endIcon={endIcon}
         disabled={disabled}
         aria-label={title}
         onClick={onClick}
@@ -101,7 +109,7 @@ export const ActionIconButton = ({
         {...props}
       >
         {children}
-      </IconButton>
+      </InnerIconTextButton>
     </ToolbarButtonWrapper>
   </Tooltip>
 );

@@ -28,7 +28,7 @@ export const DropZone = ({
         minHeight: 30,
         minWidth: "max-content",
         margin: 4,
-        flex:1
+        flex:1,
       }}
     >
       <DropRegion

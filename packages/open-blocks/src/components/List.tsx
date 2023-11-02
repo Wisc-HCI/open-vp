@@ -49,7 +49,9 @@ export const List = memo(({ ids = [], regionInfo, interactionDisabled, context, 
           minHeight: 30,
           minWidth: 100,
           margin: 4,
-          flex:1
+          flex:1,
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <DropRegion
@@ -77,9 +79,10 @@ export const List = memo(({ ids = [], regionInfo, interactionDisabled, context, 
                   idx: idx + 1,
                 }}
                 peripheral={true}
-                hideText
                 disabled={interactionDisabled}
+                hideText
                 context={context}
+                limitedRender={limitedRender}
               />
             }
           />

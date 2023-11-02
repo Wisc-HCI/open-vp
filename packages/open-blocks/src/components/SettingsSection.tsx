@@ -89,6 +89,7 @@ export const SettingsSection = ({
             <>
               {propInfo.type === PropertyType.Boolean && (
                 <Toggle
+                  key={propKey}
                   label={propInfo.name}
                   value={properties[propKey]}
                   onChange={(v) =>

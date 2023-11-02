@@ -44,7 +44,6 @@ import {
   Collapse,
   Box,
   Stack,
-  Dialog,
   Card,
   alpha,
   useTheme,
@@ -61,7 +60,7 @@ import { SettingsSection } from "./components/SettingsSection";
 import { Doc } from "./components/Doc";
 import { NodeToolbar, Position } from "reactflow";
 import { motion } from "framer-motion";
-import { NestedContextMenu } from "@people_and_robots/open-gui";
+import { NestedContextMenu, Dialog } from "@people_and_robots/open-gui";
 import {
   MenuData,
   MenuSection,
@@ -256,6 +255,10 @@ export const VisualBlock = forwardRef(
       >
         <BlockContainer
           // contentEditable
+          ref={ref}
+          onBlur={()=>{
+            console.log("blur")
+          }}
           aria-labelledby={`${name} (${data.metaType})`}
           onClick={(e) => {
             onClick(data);
@@ -276,7 +279,6 @@ export const VisualBlock = forwardRef(
           // onMouseEnter={()=>console.log('enter')}
           // onMouseLeave={()=>console.log('leave')}
           className={canDragBlockRFR ? undefined : "nodrag"}
-          ref={ref}
           // onContextMenu={(e)=>e.stopPropagation()}
           bounded={bounded}
           minified={minified}
@@ -284,11 +286,6 @@ export const VisualBlock = forwardRef(
           focused={isCopying}
           color={blockSpec.color}
           style={style}
-          whileHover={{
-            transform: "translateY(-1px)",
-            // boxShadow:
-            //   "0px 0px 0px 2px #00000030",
-          }}
         >
           {/* {!inDrawer && !external && (
           <NodeToolbar
@@ -508,22 +505,23 @@ export const VisualBlock = forwardRef(
           )}
 
           <Dialog
-            id={`${data.id}-doc`}
-            open={(docActive && !limitedRender) || false}
-            onClose={() => setDocActive(data.id, false)}
-            aria-labelledby="doc-dialog"
-            PaperComponent={DraggablePaperComponent}
-            sx={{ marign: 0, backgroundColor: "transparent" }}
+            // id={`${data.id}-doc`}
+            isOpen={(docActive && !limitedRender) || false}
+            onStateChange={(state) => setDocActive(data.id, state)}
+            // onClose={() => setDocActive(data.id, false)}
+            // aria-labelledby="doc-dialog"
+            // PaperComponent={DraggablePaperComponent}
+            // sx={{ marign: 0, backgroundColor: "transparent" }}
           >
-            <MotionCard
+            {/* <MotionCard
               style={{
                 backgroundColor: alpha(theme.palette.background.paper, 0.5),
                 WebkitBackdropFilter: "blur(15px)",
                 backdropFilter: "blur(15px)",
               }}
-            >
+            > */}
               <Doc data={data} typeSpec={typeSpec} />
-            </MotionCard>
+            {/* </MotionCard> */}
           </Dialog>
 
           {/* If the block is a function instance (the actual function and not a call) then render the spawn area for arguments */}

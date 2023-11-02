@@ -12,7 +12,6 @@ import {
   AccordionSummary,
   Grid,
   Stack,
-  Tooltip,
   Divider,
   Avatar,
   CardHeader,
@@ -21,9 +20,25 @@ import {
   CardActions,
   AlertColor,
 } from "@mui/material";
-import { darken, emphasize, styled, useTheme } from "@mui/material/styles";
-import { forwardRef, useState, useCallback } from "react";
-import { useProgrammingStore, functionInstanceAsType, TypeSpec, BlockData, ConnectionDirection, MetaType, ProgrammingState, FunctionCallData, PropertyType, PrimitiveType } from "@people_and_robots/open-core";
+import {
+  darken,
+  lighten,
+  emphasize,
+  styled,
+  useTheme,
+} from "@mui/material/styles";
+import { useState, useCallback, useRef } from "react";
+import {
+  useProgrammingStore,
+  TypeSpec,
+  BlockData,
+  ConnectionDirection,
+  MetaType,
+  ProgrammingState,
+  FunctionCallData,
+  PropertyType,
+  PrimitiveType,
+} from "@people_and_robots/open-core";
 import { Remark } from "react-remark";
 import {
   FiChevronDown,
@@ -32,19 +47,22 @@ import {
   FiLogIn,
   FiList,
   FiLogOut,
-  FiPaperclip,
   FiStar,
   FiDownload,
-  FiSquare
+  FiSquare,
 } from "react-icons/fi";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { pickBy } from "lodash";
-import { motion } from "framer-motion";
 import { blockSpecQuery } from "../util";
-import { Position } from 'reactflow';
-import { FieldInfo, ObjectReferenceData } from "@people_and_robots/open-core";
+import { Position } from "reactflow";
+import { ObjectReferenceData } from "@people_and_robots/open-core";
 import { functionTypeSpec } from "@people_and_robots/open-core/src/generators";
+import {
+  IconTextButton,
+  ScrollRegion,
+  Tooltip,
+} from "@people_and_robots/open-gui";
 
 const DOC_FLAG_COLORS = {
   INBOUND_CONNECTION: "#DDA0DD",
@@ -63,8 +81,6 @@ const SHOWN_SIMPLE_TYPES = [
   "OPTIONS",
   "VECTOR3",
 ];
-
-const MotionCard = motion(Card);
 
 const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   const backgroundColor =
@@ -86,16 +102,22 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
   };
 });
 
-function getReferences(typeSpec: {[key:string]: TypeSpec}, usedType: string): {parent:string,fields:string[]}[] {
+function getReferences(
+  typeSpec: { [key: string]: TypeSpec },
+  usedType: string
+): { parent: string; fields: string[] }[] {
   // @ts-ignore
-  const referent = typeSpec[usedType]?.specificType || usedType
-  let references: {parent:string,fields:string[]}[] = [];
-  Object.keys(typeSpec).forEach((typeValue:string) => {
+  const referent = typeSpec[usedType]?.specificType || usedType;
+  let references: { parent: string; fields: string[] }[] = [];
+  Object.keys(typeSpec).forEach((typeValue: string) => {
     let entry = { parent: typeValue, fields: [] };
     if (typeSpec[typeValue].properties) {
       Object.keys(typeSpec[typeValue].properties).forEach((prop: string) => {
         let propValue = typeSpec[typeValue].properties[prop];
-        if (propValue.type === PropertyType.Block && propValue.accepts?.includes(referent)) {
+        if (
+          propValue.type === PropertyType.Block &&
+          propValue.accepts?.includes(referent)
+        ) {
           // @ts-ignore
           entry.fields.push(prop);
         }
@@ -107,7 +129,7 @@ function getReferences(typeSpec: {[key:string]: TypeSpec}, usedType: string): {p
     }
   });
   return references;
-};
+}
 
 export const ChipMimic = styled("button")(({ theme }) => {
   const backgroundColor =
@@ -129,34 +151,50 @@ export const ChipMimic = styled("button")(({ theme }) => {
     fontWeight: theme.typography.fontWeightRegular,
     "&:hover, &:focus": {
       backgroundColor: emphasize(backgroundColor, 0.06),
-    }
+    },
   };
 });
 
 export interface FieldInfoSectionProps {
   parent: string;
   field: string;
-  typeInfo: {[key:string]:TypeSpec};
+  typeInfo: { [key: string]: TypeSpec };
   handleLinkClick: (value: string) => void;
+  container?: HTMLElement;
 }
-const FieldInfoSection = ({ parent, field, typeInfo, handleLinkClick }: FieldInfoSectionProps) => {
+const FieldInfoSection = ({
+  parent,
+  field,
+  typeInfo,
+  handleLinkClick,
+  container,
+}: FieldInfoSectionProps) => {
   const fieldInfo = typeInfo[parent]?.properties?.[field];
   const theme = useTheme();
-  const fullAccepts = fieldInfo.type === PropertyType.Block && fieldInfo?.accepts 
-    ? fieldInfo.accepts.map(a=>{
-      if (typeInfo[a]) {
-        return [a]
-      } else {
-        // @ts-ignore
-        return Object.keys(pickBy(typeInfo,(info)=>info.specificType === a))
-      }
-    }).reduce((accumulator,currentValue)=>[...accumulator,...currentValue],[])
-    : [];
-  const variant = fieldInfo.type === PropertyType.Block && fieldInfo?.accepts
-    ? "block"
-    : SHOWN_SIMPLE_TYPES.includes(fieldInfo?.type)
-    ? "simple"
-    : "na";
+  const fullAccepts =
+    fieldInfo.type === PropertyType.Block && fieldInfo?.accepts
+      ? fieldInfo.accepts
+          .map((a) => {
+            if (typeInfo[a]) {
+              return [a];
+            } else {
+              return Object.keys(
+                // @ts-ignore
+                pickBy(typeInfo, (info) => info.specificType === a)
+              );
+            }
+          })
+          .reduce(
+            (accumulator, currentValue) => [...accumulator, ...currentValue],
+            []
+          )
+      : [];
+  const variant =
+    fieldInfo.type === PropertyType.Block && fieldInfo?.accepts
+      ? "block"
+      : SHOWN_SIMPLE_TYPES.includes(fieldInfo?.type)
+      ? "simple"
+      : "na";
 
   if (variant === "na") {
     return null;
@@ -174,9 +212,9 @@ const FieldInfoSection = ({ parent, field, typeInfo, handleLinkClick }: FieldInf
             <Stack direction="row" gap={0.5}>
               {fieldInfo.isList && (
                 <Tooltip
+                  key="is-list"
                   title="This property accepts a set of entries as a list"
-                  sx={{ fontSize: 20 }}
-                  arrow
+                  parent={container}
                 >
                   <Avatar
                     sx={{
@@ -191,9 +229,9 @@ const FieldInfoSection = ({ parent, field, typeInfo, handleLinkClick }: FieldInf
               )}
               {fieldInfo.fullWidth && (
                 <Tooltip
+                  key="full-width"
                   title="This property spans the width of the block"
-                  sx={{ fontSize: 20 }}
-                  arrow
+                  parent={container}
                 >
                   <Avatar
                     sx={{
@@ -208,9 +246,9 @@ const FieldInfoSection = ({ parent, field, typeInfo, handleLinkClick }: FieldInf
               )}
               {fieldInfo.isRequired && (
                 <Tooltip
+                  key="required"
                   title="This property is required"
-                  sx={{ fontSize: 20 }}
-                  arrow
+                  parent={container}
                 >
                   <Avatar
                     sx={{
@@ -225,9 +263,9 @@ const FieldInfoSection = ({ parent, field, typeInfo, handleLinkClick }: FieldInf
               )}
               {fieldInfo.isFunctionArgument && (
                 <Tooltip
+                  key="is-function-argument"
                   title="This is an argument to the function"
-                  sx={{ fontSize: 20 }}
-                  arrow
+                  parent={container}
                 >
                   <Avatar
                     sx={{
@@ -243,9 +281,9 @@ const FieldInfoSection = ({ parent, field, typeInfo, handleLinkClick }: FieldInf
               {/* @ts-ignore */}
               {fieldInfo.isFunctionBlockField && (
                 <Tooltip
+                  key="is-function-block-field"
                   title="This is a property of this function block"
-                  sx={{ fontSize: 20 }}
-                  arrow
+                  parent={container}
                 >
                   <Avatar
                     sx={{
@@ -277,38 +315,56 @@ const FieldInfoSection = ({ parent, field, typeInfo, handleLinkClick }: FieldInf
             backgroundColor: theme.palette.mode === "dark" ? "#252525" : "#ccc",
             borderRadius: 1,
             padding: 0.5,
-            lineHeight: 1.75,
+            // lineHeight: 1.75,
+            display: "flex",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            listStyle: "none",
+            p: 0.5,
+            m: 0,
           }}
+          component="ul"
         >
-          {fullAccepts?.map((t:string) => (
-            <TypeLink
-              key={t}
-              label={typeInfo[t]?.name || "Unrecognized"}
-              color={blockSpecQuery(typeInfo[t], "color")}
-              onClick={(e) => {
-                e.preventDefault();
-                if (typeInfo[t]) {
-                  handleLinkClick(t);
-                }
-              }}
-            />
+          {fullAccepts?.map((t: string) => (
+            <li style={{ margin: 1 }}>
+              <TypeLink
+                key={t}
+                label={typeInfo[t]?.name || "Unrecognized"}
+                color={blockSpecQuery(typeInfo[t], "color")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (typeInfo[t]) {
+                    handleLinkClick(t);
+                  }
+                }}
+              />
+            </li>
           ))}
         </CardContent>
+      )}
+      {fieldInfo.type === PropertyType.Options && (
+        <Typography
+          sx={{ fontSize: 14, textAlign: "center", fontStyle: "italic" }}
+          color="text.secondary"
+          gutterBottom={false}
+        >
+          {fieldInfo.options?.map((option) => option.label).join(", ")}
+        </Typography>
       )}
     </Card>
   );
 };
 
 interface ConnectionInfo {
-  allowed: string[],
-  direction: string,
+  allowed: string[];
+  direction: string;
 }
 
 interface ConnectionInfoSectionProps {
-  side: Position,
-  connectionInfo: ConnectionInfo,
-  typeInfo: {[key:string]:TypeSpec},
-  handleLinkClick: (value: string) => void,
+  side: Position;
+  connectionInfo: ConnectionInfo;
+  typeInfo: { [key: string]: TypeSpec };
+  handleLinkClick: (value: string) => void;
 }
 const ConnectionInfoSection = ({
   side,
@@ -320,7 +376,7 @@ const ConnectionInfoSection = ({
   return (
     <Card sx={{ padding: 2 }}>
       <Grid container spacing={1}>
-        <Grid item xs={4}>
+        <Grid key={side} item xs={4}>
           <Typography
             variant="h5"
             color="text.primary"
@@ -329,7 +385,7 @@ const ConnectionInfoSection = ({
             {side}
           </Typography>
         </Grid>
-        <Grid item xs={8}>
+        <Grid key={`${side}-accepts`} item xs={8}>
           <Typography
             sx={{ fontSize: 14, textAlign: "center", fontStyle: "italic" }}
             color="text.secondary"
@@ -340,15 +396,13 @@ const ConnectionInfoSection = ({
         </Grid>
         {connectionInfo.allowed && (
           <>
-            <Grid item xs={4}>
+            <Grid key={`${side}-direction`} item xs={4}>
               <Tooltip
                 title={
                   connectionInfo.direction === ConnectionDirection.Outbound
                     ? "This connection is outbound"
                     : "This connection is inbound"
                 }
-                sx={{ fontSize: 20 }}
-                arrow
               >
                 <Avatar
                   sx={{
@@ -369,10 +423,12 @@ const ConnectionInfoSection = ({
               </Tooltip>
             </Grid>
             <Grid
+              key={`${side}-bin`}
               item
               xs={8}
               sx={{
-                backgroundColor: theme.palette.mode === "dark" ? "#252525" : "#ccc",
+                backgroundColor:
+                  theme.palette.mode === "dark" ? "#252525" : "#ccc",
                 borderRadius: 1,
                 padding: 3,
                 lineHeight: 1.75,
@@ -434,12 +490,15 @@ const TypeLink = ({ label, color, onClick }: TypeLinkProps) => {
   );
 };
 
-export const TypeDescription = ({type}:{type: string}) => {
+export const TypeDescription = ({ type }: { type: string }) => {
   const info = useProgrammingStore(
     useCallback((state) => state.programSpec.objectTypes[type], [type])
   );
   return (
-    <TypeLink label={info?.name || "Unknown Block"} color={blockSpecQuery(info, "color")} />
+    <TypeLink
+      label={info?.name || "Unknown Block"}
+      color={blockSpecQuery(info, "color")}
+    />
   );
 };
 
@@ -449,31 +508,41 @@ export interface DocProps {
 }
 export const Doc = ({ data, typeSpec }: DocProps) => {
   const theme = useTheme();
-  const typeKey = data?.metaType === MetaType.FunctionDeclaration
-    ? data.id 
-    : data.metaType === MetaType.FunctionCall
-    ? data.ref
-    : data.type;
+  const typeKey =
+    data?.metaType === MetaType.FunctionDeclaration
+      ? data.id
+      : data.metaType === MetaType.FunctionCall
+      ? data.ref
+      : data.type;
   const [path, setPath] = useState([typeKey]);
   const activeType = path[path.length - 1];
 
-  const typeInfo: {[key:string]: TypeSpec} = useProgrammingStore(
+  const typeInfo: { [key: string]: TypeSpec } = useProgrammingStore(
     (state: ProgrammingState) =>
       functionTypeSpec(state.programSpec.objectTypes, state.programData)
   );
 
-  const haloColor = darken(blockSpecQuery(typeInfo[data.type], "color"), 0.5);
+  const docRef = useRef<HTMLDivElement>(null);
+
+  const haloColor =
+    theme.palette.mode === "dark"
+      ? darken(blockSpecQuery(typeInfo[activeType], "color"), 0.5)
+      : lighten(blockSpecQuery(typeInfo[activeType], "color"), 0.5);
 
   const setActiveDoc = useProgrammingStore(
     (state: ProgrammingState) => state.setActiveDoc
   );
-  const featuredDoc = useProgrammingStore(
-    (state: ProgrammingState) =>
-      typeof state.featuredDocs[data.id] === "string"
-        ? state.featuredDocs[data.id]
-        : [MetaType.FunctionCall,MetaType.ObjectReference].includes(data.metaType) && typeof state.featuredDocs[(data as FunctionCallData | ObjectReferenceData).ref] === "string"
-        ? state.featuredDocs[(data as FunctionCallData | ObjectReferenceData).ref]
-        : null
+  const featuredDoc = useProgrammingStore((state: ProgrammingState) =>
+    typeof state.featuredDocs[data.id] === "string"
+      ? state.featuredDocs[data.id]
+      : [MetaType.FunctionCall, MetaType.ObjectReference].includes(
+          data.metaType
+        ) &&
+        typeof state.featuredDocs[
+          (data as FunctionCallData | ObjectReferenceData).ref
+        ] === "string"
+      ? state.featuredDocs[(data as FunctionCallData | ObjectReferenceData).ref]
+      : null
   );
   const tabs = featuredDoc
     ? ["featured", "description", "usage"]
@@ -503,19 +572,33 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
 
   const componentLookup = {
     // @ts-ignore
-    h1: ({ node, ...props }) => <Typography variant="h3" {...props} color="text.primary"/>,
+    h1: ({ node, ...props }) => (
+      <Typography variant="h3" {...props} color="text.primary" />
+    ),
     // @ts-ignore
-    h2: ({ node, ...props }) => <Typography variant="h4" {...props} color="text.primary"/>,
+    h2: ({ node, ...props }) => (
+      <Typography variant="h4" {...props} color="text.primary" />
+    ),
     // @ts-ignore
-    h3: ({ node, ...props }) => <Typography variant="h5" {...props} color="text.primary"/>,
+    h3: ({ node, ...props }) => (
+      <Typography variant="h5" {...props} color="text.primary" />
+    ),
     // @ts-ignore
-    h4: ({ node, ...props }) => <Typography variant="h6" {...props} color="text.primary"/>,
+    h4: ({ node, ...props }) => (
+      <Typography variant="h6" {...props} color="text.primary" />
+    ),
     // @ts-ignore
-    h5: ({ node, ...props }) => <Typography variant="body1" {...props} color="text.primary"/>,
+    h5: ({ node, ...props }) => (
+      <Typography variant="body1" {...props} color="text.primary" />
+    ),
     // @ts-ignore
-    h6: ({ node, ...props }) => <Typography variant="body1" {...props} color="text.primary"/>,
+    h6: ({ node, ...props }) => (
+      <Typography variant="body1" {...props} color="text.primary" />
+    ),
     // @ts-ignore
-    p: ({ node, ...props }) => <Typography variant="body1" {...props} color="text.primary"/>,
+    p: ({ node, ...props }) => (
+      <Typography variant="body1" {...props} color="text.primary" />
+    ),
     // @ts-ignore
     a: ({ node, ...props }) => {
       return (
@@ -548,7 +631,8 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
       ) : (
         <Box
           style={{
-            backgroundColor: theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
+            backgroundColor:
+              theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
             borderRadius: 4,
             padding: 5,
           }}
@@ -565,7 +649,8 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
         {...props}
         style={{
           fontFamily: "helvetica",
-          backgroundColor: theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
+          backgroundColor:
+            theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
           color: theme.palette.text.primary,
           borderRadius: 4,
           paddingTop: 5,
@@ -579,7 +664,8 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
         {...props}
         style={{
           fontFamily: "helvetica",
-          backgroundColor: theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
+          backgroundColor:
+            theme.palette.mode === "dark" ? "#44444444" : "#cccccccc",
           color: theme.palette.text.primary,
           borderRadius: 4,
           paddingTop: 5,
@@ -606,7 +692,8 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
               color = "info";
               // @ts-ignore
               child.props.children[idx] = innerChild.replace("[info]", "");
-            } if (
+            }
+            if (
               typeof innerChild === "string" &&
               innerChild.includes("[primary]")
             ) {
@@ -645,11 +732,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
         cleaned.push(child);
       });
       return (
-        <Alert
-          variant="filled"
-          severity={severity}
-          color={color}
-        >
+        <Alert variant="filled" severity={severity} color={color}>
           <span>{cleaned}</span>
         </Alert>
       );
@@ -657,53 +740,84 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
   };
 
   let connections = [];
-  let connectionData: {[key:string]:ConnectionInfo}[] = []
+  let connectionData: { [key: string]: ConnectionInfo }[] = [];
   const activeTypeSpec = typeInfo[activeType];
-  if (activeTypeSpec.primitiveType === PrimitiveType.Object && activeTypeSpec?.instanceBlock?.onCanvas && activeTypeSpec?.instanceBlock?.connections) {
+  if (
+    activeTypeSpec.primitiveType === PrimitiveType.Object &&
+    activeTypeSpec?.instanceBlock?.onCanvas &&
+    activeTypeSpec?.instanceBlock?.connections
+  ) {
     connections.push("instanceBlock");
-    connectionData.push(activeTypeSpec.instanceBlock.connections)
+    connectionData.push(activeTypeSpec.instanceBlock.connections);
   }
-  if (activeTypeSpec.primitiveType === PrimitiveType.Object && activeTypeSpec?.referenceBlock?.onCanvas && activeTypeSpec?.referenceBlock?.connections) {
+  if (
+    activeTypeSpec.primitiveType === PrimitiveType.Object &&
+    activeTypeSpec?.referenceBlock?.onCanvas &&
+    activeTypeSpec?.referenceBlock?.connections
+  ) {
     connections.push("referenceBlock");
-    connectionData.push(activeTypeSpec.referenceBlock.connections)
+    connectionData.push(activeTypeSpec.referenceBlock.connections);
   }
-  if (activeTypeSpec.primitiveType === PrimitiveType.Function && activeTypeSpec?.functionBlock?.onCanvas && activeTypeSpec?.functionBlock?.connections) {
+  if (
+    activeTypeSpec.primitiveType === PrimitiveType.Function &&
+    activeTypeSpec?.functionBlock?.onCanvas &&
+    activeTypeSpec?.functionBlock?.connections
+  ) {
     connections.push("functionBlock");
-    connectionData.push(activeTypeSpec.functionBlock.connections)
+    connectionData.push(activeTypeSpec.functionBlock.connections);
   }
-  if (activeTypeSpec.primitiveType === PrimitiveType.Function && activeTypeSpec?.callBlock?.onCanvas && activeTypeSpec?.callBlock?.connections) {
+  if (
+    activeTypeSpec.primitiveType === PrimitiveType.Function &&
+    activeTypeSpec?.callBlock?.onCanvas &&
+    activeTypeSpec?.callBlock?.connections
+  ) {
     connections.push("callBlock");
-    connectionData.push(activeTypeSpec.callBlock.connections)
+    connectionData.push(activeTypeSpec.callBlock.connections);
   }
 
   return (
     <div
+      ref={docRef}
       className="nodrag nowheel"
       style={{
         // userDrag: "none",
-        color: "white",
         zIndex: 100,
         transformOrigin: "left",
         minWidth: 200,
         maxWidth: 350,
       }}
     >
-      <Tabs
-        key="tabs"
-        value={tab}
-        onChange={(_, tab) => setTab(tab)}
-        indicatorColor="primary"
-        textColor="inherit"
-        //   variant="fullWidth"
-        aria-label="full width tabs example"
-        sx={{ backgroundColor: haloColor }}
+      <div
+        style={{
+          backgroundColor: haloColor,
+          borderTopLeftRadius: theme.shape.borderRadius,
+          borderTopRightRadius: theme.shape.borderRadius,
+        }}
       >
-        {tabs.map((tab) => (
-          <Tab key={tab} label={tab} value={tab} />
-        ))}
-      </Tabs>
+        <Tabs
+          key="tabs"
+          value={tab}
+          onChange={(_, tab) => setTab(tab)}
+          indicatorColor="primary"
+          textColor="inherit"
+          //   variant="fullWidth"
+          aria-label="full width tabs example"
+          sx={{}}
+        >
+          {tabs.map((tab) => (
+            <Tab key={tab} label={tab} value={tab} />
+          ))}
+        </Tabs>
+      </div>
       {(tab === "description" || tab === "usage") && (
-        <Box key={tab} style={{ padding: 2, backgroundColor: theme.palette.mode === "dark" ? "#252525" : "#cccccccc", }}>
+        <Box
+          key={tab}
+          style={{
+            padding: 2,
+            backgroundColor:
+              theme.palette.mode === "dark" ? "#252525" : "#cccccccc",
+          }}
+        >
           <Breadcrumbs>
             {path.map((item) => (
               <StyledBreadcrumb
@@ -722,7 +836,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
                     style={{
                       height: 13,
                       width: 13,
-                      fill: blockSpecQuery(typeInfo[item], "color")
+                      fill: blockSpecQuery(typeInfo[item], "color"),
                     }}
                   />
                 }
@@ -731,183 +845,207 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
           </Breadcrumbs>
         </Box>
       )}
-      <Box
+      <ScrollRegion
         key="content"
-        style={{
-          minHeight: 100,
-          maxHeight: 400,
-          padding: 10,
-          overflowY: "scroll",
-        }}
+        width={350}
+        height={"50vh"}
+        // style={{
+        //   minHeight: 100,
+        //   maxHeight: 400,
+        //   padding: 10
+        // }}
       >
-        {tab === "featured" && (
-          <Remark
-            rehypeReactOptions={{
-              // @ts-ignore
-              components: componentLookup,
-            }}
-          >
-            {featuredDoc}
-          </Remark>
-        )}
-        {tab === "description" && (
-          <Remark
-            rehypeReactOptions={{
-              // @ts-ignore
-              components: componentLookup,
-            }}
-          >
-            {typeInfo[activeType]?.description || "No Description"}
-          </Remark>
-        )}
-        {tab === "usage" && (
-          <>
-            <Accordion key="fields">
-              <AccordionSummary
-                expandIcon={<FiChevronDown />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>
-                  <b>
-                    <i>{typeInfo[activeType]?.name || "Unrecognized"}</i>
-                  </b>{" "}
-                  Fields
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ backgroundColor: theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2", padding: 1 }}>
-                {Object.keys(typeInfo[activeType]?.properties || {}).length ===
-                  0 && (
-                  <Typography
-                    style={{ textAlign: "center" }}
-                    color="text.secondary"
-                  >
-                    This block has no fields
+        <div style={{ padding: 10 }}>
+          {tab === "featured" && (
+            <Remark
+              rehypeReactOptions={{
+                // @ts-ignore
+                components: componentLookup,
+              }}
+            >
+              {featuredDoc}
+            </Remark>
+          )}
+          {tab === "description" && (
+            <Remark
+              rehypeReactOptions={{
+                // @ts-ignore
+                components: componentLookup,
+              }}
+            >
+              {typeInfo[activeType]?.description || "No Description"}
+            </Remark>
+          )}
+          {tab === "usage" && (
+            <>
+              <Accordion key="fields">
+                <AccordionSummary
+                  expandIcon={<FiChevronDown />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>
+                    <b>
+                      <i>{typeInfo[activeType]?.name || "Unrecognized"}</i>
+                    </b>{" "}
+                    Fields
                   </Typography>
-                )}
-                <Stack spacing={1}>
-                  {Object.keys(typeInfo[activeType]?.properties || {}).map(
-                    (key) => (
-                      <FieldInfoSection
-                        key={key}
-                        parent={activeType}
-                        field={key}
-                        typeInfo={typeInfo}
-                        handleLinkClick={handleLinkClick}
-                      />
-                    )
-                  )}
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion key="as-field">
-              <AccordionSummary
-                expandIcon={<FiChevronDown />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>
-                  <b>
-                    <i>{typeInfo[activeType]?.name || "Unrecognized"}</i>
-                  </b>{" "}
-                  as a Field
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ backgroundColor: theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2", padding: 1 }}>
-                <Stack spacing={1}>
-                  {references.length === 0 && (
+                </AccordionSummary>
+                <AccordionDetails
+                  sx={{
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2",
+                    padding: 1,
+                  }}
+                >
+                  {Object.keys(typeInfo[activeType]?.properties || {})
+                    .length === 0 && (
                     <Typography
                       style={{ textAlign: "center" }}
                       color="text.secondary"
                     >
-                      This block is not used anywhere
+                      This block has no fields
                     </Typography>
                   )}
-                  {references.map((block) => (
-                    <>
-                      <Divider>
-                        <TypeLink
-                          label={typeInfo[block.parent]?.name}
-                          color={blockSpecQuery(typeInfo[block.parent], "color")}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (typeInfo[block.parent]) {
-                              handleLinkClick(block.parent);
-                            }
-                          }}
-                        />
-                      </Divider>
-                      {block.fields.map((field: string) => (
+                  <Stack spacing={1}>
+                    {Object.keys(typeInfo[activeType]?.properties || {}).map(
+                      (key) => (
                         <FieldInfoSection
-                          key={`${block.parent}-${field}`}
-                          parent={block.parent}
-                          field={field}
+                          key={key}
+                          parent={activeType}
+                          field={key}
                           typeInfo={typeInfo}
                           handleLinkClick={handleLinkClick}
+                          container={docRef.current || undefined}
                         />
-                      ))}
-                    </>
-                  ))}
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion key='connections'>
-              <AccordionSummary
-                expandIcon={<FiChevronDown />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Connections</Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ backgroundColor: theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2", padding: 1 }}>
-                {connections.length > 0 ? (
-                  connections.map((blockType,i) => (
-                    <>
-                      <Divider>
-                        <span
-                          style={{
-                            fontFamily: "Helvetica",
-                            textTransform: "capitalize",
-                          }}
-                        >
-                          {blockType.replace("Block", "")}
-                        </span>
-                      </Divider>
-                      {Object.entries(
-                        connectionData[i]
-                      ).map(([side, connectInfo]) => (
-                        <ConnectionInfoSection
-                          side={side as Position}
-                          connectionInfo={connectInfo as ConnectionInfo}
-                          typeInfo={typeInfo}
-                          handleLinkClick={handleLinkClick}
-                        />
-                      ))}
-                    </>
-                  ))
-                ) : (
-                  <Typography
-                    style={{ textAlign: "center" }}
-                    color="text.secondary"
-                  >
-                    This block has no connections
+                      )
+                    )}
+                  </Stack>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion key="as-field">
+                <AccordionSummary
+                  expandIcon={<FiChevronDown />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>
+                    <b>
+                      <i>{typeInfo[activeType]?.name || "Unrecognized"}</i>
+                    </b>{" "}
+                    as a Field
                   </Typography>
-                )}
-              </AccordionDetails>
-            </Accordion>
-          </>
-        )}
-
+                </AccordionSummary>
+                <AccordionDetails
+                  sx={{
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2",
+                    padding: 1,
+                  }}
+                >
+                  <Stack spacing={1}>
+                    {references.length === 0 && (
+                      <Typography
+                        style={{ textAlign: "center" }}
+                        color="text.secondary"
+                      >
+                        This block is not used anywhere
+                      </Typography>
+                    )}
+                    {references.map((block) => (
+                      <>
+                        <Divider>
+                          <TypeLink
+                            label={typeInfo[block.parent]?.name}
+                            color={blockSpecQuery(
+                              typeInfo[block.parent],
+                              "color"
+                            )}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (typeInfo[block.parent]) {
+                                handleLinkClick(block.parent);
+                              }
+                            }}
+                          />
+                        </Divider>
+                        {block.fields.map((field: string) => (
+                          <FieldInfoSection
+                            key={`${block.parent}-${field}`}
+                            parent={block.parent}
+                            field={field}
+                            typeInfo={typeInfo}
+                            handleLinkClick={handleLinkClick}
+                          />
+                        ))}
+                      </>
+                    ))}
+                  </Stack>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion key="connections">
+                <AccordionSummary
+                  expandIcon={<FiChevronDown />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Connections</Typography>
+                </AccordionSummary>
+                <AccordionDetails
+                  sx={{
+                    backgroundColor:
+                      theme.palette.mode === "dark" ? "#2D2D2D" : "#D2D2D2",
+                    padding: 1,
+                  }}
+                >
+                  {connections.length > 0 ? (
+                    connections.map((blockType, i) => (
+                      <>
+                        <Divider>
+                          <span
+                            style={{
+                              fontFamily: "Helvetica",
+                              textTransform: "capitalize",
+                            }}
+                          >
+                            {blockType.replace("Block", "")}
+                          </span>
+                        </Divider>
+                        {Object.entries(connectionData[i]).map(
+                          ([side, connectInfo]) => (
+                            <ConnectionInfoSection
+                              side={side as Position}
+                              connectionInfo={connectInfo as ConnectionInfo}
+                              typeInfo={typeInfo}
+                              handleLinkClick={handleLinkClick}
+                            />
+                          )
+                        )}
+                      </>
+                    ))
+                  ) : (
+                    <Typography
+                      style={{ textAlign: "center" }}
+                      color="text.secondary"
+                    >
+                      This block has no connections
+                    </Typography>
+                  )}
+                </AccordionDetails>
+              </Accordion>
+            </>
+          )}
+        </div>
         {/* Content for {data.name} */}
-      </Box>
-      <CardActions style={{ borderTop: "1px solid #444" }}>
-        <Button
+      </ScrollRegion>
+      <CardActions>
+        <IconTextButton
           size="small"
-          style={{ flex: 1 }}
+          title="Close"
           onClick={() => setActiveDoc(data.id, false)}
         >
           Close
-        </Button>
+        </IconTextButton>
       </CardActions>
     </div>
   );

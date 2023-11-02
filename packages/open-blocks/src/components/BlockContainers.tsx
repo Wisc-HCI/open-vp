@@ -1,5 +1,5 @@
 import { Avatar, Box, Card, lighten, Stack } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { alpha, styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import Draggable from 'react-draggable';
 import Paper from '@mui/material/Paper';
@@ -22,12 +22,17 @@ export const BlockContainer = motion(styled('div', {
   },
   ({ minified, selected, color, focused, theme, bounded }) => ({
     padding: minified ? 0 : "4px",
-    backgroundColor: focused ? lighten(color || 'white', 0.1) : color,
+    backgroundColor: alpha(focused ? lighten(color || 'white', 0.1) : color || 'white',0.8),
+    backdropFilter: "blur(5px)",
+    WebkitBackdropFilter: "blur(5px)",
     width: bounded ? "inherit" : "max-content",
     flex: bounded ? 1 : undefined,
+    "&:hover": {
+      backgroundColor: alpha(focused ? lighten(color || 'white', 0.1) : color || 'white',0.95),
+    },
     boxShadow:
-        (selected && focused) ? `0pt 0pt 2pt 1pt #ffffffaa, 0pt 0pt 0pt 5pt ${lighten(theme.palette.primary.main, 0.5)}, 0pt 0pt 4pt 7pt black`
-          : selected ? `0pt 0pt 2pt 1pt #ffffffaa, 0pt 0pt 0pt 5pt ${theme.palette.primary.main}, 0pt 0pt 4pt 7pt black`
+        (selected && focused) ? `0pt 0pt 0pt 3pt ${lighten(theme.palette.primary.main, 0.5)}`
+          : selected ? `0pt 0pt 0pt 3pt ${theme.palette.primary.main}`
             : focused ? `0pt 0pt 0pt 3pt ${lighten(color || 'white', 0.5)}}`
               : undefined,
   })

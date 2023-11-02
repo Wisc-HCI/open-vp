@@ -133,11 +133,12 @@ export const MenuSection = memo(
 
     return (
       <Stack direction="row" gap={1}>
-        {dropdowns.map((dropdown: DropdownData<MenuData & BlockData>) => {
+        {dropdowns.map((dropdown: DropdownData<MenuData & BlockData>,i) => {
           return dropdown.type === "ENTRY" && dropdown.inner ? (
-            <NestedDropdown data={menuData} inner={dropdown.inner} />
+            <NestedDropdown key={i} data={menuData} inner={dropdown.inner} />
           ) : dropdown.type === "ENTRY" ? (
             <ActionIconButton
+              key={i}
               title={typeof dropdown.label === "function" ? dropdown.label(menuData) : dropdown.label}
               // @ts-ignore
               onClick={(e: MouseEvent) =>
@@ -148,7 +149,7 @@ export const MenuSection = memo(
               {typeof dropdown.left === "function" ? dropdown.left(menuData) : dropdown.left}
             </ActionIconButton>
           ) : (
-            <Divider />
+            <Divider key={i} />
           );
         })}
       </Stack>

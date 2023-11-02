@@ -11,6 +11,9 @@ import ReactFlow, {
   NodeProps,
   EdgeProps,
   Node,
+  OnSelectionChangeParams,
+  NodeChange,
+  NodeSelectionChange
 } from "reactflow";
 import { useDrop } from "react-dnd";
 import {
@@ -27,6 +30,7 @@ import {
   TypeSpec,
   PropertyType,
   SPAWNER,
+  RegionInfo,
 } from "@people_and_robots/open-core";
 import { useMemo } from "react";
 import {
@@ -35,7 +39,7 @@ import {
   blockSpecQuery,
 } from "@people_and_robots/open-blocks";
 import { CanvasEdge, DrawingCanvasEdge } from "./CanvasEdge";
-import useMeasure from "react-use-measure";
+import useMeasure, { RectReadOnly } from "react-use-measure";
 import { FiClipboard, FiPlus, FiMinus, FiMaximize } from "react-icons/fi";
 // import { isEqual, pick } from "lodash";
 // import { FancyMenu, stringEquality, FancyStack, FancyIconButton } from "./Block/Utility";
@@ -50,6 +54,8 @@ import {
   Theme,
   styled,
   lighten,
+  darken,
+  alpha
 } from "@mui/material";
 import { debounce } from "lodash";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
@@ -90,6 +96,7 @@ const CanvasNode = memo(
             type: PropertyType.Block,
           },
         }}
+        dragDisabled
         // typeSpec={rest.typeSpec}
         // onCanvas
         context={[]}
@@ -108,14 +115,21 @@ const CanvasNode = memo(
 
 export interface CanvasProps {
   snapToGrid?: boolean;
+  drawerWidth: number;
+  bounds: RectReadOnly;
 }
-export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
+export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) => {
   const setTabViewport = useProgrammingStore(
     (state: ProgrammingState) => state.setTabViewport
   );
   const setClipboardBlock = useProgrammingStore(
     (state) => state.setClipboardBlock
   );
+
+  const updateItemSelected = useProgrammingStore((state)=>state.updateItemSelected);
+  const setSelections = useProgrammingStore((state)=>state.setSelections);
+
+  const drawerOpen = useProgrammingStore((state:ProgrammingState)=>state.activeDrawer !== null);
 
   const activeTabData: Tab | null = useProgrammingStore((state) => {
     let tabData = null;
@@ -134,8 +148,8 @@ export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
 
   const paste = useProgrammingStore((state) => state.paste);
 
-  const clipboard = useProgrammingStore((state) => state.clipboard);
-  console.log("clipboard", clipboard);
+  // const clipboard = useProgrammingStore((state) => state.clipboard);
+  
   const onCanvasPastable = useProgrammingStore(
     (state: ProgrammingState) =>
       state.clipboard?.regionInfo?.parentId === CANVAS &&
@@ -238,14 +252,23 @@ export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
       .map(([objectKey]) => objectKey)
   );
 
+  const canvasRegion: RegionInfo = {
+    parentId: CANVAS,
+    fieldInfo: {
+      id: CANVAS,
+      name: CANVAS,
+      accepts: acceptTypes,
+      default: null,
+      type: PropertyType.Block,
+    },
+  }
+
   const moveNodes = useProgrammingStore((state) => state.moveBlocks);
   const createPlacedNode = useProgrammingStore(
     (state) => state.createPlacedBlock
   );
 
   const { project, fitView, setViewport } = useReactFlow();
-
-  const [ref, bounds] = useMeasure();
 
   const drop = useDrop({
     accept: acceptTypes,
@@ -258,15 +281,16 @@ export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
     drop: (item: ClipboardProps, monitor) => {
       const clientOffset = monitor.getClientOffset();
       if (!clientOffset) return;
-      const position = project({
-        x: clientOffset.x - bounds.left - 50,
-        y: clientOffset.y - bounds.top,
-      });
+      const offset = {
+        x: drawerOpen ? clientOffset.x - bounds.left - drawerWidth - 50 : clientOffset.x - bounds.left - 50,
+        y: clientOffset.y - bounds.top - 50,
+      };
+      const position = project(offset);
       if ((item as ClipboardProps).data) {
         createPlacedNode((item as ClipboardProps).data, position.x, position.y);
       }
     },
-  })[1];
+  },[drawerWidth, acceptTypes, drawerWidth, bounds, drawerOpen])[1];
 
   useEffect(() => {
     const viewport = getTabViewport(activeTabData?.id);
@@ -278,6 +302,18 @@ export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
     }
     return () => {};
   }, [activeTabData?.id]);
+
+  const onNodesChange = (changes: NodeChange[])=>{
+    moveNodes(changes);
+    // clearSelections();
+    // setSelections(changes.nodes.map((node:Node)=>node.id));
+    changes.forEach((nodeChange:NodeChange)=>{
+      if (nodeChange.type !== 'select') return;
+      console.log(nodeChange)
+      // console.log('node selected?', nodeChange..id, node.selected)
+      updateItemSelected(nodeChange.id, nodeChange.selected)
+    })
+  }
 
   // const [contextMenu, setContextMenu] = useState(null);
 
@@ -302,7 +338,7 @@ export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
   // };
 
   return (
-    <Backdrop ref={ref} pastable={onCanvasPastable}>
+    <Backdrop pastable={onCanvasPastable}>
       <ParentSize>
         {({ width, height }: { width: number; height: number }) => (
           <NestedContextMenu
@@ -316,12 +352,18 @@ export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
                 onClick: (data: {}, e: MouseEvent) => {
                   const viewport = getTabViewport(activeTabData?.id);
                   const zoom = viewport?.zoom || 1;
-                  const { x, y } = project({
-                    x: e.clientX,
-                    y: e.clientY,
-                  });
+                  const offset = {
+                    x: drawerOpen ? e.clientX - bounds.left - drawerWidth - 50 : e.clientX - bounds.left - 50,
+                    y: e.clientY - bounds.top,
+                  };
+                  const { x, y } = project(offset);
                   const coordinates = { x: x - 100 / zoom, y: y - 100 / zoom };
-                  paste({ coordinates, tab: activeTabData?.id });
+                  const clipboardProps: ClipboardProps = {
+                    coordinates, 
+                    tab: activeTabData?.id, 
+                    regionInfo: canvasRegion
+                  }
+                  paste(clipboardProps);
                   e.stopPropagation();
                 },
               },
@@ -355,10 +397,12 @@ export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
               // width={width}
               minZoom={0.25}
               nodesConnectable
+              // onNodesChange={onNodesChange}
               // defaultViewport={activeTabData?.viewport}
               elevateNodesOnSelect
               onDoubleClick={(e) => {
                 setClipboardBlock(null);
+                setSelections([]);
               }}
               onClick={(e) => {
                 onOffClick();
@@ -401,7 +445,7 @@ export const Canvas = ({ snapToGrid = true }: CanvasProps) => {
               onConnectEnd={(_) => {
                 setConnectionInfo(null);
               }}
-              onNodesChange={moveNodes}
+              onNodesChange={onNodesChange}
               fitView
               snapToGrid={snapToGrid}
               snapGrid={[30, 30]}
@@ -488,5 +532,21 @@ export const Backdrop = styled("div")<BackdropProps>(
     backgroundColor: pastable
       ? lighten(theme.palette.background.default, 0.3)
       : theme.palette.background.default,
+    '& .react-flow__selection': {
+        background: alpha(darken(theme.palette.primary.main,0.5),0.3),
+        border: `1px dotted ${alpha(theme.palette.primary.main,0.8)}`,
+        borderRadius: 3,
+        outline: 'none',
+      },
+    '& .react-flow__nodesselection-rect': {
+      background: alpha(darken(theme.palette.primary.main,0.5),0.3),
+      border: `1px dotted ${alpha(theme.palette.primary.main,0.8)}`,
+      borderRadius: 3,
+      outline: 'none',
+      zIndex: 1,
+      },
+    '& .react-flow__nodesselection': {
+        background: "transparent",
+        },
   })
 );

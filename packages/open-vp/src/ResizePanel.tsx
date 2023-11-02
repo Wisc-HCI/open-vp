@@ -14,7 +14,7 @@ const StyledStack = styled(Stack)({
   borderRadius: 5,
   padding: 5,
 }, ({theme})=>({
-  backgroundColor: theme.palette.mode === "dark" ? "rgba(200,200,200,0.5)" : "rgba(100,100,100,0.5)"
+  backgroundColor: theme.palette.mode === "dark" ? "rgba(200,200,200,0.05)" : "rgba(100,100,100,0.05)"
 }))
 
 export default function ResizePanel() {
@@ -27,7 +27,7 @@ export default function ResizePanel() {
         <ActionIconButton
           title="Zoom In"
           disabled={zoom >= 1}
-          onClick={()=>zoomIn()}
+          onClick={()=>zoomIn({duration:300})}
           placement="right"
         >
           <FiPlus />
@@ -39,19 +39,19 @@ export default function ResizePanel() {
           min={0.25}
           max={1}
           step={0.05}
-          onChangeCommitted={(e:Event, value: number) => setViewport({ zoom: value, x, y})}
+          onChange={(e:Event, value: number) => setViewport({ zoom: value, x, y }, {duration:200})}
         />
         <ActionIconButton
           title="Zoom Out"
           disabled={zoom <= 0.25}
-          onClick={()=>zoomOut()}
+          onClick={()=>zoomOut({duration:300})}
           placement="right"
         >
           <FiMinus />
         </ActionIconButton>
         <ActionIconButton
           title="Fit View"
-          onClick={()=>fitView()}
+          onClick={()=>fitView({duration:300})}
           placement="right"
         >
           <FiMaximize />

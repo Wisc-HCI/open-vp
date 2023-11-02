@@ -4,7 +4,7 @@ import { subscribeWithSelector } from "zustand/middleware";
 import { shallow } from "zustand/shallow";
 import { immer } from "zustand/middleware/immer";
 import { produce } from "immer";
-import { remove, throttle } from "lodash";
+import { mapValues, remove, throttle } from "lodash";
 import { instanceTemplateFromSpec } from "./generators";
 import { Timer } from "./timer";
 import {
@@ -32,9 +32,23 @@ import {
   ProgrammingState,
   BlockFieldInfo,
 } from "./types";
-import { MetaType, PrimitiveType, CANVAS, SPAWNER, ClipboardAction, ConnectionDirection, ConnectionType } from "./constants";
+import {
+  MetaType,
+  PrimitiveType,
+  CANVAS,
+  SPAWNER,
+  ClipboardAction,
+  ConnectionDirection,
+  ConnectionType,
+  PropertyType,
+} from "./constants";
 
-import { OnConnectStartParams, NodeChange, Viewport, Position } from "reactflow";
+import {
+  OnConnectStartParams,
+  NodeChange,
+  Viewport,
+  Position,
+} from "reactflow";
 // import { temporal } from "zundo";
 // import type { TemporalState } from "zundo";
 
@@ -164,8 +178,7 @@ export const ProgrammingSlice = (
   deleteBlock: (data: BlockData, parentId: string, fieldInfo: FieldInfo) => {
     set(
       produce((state: ProgrammingState) => {
-        
-        console.warn('deleteBlock',data.id, data, parentId, fieldInfo)
+        console.warn("deleteBlock", data.id, data, parentId, fieldInfo);
 
         state.tabs = state.tabs.map((t) => ({
           ...t,
@@ -287,7 +300,6 @@ export const ProgrammingSlice = (
           // @ts-ignore (ts is not smart enough to figure out that this is a valid assignment)
           state.programData[usedId].name = value;
         }
-        
       })
     );
   },
@@ -306,6 +318,18 @@ export const ProgrammingSlice = (
         state.programData[usedId] = updatedItem;
       })
     );
+  },
+  setSelections: (selections: string[]) => {
+    set(
+      produce((state: ProgrammingState) => {
+        state.programData = mapValues(state.programData, (item: BlockData | ConnectionData) => {
+          if (item.metaType === MetaType.Connection) {
+            return item;
+          }
+          return { ...item, selected: selections.includes(item.id) };
+        });
+      })
+    )
   },
   updateItemEditing: (id: string, value: boolean) => {
     set(
@@ -385,7 +409,8 @@ export const ProgrammingSlice = (
     const edges: ConnectionData[] = Object.values(
       get().programData as { [key: string]: BlockData | ConnectionData }
     ).filter(
-      (value: BlockData | ConnectionData) => value.metaType === MetaType.Connection
+      (value: BlockData | ConnectionData) =>
+        value.metaType === MetaType.Connection
     ) as ConnectionData[];
 
     // Get info on source
@@ -500,13 +525,15 @@ export const ProgrammingSlice = (
       produce((state: ProgrammingState) => {
         const edgeType = (state.programData[id] as ConnectionData).type;
         if (edgeType === ConnectionType.String) {
-          (state.programData[id] as ConnectionData).type = ConnectionType.Number;
+          (state.programData[id] as ConnectionData).type =
+            ConnectionType.Number;
           (state.programData[id] as ConnectionData).value = 0;
         } else {
           const edgeCount = Object.values(state.programData).filter(
             (d) => d.metaType === MetaType.Connection
           ).length;
-          (state.programData[id] as ConnectionData).type = ConnectionType.String;
+          (state.programData[id] as ConnectionData).type =
+            ConnectionType.String;
           (state.programData[id] as ConnectionData).value = `Connection ${
             edgeCount + 1
           }`;
@@ -653,9 +680,14 @@ export const ProgrammingSlice = (
         if (!clipboardProps.data) {
           return;
         }
-        console.log("something to cut")
+        console.log("something to cut");
         const block = state.programData[clipboardProps.data.id];
-        if (block !== null && block.id && state.clipboard.action === "CUT") {
+        if (
+          block !== null &&
+          block.id &&
+          state.clipboard.action === ClipboardAction.Cut
+        ) {
+          // This only happens if they cut something, then cut something else...
           // Remove the current block in the clipboard
           // Clear from tabs if it is there
           state.tabs = state.tabs.map((t) => ({
@@ -685,208 +717,174 @@ export const ProgrammingSlice = (
   paste: (clipboardProps: ClipboardProps) =>
     set(
       produce((state: ProgrammingState) => {
+        if (!state.clipboard.block?.id || !state.clipboard.action) {
+          // Nothing currently to paste, so return (no-op)
+          alert("nothing to paste");
+          return;
+        }
+        console.log("handling paste...", state.clipboard);
+
+        const clipboardBlock: BlockData = state.clipboard.block;
+
+        console.log("handling paste...", clipboardBlock);
+
         if (
-          (state.clipboard.block?.id && clipboardProps.regionInfo?.fieldInfo) ||
-          (state.clipboard.block?.id && state.clipboard.regionInfo?.parentId === CANVAS)
+          state.clipboard.action === ClipboardAction.Copy ||
+          state.clipboard.action === ClipboardAction.Paste
         ) {
-          // alert('paste '+state.clipboard.block.id);
-          // console.log("paste valid...");
-          if (
-            state.clipboard.action === ClipboardAction.Copy ||
-            state.clipboard.action === ClipboardAction.Paste
-          ) {
-            const [newBlocks, newId]: [{[key:string]:BlockData}, string] = deepCopy(
+          // Paste the last thing that was copied or pasted
+          console.log("Pasting the last that was copied or pasted");
+          const [newBlocks, newId]: [{ [key: string]: BlockData }, string] =
+            deepCopy(
               state.programData,
               state.programSpec.objectTypes,
-              state.clipboard.block.id
+              clipboardBlock.id
             );
-            if (state.clipboard.regionInfo?.parentId === CANVAS) {
-              // console.log({ new: newBlocks[newId], coordinates });
-              (newBlocks[newId] as FunctionCallData | FunctionDeclarationData | ObjectData | ObjectReferenceData).position = clipboardProps.coordinates;
-              state.tabs = state.tabs.map((t) =>
-                t.id === state.activeTab
-                  ? { ...t, blocks: [...t.blocks, newId] }
-                  : t
+          if (clipboardProps.regionInfo?.parentId === CANVAS) {
+            console.log("New block is on the canvas");
+            // Set the position based on the coordinates of the paste
+            (
+              newBlocks[newId] as
+                | FunctionCallData
+                | FunctionDeclarationData
+                | ObjectData
+                | ObjectReferenceData
+            ).position = clipboardProps.coordinates;
+            state.tabs = state.tabs.map((t) =>
+              t.id === state.activeTab
+                ? { ...t, blocks: [...t.blocks, newId] }
+                : t
+            );
+          } else if (clipboardProps.regionInfo?.parentId) {
+            console.log("New block is not on the canvas");
+            // Add the block to the clipboard's parent
+            let parentBlock =
+              state.programData[clipboardProps.regionInfo.parentId];
+            // If a list, add to the list
+            if (
+              clipboardProps.regionInfo.fieldInfo.type === PropertyType.Block &&
+              clipboardProps.regionInfo.fieldInfo.isList
+            ) {
+              (
+                parentBlock as
+                  | FunctionCallData
+                  | FunctionDeclarationData
+                  | ObjectData
+              ).properties[clipboardProps.regionInfo.fieldInfo.id].splice(
+                clipboardProps.regionInfo.idx,
+                0,
+                newId
               );
-            }
-            // console.log({newBlocks,newId})
-            state.programData = { ...state.programData, ...newBlocks };
-            if (state.clipboard.regionInfo?.parentId === CANVAS) {
-            } else if ((clipboardProps.regionInfo?.fieldInfo as BlockFieldInfo).isList) {
-              // @ts-ignore
-              state.programData[clipboardProps.regionInfo?.parentId].properties[
-                clipboardProps.regionInfo?.fieldInfo.id
-              ].splice(clipboardProps.regionInfo?.idx, 0, newId);
             } else {
-              // @ts-ignore
-              state.programData[clipboardProps.regionInfo?.parentId].properties[
-                clipboardProps.regionInfo?.fieldInfo.id
-              ] = newId;
+              // Otherwise, just set the property
+              (
+                parentBlock as
+                  | FunctionCallData
+                  | FunctionDeclarationData
+                  | ObjectData
+              ).properties[clipboardProps.regionInfo.fieldInfo.id] = newId;
             }
-          } else if (
-            state.clipboard.action === ClipboardAction.Cut &&
-            clipboardProps.regionInfo?.parentId &&
-            state.clipboard.regionInfo?.parentId !== CANVAS
-          ) {
-            applyTransfer(
-              state,
-              state.clipboard.block,
-              // @ts-ignore
-              state.clipboard.regionInfo,
-              clipboardProps.regionInfo
-            );
-          } else if (
-            state.clipboard.action === ClipboardAction.Cut &&
-            state.clipboard.regionInfo?.parentId === CANVAS
-          ) {
-            (state.programData[state.clipboard.block.id] as FunctionCallData | FunctionDeclarationData | ObjectData | ObjectReferenceData).position =
-              clipboardProps.coordinates;
-              // @ts-ignore
-            state.tabs = state.tabs.map((t) => {
-              if (t.id === state.activeTab) {
-                return { ...t, blocks: [...t.blocks.filter(i=>i!==state.clipboard.block?.id), state.clipboard.block?.id] }
-              } else {
-                t.blocks.forEach(b=>{
-                  if (b === state.clipboard.block?.id) {
-                    Object.values(state.programData).forEach(data=>{
-                      if (data.metaType === MetaType.Connection && (data.parent.id === state.clipboard.block?.id || data.child.id === state.clipboard.block?.id)) {
-                        delete state.programData[data.id]
-                      }
-                    })
-                  }
-                })
-                return { ...t, blocks: t.blocks.filter(i=>i!==state.clipboard.block?.id) }
-              }
-            });
+          } else {
+            alert("No parent block to paste into");
           }
-  
-          state.clipboard.action = ClipboardAction.Paste;
-        } else {
-          // alert('paste failed');
-        }
-        // console.log("handling paste...", clipboardProps);
-        // if (
-        //   (state.clipboard.block?.id && clipboardProps?.regionInfo?.fieldInfo) ||
-        //   (state.clipboard.block?.id &&
-        //     state.clipboard.regionInfo?.parentId === CANVAS)
-        // ) {
-        //   console.log("pasting from canvas", clipboardProps)
-        //   if (
-        //     state.clipboard.action === ClipboardAction.Copy ||
-        //     state.clipboard.action === ClipboardAction.Paste
-        //   ) {
-        //     const [newBlocks, newId] = deepCopy(
-        //       state.programData,
-        //       state.programSpec.objectTypes,
-        //       state.clipboard.block.id
-        //     );
-        //     if (state.clipboard.onCanvas) {
-        //       (
-        //         newBlocks[newId] as
-        //           | ObjectData
-        //           | ObjectReferenceData
-        //           | FunctionDeclarationData
-        //           | FunctionCallData
-        //       ).position = clipboardProps.coordinates;
-        //       state.tabs = state.tabs.map((t) =>
-        //         t.id === state.activeTab
-        //           ? { ...t, blocks: [...t.blocks, newId] }
-        //           : t
-        //       );
-        //     }
-        //     // console.log({newBlocks,newId})
-        //     state.programData = { ...state.programData, ...newBlocks };
-        //     if (
-        //       state.clipboard.onCanvas ||
-        //       clipboardProps?.regionInfo?.fieldInfo.type !== "BLOCK"
-        //     ) {
-        //     } else if (clipboardProps.regionInfo.fieldInfo.isList) {
-        //       (
-        //         state.programData[clipboardProps.regionInfo.parentId] as
-        //           | ObjectData
-        //           | FunctionDeclarationData
-        //           | FunctionCallData
-        //       ).properties[clipboardProps.regionInfo.fieldInfo.name].splice(
-        //         clipboardProps.regionInfo.idx,
-        //         0,
-        //         newId
-        //       );
-        //     } else {
-        //       (
-        //         state.programData[clipboardProps.regionInfo.parentId] as
-        //           | ObjectData
-        //           | FunctionDeclarationData
-        //           | FunctionCallData
-        //       ).properties[clipboardProps.regionInfo.fieldInfo.name] = newId;
-        //     }
-        //   } else if (
-        //     state.clipboard.action === "CUT" &&
-        //     !state.clipboard.onCanvas &&
-        //     state.clipboard.regionInfo?.fieldInfo &&
-        //     state.clipboard.regionInfo?.parentId
-        //   ) {
-        //     applyTransfer(
-        //       state,
-        //       state.clipboard.block,
-        //       {
-        //         fieldInfo: state.clipboard.regionInfo.fieldInfo,
-        //         parentId: state.clipboard.regionInfo.parentId,
-        //         idx: state.clipboard.regionInfo.idx || undefined,
-        //       },
-        //       {
-        //         fieldInfo: clipboardProps?.regionInfo?.fieldInfo,
-        //         parentId: clipboardProps?.regionInfo?.parentId,
-        //         idx: clipboardProps?.regionInfo?.idx,
-        //       }
-        //     );
-        //   } else if (
-        //     state.clipboard.action === "CUT" &&
-        //     state.clipboard.onCanvas
-        //   ) {
-        //     (
-        //       state.programData[state.clipboard.block.id] as
-        //         | ObjectData
-        //         | ObjectReferenceData
-        //         | FunctionDeclarationData
-        //         | FunctionCallData
-        //     ).position = clipboardProps.coordinates;
-        //     state.tabs = state.tabs.map((t: Tab) => {
-        //       if (t.id === state.activeTab) {
-        //         return {
-        //           ...t,
-        //           blocks: [
-        //             ...t.blocks.filter((i) => i !== state.clipboard.block?.id),
-        //             state.clipboard.block?.id || "",
-        //           ],
-        //         };
-        //       } else {
-        //         t.blocks.forEach((b) => {
-        //           if (b === state.clipboard.block?.id) {
-        //             Object.values(state.programData).forEach((data) => {
-        //               if (
-        //                 data.metaType === MetaType.Connection &&
-        //                 (data.parent.id === state.clipboard.block?.id ||
-        //                   data.child.id === state.clipboard.block?.id)
-        //               ) {
-        //                 delete state.programData[data.id];
-        //               }
-        //             });
-        //           }
-        //         });
-        //         return {
-        //           ...t,
-        //           blocks: t.blocks.filter(
-        //             (i) => i !== state.clipboard.block?.id
-        //           ),
-        //         };
-        //       }
-        //     });
-        //   }
+          // Add the new blocks to the programData
+          state.programData = { ...state.programData, ...newBlocks };
+        } else if (
+          state.clipboard.action === ClipboardAction.Cut &&
+          state.clipboard.regionInfo &&
+          clipboardProps.regionInfo
+        ) {
+          // If the previous region was the canvas, remove it from the canvas
+          if (state.clipboard.regionInfo.parentId === CANVAS) {
+            // console.log('removing from canvas')
+            state.tabs = state.tabs.map((t) =>
+              t.id === state.activeTab
+                ? {
+                    ...t,
+                    blocks: t.blocks.filter(
+                      (b) => b !== state.clipboard.block?.id
+                    ),
+                  }
+                : t
+            );
+          } else {
+            let parentBlock =
+              state.programData[state.clipboard.regionInfo.parentId];
+            if (
+              parentBlock.metaType === MetaType.FunctionDeclaration ||
+              parentBlock.metaType === MetaType.ObjectInstance ||
+              parentBlock.metaType === MetaType.FunctionCall
+            ) {
+              // Remove the block from the list at the fieldinfo's index
+              if (
+                state.clipboard.regionInfo.fieldInfo.type ===
+                  PropertyType.Block &&
+                state.clipboard.regionInfo.fieldInfo.isList
+              ) {
+                parentBlock.properties[
+                  state.clipboard.regionInfo.fieldInfo.id
+                ].splice(state.clipboard.regionInfo.idx, 1);
+              } else if (
+                state.clipboard.regionInfo.fieldInfo.type === PropertyType.Block
+              ) {
+                parentBlock.properties[
+                  state.clipboard.regionInfo.fieldInfo.id
+                ] = null;
+              }
+              // Update the parent block
+              state.programData[parentBlock.id] = parentBlock;
+            }
+          }
 
-        //   state.clipboard.action = ClipboardAction.Paste;
-        // } else {
-        //   // alert('paste failed');
-        // }
+          // Manage adding the block to the new region
+          if (clipboardProps.regionInfo.parentId === CANVAS) {
+            // Set the position based on the coordinates of the paste
+            (
+              state.clipboard.block as
+                | FunctionCallData
+                | FunctionDeclarationData
+                | ObjectData
+                | ObjectReferenceData
+            ).position = clipboardProps.coordinates;
+            state.tabs = state.tabs.map((t) =>
+              t.id === state.activeTab
+                ? { ...t, blocks: [...t.blocks, clipboardBlock.id] }
+                : t
+            );
+          } else {
+            let parentBlock =
+              state.programData[clipboardProps.regionInfo.parentId];
+            if (
+              parentBlock.metaType === MetaType.FunctionDeclaration ||
+              parentBlock.metaType === MetaType.ObjectInstance ||
+              parentBlock.metaType === MetaType.FunctionCall
+            ) {
+              // Add the block to the list at the fieldinfo's index
+              if (
+                clipboardProps.regionInfo.fieldInfo.type ===
+                  PropertyType.Block &&
+                clipboardProps.regionInfo.fieldInfo.isList
+              ) {
+                parentBlock.properties[
+                  clipboardProps.regionInfo.fieldInfo.id
+                ].splice(
+                  clipboardProps.regionInfo.idx,
+                  0,
+                  state.clipboard.block?.id
+                );
+              } else if (
+                clipboardProps.regionInfo.fieldInfo.type === PropertyType.Block
+              ) {
+                parentBlock.properties[clipboardProps.regionInfo.fieldInfo.id] =
+                  state.clipboard.block?.id;
+              }
+              // Update the parent block
+              state.programData[parentBlock.id] = parentBlock;
+            }
+          }
+        }
+
+        state.clipboard.action = ClipboardAction.Paste;
       })
     ),
   setClipboardBlock: (block: BlockData) =>

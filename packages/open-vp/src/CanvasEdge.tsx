@@ -3,7 +3,7 @@ import {
   getSmoothStepPath,
   EdgeLabelRenderer,
   EdgeProps,
-  ConnectionLineComponentProps
+  ConnectionLineComponentProps,
   // getEdgeCenter,
 } from "reactflow";
 // import { useProgrammingStore } from "./ProgrammingContext";
@@ -12,7 +12,18 @@ import styled from "@emotion/styled";
 import { strip } from "number-precision";
 import { motion } from "framer-motion";
 import { Fade, Stack, useTheme } from "@mui/material";
-import { ProgrammingState, useProgrammingStore, PropertyType } from "@people_and_robots/open-core";
+import {
+  ProgrammingState,
+  useProgrammingStore,
+  PropertyType,
+  ConnectionData,
+  ConnectionType,
+} from "@people_and_robots/open-core";
+import {
+  ActionIconButton,
+  NumberInput,
+  TextInput,
+} from "@people_and_robots/open-gui";
 
 const EdgeButton = styled.button({
   all: "unset",
@@ -87,11 +98,16 @@ export const DrawingCanvasEdge = ({
 
   return (
     <g>
-      <path fill="none" stroke={theme.palette.mode === "dark" ? "#ffffff99" : "#00000099"} strokeWidth={1.5} d={edgePath} />
+      <path
+        fill="none"
+        stroke={theme.palette.mode === "dark" ? "#ffffff99" : "#00000099"}
+        strokeWidth={1.5}
+        d={edgePath}
+      />
       <circle
         cx={toX}
         cy={toY}
-        fill={theme.palette.mode === "dark" ? "#fff": "#000"}
+        fill={theme.palette.mode === "dark" ? "#fff" : "#000"}
         r={3}
         stroke="#222"
         strokeWidth={1.5}
@@ -114,18 +130,23 @@ export const CanvasEdge = ({
   const updateEdgeValue = useProgrammingStore(
     (state: ProgrammingState) => state.updateEdgeValue
   );
-  const deleteEdge = useProgrammingStore((state: ProgrammingState) => state.deleteEdge);
+  const deleteEdge = useProgrammingStore(
+    (state: ProgrammingState) => state.deleteEdge
+  );
   const toggleEdgeMode = useProgrammingStore(
     (state: ProgrammingState) => state.toggleEdgeMode
   );
-  const onClick = useProgrammingStore((state: ProgrammingState) => state.onVPEClick);
-  const edge = useProgrammingStore(
+
+  const onClick = useProgrammingStore(
+    (state: ProgrammingState) => state.onVPEClick
+  );
+  const edge: ConnectionData = useProgrammingStore(
     useCallback((state: ProgrammingState) => state.programData[id], [id])
   );
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const bounds = { width: 165, height: 35 };
+  // const bounds = { width: 165, height: 35 };
 
   const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX,
@@ -174,80 +195,67 @@ export const CanvasEdge = ({
         <EdgeLabelRenderer>
           <Fade in={isOpen}>
             <div
-            className="nodrag nopan"
-            style={{
-              backgroundColor: "#333",
-              position: "absolute",
-              transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-              borderRadius: 5,
-              borderColor: "white",
-              flexDirection: "row",
-              padding: 5,
-              userSelect: "none",
-              pointerEvents: "all",
-            }}
+              className="nodrag nopan"
+              style={{
+                backgroundColor: "#333",
+                position: "absolute",
+                transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+                borderRadius: 5,
+                borderColor: "white",
+                flexDirection: "row",
+                padding: 5,
+                userSelect: "none",
+                pointerEvents: "all",
+              }}
             >
               <Stack
                 direction="row"
                 alignItems="center"
                 onClick={(e) => e.stopPropagation()}
+                gap={1}
               >
-                <EdgeField
-                  // type={
-                  //   edge.mode === PropertyType.Number ? "number" : null
-                  // }
-                  className="nodrag"
-                  value={
-                    edge.mode === PropertyType.Number
-                      ? Number(edge.name)
-                      : edge.name
-                  }
-                  style={{
-                    maxWidth:
-                      edge.mode === PropertyType.Number
-                        ? bounds.width - 110
-                        : bounds.width - 90,
-                  }}
-                  onChange={(v) => updateEdgeValue(edge.id, v.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                />
-                {edge.mode === PropertyType.Number && (
-                  null
-                  // <Spinner
-                  //   above={false}
-                  //   below={false}
-                  //   onClickDown={(v) =>
-                  //     updateEdgeValue(edge.id, strip(Number(edge.name) - 0.1))
-                  //   }
-                  //   onClickUp={(v) =>
-                  //     updateEdgeValue(edge.id, strip(Number(edge.name) + 0.1))
-                  //   }
-                  // />
+                {edge.type === ConnectionType.Number ? (
+                  <NumberInput
+                    label="Edge"
+                    value={Number(edge.value)}
+                    onChange={(v) => updateEdgeValue(edge.id, v)}
+                  />
+                ) : (
+                  <TextInput
+                    label="Edge"
+                    value={edge.value}
+                    onChange={(v) => updateEdgeValue(edge.id, v.target.value)}
+                  />
                 )}
-                <EdgeButton
+
+                <ActionIconButton
+                  title="Toggle edge type"
+                  size="medium"
                   onClick={(e) => {
                     toggleEdgeMode(edge.id);
                     e.stopPropagation();
                   }}
                 >
-                  {edge.mode === PropertyType.Number ? (
+                  {edge.type === ConnectionType.Number ? (
                     <FiType />
                   ) : (
                     <FiHash />
                   )}
-                </EdgeButton>
-                <EdgeButton
+                </ActionIconButton>
+                <ActionIconButton
+                  title="Delete edge"
+                  size="medium"
                   onClick={(e) => {
                     deleteEdge(edge.id);
                     e.stopPropagation();
                   }}
                 >
                   <FiTrash2 />
-                </EdgeButton>
+                </ActionIconButton>
               </Stack>
             </div>
-            </Fade>
-          </EdgeLabelRenderer>
+          </Fade>
+        </EdgeLabelRenderer>
       </g>
     )
   );

@@ -99,7 +99,8 @@ export const BlockHeader = memo(
                 updateItemName(nameId, e.target.value);
               }}
               readonly={!editing}
-
+              onBlur={() => setIsEditing(false)}
+              onFocus={() => setIsEditing(true)}
               // editing={editing}
               onDoubleClick={(e) => {
                 setIsEditing(!editing);

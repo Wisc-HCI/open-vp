@@ -7,7 +7,7 @@ import {
   FiMoreHorizontal,
 } from "react-icons/fi";
 import { IconButton } from "./ActionIconButton";
-import { styled, alpha, Theme } from "@mui/material";
+import { styled, darken, lighten, alpha, Theme, keyframes } from "@mui/material";
 
 export interface DropdownEntry<T> {
   left?: ReactNode | ((data: T) => ReactNode);
@@ -43,17 +43,20 @@ export interface NestedDropdownProps<T> {
   inner: DropdownData<T>[];
 }
 
+export const slideUpAndFade = keyframes({
+  from: { transform: "translateY(4px)", opacity: 0 },
+  to: { transform: "translateY(0)", opacity: 1 },
+});
+
 export const CONTENT_STYLES = {
   minWidth: "220px",
-  backgroundColor: "#000000a0",
   padding: "5px",
   boxShadow:
     "0px 10px 38px -10px rgba(22, 23, 24, 0.35), 0px 10px 20px -15px rgba(22, 23, 24, 0.2)",
-  animationDuration: "400ms",
-  animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
-  willChange: "transform, opacity",
   backdropfilter: "blur(8pt)",
   WebkitBackdropFilter: "blur(8pt)",
+  willChange: "transform, opacity",
+  borderRadius: 5
 };
 
 export const ORIGIN_STYLES = {
@@ -61,11 +64,6 @@ export const ORIGIN_STYLES = {
   lineHeight: 1,
   display: "flex",
   alignItems: "center",
-  // height: "25pt",
-  // padding: "0 5pt",
-  // position: "relative",
-  // paddingLeft: "25pt",
-  // userSelect: "none",
   outline: "none",
   "&[data-disabled]": {
     pointerEvents: "none",
@@ -110,7 +108,8 @@ const DropdownMenuContent = styled(DropdownMenu.Content)(
   CONTENT_STYLES,
   ({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.background.paper, 0.7),
+    backgroundColor: alpha(theme.palette.background.paper,0.8),
+    animation: `${slideUpAndFade} 500ms cubic-bezier(0.16, 1, 0.3, 1)}`,
   }),
 );
 
@@ -118,7 +117,8 @@ const DropdownMenuSubContent = styled(DropdownMenu.SubContent)(
   CONTENT_STYLES,
   ({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.background.paper, 0.7),
+    backgroundColor: alpha(theme.palette.background.paper,0.8),
+    animation: `${slideUpAndFade} 500ms cubic-bezier(0.16, 1, 0.3, 1)}`,
   }),
 );
 
@@ -149,7 +149,7 @@ const DropdownMenuLabel = styled(DropdownMenu.Label)(
 );
 
 const DropdownMenuArrow = styled(DropdownMenu.Arrow)({}, ({ theme }) => ({
-  fill: alpha(theme.palette.background.paper, 0.7),
+  fill: alpha(theme.palette.background.paper,0.8),
 }));
 
 export const RightSlot = styled("div")(
@@ -242,15 +242,6 @@ function InnerDropdown<T>({
       <DropdownMenuItem
         disabled={inner.disabled}
         // @ts-ignore
-        // onSelect={(e: MouseEvent) => {
-        //   if (typeof inner.onClick === "function") {
-        //     inner.onClick(data,e);
-        //     if (inner.preventCloseOnClick) {
-        //       e.preventDefault();
-        //     }
-        //   }
-        //   e.stopPropagation()
-        // }}
         onClick={(e: MouseEvent) => {
           if (typeof inner.onClick === "function") {
             inner.onClick(data,e);

@@ -62,6 +62,7 @@ export interface ClipboardProps {
   regionInfo?: RegionInfo;
   context?: string[];
   coordinates?: { x: number; y: number };
+  tab?: string;
 }
 
 export interface ObjectData {
@@ -398,6 +399,7 @@ export interface ProgrammingStateActions {
   updateItemEditing: (id: string, value: boolean) => void;
   updateItemSimpleProperty: (id: string, property: string, value: any) => void;
   updateEdgeValue: (id: string, value: string) => void;
+  setSelections: (selections: string[]) => void;
   deleteEdge: (id: string) => void;
   createEdge: (
     source: string,

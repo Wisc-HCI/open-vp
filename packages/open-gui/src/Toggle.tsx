@@ -36,6 +36,7 @@ const SwitchRoot = styled(Switch.Root)(
     },
   },
   ({ theme }) => ({
+    borderRadius: theme.shape.borderRadius,
     backgroundColor:
       theme.palette.mode === "light"
         ? darken(theme.palette.background.paper, 0.1)
@@ -52,7 +53,7 @@ const SwitchThumb = styled(Switch.Thumb)(
     width: 21,
     height: 21,
     backgroundColor: "white",
-    borderRadius: 100,
+    // borderRadius: 100,
     boxShadow: "0 2px 2px var(--black-a7)",
     transition: "transform 100ms",
     transform: "translateX(2px)",
@@ -61,5 +62,7 @@ const SwitchThumb = styled(Switch.Thumb)(
         transform: 'translateX(19px)'
     }
   },
-  ({ theme }) => ({})
+  ({ theme }) => ({
+    borderRadius: theme.shape.borderRadius * .66,
+  })
 );

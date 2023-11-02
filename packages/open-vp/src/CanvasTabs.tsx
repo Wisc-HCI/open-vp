@@ -225,8 +225,6 @@ const TabItem = ({ item, onClick, onRemove, isSelected, peerCount = 2, removable
 
   const theme: Theme = useTheme();
 
-  const darkerPrimary = darken(theme.palette.primary.main,0.2);
-
   const TABVARIANTS = {
     inactiveFocused: {
       // backgroundColor: theme.palette.mode === 'dark' ? lighten(theme.palette.background.paper, 0.3) : darken(theme.palette.background.paper, 0.3),
@@ -251,7 +249,7 @@ const TabItem = ({ item, onClick, onRemove, isSelected, peerCount = 2, removable
     activeFocused: {
       // backgroundColor: theme.palette.mode === 'dark' ? lighten(theme.palette.background.paper, 0.3) : darken(theme.palette.background.paper, 0.3),
       // border: "1px solid lightblue",
-      // boxShadow: `inset 0px 0px 0px 2px ${theme.palette.primary.main}`,
+      boxShadow: `0px 0px 0px 2px ${theme.palette.primary.main}`,
       flex: peerCount,
       transition: {
         type: "tween",
@@ -259,9 +257,9 @@ const TabItem = ({ item, onClick, onRemove, isSelected, peerCount = 2, removable
       },
     },
     active: {
-      // backgroundColor: "transparent",
+      // backgroundColor: theme.palette.mode === 'dark' ? lighten(theme.palette.background.paper, 0.3) : darken(theme.palette.background.paper, 0.3),
       // border: "1px solid cyan",
-      // boxShadow: `inset 0px 0px 0px 2px ${darkerPrimary}`,
+      boxShadow: `0px 0px 0px 2px ${theme.palette.primary.main}`,
       flex: peerCount,
       transition: {
         type: "tween",

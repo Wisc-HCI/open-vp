@@ -2,15 +2,14 @@ import React from "react";
 import { useDragLayer } from "react-dnd";
 import { VisualBlock } from "@people_and_robots/open-blocks";
 import { useViewport } from "reactflow";
+import useMeasure, { RectReadOnly } from "react-use-measure";
 
-export const DragLayer = () => {
+export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
-    currentOffset: monitor.getSourceClientOffset(),
+    currentOffset: monitor.getClientOffset(),
     isDragging: monitor.isDragging(),
   }));
-
-  const { zoom } = useViewport();
 
   if (!isDragging || !item) return null
 
@@ -32,8 +31,8 @@ export const DragLayer = () => {
       {item.data && (
         <div
           style={{
-            transform: `translate(${currentOffset ? currentOffset.x : 0}px, ${
-              currentOffset ? currentOffset.y : 0
+            transform: `translate(${currentOffset ? currentOffset.x - bounds.top : 0}px, ${
+              currentOffset ? currentOffset.y - bounds.left : 0
             }px)`,
           }}
         >

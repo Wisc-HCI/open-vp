@@ -40,7 +40,8 @@ export {
   ClipboardAction,
   ConnectionDirection,
   PropertyType,
-  ExtraType
+  ExtraType,
+  ConnectionType
 } from "./src/constants";
 export { generateId } from "./src/functions";
 export { Timer } from "./src/timer";

@@ -3,8 +3,13 @@ import * as ContextMenu from "@radix-ui/react-context-menu";
 import {
   FiChevronRight,
 } from "react-icons/fi";
-import { styled, alpha, Theme } from "@mui/material";
+import { styled, alpha, Theme, keyframes } from "@mui/material";
 import { CONTENT_STYLES, ITEM_STYLES, ITEM_THEMED_STYLES, TRIGGER_THEMED_STYLES, DropdownData, RightSlot, LeftSlot } from "./NestedDropdown";
+
+export const slideUpAndFade = keyframes({
+  from: { transform: "translateY(4px)", opacity: 0 },
+  to: { transform: "translateY(0)", opacity: 1 },
+});
 
 export interface NestedContextMenuProps<T> {
   data: T;
@@ -32,7 +37,7 @@ export const ORIGIN_TRIGGER_THEMED_STYLES = ({ theme }: { theme: Theme }) => ({
 });
 
 const ContextMenuTrigger = styled(ContextMenu.Trigger)(
-  {},
+  {flex:1},
   ORIGIN_TRIGGER_THEMED_STYLES,
 );
 const ContextMenuSubTrigger = styled(ContextMenu.SubTrigger)(
@@ -43,7 +48,8 @@ const ContextMenuContent = styled(ContextMenu.Content)(
   CONTENT_STYLES,
   ({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.background.paper, 0.7),
+    backgroundColor: alpha(theme.palette.background.paper, 0.8),
+    animation: `${slideUpAndFade} 500ms cubic-bezier(0.16, 1, 0.3, 1)`,
   }),
 );
 
@@ -51,7 +57,8 @@ const ContextMenuSubContent = styled(ContextMenu.SubContent)(
   CONTENT_STYLES,
   ({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.background.paper, 0.7),
+    backgroundColor: alpha(theme.palette.background.paper, 0.8),
+    animation: `${slideUpAndFade} 500ms cubic-bezier(0.16, 1, 0.3, 1)`,
   }),
 );
 
@@ -80,10 +87,6 @@ const ContextMenuLabel = styled(ContextMenu.Label)(
     color: alpha(theme.palette.primary.main, 0.8),
   }),
 );
-
-const ContextMenuArrow = styled(ContextMenu.Arrow)({}, ({ theme }) => ({
-  fill: alpha(theme.palette.background.paper, 0.7),
-}));
 
 function InnerContext<T>({
   data,
@@ -187,7 +190,7 @@ function InnerContext<T>({
 export function NestedContextMenu<T>(props: NestedContextMenuProps<T>): ReactNode {
   return (
     <ContextMenu.Root>
-      <ContextMenuTrigger asChild >
+      <ContextMenuTrigger>
         {props.children}
       </ContextMenuTrigger>
 
@@ -196,7 +199,6 @@ export function NestedContextMenu<T>(props: NestedContextMenuProps<T>): ReactNod
           {props.inner.map((innerData: DropdownData<T>, i: number) => (
             <InnerContext key={i} data={props.data} inner={innerData} />
           ))}
-          <ContextMenuArrow />
         </ContextMenuContent>
       </ContextMenu.Portal>
     </ContextMenu.Root>

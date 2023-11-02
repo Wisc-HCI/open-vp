@@ -9,6 +9,8 @@ interface NumberInputProps {
   label?: string,
   onChange?: (value?: number) => void,
   onDoubleClick?: (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void,
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onFocus?: (e: React.FocusEvent<HTMLInputElement>) => void;
   step?: number,
   value?: number,
   suffix?: string,
@@ -25,6 +27,8 @@ export const NumberInput = memo(
     label,
     onChange = (_) => { },
     onDoubleClick,
+    onBlur,
+    onFocus,
     step,
     value = 0,
     suffix = "",
@@ -56,6 +60,8 @@ export const NumberInput = memo(
         suffix={suffix}
         onChange={onChangeInner}
         onDoubleClick={onDoubleClick}
+        onBlur={onBlur}
+        onFocus={onFocus}
         extra={<NumberSpinner
           disabled={disabled}
           above={value >= max}

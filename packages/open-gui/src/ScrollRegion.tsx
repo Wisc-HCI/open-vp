@@ -15,12 +15,10 @@ type Size = keyof typeof SCROLLBAR_SIZES;
 
 const StyledScrollArea = styled(ScrollArea.Root)(
   { overflow: "hidden" },
-  (props: { height: number | string, width: number | string }) => (
-    {
-      height: props.height,
-      width: props.width
-    }
-  )
+  (props: { height: number | string; width: number | string }) => ({
+    height: props.height,
+    width: props.width,
+  })
 );
 
 const StyledViewport = styled(ScrollArea.Viewport)({
@@ -39,18 +37,38 @@ const StyledScrollbar = styled(ScrollArea.Scrollbar)({
   "&:hover": { background: "#45454540" },
 });
 
-const VerticalScrollBar = styled(StyledScrollbar)({}, ({ scrollbarSize }: { scrollbarSize: Size }) => ({ width: SCROLLBAR_SIZES[scrollbarSize] }));
+interface StyledScrollbarProps {
+  scrollbarSize: Size;
+}
 
-const HorizontalScrollBar = styled(StyledScrollbar)({
-  flexDirection: "column",
-}, ({ scrollbarSize }: { scrollbarSize: Size }) => ({ height: SCROLLBAR_SIZES[scrollbarSize] }));
-
-const StyledScrollThumb = styled(ScrollArea.Thumb)({
-  flex: 1,
-  background: "#eeeeee66",
-}, ({ scrollbarSize }: { scrollbarSize: Size }) => ({
-  borderRadius: SCROLLBAR_SIZES[scrollbarSize]
+const VerticalScrollBar = styled(StyledScrollbar, {
+  shouldForwardProp: (prop: string) => !["scrollbarSize"].includes(prop),
+})<StyledScrollbarProps>({}, ({ scrollbarSize }: StyledScrollbarProps) => ({
+  width: SCROLLBAR_SIZES[scrollbarSize],
 }));
+
+const HorizontalScrollBar = styled(StyledScrollbar, {
+  shouldForwardProp: (prop: string) => !["scrollbarSize"].includes(prop),
+})<StyledScrollbarProps>(
+  {
+    flexDirection: "column",
+  },
+  ({ scrollbarSize }: StyledScrollbarProps) => ({
+    height: SCROLLBAR_SIZES[scrollbarSize],
+  })
+);
+
+const StyledScrollThumb = styled(ScrollArea.Thumb, {
+  shouldForwardProp: (prop: string) => !["scrollbarSize"].includes(prop),
+})<StyledScrollbarProps>(
+  {
+    flex: 1,
+    background: "#eeeeee66",
+  },
+  ({ scrollbarSize }: { scrollbarSize: Size }) => ({
+    borderRadius: SCROLLBAR_SIZES[scrollbarSize],
+  })
+);
 
 export interface ScrollRegionProps {
   children: React.ReactNode;
@@ -58,7 +76,7 @@ export interface ScrollRegionProps {
   vertical?: boolean;
   height: number | string;
   width: number | string;
-  scrollbarSize?: Size
+  scrollbarSize?: Size;
 }
 
 export const ScrollRegion = ({
@@ -67,7 +85,7 @@ export const ScrollRegion = ({
   vertical = true,
   height = "100%",
   width = "100%",
-  scrollbarSize = "medium"
+  scrollbarSize = "medium",
 }: ScrollRegionProps) => (
   <StyledScrollArea
     height={height}
@@ -76,7 +94,10 @@ export const ScrollRegion = ({
   >
     <StyledViewport>{children}</StyledViewport>
     {horizontal && (
-      <HorizontalScrollBar orientation="horizontal" scrollbarSize={scrollbarSize}>
+      <HorizontalScrollBar
+        orientation="horizontal"
+        scrollbarSize={scrollbarSize}
+      >
         <StyledScrollThumb scrollbarSize={scrollbarSize} />
       </HorizontalScrollBar>
     )}
