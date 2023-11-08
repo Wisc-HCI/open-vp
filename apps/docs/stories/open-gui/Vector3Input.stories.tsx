@@ -1,18 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
 import { Vector3Input } from "@people_and_robots/open-gui";
 import { FiMoreHorizontal } from "react-icons/fi";
 
 const meta: Meta<typeof Vector3Input> = {
-  component: Vector3Input,
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={createTheme()}>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
-    )
-  ]
+  component: Vector3Input
 };
 
 export default meta;

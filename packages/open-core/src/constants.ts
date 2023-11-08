@@ -14,6 +14,7 @@ export enum MetaType {
   FunctionCall = "FUNCTION-CALL",
   Argument = "ARGUMENT",
   Connection = "CONNECTION",
+  Comment = "COMMENT",
 }
 
 export enum ConnectionDirection {

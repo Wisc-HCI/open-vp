@@ -4,20 +4,22 @@ import { TextInputWrapper, TextInputExtra } from "./TextInput";
 import { styled, alpha, lighten, darken } from "@mui/material/styles";
 
 export interface ToggleProps {
-  value: boolean;
+  value?: boolean;
   label: string;
+  defaultValue?: boolean;
   onChange: (value: boolean) => void;
   disabled?: boolean;
 }
 export const Toggle = ({
   value = false,
+  defaultValue = false,
   label,
   onChange = (value: boolean) => {},
   disabled = false,
 }: ToggleProps) => (
   <TextInputWrapper disabled={disabled} style={{justifyContent:'space-between', paddingRight: 5}} onDoubleClick={e=>e.stopPropagation()}>
     <TextInputExtra side="left">{label}</TextInputExtra>
-    <SwitchRoot checked={value} onCheckedChange={onChange} disabled={disabled}>
+    <SwitchRoot checked={value} defaultChecked={defaultValue} onCheckedChange={onChange} disabled={disabled}>
       <SwitchThumb />
     </SwitchRoot>
   </TextInputWrapper>
@@ -29,6 +31,7 @@ const SwitchRoot = styled(Switch.Root)(
     width: 42,
     height: 25,
     borderRadius: 100,
+    marginLeft: 5,
     position: "relative",
     WebkitTapHighlightColor: "rgba(0,0,0,0)",
     "&:focus": {
@@ -52,7 +55,7 @@ const SwitchThumb = styled(Switch.Thumb)(
     display: "block",
     width: 21,
     height: 21,
-    backgroundColor: "white",
+    // backgroundColor: "white",
     // borderRadius: 100,
     boxShadow: "0 2px 2px var(--black-a7)",
     transition: "transform 100ms",
@@ -64,5 +67,9 @@ const SwitchThumb = styled(Switch.Thumb)(
   },
   ({ theme }) => ({
     borderRadius: theme.shape.borderRadius * .66,
+    backgroundColor:
+      theme.palette.mode === "light"
+        ? '#444'
+        : '#ccc',
   })
 );

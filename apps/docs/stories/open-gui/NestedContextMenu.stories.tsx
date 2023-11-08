@@ -1,18 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
 import { NestedContextMenu } from "@people_and_robots/open-gui";
 import { FiMoreHorizontal, FiStar } from "react-icons/fi";
 
 const meta: Meta<typeof NestedContextMenu> = {
   component: NestedContextMenu,
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={createTheme()}>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
-    )
-  ]
 };
 
 export default meta;

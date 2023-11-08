@@ -160,7 +160,8 @@ const BlockPanel = ({
   const [headerRef, headerBounds] = useMeasure();
 
   const theme = useTheme();
-
+  console.log("THEME",theme.palette.mode,theme.palette.primary.main)
+  
   return (
     <Stack
       ref={drawerRef}

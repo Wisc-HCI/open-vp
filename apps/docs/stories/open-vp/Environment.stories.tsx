@@ -1,5 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline, Button, Stack } from "@mui/material";
+import {
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
+  Button,
+  Stack,
+  PaletteMode,
+  useTheme,
+} from "@mui/material";
 import { Environment } from "@people_and_robots/open-vp";
 import {
   FiClipboard,
@@ -19,37 +27,30 @@ import {
   PrimitiveType,
   PropertyType,
   ExtraType,
-  ConnectionDirection
+  ConnectionDirection,
 } from "@people_and_robots/open-core";
 import React from "react";
 
 const meta: Meta<typeof Environment> = {
   component: Environment,
+  parameters: {
+    layout: 'fullscreen',
+  },
   decorators: [
     (Story, args) => {
-      const [mode, setMode] = React.useState<"light" | "dark">("light");
-
-      const muiTheme = createTheme({ palette: { mode, primary: {main: "#f5f"} } });
-
       return (
-        <ThemeProvider theme={muiTheme}>
-          <CssBaseline />
-          <Stack direction='column' alignItems='center' style={{display:'flex',flexDirection:'column', minHeight: 400}}>
-          <Button onClick={()=>mode === "light" ? setMode("dark") : setMode("light")}>Toggle Mode</Button>
           <div
             style={{
               display:'flex',
-              minHeight: 400,//"calc(100vh - 55pt)",
+              minHeight: args.viewMode === 'docs' ? 400 : '100vh',//"calc(100vh - 55pt)",
               width: "100%",//"calc(100vw - 25pt)"
             }}
           >
-            <Story args={{...args.allArgs, muiTheme}}/>
+          <Story {...args} />
           </div>
-          </Stack>
-        </ThemeProvider>
-      );
-    },
-  ],
+      )
+    }
+  ]
 };
 
 export default meta;
@@ -95,14 +96,14 @@ export const Primary: Story = {
           extras: [
             {
               type: ExtraType.Dropdown,
-              icon: <FiChevronDown/>,
-              contents:[
+              icon: <FiChevronDown />,
+              contents: [
                 ExtraType.CollapseToggle,
                 ExtraType.SelectionToggle,
                 ExtraType.DeleteButton,
                 ExtraType.DocToggle,
-              ]
-            }
+              ],
+            },
           ],
         },
         referenceBlock: {
@@ -149,7 +150,7 @@ export const Primary: Story = {
           onCanvas: false,
           color: "#7f7f7f",
           icon: FiLayers,
-          extras: [ExtraType.CollapseToggle,ExtraType.DocToggle],
+          extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
         },
         referenceBlock: {
           onCanvas: false,
@@ -195,23 +196,27 @@ export const Primary: Story = {
           color: "#62869e",
           icon: FiLogOut,
           extras: [
-            { type: ExtraType.Dropdown, label: "Actions", contents: [
-              { 
-                type: ExtraType.AddArgumentGroup, 
-                icon: FiPlus,
-                allowed: ["hatType","bootType"]
-              },
-              ExtraType.DeleteButton,
-              ExtraType.DebugToggle,
-              ExtraType.DocToggle,
-            ]}
+            {
+              type: ExtraType.Dropdown,
+              label: "Actions",
+              contents: [
+                {
+                  type: ExtraType.AddArgumentGroup,
+                  icon: FiPlus,
+                  allowed: ["hatType", "bootType"],
+                },
+                ExtraType.DeleteButton,
+                ExtraType.DebugToggle,
+                ExtraType.DocToggle,
+              ],
+            },
           ],
         },
         callBlock: {
           onCanvas: false,
           color: "#62869e",
           icon: FiLogOut,
-          extras: [ExtraType.DebugToggle,ExtraType.DocToggle],
+          extras: [ExtraType.DebugToggle, ExtraType.DocToggle],
         },
         properties: {
           children: {
@@ -278,7 +283,7 @@ export const Primary: Story = {
           onCanvas: false,
           color: "#629e6c",
           icon: FiClipboard,
-          extras: [ExtraType.CollapseToggle,ExtraType.DocToggle],
+          extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
           hideNewPrefix: true,
         },
         referenceBlock: {
@@ -432,7 +437,7 @@ export const Primary: Story = {
         title: "Structures",
         type: DrawerType.Multiple,
         metaType: MetaType.ObjectInstance,
-        objectTypes: ["stateType","operationType", "blockType"],
+        objectTypes: ["stateType", "operationType", "blockType"],
         icon: FiClipboard,
       },
       {
@@ -483,20 +488,26 @@ Each State is a collection of attributes, which can be dragged into the State. T
           color: "#3f3f3f",
           icon: FiBriefcase,
           connections: {
-            bottom: { allowed: ["stateType"], direction: ConnectionDirection.Outbound },
-            top: { allowed: ["stateType"], direction: ConnectionDirection.Inbound }
+            bottom: {
+              allowed: ["stateType"],
+              direction: ConnectionDirection.Outbound,
+            },
+            top: {
+              allowed: ["stateType"],
+              direction: ConnectionDirection.Inbound,
+            },
           },
           extras: [
             {
               type: ExtraType.Dropdown,
-              icon: <FiChevronDown/>,
-              contents:[
+              icon: <FiChevronDown />,
+              contents: [
                 ExtraType.CollapseToggle,
                 ExtraType.SelectionToggle,
                 ExtraType.DeleteButton,
                 ExtraType.DocToggle,
-              ]
-            }
+              ],
+            },
           ],
         },
         referenceBlock: {
@@ -541,18 +552,18 @@ The **The Facial Expression Attribute** can be configured and added to individua
           onCanvas: false,
           color: "#AD1FDE",
           icon: FiGrid,
-          extras: [ExtraType.CollapseToggle,ExtraType.DocToggle],
+          extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
         },
         referenceBlock: {
           onCanvas: false,
           color: "#AD1FDE",
           icon: FiGrid,
-          extras: [ExtraType.CollapseToggle,ExtraType.DocToggle],
+          extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
         },
         properties: {
           type: {
-            id: 'type',
-            name: 'Type',
+            id: "type",
+            name: "Type",
             type: PropertyType.Options,
             options: [
               { value: "happy", label: "Happy" },
@@ -560,8 +571,8 @@ The **The Facial Expression Attribute** can be configured and added to individua
               { value: "angry", label: "Angry" },
               { value: "surprised", label: "Surprised" },
             ],
-            default: 'happy'
-          }
+            default: "happy",
+          },
         },
         parsers: {
           javascript: ({ block, name, depth, context, storeParser }) => {
@@ -583,18 +594,18 @@ The **Hand Gesture Attribute** can be configured and added to individual [States
           onCanvas: false,
           color: "#B3A533",
           icon: FiGrid,
-          extras: [ExtraType.CollapseToggle,ExtraType.DocToggle],
+          extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
         },
         referenceBlock: {
           onCanvas: false,
           color: "#B3A533",
           icon: FiGrid,
-          extras: [ExtraType.CollapseToggle,ExtraType.DocToggle],
+          extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
         },
         properties: {
           type: {
-            id: 'type',
-            name: 'Type',
+            id: "type",
+            name: "Type",
             type: PropertyType.Options,
             options: [
               { value: "wave", label: "Wave" },
@@ -602,8 +613,8 @@ The **Hand Gesture Attribute** can be configured and added to individual [States
               { value: "thumbsUp", label: "Thumbs Up" },
               { value: "thumbsDown", label: "Thumbs Down" },
             ],
-            default: 'wave'
-          }
+            default: "wave",
+          },
         },
         parsers: {
           javascript: ({ block, name, depth, context, storeParser }) => {
@@ -629,7 +640,7 @@ The **Hand Gesture Attribute** can be configured and added to individual [States
         title: "Expressions",
         type: DrawerType.Multiple,
         metaType: MetaType.ObjectInstance,
-        objectTypes: ["expressionType","gestureType"],
+        objectTypes: ["expressionType", "gestureType"],
         icon: FiBox,
       },
     ],

@@ -1,19 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import React from "react";
+import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
 import { ActionIconButton } from "@people_and_robots/open-gui";
-import { FiMoreHorizontal } from "react-icons/fi";
+import { FiMoreHorizontal, FiPlay } from "react-icons/fi";
 
 const meta: Meta<typeof ActionIconButton> = {
-  component: ActionIconButton,
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={createTheme()}>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
-    )
-  ]
+  component: ActionIconButton
 };
+
 
 export default meta;
 
@@ -58,5 +52,23 @@ export const Secondary: Story = {
     toggled: false,
     canToggle: false,
     children: <FiMoreHorizontal />
+  },
+};
+
+export const Toggle: Story = {
+  render: (props) => (
+    <ActionIconButton
+      {...props}
+    />
+  ),
+  name: "Toggle Button",
+  args: {
+    title: "Button Title",
+    // onClick: () => alert("Button Was Clicked"),
+    disabled: false,
+    placement: 'bottom',
+    toggled: false,
+    canToggle: true,
+    children: <FiPlay />
   },
 };

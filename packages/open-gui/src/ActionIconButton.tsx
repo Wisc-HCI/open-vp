@@ -26,12 +26,20 @@ export const IconButton = styled(MuiButton, {
   shouldForwardProp: (prop: string) =>
     !['canToggle', 'toggled'].includes(prop)
 })<IconButtonProps>(({ theme, toggled, size = "medium", canToggle }) => ({
+  // backgroundColor: canToggle && toggled
+  //   ? alpha(theme.palette.primary.main, 0.4)
+  //   : canToggle && !toggled
+  //     ? "transparent"
+  //     : "rgba(100,100,100,0.5)",
+  // color: theme.palette.text.primary,
   backgroundColor: canToggle && toggled
-    ? alpha(theme.palette.primary.main, 0.4)
-    : canToggle && !toggled
-      ? "transparent"
-      : "rgba(100,100,100,0.5)",
-  color: theme.palette.text.primary,
+      ? alpha(theme.palette.primary.main, 0.6)
+      : canToggle && !toggled
+        ? 'transparent'
+        : "rgba(100,100,100,0.5)",
+    color: canToggle && toggled
+      ? alpha(theme.palette.getContrastText(theme.palette.primary.main), 0.8)
+      : theme.palette.text.primary,
   fontSize: size ? fontSizeMap[size] : "1.4rem",
   "&.Mui-disabled": {
     backgroundColor: "rgba(0,0,0,0.25)",
@@ -43,11 +51,13 @@ export const IconButton = styled(MuiButton, {
   // flex: 1,
   "&:hover": {
     backgroundColor: canToggle && toggled
-      ? alpha(theme.palette.primary.main, 0.5)
+      ? alpha(theme.palette.primary.main, 0.8)
       : canToggle && !toggled
         ? alpha(theme.palette.primary.main, 0.25)
         : "rgba(0,0,0,0.7)",
-    color: theme.palette.primary.main,
+    color: canToggle && toggled
+      ? alpha(theme.palette.getContrastText(theme.palette.primary.main), 0.8)
+      : theme.palette.primary.main,
   },
   "&:focus-visible": {
     userSelect: "none",

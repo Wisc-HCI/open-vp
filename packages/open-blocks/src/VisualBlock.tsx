@@ -68,8 +68,6 @@ import {
 } from "./components/MenuSection";
 import { flattenMenuOnce } from "./util";
 
-const MotionCard = motion(Card);
-
 const UNRENDERED_PROPS = ["IGNORED", "METADATA"];
 const SIMPLE_PROPERTY_TYPES = [
   "BOOLEAN",
@@ -84,7 +82,6 @@ const SIMPLE_PROPERTY_TYPES = [
 export interface VisualBlockProps {
   data: BlockData;
   refData?: BlockData;
-  argumentBlockData?: BlockData[];
   typeSpec: TypeSpec;
   interactionDisabled?: boolean;
   bounded?: boolean;

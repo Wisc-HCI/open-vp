@@ -5,6 +5,11 @@ import {
   RegionInfo,
   CANVAS,
   ClipboardAction,
+  generateId,
+  SPAWNER,
+  PropertyType,
+  MetaType,
+  CommentData,
 } from "@people_and_robots/open-core";
 import { useDrop } from "react-dnd";
 import { Block } from "../Block";
@@ -22,7 +27,7 @@ import {
 } from "@mui/material";
 import { TypeDescription, ChipMimic } from "./Doc";
 // import { CLIPBOARD_ACTION } from "../Constants";
-import { FiClipboard } from "react-icons/fi";
+import { FiClipboard, FiHash } from "react-icons/fi";
 import { BlockData, BlockFieldInfo } from "@people_and_robots/open-core";
 import { NestedContextMenu, Tooltip } from "@people_and_robots/open-gui";
 // import { useHover } from '@use-gesture/react';
@@ -169,6 +174,7 @@ export interface DropRegionProps {
   hideText?: boolean;
   disabled?: boolean;
   limitedRender?: boolean;
+  commentsEnabled?: boolean;
 }
 
 export const DropRegion = memo(
@@ -180,6 +186,7 @@ export const DropRegion = memo(
     disabled = false,
     context = [],
     limitedRender = false,
+    commentsEnabled = false,
   }: DropRegionProps) => {
     const transferBlock = useProgrammingStore(transferBlockSelector);
 
@@ -211,21 +218,24 @@ export const DropRegion = memo(
 
     const paste = useProgrammingStore((state: ProgrammingState) => state.paste);
 
+    const acceptTypes = regionInfo.fieldInfo.type === PropertyType.Block && regionInfo.fieldInfo.isList ? [...fieldInfo.accepts, MetaType.Comment] : fieldInfo.accepts;
+
     const [dropProps, drop] = useDrop(
       () => ({
-        accept: fieldInfo.accepts,
-        drop: (item: { data: BlockData; regionInfo: RegionInfo }, _) => {
+        accept: acceptTypes,
+        drop: (item: { data: BlockData | CommentData; regionInfo: RegionInfo }, _) => {
           console.log("DROP", item);
           transferBlock(item.data, item.regionInfo, regionInfo);
         },
         canDrop: (item: {
-          data: BlockData;
+          data: BlockData | CommentData;
           regionInfo: RegionInfo;
           context: string[];
         }) =>
           !disabled &&
-          item.regionInfo.parentId !== CANVAS &&
-          isEqual(intersection(context, item.context), item.context),
+          (item.data.metaType === MetaType.Comment ||
+          (item.regionInfo.parentId !== CANVAS &&
+          isEqual(intersection(context, item.context), item.context))),
         collect: (monitor) => ({
           isOver: monitor.isOver(),
           item: monitor.getItem(),
@@ -235,7 +245,7 @@ export const DropRegion = memo(
     );
 
     const validDropType =
-      fieldInfo.accepts.includes(dropProps.item?.data?.type) &&
+      acceptTypes.includes(dropProps.item?.data?.type) &&
       dropProps.item?.regionInfo.parentId !== CANVAS &&
       isEqual(
         intersection(context, dropProps.item.context),
@@ -302,7 +312,7 @@ export const DropRegion = memo(
         data={{}}
         inner={[
           {
-            disabled: !validClipboard,
+            disabled: disabled || !validClipboard,
             left: FiClipboard,
             type: "ENTRY",
             label: "Paste",
@@ -311,6 +321,26 @@ export const DropRegion = memo(
                 context,
                 regionInfo,
               });
+              e.stopPropagation();
+            },
+          },
+          {
+            disabled: disabled || !commentsEnabled,
+            left: FiHash,
+            type: "ENTRY",
+            label: "Add Comment",
+            onClick: (d, e) => {
+              transferBlock({id: generateId('comment'), type: MetaType.Comment, metaType: MetaType.Comment}, {
+                fieldInfo: {
+                  type: PropertyType.Block,
+                  accepts: [],
+                },
+                parentId: SPAWNER
+              }, regionInfo)
+              // paste({
+              //   context,
+              //   regionInfo,
+              // });
               e.stopPropagation();
             },
           },

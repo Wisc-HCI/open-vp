@@ -5,6 +5,7 @@ export { ActionIconButton } from "./src/ActionIconButton";
 export { IconTextButton } from "./src/IconTextButton";
 export { useNumeric } from "./src/useNumeric";
 export { TextInput } from "./src/TextInput";
+export { TextArea } from "./src/TextArea";
 export { NestedDropdown } from "./src/NestedDropdown";
 export { NestedContextMenu } from "./src/NestedContextMenu";
 export { ScrollRegion } from "./src/ScrollRegion";
@@ -13,6 +14,7 @@ export { Select } from "./src/Select";
 export { Toggle } from "./src/Toggle";
 export { Tooltip } from "./src/Tooltip";
 export { Dialog } from "./src/Dialog";
+export { TreeView } from "./src/TreeView";
 export type {
   NestedDropdownProps, DropdownData, DropdownDivider, DropdownHeader, DropdownEntry } from "./src/NestedDropdown";
 // import { ScrollRegion } from "./ScrollRegion";

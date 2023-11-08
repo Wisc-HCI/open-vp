@@ -7,7 +7,8 @@ import {
   ObjectReferenceData,
   FunctionCallData,
   ConnectionData,
-  ExecutionState
+  ExecutionState,
+  CommentData
 } from "./types";
 import { 
   PrimitiveType,
@@ -95,7 +96,7 @@ export function instanceTemplateFromSpec(
 
 export function referenceTemplateFromSpec(
   type: string,
-  instanceReference: BlockData,
+  instanceReference: ArgumentData | ObjectData | FunctionDeclarationData | FunctionCallData | ObjectReferenceData,
   typeSpec: TypeSpec
 ): FunctionCallData | ObjectReferenceData {
   let data: FunctionCallData | ObjectReferenceData;
@@ -141,7 +142,7 @@ export function referenceTemplateFromSpec(
 export function functionInstanceAsType(
   functionTypeSpec: TypeSpec,
   functionInstance: FunctionDeclarationData,
-  programData: { [key: string]: BlockData | ConnectionData }
+  programData: { [key: string]: BlockData | ConnectionData | CommentData}
 ): TypeSpec {
   const initialFunctionDef = {
     ...functionTypeSpec,
@@ -174,12 +175,12 @@ export function functionInstanceAsType(
 }
 
 export function combinedBlockData(
-  programData: { [key: string]: BlockData | ConnectionData },
+  programData: { [key: string]: BlockData | ConnectionData | CommentData },
   executionData: { [key: string]: ExecutionState },
   objectTypes: { [key: string]: TypeSpec },
-  info: string | BlockData
-): [null | BlockData | ConnectionData, null | TypeSpec, null | ExecutionState, null | BlockData] {
-  const data: BlockData | ConnectionData | undefined = typeof info === "string" 
+  info: string | BlockData | CommentData
+): [null | BlockData | ConnectionData | CommentData, null | TypeSpec, null | ExecutionState, null | BlockData] {
+  const data: BlockData | ConnectionData | CommentData | undefined = typeof info === "string" 
     ? programData[info]
     : info;
 
@@ -187,18 +188,23 @@ export function combinedBlockData(
     // This is likely present because of cleanup. Return null to be removed
     return [null, null, null, null]
   }
-  if (data.metaType === "CONNECTION") {
+  if (data.metaType === MetaType.Connection) {
     return [data, null, null, null];
   }
+
+  if (data.metaType === MetaType.Comment) {
+    return [data, null, null, null];
+  }
+
   const progress = executionData[data.id];
   const typeSpec = objectTypes[data.type];
-  const robustTypeSpec = data.metaType === "FUNCTION-DECLARATION" 
+  const robustTypeSpec = data.metaType === MetaType.FunctionDeclaration
     ? functionInstanceAsType(typeSpec, data as FunctionDeclarationData, programData)
-    : data.metaType === "FUNCTION-CALL"
+    : data.metaType === MetaType.FunctionCall
     ? functionInstanceAsType(typeSpec, programData[data.ref as string] as FunctionDeclarationData, programData)
     : typeSpec;
   let refData: BlockData | null;
-  if (data.metaType === "FUNCTION-CALL" || data.metaType === "OBJECT-REFERENCE") {
+  if (data.metaType === MetaType.FunctionCall || data.metaType === MetaType.ObjectReference) {
     refData = programData[data.ref as string] as BlockData;
   } else {
     refData = null;

@@ -12,7 +12,9 @@ import {
   OUTSIDE,
   MetaType,
   PropertyType,
+  CommentData,
 } from "@people_and_robots/open-core";
+import { CommentBlock } from "./CommentBlock";
 
 export interface PreviewBlockProps {
   id: string;
@@ -24,12 +26,11 @@ export interface PreviewBlockProps {
 
 export const PreviewBlock = memo(
   ({ id, staticData, bounded, context, style }: PreviewBlockProps) => {
-    const [data, typeSpec, _eState, _blockData, argumentBlockData]: [
-      BlockData,
+    const [data, typeSpec, _eState, _blockData]: [
+      null | BlockData | CommentData,
       TypeSpec,
       ExecutionState,
       BlockData | null,
-      BlockData[] | null,
     ] = useProgrammingStore((state: ProgrammingState) =>
       combinedBlockData(
         state.programData,
@@ -38,23 +39,22 @@ export const PreviewBlock = memo(
         staticData || id || ""
       )
     ) as [
-      BlockData,
+      null | BlockData | CommentData,
       TypeSpec,
       ExecutionState,
-      BlockData | null,
-      BlockData[] | null,
+      BlockData | null
     ];
 
     const blockContext =
-      data.metaType === MetaType.FunctionDeclaration ? data.arguments : [];
-    const wholeContext = [...context, ...blockContext];
+      data?.metaType === MetaType.FunctionDeclaration ? data.arguments : [];
+    const wholeContext: string[] = [...context, ...blockContext];
 
     const regionInfo: RegionInfo = {
       parentId: OUTSIDE,
       fieldInfo: {
         id: "PREVIEW",
         name: "PREVIEW",
-        accepts: [data.type],
+        accepts: [data ? data.type : 'null'],
         default: null,
         isList: false,
         fullWidth: false,
@@ -66,11 +66,14 @@ export const PreviewBlock = memo(
 
     if (!data) {
       return null;
+    } else if (data.metaType === MetaType.Comment) {
+      return (
+        <CommentBlock data={data} bounded regionInfo={regionInfo}/>
+      )
     } else {
       return (
         <VisualBlock
           data={data}
-          argumentBlockData={argumentBlockData || []}
           regionInfo={regionInfo}
           typeSpec={typeSpec}
           interactionDisabled

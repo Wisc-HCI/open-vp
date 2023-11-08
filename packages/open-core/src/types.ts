@@ -57,12 +57,19 @@ export type Extra =
   | IndicatorExtra;
 
 export interface ClipboardProps {
-  data?: BlockData;
+  data?: BlockData | CommentData;
   typeSpec?: TypeSpec;
   regionInfo?: RegionInfo;
   context?: string[];
   coordinates?: { x: number; y: number };
   tab?: string;
+}
+
+export interface CommentData {
+  id: string;
+  type: MetaType.Comment;
+  metaType: MetaType.Comment;
+  text: string;
 }
 
 export interface ObjectData {
@@ -344,14 +351,14 @@ export interface ProgrammingStateStructures {
   activeDrawer: string | null;
   connectionInfo: OnConnectStartParams | null;
   programSpec: ProgramSpec;
-  programData: { [key: string]: BlockData | ConnectionData };
+  programData: { [key: string]: BlockData | ConnectionData | CommentData };
   executionData: { [key: string]: ExecutionState };
   tabs: Tab[];
   activeTab: string | null;
   featuredDocs: { [key: string]: string };
   activeDoc: string | null;
   clipboard: {
-    block?: BlockData;
+    block?: BlockData | CommentData;
     regionInfo?: RegionInfo;
     context?: string[];
     onCanvas?: boolean;
@@ -361,7 +368,7 @@ export interface ProgrammingStateStructures {
 }
 
 export interface ProgrammingStateActions {
-  onVPEClick: (entryInfo: BlockData) => void;
+  onVPEClick: (entryInfo: BlockData | ConnectionData | CommentData) => void;
   onOffVPEClick: (entryInfo: any) => void;
   setConnectionInfo: (info: OnConnectStartParams | null) => void;
   setActiveDrawer: (activeDrawer: string | null) => void;
@@ -381,13 +388,13 @@ export interface ProgrammingStateActions {
     context?: { [key: string]: BlockData }
   ) => string;
   transferBlock: (
-    data: BlockData,
+    data: BlockData | CommentData,
     sourceInfo: RegionInfo,
     destInfo: RegionInfo
   ) => void;
   moveBlocks: (changes: NodeChange[]) => void;
   deleteBlock: (
-    data: BlockData,
+    data: BlockData | CommentData,
     parentId: string,
     fieldInfo: FieldInfo
   ) => void;
@@ -399,6 +406,7 @@ export interface ProgrammingStateActions {
   updateItemEditing: (id: string, value: boolean) => void;
   updateItemSimpleProperty: (id: string, property: string, value: any) => void;
   updateEdgeValue: (id: string, value: string) => void;
+  updateCommentText: (id: string, value: string) => void;
   setSelections: (selections: string[]) => void;
   deleteEdge: (id: string) => void;
   createEdge: (
@@ -420,7 +428,7 @@ export interface ProgrammingStateActions {
   cut: (clipboardProps: ClipboardProps) => void;
   copy: (clipboardProps: ClipboardProps) => void;
   paste: (clipboardProps: ClipboardProps) => void;
-  setClipboardBlock: (block: BlockData) => void;
+  setClipboardBlock: (block: BlockData | CommentData) => void;
 }
 
 export interface ProgrammingState

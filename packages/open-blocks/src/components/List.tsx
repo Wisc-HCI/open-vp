@@ -35,6 +35,7 @@ export const List = memo(({ ids = [], regionInfo, interactionDisabled, context, 
         hideText
         context={context}
         limitedRender={limitedRender}
+        commentsEnabled
       />
     </div>
     )
@@ -62,6 +63,7 @@ export const List = memo(({ ids = [], regionInfo, interactionDisabled, context, 
           hideText
           context={context}
           limitedRender={limitedRender}
+          commentsEnabled
         />
         {ids.map((id, idx) => (
           <Block
@@ -83,6 +85,7 @@ export const List = memo(({ ids = [], regionInfo, interactionDisabled, context, 
                 hideText
                 context={context}
                 limitedRender={limitedRender}
+                commentsEnabled
               />
             }
           />

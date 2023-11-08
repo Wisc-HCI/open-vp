@@ -6,6 +6,7 @@ export type {
   FunctionDeclarationData,
   FunctionCallData,
   ConnectionData,
+  CommentData,
   BlockData,
   TypeSpec,
   BlockSpec,

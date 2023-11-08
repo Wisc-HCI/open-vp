@@ -92,6 +92,7 @@ export const SettingsSection = ({
                   key={propKey}
                   label={propInfo.name}
                   value={properties[propKey]}
+                  defaultValue={false}
                   onChange={(v) =>
                     updateItemSimpleProperty(id, propKey, v)
                   }

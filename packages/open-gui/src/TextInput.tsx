@@ -166,6 +166,7 @@ const TextInputField = styled("input")(
 
 export const TextInput = ({
   disabled,
+  value,
   defaultValue,
   readonly,
   hideLabelPrefix = false,
@@ -200,6 +201,7 @@ export const TextInput = ({
       )}
       <TextInputField
         readOnly={readonly}
+        value={value}
         defaultValue={defaultValue}
         disabled={disabled}
         onFocus={(e) => {
@@ -214,7 +216,6 @@ export const TextInput = ({
             onBlur(e);
           }
         }}
-        value={props.value}
         onChange={props.onChange}
 
       />

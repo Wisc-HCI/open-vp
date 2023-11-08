@@ -5,17 +5,23 @@ function getAbsolutePath(value) {
 }
 
 const config = {
-  stories: ["../stories/*.stories.tsx", "../stories/**/*.stories.tsx"],
+  stories: ["../stories/**/*.stories.tsx"],//["../stories/**/*.stories.tsx", "../stories/*.mdx"],
   addons: [
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@storybook/addon-docs"),
+    getAbsolutePath("@storybook/addon-themes"),
   ],
   framework: {
     name: getAbsolutePath("@storybook/react-vite"),
     options: {},
   },
-
+  typescript: {
+    check: true,
+    checkOptions: {
+      eslint: true,
+    },
+  },
   core: {},
 
   async viteFinal(config, { configType }) {
@@ -32,6 +38,14 @@ const config = {
           {
             find: "@people_and_robots/open-gui",
             replacement: resolve(__dirname, "../../../packages/open-gui/"),
+          },
+          {
+            find: "@people_and_robots/open-blocks",
+            replacement: resolve(__dirname, "../../../packages/open-blocks/"),
+          },
+          {
+            find: "@people_and_robots/open-vp",
+            replacement: resolve(__dirname, "../../../packages/open-vp/"),
           },
         ],
       },

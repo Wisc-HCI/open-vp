@@ -1,18 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
 import { ScrollRegion } from "@people_and_robots/open-gui";
 import { FiMoreHorizontal } from "react-icons/fi";
 
 const meta: Meta<typeof ScrollRegion> = {
-  component: ScrollRegion,
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={createTheme()}>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
-    )
-  ]
+  component: ScrollRegion
 };
 
 export default meta;

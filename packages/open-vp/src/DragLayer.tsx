@@ -3,6 +3,8 @@ import { useDragLayer } from "react-dnd";
 import { VisualBlock } from "@people_and_robots/open-blocks";
 import { useViewport } from "reactflow";
 import useMeasure, { RectReadOnly } from "react-use-measure";
+import { CommentBlock } from "@people_and_robots/open-blocks/src/CommentBlock";
+import { MetaType } from "@people_and_robots/open-core";
 
 export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
@@ -28,7 +30,24 @@ export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
         backdropFilter: "blur(10px)",
       }}
     >
-      {item.data && (
+      {item.data && item.data.metaType === MetaType.Comment && (
+        <div
+          style={{
+            transform: `translate(${currentOffset ? currentOffset.x - bounds.top : 0}px, ${
+              currentOffset ? currentOffset.y - bounds.left : 0
+            }px)`,
+          }}
+        >
+          <CommentBlock
+            data={item.data}
+            regionInfo={item.regionInfo}
+            // isDragging={isDragging}
+            interactionDisabled
+            limitedRender
+          />
+        </div>
+      )}
+      {item.data && item.data.metaType !== MetaType.Comment && (
         <div
           style={{
             transform: `translate(${currentOffset ? currentOffset.x - bounds.top : 0}px, ${

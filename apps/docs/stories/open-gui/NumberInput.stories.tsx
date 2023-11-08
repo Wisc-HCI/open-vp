@@ -1,18 +1,10 @@
 import { SyntheticEvent } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
 import { NumberInput } from "@people_and_robots/open-gui";
 
 const meta: Meta<typeof NumberInput> = {
-  component: NumberInput,
-  decorators: [
-    (Story) => (
-      <ThemeProvider theme={createTheme()}>
-        <CssBaseline />
-        <Story />
-      </ThemeProvider>
-    )
-  ]
+  component: NumberInput
 };
 
 export default meta;
@@ -39,8 +31,6 @@ export const Primary: Story = {
     value: 1.1,
     onBlur: (event: SyntheticEvent) => console.log(event),
     onFocus: (event: SyntheticEvent) => console.log(event),
-    onMouseEnter: (event: SyntheticEvent) => console.log(event),
-    onMouseLeave: (event: SyntheticEvent) => console.log(event),
     suffix: "/gal",
     prefix: "$",
     min: 0,

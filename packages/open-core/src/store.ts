@@ -1,10 +1,7 @@
-import React, { createContext, useContext, ReactNode } from "react";
-import { create, createStore } from "zustand";
+import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { shallow } from "zustand/shallow";
-import { immer } from "zustand/middleware/immer";
 import { produce } from "immer";
-import { mapValues, remove, throttle } from "lodash";
+import { mapValues, remove } from "lodash";
 import { instanceTemplateFromSpec } from "./generators";
 import { Timer } from "./timer";
 import {
@@ -31,6 +28,7 @@ import {
   ClipboardProps,
   ProgrammingState,
   BlockFieldInfo,
+  CommentData,
 } from "./types";
 import {
   MetaType,
@@ -77,7 +75,7 @@ export const ProgrammingSlice = (
   ) => void,
   get: () => ProgrammingState
 ) => ({
-  onVPEClick: (entryInfo: BlockData | ConnectionData) =>
+  onVPEClick: (entryInfo: BlockData | ConnectionData | CommentData) =>
     console.log(`Clicked Entry:`, entryInfo),
   onOffVPEClick: () => console.log(`Missed VPE Click:`),
   activeDrawer: null,
@@ -93,7 +91,12 @@ export const ProgrammingSlice = (
   setActiveDoc: (id: string, value: boolean) => {
     set({ activeDoc: value ? id : null });
   },
-  tabs: [],
+  tabs: [{
+    title: "Main",
+    id: generateId("tab"),
+    visible: true,
+    blocks: [],
+  }],
   setTabs: (newTabs: Tab[]) => set({ tabs: newTabs }),
   activeTab: null,
   parse: (
@@ -145,7 +148,7 @@ export const ProgrammingSlice = (
     return parsed;
   },
   transferBlock: (
-    data: BlockData,
+    data: BlockData | CommentData,
     sourceInfo: RegionInfo,
     destInfo: RegionInfo
   ) => {
@@ -175,7 +178,7 @@ export const ProgrammingSlice = (
         });
       })
     ),
-  deleteBlock: (data: BlockData, parentId: string, fieldInfo: FieldInfo) => {
+  deleteBlock: (data: BlockData | CommentData, parentId: string, fieldInfo: FieldInfo) => {
     set(
       produce((state: ProgrammingState) => {
         console.warn("deleteBlock", data.id, data, parentId, fieldInfo);
@@ -322,7 +325,7 @@ export const ProgrammingSlice = (
   setSelections: (selections: string[]) => {
     set(
       produce((state: ProgrammingState) => {
-        state.programData = mapValues(state.programData, (item: BlockData | ConnectionData) => {
+        state.programData = mapValues(state.programData, (item: BlockData | ConnectionData | CommentData) => {
           if (item.metaType === MetaType.Connection) {
             return item;
           }
@@ -364,6 +367,15 @@ export const ProgrammingSlice = (
         state.programData[id] = current;
       })
     );
+  },
+  updateCommentText: (id: string, value: string) => {
+    set(
+      produce((state: ProgrammingState) => {
+        let current = state.programData[id] as CommentData;
+        current.text = value;
+        state.programData[id] = current;
+      })
+    )
   },
   deleteEdge: (id: string) => {
     set(
@@ -724,7 +736,7 @@ export const ProgrammingSlice = (
         }
         console.log("handling paste...", state.clipboard);
 
-        const clipboardBlock: BlockData = state.clipboard.block;
+        const clipboardBlock: BlockData | CommentData = state.clipboard.block;
 
         console.log("handling paste...", clipboardBlock);
 
@@ -734,7 +746,7 @@ export const ProgrammingSlice = (
         ) {
           // Paste the last thing that was copied or pasted
           console.log("Pasting the last that was copied or pasted");
-          const [newBlocks, newId]: [{ [key: string]: BlockData }, string] =
+          const [newBlocks, newId]: [{ [key: string]: BlockData | CommentData }, string] =
             deepCopy(
               state.programData,
               state.programSpec.objectTypes,
@@ -887,7 +899,7 @@ export const ProgrammingSlice = (
         state.clipboard.action = ClipboardAction.Paste;
       })
     ),
-  setClipboardBlock: (block: BlockData) =>
+  setClipboardBlock: (block: BlockData | CommentData) =>
     set(
       produce((state: ProgrammingState) => {
         state.clipboard.block = block;

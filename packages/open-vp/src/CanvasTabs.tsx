@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from "react";
+import React, { useState, forwardRef, useEffect } from "react";
 import { motion, Reorder, AnimatePresence } from "framer-motion";
 import { ProgrammingState, Tab, useProgrammingStore } from "@people_and_robots/open-core";
 import {
@@ -13,42 +13,16 @@ import {
 import { styled, darken, useTheme, lighten } from "@mui/material/styles";
 import {
   ClickAwayListener,
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  TextField,
   Dialog,
   DialogTitle,
   DialogContentText,
   DialogActions,
   Button,
-  Slide,
   DialogContent,
-  InputAdornment,
   Theme,
-  Stack
 } from "@mui/material";
 import { NestedDropdown, TextInput } from "@people_and_robots/open-gui";
 
-// const SlideUpTransition = forwardRef(({children, ...props}, ref) => (
-//   <Slide direction="up" ref={ref} {...props}>{children}</Slide>
-// ));
-
-const PlusButton = styled(IconButton)(
-  {
-    borderRadius: 5,
-    // borderLeft: "1.5px solid #222",
-    height: 35,
-    width: 35,
-    margin: 5,
-    backgroundColor: "#333",
-  },
-  ({ theme }) => ({
-    "&:hover": { backgroundColor: darken(theme.palette.primary.main, 0.5) },
-    color: theme.palette.primary.main
-  })
-);
 
 const Bar = styled("div")({
   width: "100%",
@@ -116,7 +90,7 @@ export const CanvasTabs = ({}) => {
             <TabItem
               key={tab.id}
               item={tab}
-              onClick={() => {
+              onSelect={() => {
                 setActiveTab(tab);
               }}
               isSelected={activeTab === tab.id}
@@ -210,13 +184,13 @@ export const CanvasTabs = ({}) => {
 
 interface TabItemProps {
   item: Tab;
-  onClick: () => void;
+  onSelect: () => void;
   onRemove: () => void;
   removable?: boolean;
   isSelected: boolean;
   peerCount: number;
 }
-const TabItem = ({ item, onClick, onRemove, isSelected, peerCount = 2, removable }: TabItemProps) => {
+const TabItem = ({ item, onRemove, isSelected, peerCount = 2, removable, onSelect }: TabItemProps) => {
   const [editing, setEditing] = useState(false);
   const renameTab = useProgrammingStore((state:ProgrammingState) => state.renameTab);
   const setTabVisibility = useProgrammingStore(
@@ -226,41 +200,16 @@ const TabItem = ({ item, onClick, onRemove, isSelected, peerCount = 2, removable
   const theme: Theme = useTheme();
 
   const TABVARIANTS = {
-    inactiveFocused: {
-      // backgroundColor: theme.palette.mode === 'dark' ? lighten(theme.palette.background.paper, 0.3) : darken(theme.palette.background.paper, 0.3),
-      // border: "1px solid #444",
-      // boxShadow: "inset 0px 0px 0px 2px #444",
-      flex: 1,
-      transition: {
-        type: "tween",
-        duration: 0.4,
-      },
-    },
     inactive: {
-      // backgroundColor: "#333",
-      // border: "1px solid #333",
-      // boxShadow: "inset 0px 0px 0px 2px #333",
       flex: 1,
-      transition: {
-        type: "tween",
-        duration: 0.4,
-      },
-    },
-    activeFocused: {
-      // backgroundColor: theme.palette.mode === 'dark' ? lighten(theme.palette.background.paper, 0.3) : darken(theme.palette.background.paper, 0.3),
-      // border: "1px solid lightblue",
-      boxShadow: `0px 0px 0px 2px ${theme.palette.primary.main}`,
-      flex: peerCount,
       transition: {
         type: "tween",
         duration: 0.4,
       },
     },
     active: {
-      // backgroundColor: theme.palette.mode === 'dark' ? lighten(theme.palette.background.paper, 0.3) : darken(theme.palette.background.paper, 0.3),
-      // border: "1px solid cyan",
       boxShadow: `0px 0px 0px 2px ${theme.palette.primary.main}`,
-      flex: peerCount,
+      flex: peerCount + 1,
       transition: {
         type: "tween",
         duration: 0.4,
@@ -268,7 +217,9 @@ const TabItem = ({ item, onClick, onRemove, isSelected, peerCount = 2, removable
     },
   };
 
-  // console.log("tab item", item)
+  useEffect(()=>{
+    setEditing(isSelected);
+  },[isSelected])
 
   return (
     <ClickAwayListener onClickAway={() => setEditing(false)}>
@@ -276,29 +227,28 @@ const TabItem = ({ item, onClick, onRemove, isSelected, peerCount = 2, removable
         value={item}
         id={item.id}
         dragListener={!editing}
-        onClick={onClick}
+        onClick={onSelect}
         onDoubleClick={() => setEditing(true)}
-        // initial={{ opacity: 0 }}
+        // initial={{ opacity: 1 }}
         style={{ borderRadius: 5, marginRight: 5, backgroundColor:'transparent' }}
         animate={
-          isSelected && editing
-            ? "activeFocused"
-            : isSelected && !editing
-            ? "active"
-            : !isSelected && editing
-            ? "inactiveFocused"
-            : "inactive"
+          isSelected ? "active" : "inactive"
         }
         variants={TABVARIANTS}
         exit={{ opacity: 0, y: 0, transition: { duration: 0.3 } }}
-        whileDrag={"activeFocused"}
+        whileDrag="active"
         className={isSelected ? "selected" : ""}
       >
         <TextInput
           value={item.title}
-          hideLabelPrefix={true}
-
+          hideLabelPrefix
           // disabled={!editing}
+
+          onFocus={()=>{
+            onSelect();
+            setEditing(true);
+          }}
+          onBlur={() => setEditing(false)}
           onChange={(e) => renameTab(item.id, e.target.value)}
           extra={
             <NestedDropdown 
