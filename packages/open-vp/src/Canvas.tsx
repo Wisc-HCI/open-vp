@@ -31,6 +31,7 @@ import {
   PropertyType,
   SPAWNER,
   RegionInfo,
+  CommentData,
 } from "@people_and_robots/open-core";
 import { useMemo } from "react";
 import {
@@ -55,7 +56,8 @@ import {
   styled,
   lighten,
   darken,
-  alpha
+  alpha,
+  useTheme
 } from "@mui/material";
 import { debounce } from "lodash";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
@@ -119,6 +121,8 @@ export interface CanvasProps {
   bounds: RectReadOnly;
 }
 export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) => {
+
+  const theme = useTheme();
   const setTabViewport = useProgrammingStore(
     (state: ProgrammingState) => state.setTabViewport
   );
@@ -224,10 +228,10 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
   const edges = useProgrammingStore((state: ProgrammingState) => {
     return Object.values(state.programData)
       .filter(
-        (data: ConnectionData | BlockData) =>
+        (data: ConnectionData | BlockData | CommentData) =>
           data.metaType === MetaType.Connection
       )
-      .map((data: ConnectionData | BlockData) => ({
+      .map((data: ConnectionData | BlockData | CommentData) => ({
         id: data.id,
         source: (data as ConnectionData).parent.id,
         target: (data as ConnectionData).child.id,
@@ -456,17 +460,18 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
                   WebkitBackdropFilter: "blur(10px)",
                   backdropFilter: "blur(10px)",
                   borderRadius: 5,
+                  overflow: 'hidden',
+                  padding: 0,
+                  height: 100
                 }}
-                // style={{ opacity: 0.75, borderRadius: 5, WebkitBackdropFilter: 'blur(10px)', backdropFilter: 'blur(10px)' }}
-                maskColor="#20202070"
+                maskColor={theme.palette.mode === 'dark' ? "#d0d0d070" : "#20202070"}
                 nodeStrokeColor={"transparent"}
                 nodeColor={(n: Node) =>
                   blockSpecQuery(n.data.typeSpec, "color", n.data.metaType) ||
                   "#fff"
                 }
-                nodeBorderRadius={3}
-                zoomable
-                pannable
+                nodeBorderRadius={10}
+                pannable zoomable
               />
               <ResizePanel />
               <Background

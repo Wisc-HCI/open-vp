@@ -63,6 +63,8 @@ const DEFAULT_PROGRAM_SPEC: ProgramSpec = {
   objectTypes: {},
 };
 
+const tab1ID = generateId("tab");
+
 export const ProgrammingSlice = (
   set: (
     partial:
@@ -93,12 +95,12 @@ export const ProgrammingSlice = (
   },
   tabs: [{
     title: "Main",
-    id: generateId("tab"),
+    id: tab1ID,
     visible: true,
     blocks: [],
   }],
   setTabs: (newTabs: Tab[]) => set({ tabs: newTabs }),
-  activeTab: null,
+  activeTab: tab1ID,
   parse: (
     language: string,
     nodeId: undefined | string,

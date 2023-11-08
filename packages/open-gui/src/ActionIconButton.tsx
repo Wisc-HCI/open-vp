@@ -26,12 +26,6 @@ export const IconButton = styled(MuiButton, {
   shouldForwardProp: (prop: string) =>
     !['canToggle', 'toggled'].includes(prop)
 })<IconButtonProps>(({ theme, toggled, size = "medium", canToggle }) => ({
-  // backgroundColor: canToggle && toggled
-  //   ? alpha(theme.palette.primary.main, 0.4)
-  //   : canToggle && !toggled
-  //     ? "transparent"
-  //     : "rgba(100,100,100,0.5)",
-  // color: theme.palette.text.primary,
   backgroundColor: canToggle && toggled
       ? alpha(theme.palette.primary.main, 0.6)
       : canToggle && !toggled

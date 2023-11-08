@@ -2,13 +2,11 @@ import React, {
   useState,
   ReactNode,
   ChangeEventHandler,
-  ReactHTMLElement,
   CSSProperties,
 } from "react";
 // import { Theme } from "@mui/material";
 import { styled, alpha, lighten, darken } from "@mui/material/styles";
 import TextareaAutosize from "react-textarea-autosize";
-import { TextInputWrapper, TextInputExtra } from "./TextInput";
 import { Stack } from "@mui/material";
 
 export interface TextAreaProps {
@@ -149,6 +147,11 @@ const StyledTextArea = styled(TextareaAutosize)(
     minHeight: 35,
   },
   ({ theme }) => ({
+    caretColor: theme.palette.primary.main,
+    "::selection": {
+      color: theme.palette.getContrastText(theme.palette.primary.main),
+      backgroundColor: theme.palette.primary.main
+    },
     color: theme.palette.text.primary,
     textHighlight: theme.palette.primary.main,
   })

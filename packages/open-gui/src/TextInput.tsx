@@ -66,11 +66,10 @@ export const TextInputWrapper = styled("label", {
     background: theme.palette.mode === "light"
       ? alpha(darken(theme.palette.background.paper, 0.4), disabled ? 0.1 : 0.75)
       : alpha(lighten(theme.palette.background.paper, 0.4), disabled ? 0.1 : 0.75),
-    border: "none", //disabled ? `1px solid #24292f30` : `1px solid #24292f50`,
     borderRadius: wrapped
       ? theme.shape.borderRadius * 0.66
       : theme.shape.borderRadius,
-    color: theme.palette.mode === "light" ? alpha("#eee",disabled?0.5:1) : alpha("#111",disabled?0.5:1),
+    color: theme.palette.text.primary,
     boxShadow: focused ? `0 0 0 1px ${theme.palette.primary.main}` : undefined,
     cursor: disabled ? "not-allowed" : "arrow",
     "&:hover": focused
@@ -149,12 +148,17 @@ const TextInputField = styled("input")(
   ({ theme, disabled }) => ({
     color:  disabled ? theme.palette.text.secondary : theme.palette.text.primary,
     cursor: disabled ? "not-allowed" : "arrow",
+    caretColor: theme.palette.primary.main,
+    "::selection": {
+      color: theme.palette.getContrastText(theme.palette.primary.main),
+      backgroundColor: theme.palette.primary.main
+    },
     "&:hover": {
-      color: disabled ? theme.palette.text.secondary : theme.palette.primary.main,
+      color: disabled ? theme.palette.text.secondary : theme.palette.text.primary,
     },
     "&:focus": {
-      // borderColor: theme.palette.primary.main,
-      color: disabled ? theme.palette.text.secondary : theme.palette.primary.main,
+      // borderColor: theme.palette.text.main,
+      color: disabled ? theme.palette.text.secondary : theme.palette.text.primary,
     },
     // firefox
     "&:focus-visible": {

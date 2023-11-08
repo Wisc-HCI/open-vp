@@ -190,7 +190,7 @@ interface TabItemProps {
   isSelected: boolean;
   peerCount: number;
 }
-const TabItem = ({ item, onRemove, isSelected, peerCount = 2, removable, onSelect }: TabItemProps) => {
+const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabItemProps) => {
   const [editing, setEditing] = useState(false);
   const renameTab = useProgrammingStore((state:ProgrammingState) => state.renameTab);
   const setTabVisibility = useProgrammingStore(
