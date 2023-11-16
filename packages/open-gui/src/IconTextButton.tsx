@@ -1,7 +1,8 @@
-import React, { MouseEventHandler, ReactNode} from "react";
+import { MouseEventHandler, ReactNode} from "react";
 import { styled, alpha } from '@mui/material/styles';
 import { Button as MuiButton } from "@mui/material";
 import { Tooltip } from "./Tooltip";
+import { Icon, IconName } from "./Icon";
 
 export interface IconButtonProps {
   // size?: Size;
@@ -64,21 +65,21 @@ export const ToolbarButtonWrapper = styled("span")(({ }) => ({
 
 export interface IconTextButtonProps {
   title?: string;
-  startIcon?: ReactNode;
-  endIcon?: ReactNode;
+  startIcon?: IconName | (() => IconName);
+  endIcon?: IconName | (() => IconName);
   onClick?: MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   placement?: "top" | "bottom" | "left" | "right";
   toggled?: boolean;
   canToggle?: boolean;
   size?: "small" | "medium" | "large";
-  children?: ReactNode
+  children?: string | ReactNode;
 }
 
 export const IconTextButton = ({
   title = "Button",
-  startIcon = null,
-  endIcon = null,
+  startIcon,
+  endIcon,
   onClick = () => { },
   disabled = false,
   placement = "top",
@@ -87,7 +88,11 @@ export const IconTextButton = ({
   children = null,
   size = "medium",
   ...props
-}: IconTextButtonProps) => (
+}: IconTextButtonProps) => {
+  const startIconStr = typeof startIcon === "string" ? startIcon : typeof startIcon === "function" ? startIcon() : undefined as IconName | undefined;
+  const endIconStr = typeof endIcon === "string" ? endIcon : typeof endIcon === "function" ? endIcon() : undefined as IconName | undefined;
+
+  return (
   <Tooltip
     // className="no-outline"
     title={title}
@@ -98,8 +103,8 @@ export const IconTextButton = ({
     <ToolbarButtonWrapper className="no-outline">
       <InnerIconTextButton
         className="no-outline"
-        startIcon={startIcon}
-        endIcon={endIcon}
+        startIcon={startIconStr && <Icon name={startIconStr} size={size==='large' ? 36 : size ==='medium' ? 22 : 16}/>}
+        endIcon={endIconStr && <Icon name={endIconStr} size={size==='large' ? 36 : size ==='medium' ? 22 : 16}/>}
         disabled={disabled}
         aria-label={title}
         onClick={onClick}
@@ -112,4 +117,4 @@ export const IconTextButton = ({
       </InnerIconTextButton>
     </ToolbarButtonWrapper>
   </Tooltip>
-);
+)};

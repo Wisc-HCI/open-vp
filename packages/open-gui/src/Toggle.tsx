@@ -1,7 +1,6 @@
-import React from "react";
 import * as Switch from "@radix-ui/react-switch";
 import { TextInputWrapper, TextInputExtra } from "./TextInput";
-import { styled, alpha, lighten, darken } from "@mui/material/styles";
+import { styled, lighten, darken } from "@mui/material/styles";
 
 export interface ToggleProps {
   value?: boolean;

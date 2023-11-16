@@ -1,21 +1,15 @@
-import React, { useCallback, useState, useRef } from "react";
+import { useCallback, useState } from "react";
 import {
   getSmoothStepPath,
   EdgeLabelRenderer,
   EdgeProps,
   ConnectionLineComponentProps,
-  // getEdgeCenter,
 } from "reactflow";
-// import { useProgrammingStore } from "./ProgrammingContext";
-import { FiTrash2, FiType, FiHash } from "react-icons/fi";
-import styled from "@emotion/styled";
-import { strip } from "number-precision";
 import { motion } from "framer-motion";
-import { Fade, Stack, useTheme } from "@mui/material";
+import { ClickAwayListener, Fade, Stack, useTheme } from "@mui/material";
 import {
   ProgrammingState,
   useProgrammingStore,
-  PropertyType,
   ConnectionData,
   ConnectionType,
 } from "@people_and_robots/open-core";
@@ -24,53 +18,6 @@ import {
   NumberInput,
   TextInput,
 } from "@people_and_robots/open-gui";
-
-const EdgeButton = styled.button({
-  all: "unset",
-  fontFamily: "inherit",
-  userSelect: "none",
-  borderRadius: "100%",
-  height: "23px",
-  width: "23px",
-  display: "inherit",
-  padding: "3px",
-  alignItems: "center",
-  justifyContent: "center",
-  color: "white",
-  cursor: "pointer",
-  // backgroundColor: 'darkgrey',
-  "&:hover": {
-    backgroundColor: "#ffffff22",
-  },
-  "&:focus": {
-    boxShadow: "0 0 0 2px darkgrey",
-  },
-});
-
-const EdgeField = styled.input`
-  border-width: 0;
-  // user-select: none;
-  outline: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  padding: 0 10px;
-  height: 25px;
-  // max-width: 80px;
-  font-size: 12px;
-  line-height: 1;
-  color: white;
-  background-color: #22222299;
-  box-shadow: 0 0 0 1px #222222;
-  &:focus: {
-    box-shadow: 0 0 0 2px #222222;
-  }
-  &::-webkit-inner-spin-button,
-  &::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-`;
 
 const mainVariants = {
   highlighted: { strokeWidth: 30, stroke: "#777" },
@@ -193,68 +140,85 @@ export const CanvasEdge = ({
           animate={isOpen ? "highlighted" : "default"}
         />
         <EdgeLabelRenderer>
-          <Fade in={isOpen}>
-            <div
-              className="nodrag nopan"
-              style={{
-                backgroundColor: "#333",
-                position: "absolute",
-                transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-                borderRadius: 5,
-                borderColor: "white",
-                flexDirection: "row",
-                padding: 5,
-                userSelect: "none",
-                pointerEvents: "all",
-              }}
-            >
+            <Fade in={isOpen}>
               <Stack
+                className="nodrag nopan"
                 direction="row"
                 alignItems="center"
                 onClick={(e) => e.stopPropagation()}
                 gap={1}
+                style={{
+                  // backgroundColor: "#333",
+                  position: "absolute",
+                  transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+                  borderRadius: 5,
+                  // borderColor: "white",
+                  flexDirection: "row",
+                  // padding: 5,
+                  userSelect: "none",
+                  pointerEvents: "all",
+                }}
               >
                 {edge.type === ConnectionType.Number ? (
                   <NumberInput
                     label="Edge"
                     value={Number(edge.value)}
                     onChange={(v) => updateEdgeValue(edge.id, v)}
+                    extra={
+                      <Stack direction="row" gap={1}>
+                        <ActionIconButton
+                          title="Toggle Edge Type"
+                          size="small"
+                          onClick={(e) => {
+                            toggleEdgeMode(edge.id);
+                            e.stopPropagation();
+                          }}
+                          icon="FrameIcon"
+                        />
+                        <ActionIconButton
+                          title="Delete edge"
+                          size="small"
+                          onClick={(e) => {
+                            deleteEdge(edge.id);
+                            e.stopPropagation();
+                          }}
+                          icon="TrashIcon"
+                        />
+                      </Stack>
+                    }
                   />
                 ) : (
                   <TextInput
                     label="Edge"
                     value={edge.value}
                     onChange={(v) => updateEdgeValue(edge.id, v.target.value)}
+                    extra={
+                      <Stack direction="row" gap={1}>
+                        <ActionIconButton
+                          title="Toggle Edge Type"
+                          size="small"
+                          onClick={(e) => {
+                            toggleEdgeMode(edge.id);
+                            e.stopPropagation();
+                          }}
+                          icon="TextIcon"
+                        />
+                        <ActionIconButton
+                          title="Delete edge"
+                          size="small"
+                          onClick={(e) => {
+                            deleteEdge(edge.id);
+                            e.stopPropagation();
+                          }}
+                          icon="TrashIcon"
+                        />
+                      </Stack>
+                    }
                   />
                 )}
-
-                <ActionIconButton
-                  title="Toggle edge type"
-                  size="medium"
-                  onClick={(e) => {
-                    toggleEdgeMode(edge.id);
-                    e.stopPropagation();
-                  }}
-                >
-                  {edge.type === ConnectionType.Number ? (
-                    <FiType />
-                  ) : (
-                    <FiHash />
-                  )}
-                </ActionIconButton>
-                <ActionIconButton
-                  title="Delete edge"
-                  size="medium"
-                  onClick={(e) => {
-                    deleteEdge(edge.id);
-                    e.stopPropagation();
-                  }}
-                >
-                  <FiTrash2 />
-                </ActionIconButton>
               </Stack>
-            </div>
-          </Fade>
+              {/* </div> */}
+            </Fade>
         </EdgeLabelRenderer>
       </g>
     )

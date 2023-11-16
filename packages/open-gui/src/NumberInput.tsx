@@ -1,9 +1,10 @@
-import React, { SyntheticEvent, memo } from "react";
+import { memo } from "react";
 import { NumberSpinner } from "./NumberSpinner";
 import { useNumeric } from "./useNumeric";
 import { TextInput } from "./TextInput";
+import { Stack } from "@mui/material";
 
-interface NumberInputProps {
+export interface NumberInputProps {
   disabled?: boolean,
   readonly?: boolean,
   label?: string,
@@ -15,6 +16,7 @@ interface NumberInputProps {
   value?: number,
   suffix?: string,
   prefix?: string,
+  extra?: React.ReactNode,
   min?: number,
   max?: number, 
   style?: any
@@ -62,13 +64,16 @@ export const NumberInput = memo(
         onDoubleClick={onDoubleClick}
         onBlur={onBlur}
         onFocus={onFocus}
-        extra={<NumberSpinner
+        extra={<Stack direction='row' gap={1} alignItems='center'>
+          <NumberSpinner
           disabled={disabled}
           above={value >= max}
           below={value <= min}
           onClickDown={onStepDown}
           onClickUp={onStepUp}
-        />}
+        />
+        {props.extra}
+          </Stack>}
         style={style}
       />
 

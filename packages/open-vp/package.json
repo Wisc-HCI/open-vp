@@ -1,42 +1,64 @@
 {
   "name": "@people_and_robots/open-vp",
   "version": "2.0.0-pre",
-  "main": "./index.tsx",
-  "types": "./index.tsx",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "license": "MIT",
+  "files": [
+    "dist/**"
+  ],
   "scripts": {
     "lint": "eslint .",
-    "generate:component": "turbo gen react-component"
+    "generate:component": "turbo gen react-component",
+    "build": "tsup src/index.tsx --format esm,cjs --dts --external react --external redux",
+    "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react --external redux",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
-    "@mui/material": "^5.14.0",
-    "@mui/x-tree-view": "^6.0.0-beta.0",
+    "react": "^18.2.0",
+    "@people_and_robots/open-blocks": "*",
+    "@people_and_robots/open-core": "*",
+    "@people_and_robots/open-gui": "*",
     "@visx/responsive": "^3.3.0",
     "framer-motion": "^9.1.6",
     "lodash": "^4.17.21",
     "number-precision": "^1.5.2",
     "rdndmb-html5-to-touch": "^8.0.0",
+    "reactflow": "^11.10.1",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-multi-backend": "^8.0.0",
     "react-icons": "^4.4.0",
     "react-remark": "^2.1.0",
     "react-syntax-highlighter": "^15.5.0",
-    "react-use-measure": "^2.1.1"
+    "react-use-measure": "^2.1.1",
+    "zustand": "^4.4.6",
+    "@mui/material": "^5.14.18",
+    "@mui/system": "^5.14.18"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3"
   },
   "devDependencies": {
-    "@turbo/gen": "^1.10.12",
-    "@types/lodash": "^4.14.199",
-    "@types/node": "^20.5.2",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@types/react-syntax-highlighter": "^15.5.7",
+    "@types/lodash": "^4.14.199",
+    "@types/node": "^20.5.2",
     "@types/uuid": "^9.0.4",
     "eslint-config-custom": "*",
     "react": "^18.2.0",
     "tsconfig": "*",
-    "typescript": "^4.5.2"
+    "tsup": "^7.2.0",
+    "typescript": "^5.2.2",
+    "@emotion/react": "^11.9.3",
+    "@emotion/styled": "^11.9.3",
+    "@types/react-syntax-highlighter": "^15.5.7",
+    "rollup-plugin-import-css": "^3.3.5"
+  },
+  "rollupOptions": {
+    "external": [] 
   }
 }

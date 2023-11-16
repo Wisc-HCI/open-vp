@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from "react";
+import { MouseEventHandler } from "react";
 import { motion } from "framer-motion";
 import SvgIcon from "@mui/material/SvgIcon";
 

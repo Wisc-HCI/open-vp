@@ -3,8 +3,11 @@ import {
   } from "@mui/material";
 
 import { styled } from "@mui/material";
+import { SliderProps as MuiSliderProps } from "@mui/material";
 
-export const VerticalSlider = styled((props) => (
+export type VerticalSliderProps = MuiSliderProps;
+
+export const VerticalSlider = styled((props: MuiSliderProps) => (
     <MuiSlider {...props} orientation="vertical"/>
   ))(
     {

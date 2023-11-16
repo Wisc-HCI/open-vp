@@ -1,11 +1,10 @@
-import React from "react";
 import { Contents } from "./Contents";
 import { DragLayer } from "./DragLayer";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
 import { ReactFlowProvider } from "reactflow";
-import { Theme, ThemeProvider, createTheme } from "@mui/material/styles";
+import { Theme, ThemeProvider } from "@mui/material/styles";
 import {
   ProgrammingStore,
   ProgrammingProvider,

@@ -1,4 +1,4 @@
-import { SyntheticEvent, useState } from "react";
+import { useState } from "react";
 import { isNumber, isNaN } from "lodash";
 import { strip } from "number-precision";
 

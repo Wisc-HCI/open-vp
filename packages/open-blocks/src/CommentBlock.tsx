@@ -1,85 +1,24 @@
-import React, { memo, useState, forwardRef, useCallback, Ref } from "react";
-import { DropZone } from "./components/DropZone";
-import { List } from "./components/List";
-// import {
-//   DATA_TYPES,
-//   TYPES,
-//   SIMPLE_PROPERTY_TYPES,
-//   UNRENDERED_PROPS,
-//   ATTENDED_RENDER_PROPS,
-//   CLIPBOARD_ACTION,
-// } from "../Constants";
-import { FiMoreVertical, FiSquare } from "react-icons/fi";
+import { useState, forwardRef, useCallback, Ref, ChangeEvent, CSSProperties } from "react";
+import { FiMoreVertical } from "react-icons/fi";
 import {
   useProgrammingStore,
-  TypeSpec,
   BlockData,
-  ExecutionState,
-  BlockSpec,
-  ObjectTypeSpec,
-  FunctionTypeSpec,
   ProgrammingState,
   RegionInfo,
-  SPAWNER,
-  CANVAS,
-  OUTSIDE,
-  BlockFieldInfo,
-  SimpleFieldInfo,
   MetaType,
-  ConnectionDirection,
   PropertyType,
-  ObjectData,
-  FunctionCallData,
-  FunctionDeclarationData,
   FieldInfo,
   CommentData,
 } from "@people_and_robots/open-core";
-import { ExtraBar, RightClickMenu } from "./components/extras/ExtraBar";
-import { DebugSection } from "./components/DebugSection";
-import { Block } from "./Block";
-import { pickBy, omitBy, pick, isEqual, update } from "lodash";
-import { ConnectionHandle } from "./components/ConnectionHandle";
-import Menu from "@mui/material/Menu";
-import Typography from "@mui/material/Typography";
-import { Collapse, Box, Stack, Card, alpha, useTheme, Skeleton } from "@mui/material";
+import { useTheme, Skeleton } from "@mui/material";
 import {
-  BlockContainer,
-  CommentContainer,
-  CommentHeader,
-  CommentText,
-  DraggablePaperComponent,
-  FullWidthStack,
-  PropertySection,
+  CommentContainer
 } from "./components/BlockContainers";
-import { BlockHeader } from "./components/BlockHeader";
-import { MinifiedBar } from "./components/MinifiedBar";
-import { SettingsSection } from "./components/SettingsSection";
-import { Doc } from "./components/Doc";
-import { NodeToolbar, Position } from "reactflow";
-import { motion } from "framer-motion";
 import {
   NestedContextMenu,
-  Dialog,
   ActionIconButton,
   TextArea,
 } from "@people_and_robots/open-gui";
-import {
-  MenuData,
-  MenuSection,
-  extrasToDropdown,
-} from "./components/MenuSection";
-import { flattenMenuOnce } from "./util";
-
-const UNRENDERED_PROPS = ["IGNORED", "METADATA"];
-const SIMPLE_PROPERTY_TYPES = [
-  "BOOLEAN",
-  "NUMBER",
-  "STRING",
-  "OPTIONS",
-  "IGNORED",
-  "METADATA",
-  "VECTOR3",
-];
 
 export interface CommentBlockProps {
   data: CommentData;
@@ -89,7 +28,7 @@ export interface CommentBlockProps {
   limitedRender?: boolean;
   copyFn?: () => void;
   cutFn?: () => void;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
 const validateProp = (data: BlockData, fieldInfo: FieldInfo) => {
@@ -109,9 +48,7 @@ export const CommentBlock = forwardRef(
   (
     {
       data,
-      interactionDisabled = false,
       bounded = false,
-      regionInfo,
       limitedRender,
       copyFn = () => {},
       cutFn = () => {},
@@ -139,7 +76,7 @@ export const CommentBlock = forwardRef(
       )
     );
 
-    const onClick = useProgrammingStore((state) => state.onVPEClick);
+    const onClick = useProgrammingStore((state: ProgrammingState) => state.onVPEClick);
 
     const theme = useTheme();
 
@@ -175,7 +112,7 @@ export const CommentBlock = forwardRef(
           focused={isCopying}
           style={style}
         >
-          {limitedRender ? <Skeleton/> : (
+          {limitedRender ? <Skeleton /> : (
             <TextArea
             value={data.text}
             label="#"
@@ -184,7 +121,7 @@ export const CommentBlock = forwardRef(
                 <FiMoreVertical />
               </ActionIconButton>
             }
-            onChange={(event) => updateCommentText(data.id, event.target.value)}
+            onChange={(event: ChangeEvent<HTMLTextAreaElement>) => updateCommentText(data.id, event.target.value)}
           />
           )}
           

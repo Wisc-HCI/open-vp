@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { ProgrammingState, Timer, useProgrammingStore } from "@people_and_robots/open-core";
+import { ProgrammingState, Timer, useProgrammingStore, ExecutionState } from "@people_and_robots/open-core";
 import CircularProgress from "@mui/material/CircularProgress";
 // import { useTheme } from "@mui/material/styles";
 
-export const ProgressBar = ({ progress }) => {
+export const ProgressBar = ({ progress }: {progress: ExecutionState}) => {
   // const theme = useTheme();
   const [progressValue, setProgressValue] = useState(0);
   

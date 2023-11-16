@@ -10,12 +10,18 @@
     "version-packages": "changeset version",
     "release": "turbo run build --filter=docs^... && changeset publish"
   },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
   "devDependencies": {
     "@changesets/cli": "^2.25.2",
+    "@types/lodash": "^4.14.199",
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
-    "tsconfig": "*",
-    "turbo": "latest"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tsconfig": "workspace:*",
+    "turbo": "^1.10.16"
   },
   "packageManager": "npm@8.19.3",
   "workspaces": [

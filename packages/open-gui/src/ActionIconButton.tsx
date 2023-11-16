@@ -1,7 +1,8 @@
-import React, { MouseEventHandler, ReactNode} from "react";
+import { MouseEventHandler } from "react";
 import { styled, alpha } from '@mui/material/styles';
-import { IconButton as MuiIconButton, Button as MuiButton } from "@mui/material";
+import { Button as MuiButton } from "@mui/material";
 import { Tooltip } from "./Tooltip";
+import { Icon, IconName } from "./Icon";
 
 export interface IconButtonProps {
   // size?: Size;
@@ -72,7 +73,7 @@ export interface ActionIconButtonProps {
   toggled?: boolean;
   canToggle?: boolean;
   size?: "small" | "medium" | "large";
-  children?: React.ReactNode
+  icon: IconName | (() => IconName);
 }
 
 export const ActionIconButton = ({
@@ -82,7 +83,7 @@ export const ActionIconButton = ({
   placement = "top",
   toggled = false,
   canToggle = false,
-  children = null,
+  icon = "ValueIcon",
   size = "medium",
   ...props
 }: ActionIconButtonProps) => (
@@ -104,7 +105,7 @@ export const ActionIconButton = ({
         size={size}
         {...props}
       >
-        {children}
+        <Icon name={icon as IconName} size={size==='large' ? 36 : size ==='medium' ? 22 : 16}/>
       </IconButton>
     </ToolbarButtonWrapper>
   </Tooltip>

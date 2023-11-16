@@ -1,4 +1,4 @@
-import { BlockSpec, MetaType, PrimitiveType, TypeSpec, Extra, ExtraType } from '@people_and_robots/open-core';
+import { MetaType, PrimitiveType, TypeSpec, Extra, ExtraType } from '@people_and_robots/open-core';
 import { DropdownExtra } from '@people_and_robots/open-core/src/types';
 import { FiAlertCircle } from 'react-icons/fi';
 
@@ -38,7 +38,7 @@ export function flattenMenuOnce(extras: Extra[]): Extra[] {
         }
         if ((extra as DropdownExtra).label) {
           // console.log('creating label',extra.label)
-          pancaked.push({ label: (extra as DropdownExtra).label, type: ExtraType.Indicator, icon: FiAlertCircle});
+          pancaked.push({ label: (extra as DropdownExtra).label, type: ExtraType.Indicator, icon: "DotIcon"});
         }
         (extra as DropdownExtra).contents.forEach((child) => {
           if (child === ExtraType.Divider) {
@@ -68,7 +68,7 @@ export function flattenMenuOnce(extras: Extra[]): Extra[] {
     }
     // console.log(pancaked)
     if (pancaked.length === 0) {
-      pancaked.push({ label: "No Actions", type: ExtraType.Indicator, icon: FiAlertCircle });
+      pancaked.push({ label: "No Actions", type: ExtraType.Indicator, icon: "DotIcon" });
     }
     return pancaked;
   };

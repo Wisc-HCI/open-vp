@@ -1,15 +1,6 @@
-import React, { useState, forwardRef, useEffect } from "react";
-import { motion, Reorder, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Reorder, AnimatePresence } from "framer-motion";
 import { ProgrammingState, Tab, useProgrammingStore } from "@people_and_robots/open-core";
-import {
-  FiX,
-  FiPlus,
-  FiFolder,
-  FiFile,
-  FiTrash,
-  FiEyeOff,
-  FiMoreHorizontal,
-} from "react-icons/fi";
 import { styled, darken, useTheme, lighten } from "@mui/material/styles";
 import {
   ClickAwayListener,
@@ -106,7 +97,7 @@ export const CanvasTabs = ({}) => {
       <NestedDropdown 
           data={{}}
           label="Edit Tabs"
-          icon={<FiPlus />}
+          icon="PlusIcon"
           inner={[
             { type: "HEADER", label: "Tab Actions" },
             { type: "DIVIDER" },
@@ -114,14 +105,14 @@ export const CanvasTabs = ({}) => {
               type: "ENTRY",
               label: "Add Tab",
               /* @ts-ignore */
-              left: <FiPlus style={{ fontSize: 14}} />,
+              left: "PlusIcon",
               onClick: addTab,
               preventCloseOnClick: true,
             },
             {
               type: "ENTRY",
               label: "Open Existing...",
-              right: <FiFolder style={{ fontSize: 14}} />,
+              right: "CardStackPlusIcon",
               inner: hiddenTabs.length >= 0 ? [
                 { type: "HEADER", label: "Open Existing Tab" },
                 ...hiddenTabs.map((tab: Tab) => (
@@ -129,7 +120,7 @@ export const CanvasTabs = ({}) => {
                     type: "ENTRY",
                     onClick: () => setTabVisibility(tab.id, true),
                     label: tab.title,
-                    left: <FiFile style={{ fontSize: 14}} />,
+                    left: "FileIcon",
                   }
                 )) 
               ]:[ {
@@ -202,6 +193,7 @@ const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabIte
   const TABVARIANTS = {
     inactive: {
       flex: 1,
+      boxShadow: "0px 0px 0px 0px transparent",
       transition: {
         type: "tween",
         duration: 0.4,
@@ -209,12 +201,21 @@ const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabIte
     },
     active: {
       boxShadow: `0px 0px 0px 2px ${theme.palette.primary.main}`,
+      // backgroundColor: theme.palette.mode === "dark" ? lighten(theme.palette.primary.main,0.1) : darken(theme.palette.primary.main,0.1),
       flex: peerCount + 1,
       transition: {
         type: "tween",
         duration: 0.4,
       },
     },
+    initial: {
+      flex: 1,
+      boxShadow: "0px 0px 0px 0px transparent",
+      transition: {
+        type: "tween",
+        duration: 0.4,
+      },
+    }
   };
 
   useEffect(()=>{
@@ -234,6 +235,7 @@ const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabIte
         animate={
           isSelected ? "active" : "inactive"
         }
+        initial="initial"
         variants={TABVARIANTS}
         exit={{ opacity: 0, y: 0, transition: { duration: 0.3 } }}
         whileDrag="active"
@@ -255,14 +257,14 @@ const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabIte
               data={{}}
               label="Edit Tab"
               size="small"
-              icon={<FiX />}
+              icon="Cross2Icon"
               inner={[
                 { type: "HEADER", label: "Tab Actions" },
                 {
                   type: "ENTRY",
                   label: "Hide Tab",
                   /* @ts-ignore */
-                  left: <FiEyeOff />,
+                  left: "EyeNoneIcon",
                   onClick:() => {
                     setTabVisibility(item.id, false);
                   }
@@ -271,25 +273,11 @@ const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabIte
                   type: "ENTRY",
                   label: "Delete Tab",
                   /* @ts-ignore */
-                  left: <FiTrash />,
+                  left: "TrashIcon",
                   onClick:() => {
                     onRemove();
                   }
-                },
-                { type: "DIVIDER" },
-                {
-                  type: "ENTRY",
-                  label: "More...",
-                  inner: [
-                    { type: "HEADER", label: "Inner Menu" },
-                    {
-                      type: "ENTRY",
-                      right: "⇧+⌘+N",
-                      /* @ts-ignore */
-                      label: (d: DataType) => `Piped Name: ${d.name}`,
-                    },
-                  ],
-                },
+                }
               ]}
           />}
           />

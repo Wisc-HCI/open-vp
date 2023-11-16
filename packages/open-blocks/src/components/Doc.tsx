@@ -16,7 +16,6 @@ import {
   Avatar,
   CardHeader,
   CardContent,
-  Button,
   CardActions,
   AlertColor,
 } from "@mui/material";
@@ -38,6 +37,7 @@ import {
   FunctionCallData,
   PropertyType,
   PrimitiveType,
+  ConnectionData,
 } from "@people_and_robots/open-core";
 import { Remark } from "react-remark";
 import {
@@ -519,7 +519,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
 
   const typeInfo: { [key: string]: TypeSpec } = useProgrammingStore(
     (state: ProgrammingState) =>
-      functionTypeSpec(state.programSpec.objectTypes, state.programData)
+      functionTypeSpec(state.programSpec.objectTypes, state.programData as {[key: string]: BlockData | ConnectionData})
   );
 
   const docRef = useRef<HTMLDivElement>(null);

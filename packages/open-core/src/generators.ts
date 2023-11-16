@@ -14,7 +14,7 @@ import {
   PrimitiveType,
   MetaType, 
   PropertyType} from "./constants";
-import { mapValues, pickBy } from "lodash";
+import { mapValues } from "lodash";
 
 export function instanceTemplateFromSpec(
   type: string,

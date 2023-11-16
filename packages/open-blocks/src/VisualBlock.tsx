@@ -1,15 +1,6 @@
-import React, { memo, useState, forwardRef, useCallback, Ref } from "react";
+import { useState, forwardRef, useCallback, Ref, CSSProperties } from "react";
 import { DropZone } from "./components/DropZone";
 import { List } from "./components/List";
-// import {
-//   DATA_TYPES,
-//   TYPES,
-//   SIMPLE_PROPERTY_TYPES,
-//   UNRENDERED_PROPS,
-//   ATTENDED_RENDER_PROPS,
-//   CLIPBOARD_ACTION,
-// } from "../Constants";
-import { FiSquare } from "react-icons/fi";
 import {
   useProgrammingStore,
   TypeSpec,
@@ -33,33 +24,22 @@ import {
   FunctionDeclarationData,
   FieldInfo,
 } from "@people_and_robots/open-core";
-import { ExtraBar, RightClickMenu } from "./components/extras/ExtraBar";
 import { DebugSection } from "./components/DebugSection";
 import { Block } from "./Block";
-import { pickBy, omitBy, pick, isEqual } from "lodash";
+import { pickBy } from "lodash";
 import { ConnectionHandle } from "./components/ConnectionHandle";
-import Menu from "@mui/material/Menu";
 import Typography from "@mui/material/Typography";
-import {
-  Collapse,
-  Box,
-  Stack,
-  Card,
-  alpha,
-  useTheme,
-} from "@mui/material";
+import { Collapse, Box, Stack, useTheme } from "@mui/material";
 import {
   BlockContainer,
-  DraggablePaperComponent,
   FullWidthStack,
   PropertySection,
 } from "./components/BlockContainers";
 import { BlockHeader } from "./components/BlockHeader";
-import { MinifiedBar } from "./components/MinifiedBar";
+// import { MinifiedBar } from "./components/MinifiedBar";
 import { SettingsSection } from "./components/SettingsSection";
 import { Doc } from "./components/Doc";
-import { NodeToolbar, Position } from "reactflow";
-import { motion } from "framer-motion";
+import { Position } from "reactflow";
 import { NestedContextMenu, Dialog } from "@people_and_robots/open-gui";
 import {
   MenuData,
@@ -91,7 +71,7 @@ export interface VisualBlockProps {
   limitedRender?: boolean;
   copyFn?: () => void;
   cutFn?: () => void;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
 const validateProp = (data: BlockData, fieldInfo: FieldInfo) => {
@@ -128,20 +108,19 @@ export const VisualBlock = forwardRef(
     // const fieldInfo = regionInfo.fieldInfo as BlockFieldInfo;
     const onCanvas = regionInfo.parentId === CANVAS;
     const inDrawer = regionInfo.parentId === SPAWNER;
-    const external = regionInfo.parentId === OUTSIDE;
 
     const blockSpec: BlockSpec | undefined =
       data.metaType === MetaType.ObjectInstance
         ? (typeSpec as ObjectTypeSpec).instanceBlock
         : data.metaType === MetaType.ObjectReference
-        ? (typeSpec as ObjectTypeSpec).referenceBlock
-        : data.metaType === MetaType.FunctionDeclaration
-        ? (typeSpec as FunctionTypeSpec).functionBlock
-        : data.metaType === MetaType.FunctionCall
-        ? (typeSpec as FunctionTypeSpec).callBlock
-        : data.metaType === MetaType.Argument
-        ? (typeSpec as ObjectTypeSpec).referenceBlock
-        : undefined;
+          ? (typeSpec as ObjectTypeSpec).referenceBlock
+          : data.metaType === MetaType.FunctionDeclaration
+            ? (typeSpec as FunctionTypeSpec).functionBlock
+            : data.metaType === MetaType.FunctionCall
+              ? (typeSpec as FunctionTypeSpec).callBlock
+              : data.metaType === MetaType.Argument
+                ? (typeSpec as ObjectTypeSpec).referenceBlock
+                : undefined;
 
     if (!blockSpec) {
       throw new Error(
@@ -240,8 +219,17 @@ export const VisualBlock = forwardRef(
             cutFn,
             () => deleteBlock(data, regionInfo.parentId, regionInfo.fieldInfo),
             setIsDebugging,
-            setIsSelected,
-            setDocActive,
+            data.metaType === MetaType.ObjectReference ||
+              data.metaType === MetaType.FunctionCall
+              ? (v: boolean) => {
+                  // console.log(data);
+                  setIsSelected(data.ref, v);
+                }
+              : (v: boolean) => {
+                  // console.log(data);
+                  setIsSelected(data.id, v);
+                },
+            (v: boolean) => setDocActive(data.id, v),
             setIsCollapsed,
             (id: string, type: string) => {},
             {},
@@ -253,8 +241,8 @@ export const VisualBlock = forwardRef(
         <BlockContainer
           // contentEditable
           ref={ref}
-          onBlur={()=>{
-            console.log("blur")
+          onBlur={() => {
+            console.log("blur");
           }}
           aria-labelledby={`${name} (${data.metaType})`}
           onClick={(e) => {
@@ -284,80 +272,6 @@ export const VisualBlock = forwardRef(
           color={blockSpec.color}
           style={style}
         >
-          {/* {!inDrawer && !external && (
-          <NodeToolbar
-            className="nodrag nopan"
-            isVisible={docActive && !limitedRender}
-            position={Position.Right}
-          >
-            <MotionCard
-              variants={{
-                visible: { opacity: 1, x: 0 },
-                hidden: { opacity: 0, x: -10 },
-              }}
-              initial="hidden"
-              animate={docActive && !limitedRender ? "visible" : "hidden"}
-              sx={{
-                backgroundColor: "rgba(0,0,0,0.52)",
-                WebkitBackdropFilter: "blur(15px)",
-                backdropFilter: "blur(15px)",
-              }}
-            >
-              <Doc data={data} typeSpec={typeSpec} />
-            </MotionCard>
-          </NodeToolbar>
-        )} */}
-
-          {/* {!limitedRender && (
-              <FancyMenu
-                key={`${data.id}-contextmenu`}
-                open={contextMenu !== null}
-                onClose={handleContextMenuClose}
-                anchorReference="anchorPosition"
-                anchorPosition={
-                  contextMenu !== null
-                    ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-                    : undefined
-                }
-              >
-                <RightClickMenu
-                  key={`${data.id}-inner-contextmenu`}
-                  fieldInfo={fieldInfo}
-                  parentId={parentId}
-                  copyFn={copyFn}
-                  cutFn={cutFn}
-                  interactionDisabled={interactionDisabled}
-                  data={data}
-                  blockSpec={blockSpec}
-                  isEditing={editing}
-                  isCollapsed={isCollapsed}
-                  isSelected={selected}
-                  isDebugging={isDebugging}
-                  docActive={docActive}
-                  setDocActive={(v) => setDocActive(data.id, v)}
-                  setIsEditing={
-                    data.dataType === DATA_TYPES.REFERENCE ||
-                    data.dataType === DATA_TYPES.CALL
-                      ? (v) => setIsEditing(data.ref, v)
-                      : (v) => setIsEditing(data.id, v)
-                  }
-                  setIsSelected={
-                    data.dataType === DATA_TYPES.REFERENCE ||
-                    data.dataType === DATA_TYPES.CALL
-                      ? (v) => {
-                          // console.log(data);
-                          setIsSelected(data.ref, v);
-                        }
-                      : (v) => {
-                          // console.log(data);
-                          setIsSelected(data.id, v);
-                        }
-                  }
-                  setIsCollapsed={setIsCollapsed}
-                  setIsDebugging={setIsDebugging}
-                />
-              </FancyMenu>
-            )} */}
           {/* The 'Selectable' component just handles the highlighting, but is essentially a div */}
           <Stack
             justifyContent="space-between"
@@ -379,7 +293,7 @@ export const VisualBlock = forwardRef(
                 limitedRender={limitedRender}
                 nameId={refData ? refData.id : data.id}
                 name={name}
-                icon={blockSpec.icon ? blockSpec.icon : FiSquare}
+                icon={blockSpec.icon ? blockSpec.icon : "BoxIcon"}
                 editing={data.editing}
                 setIsEditing={
                   data.metaType === MetaType.ObjectReference ||
@@ -510,15 +424,7 @@ export const VisualBlock = forwardRef(
             // PaperComponent={DraggablePaperComponent}
             // sx={{ marign: 0, backgroundColor: "transparent" }}
           >
-            {/* <MotionCard
-              style={{
-                backgroundColor: alpha(theme.palette.background.paper, 0.5),
-                WebkitBackdropFilter: "blur(15px)",
-                backdropFilter: "blur(15px)",
-              }}
-            > */}
-              <Doc data={data} typeSpec={typeSpec} />
-            {/* </MotionCard> */}
+            <Doc data={data} typeSpec={typeSpec} />
           </Dialog>
 
           {/* If the block is a function instance (the actual function and not a call) then render the spawn area for arguments */}

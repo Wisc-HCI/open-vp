@@ -1,10 +1,8 @@
-import React, { ReactNode, isValidElement } from "react";
+import { ReactNode } from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
-import {
-  FiChevronRight,
-} from "react-icons/fi";
 import { styled, alpha, Theme, keyframes } from "@mui/material";
 import { CONTENT_STYLES, ITEM_STYLES, ITEM_THEMED_STYLES, TRIGGER_THEMED_STYLES, DropdownData, RightSlot, LeftSlot } from "./NestedDropdown";
+import { Icon } from "./Icon";
 
 export const slideUpAndFade = keyframes({
   from: { transform: "translateY(4px)", opacity: 0 },
@@ -117,13 +115,7 @@ function InnerContext<T>({
             ? inner.label
             : "Menu Item"}
           <RightSlot>
-            {isValidElement(inner.right) ? (
-              (inner.right as ReactNode)
-            ) : typeof inner.right == "function" ? (
-              inner.right(data)
-            ) : (
-              <FiChevronRight />
-            )}
+            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right ? inner.right : "ChevronRightIcon"} />
           </RightSlot>
         </ContextMenuSubTrigger>
         <ContextMenu.Portal>
@@ -161,11 +153,7 @@ function InnerContext<T>({
       >
         {inner.left && (
           <LeftSlot>
-            {isValidElement(inner.left)
-              ? (inner.left as ReactNode)
-              : typeof inner.left == "function"
-              ? inner.left(data)
-              : inner.left}
+            <Icon name={typeof inner.left == "function" ? inner.left(data) : inner.left} />
           </LeftSlot>
         )}
         {typeof inner.label == "function"
@@ -175,11 +163,7 @@ function InnerContext<T>({
           : "Menu Item"}
         {inner.right && (
           <RightSlot>
-            {isValidElement(inner.right)
-              ? (inner.right as ReactNode)
-              : typeof inner.right == "function"
-              ? inner.right(data)
-              : inner.right}
+            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right} />
           </RightSlot>
         )}
       </ContextMenuItem>
@@ -187,7 +171,7 @@ function InnerContext<T>({
   }
 }
 
-export function NestedContextMenu<T>(props: NestedContextMenuProps<T>): ReactNode {
+export function NestedContextMenu<T>(props: NestedContextMenuProps<T>) {
   return (
     <ContextMenu.Root>
       <ContextMenuTrigger>

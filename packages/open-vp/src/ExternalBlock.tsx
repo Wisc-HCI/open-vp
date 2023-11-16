@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { ThemeProvider, createTheme, Theme } from "@mui/material";
 import { VisualBlock } from "@people_and_robots/open-blocks";
 import {

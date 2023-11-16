@@ -2,32 +2,34 @@ import { OnConnectStartParams, NodeChange, Viewport, Position } from "reactflow"
 import { Timer } from "./timer";
 import { createProgrammingStore } from "./store";
 import { PrimitiveType, MetaType, ConnectionDirection, ClipboardAction, PropertyType, ConnectionType, DrawerType, ExtraType } from "./constants";
+import type { IconName } from "@people_and_robots/open-gui";
+import { CSSProperties } from "react";
 
 export type FunctionButtonExtra = {
   label: string;
   type: ExtraType.FunctionButton;
-  icon: React.ReactNode;
+  icon: IconName | ((block: BlockData) => IconName);
   onClick: string | ((block: BlockData) => void);
 };
 
 export type DropdownExtra = {
-  label: string;
+  label?: string;
   type: ExtraType.Dropdown;
-  icon: React.ReactNode;
+  icon?: IconName | ((block: BlockData) => IconName);
   contents: Extra[];
 };
 
 export type AddArgumentExtra = {
   label: string;
   type: ExtraType.AddArgument;
-  icon: React.ReactNode;
+  icon: IconName | ((block: BlockData) => IconName);
   argumentType: string;
 };
 
 export type AddArgumentGroupExtra = {
   label: string;
   type: ExtraType.AddArgumentGroup;
-  icon: React.ReactNode;
+  icon: IconName | ((block: BlockData) => IconName);
   allowed: string[];
 };
 
@@ -37,8 +39,8 @@ export type IndicatorExtra = {
   icon:
     | null
     | undefined
-    | React.ReactNode
-    | ((block: BlockData) => React.ReactNode);
+    | IconName 
+    | ((block: BlockData) => IconName);
 };
 
 export type Extra =
@@ -154,8 +156,8 @@ export type BlockData =
 export interface BlockSpec {
   onCanvas: boolean;
   color: string;
-  icon: any;
-  extras: any[];
+  icon: IconName;
+  extras: Extra[];
   connections?: {
     [key in Position]? : {
       direction: ConnectionDirection,
@@ -164,15 +166,7 @@ export interface BlockSpec {
   }
   hideNewPrefix?: boolean;
   minified?: boolean;
-  style?: {
-    [key: string]:
-      | number
-      | string
-      | boolean
-      | undefined
-      | null
-      | ((data: BlockData) => number | string | boolean | undefined | null);
-  };
+  style?: CSSProperties;
 }
 
 export interface NumberConnectionData {
@@ -311,7 +305,7 @@ export type TypeSpec = ObjectTypeSpec | FunctionTypeSpec;
 export interface ObjectDrawerSpec {
   type: DrawerType.Multiple,
   title: string;
-  icon: any;
+  icon: IconName;
   objectTypes: string[];
   metaType: MetaType.ObjectInstance | MetaType.FunctionDeclaration;
 }
@@ -319,7 +313,7 @@ export interface ObjectDrawerSpec {
 export interface ReferenceDrawerSpec {
   type: DrawerType.Singular
   title: string;
-  icon: any;
+  icon: IconName;
   objectType: string;
   metaType: MetaType.ObjectReference | MetaType.FunctionCall;
 }

@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
 import { NestedContextMenu } from "@people_and_robots/open-gui";
-import { FiMoreHorizontal, FiStar } from "react-icons/fi";
+import { FiStar } from "react-icons/fi";
 
 const meta: Meta<typeof NestedContextMenu> = {
   component: NestedContextMenu,
@@ -27,17 +26,17 @@ export const Primary: Story = {
       {...props}
     />
   ),
-  name: "Static Dropdown",
+  name: "Static Context Menu",
   args: {
     data: { name: 'Red Star', color: "red" },
-    children: <div style={{ width: 100, height: 100, backgroundColor: 'lightblue', borderRadius: 3 }} >Left-Click</div>,
+    children: <div style={{ width: 100, height: 100, backgroundColor: 'lightblue', borderRadius: 3, textAlign: 'center' }} >Left-Click Me</div>,
     inner: [
       { type: "HEADER", label: "My Label" },
       {
         type: "ENTRY",
         label: "Toggle Mode",
         /* @ts-ignore */
-        left: (d: DataType) => <FiStar style={{ color: d.color }} />,
+        left: (d: DataType) => "StarIcon",
         onClick: () => {
           alert("Clicked Button")
         },
@@ -45,7 +44,6 @@ export const Primary: Story = {
       },
       {
         type: "ENTRY",
-        right: "⇧+⌘+N",
         /* @ts-ignore */
         label: (d: DataType) => `Piped Name: ${d.name}`,
       },
@@ -57,7 +55,7 @@ export const Primary: Story = {
           { type: "HEADER", label: "Inner Menu" },
           {
             type: "ENTRY",
-            right: "⇧+⌘+N",
+            right: "StarIcon",
             /* @ts-ignore */
             label: (d: DataType) => `Piped Name: ${d.name}`,
           },

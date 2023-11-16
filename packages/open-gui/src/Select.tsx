@@ -1,6 +1,5 @@
-import React from "react";
 import * as RadixSelect from "@radix-ui/react-select";
-import { FiChevronDown, FiChevronUp, FiCheck } from "react-icons/fi";
+import { ChevronDownIcon, ChevronUpIcon, CheckIcon } from "@radix-ui/react-icons";
 import { styled, alpha, lighten, darken } from "@mui/material/styles";
 import {
   CONTENT_STYLES,
@@ -30,13 +29,13 @@ export const Select = ({
       <TextInputExtra side='left'>{label}</TextInputExtra>
       <SelectValue placeholder={options.filter((v)=>(v.value===value))[0]?.label || "Unset"} />
       <SelectIcon className="SelectIcon">
-        <FiChevronDown />
+        <ChevronDownIcon />
       </SelectIcon>
     </SelectTrigger>
     <RadixSelect.Portal>
       <SelectContent position="popper">
         <SelectScrollUpButton>
-          <FiChevronUp />
+          <ChevronUpIcon />
         </SelectScrollUpButton>
         <SelectViewport>
           <RadixSelect.Group>
@@ -52,14 +51,14 @@ export const Select = ({
               >
                 <RadixSelect.ItemText>{option.label}</RadixSelect.ItemText>
                 <SelectItemIndicator>
-                  <FiCheck />
+                  <CheckIcon />
                 </SelectItemIndicator>
               </SelectItem>
             ))}
           </RadixSelect.Group>
         </SelectViewport>
         <SelectScrollDownButton>
-          <FiChevronDown />
+          <ChevronDownIcon />
         </SelectScrollDownButton>
       </SelectContent>
     </RadixSelect.Portal>

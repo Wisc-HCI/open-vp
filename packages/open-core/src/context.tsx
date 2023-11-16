@@ -1,18 +1,14 @@
-"use client"
-
-import { createContext, useContext, ReactNode, useEffect, Context, useRef } from "react";
+import { createContext, useContext, ReactNode, useEffect } from "react";
 import { useStore } from "zustand";
-import { useStoreWithEqualityFn } from "zustand/traditional";
 import { ProgrammingState, ProgrammingStore, DrawerSpec, TypeSpec } from "./types";
-import { DefaultSlice, createProgrammingStore } from "./store";
-import { create } from "lodash";
+import { createProgrammingStore } from "./store";
 
 export const ProgrammingContext = createContext<ProgrammingStore | null>(null);
 
 export function useProgrammingStore(selector: (state: ProgrammingState) => any) {
   const store = useContext(ProgrammingContext);
   if (!store) throw new Error("Missing ProgrammingProvider in the tree");
-  return useStore(store, selector);
+  return useStore(store, selector as (state: unknown) => any);
 }
 
 export interface ProgrammingProviderProps {

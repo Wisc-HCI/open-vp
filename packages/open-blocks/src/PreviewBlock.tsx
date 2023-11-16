@@ -1,5 +1,4 @@
-import React, { memo } from "react";
-import { useCallback } from "react";
+import { memo, CSSProperties } from "react";
 import { VisualBlock } from "./VisualBlock";
 import {
   useProgrammingStore,
@@ -18,10 +17,10 @@ import { CommentBlock } from "./CommentBlock";
 
 export interface PreviewBlockProps {
   id: string;
-  staticData: any;
+  staticData: BlockData | CommentData;
   bounded?: boolean;
   context: any[];
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }
 
 export const PreviewBlock = memo(

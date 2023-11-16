@@ -1,17 +1,11 @@
-import React, { ReactNode, isValidElement } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import {
-  FiMenu,
-  FiChevronRight,
-  FiCheck,
-  FiMoreHorizontal,
-} from "react-icons/fi";
 import { IconButton } from "./ActionIconButton";
-import { styled, darken, lighten, alpha, Theme, keyframes } from "@mui/material";
+import { styled, alpha, Theme, keyframes } from "@mui/material";
+import { Icon, IconName } from "./Icon";
 
 export interface DropdownEntry<T> {
-  left?: ReactNode | ((data: T) => ReactNode);
-  right?: ReactNode | ((data: T) => ReactNode);
+  left?: IconName | ((data: T) => IconName);
+  right?: IconName | ((data: T) => IconName);
   label: string | ((data: T) => string);
   onClick?: (data: T, event: MouseEvent) => void;
   inner?: DropdownData<T>[];
@@ -37,7 +31,7 @@ export type DropdownData<T> =
 export interface NestedDropdownProps<T> {
   data: T;
   label?: string | ((data: T) => string);
-  icon?: ReactNode | ((data: T) => ReactNode);
+  icon?: IconName | ((data: T) => IconName);
   size?: "small" | "medium" | "large";
   onClick?: (data: T, event: MouseEvent) => void;
   inner: DropdownData<T>[];
@@ -219,13 +213,7 @@ function InnerDropdown<T>({
             ? inner.label
             : "Menu Item"}
           <RightSlot>
-            {isValidElement(inner.right) ? (
-              (inner.right as ReactNode)
-            ) : typeof inner.right == "function" ? (
-              inner.right(data)
-            ) : (
-              <FiChevronRight />
-            )}
+            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right ? inner.right : "ChevronRightIcon"} />
           </RightSlot>
         </DropdownMenuSubTrigger>
         <DropdownMenu.Portal>
@@ -254,11 +242,7 @@ function InnerDropdown<T>({
       >
         {inner.left && (
           <LeftSlot>
-            {isValidElement(inner.left)
-              ? (inner.left as ReactNode)
-              : typeof inner.left == "function"
-              ? inner.left(data)
-              : inner.left}
+            <Icon name={typeof inner.left == "function" ? inner.left(data) : inner.left} />
           </LeftSlot>
         )}
         {typeof inner.label == "function"
@@ -268,11 +252,7 @@ function InnerDropdown<T>({
           : "Menu Item"}
         {inner.right && (
           <RightSlot>
-            {isValidElement(inner.right)
-              ? (inner.right as ReactNode)
-              : typeof inner.right == "function"
-              ? inner.right(data)
-              : inner.right}
+            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right} />
           </RightSlot>
         )}
       </DropdownMenuItem>
@@ -280,21 +260,13 @@ function InnerDropdown<T>({
   }
 }
 
-export function NestedDropdown<T>(props: NestedDropdownProps<T>): ReactNode {
+export function NestedDropdown<T>(props: NestedDropdownProps<T>) {
   return (
     <DropdownMenu.Root>
       <DropdownMenuTrigger asChild>
         <span>
         <IconButton size={props.size} style={{backgroundColor:'transparent'}}>
-          {isValidElement(props.icon) ? (
-            (props.icon as ReactNode)
-          ) : typeof props.icon == "function" ? (
-            props.icon(props.data)
-          ) : props.inner ? (
-            <FiMenu />
-          ) : (
-            <FiMoreHorizontal />
-          )}
+          <Icon name={typeof props.icon == "function" ? props.icon(props.data) : typeof props.icon === "string" ? props.icon : props.inner ? "HamburgerMenuIcon" : "DotsHorizontalIcon"} />
         </IconButton>
         </span>
       </DropdownMenuTrigger>

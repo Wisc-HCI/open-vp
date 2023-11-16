@@ -1,5 +1,5 @@
-import React, { ReactNode, memo } from "react";
-import { Divider, Skeleton, Stack, Tooltip, lighten } from "@mui/material";
+import { memo } from "react";
+import { Divider, Stack } from "@mui/material";
 import {
   useProgrammingStore,
   BlockSpec,
@@ -10,31 +10,13 @@ import {
   TypeSpec,
   PrimitiveType,
 } from "@people_and_robots/open-core";
-import { FullWidthStack } from "./BlockContainers";
-import { BlockAvatar } from "./BlockAvatar";
 import {
   NestedDropdown,
   DropdownData,
   ActionIconButton,
   DropdownEntry,
 } from "@people_and_robots/open-gui";
-import {
-  FiBook,
-  FiBookOpen,
-  FiChevronDown,
-  FiChevronRight,
-  FiCopy,
-  FiEye,
-  FiEyeOff,
-  FiMoreHorizontal,
-  FiScissors,
-  FiSquare,
-  FiTrash2,
-  FiZap,
-  FiZapOff,
-} from "react-icons/fi";
 import { pickBy } from "lodash";
-import { ExpandCarrot } from "./ExpandCarrot";
 
 export interface MenuSectionProps {
   data: BlockData;
@@ -92,12 +74,12 @@ export const MenuSection = memo(
       return null;
     }
 
-    let usedExtras: Extra[] = inDrawer
+    let usedExtras: Extra[] = inDrawer && blockSpec.extras.length > 1
       ? [
           {
             label: "Actions",
-            type: "DROPDOWN",
-            icon: FiMoreHorizontal,
+            type: ExtraType.Dropdown,
+            icon: "DotsHorizontalIcon",
             contents: blockSpec.extras,
           },
         ]
@@ -144,10 +126,8 @@ export const MenuSection = memo(
               onClick={(e: MouseEvent) =>
                 dropdown.onClick ? dropdown.onClick(menuData,e) : () => {}
               }
-            >
-              {/* @ts-ignore */}
-              {typeof dropdown.left === "function" ? dropdown.left(menuData) : dropdown.left}
-            </ActionIconButton>
+              icon={typeof dropdown.left === "function" ? dropdown.left(menuData) : typeof dropdown.left === "string" ? dropdown.left : "SquareIcon"}
+            />
           ) : (
             <Divider key={i} />
           );
@@ -178,7 +158,7 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: "Delete",
-        left: <FiTrash2/>,
+        left: "TrashIcon",
         onClick: deleteFn,
         disabled: interactionDisabled,
       } as DropdownEntry<MenuData & BlockData>;
@@ -186,7 +166,7 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: "Copy",
-        left: <FiCopy />,
+        left: "CopyIcon",
         onClick: copyFn,
         disabled: interactionDisabled,
       } as DropdownData<MenuData & BlockData>;
@@ -194,17 +174,18 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: "Cut",
-        left: <FiScissors />,
+        left: "ScissorsIcon",
         onClick: cutFn,
         disabled: interactionDisabled,
       } as DropdownData<MenuData & BlockData>;
     } else if (extra === ExtraType.DebugToggle) {
       return {
         type: "ENTRY",
+        preventCloseOnClick: true,
         label: (data: MenuData & BlockData) =>
           data.isDebugging ? "Stop Debugging" : "Debug",
         left: (data: MenuData & BlockData) =>
-          data.isDebugging ? <FiZapOff /> : <FiZap />,
+          data.isDebugging ? "MinusCircledIcon" : "QuestionMarkCircledIcon",
         onClick: (data: MenuData & BlockData) => {
           setDebugging(!data.isDebugging);
         },
@@ -212,10 +193,11 @@ export function extrasToDropdown(
     } else if (extra === ExtraType.SelectionToggle) {
       return {
         type: "ENTRY",
+        preventCloseOnClick: true,
         label: (data: MenuData & BlockData) =>
           data.isSelected ? "Deselect" : "Select",
         left: (data: MenuData & BlockData) =>
-          data.isSelected ? <FiEyeOff /> : <FiEye />,
+          data.isSelected ? "StarIcon" : "StarFilledIcon",
         onClick: (data: MenuData & BlockData) => {
           setSelected(!data.isSelected);
         },
@@ -226,7 +208,7 @@ export function extrasToDropdown(
         label: (data: MenuData & BlockData) =>
           data.docActive ? "Close Doc" : "Open Doc",
         left: (data: MenuData & BlockData) =>
-          data.docActive ? <FiBook /> : <FiBookOpen />,
+          data.docActive ? "MinusCircledIcon" : "InfoCircledIcon",
         onClick: (data: MenuData & BlockData) => {
           setDocActive(!data.docActive);
         },
@@ -234,12 +216,20 @@ export function extrasToDropdown(
     } else if (extra === ExtraType.CollapseToggle) {
       return {
         type: "ENTRY",
+        preventCloseOnClick: true,
         label: (data: MenuData & BlockData) =>
           data.isCollapsed ? "Expand" : "Collapse",
-        left: (data: MenuData & BlockData) => (data.isCollapsed ? <FiChevronRight/> : <FiChevronDown/>),
+        left: (data: MenuData & BlockData) => (data.isCollapsed ? "ExitFullScreenIcon" : "EnterFullScreenIcon"),
         onClick: (data: MenuData & BlockData) => {
           setCollapsed(!data.isCollapsed);
         },
+      } as DropdownData<MenuData & BlockData>;
+    } else if (extra.type === ExtraType.Indicator) {
+      return {
+        type: "ENTRY",
+        label: extra.label,
+        left: extra.icon,
+        disabled: true,
       } as DropdownData<MenuData & BlockData>;
     } else if (extra.type === ExtraType.FunctionButton) {
       const onClick =
@@ -259,7 +249,7 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: extra.label,
-        left: extra.icon,
+        left: extra.icon || "DotsHorizontalIcon",
         inner: extrasToDropdown(
           extra.contents,
           copyFn,
@@ -305,8 +295,9 @@ export function extrasToDropdown(
     } else {
       return {
         type: "ENTRY",
-        label: extra.label,
-        left: extra.icon,
+        label: "None",
+        left: "BoxIcon",
+        disabled: true,
       } as DropdownData<MenuData & BlockData>;
     }
   });
@@ -327,5 +318,5 @@ const getIconFromTypeSpec = (typeSpec: TypeSpec) => {
         } 
     } 
     
-    return FiSquare
+    return "BoxIcon"
 }

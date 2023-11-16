@@ -1,4 +1,3 @@
-import React from 'react';
 import { DropRegion } from "./DropRegion";
 import { RegionInfo } from '@people_and_robots/open-core';
 

@@ -1,6 +1,5 @@
 import { SyntheticEvent } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
 import { NumberInput } from "@people_and_robots/open-gui";
 
 const meta: Meta<typeof NumberInput> = {

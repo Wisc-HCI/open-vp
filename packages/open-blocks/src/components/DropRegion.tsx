@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react";
+import { memo, useCallback, useState } from "react";
 import {
   useProgrammingStore,
   ProgrammingState,
@@ -14,19 +14,12 @@ import {
 import { useDrop } from "react-dnd";
 import { Block } from "../Block";
 import { PreviewBlock } from "../PreviewBlock";
-import { isEqual, intersection, delay } from "lodash";
+import { isEqual, intersection } from "lodash";
 import { motion } from "framer-motion";
-// import { stringEquality } from "../Utility";
-import { shallow } from "zustand/shallow";
 import {
-  Typography,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
+  Typography
 } from "@mui/material";
 import { TypeDescription, ChipMimic } from "./Doc";
-// import { CLIPBOARD_ACTION } from "../Constants";
 import { FiClipboard, FiHash } from "react-icons/fi";
 import { BlockData, BlockFieldInfo } from "@people_and_robots/open-core";
 import { NestedContextMenu, Tooltip } from "@people_and_robots/open-gui";

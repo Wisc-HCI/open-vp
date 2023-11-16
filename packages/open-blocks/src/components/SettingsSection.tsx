@@ -1,13 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   CardHeader,
-  IconButton,
   Collapse,
   Stack,
   Typography,
-  Switch,
-  Box,
-  MenuItem,
+  Box
 } from "@mui/material";
 import { SettingsContainer } from "./BlockContainers";
 import { ExpandCarrot } from "./ExpandCarrot";
@@ -59,9 +56,8 @@ export const SettingsSection = ({
                     e.stopPropagation();
                   }
             }
-          >
-            <ExpandCarrot expanded={!collapsed} onClick={()=>{}}/>
-          </ActionIconButton>
+            icon={collapsed ? "ChevronRightIcon" : "ChevronDownIcon"}
+          />
         }
       />
       <Collapse in={!collapsed} orientation="vertical">

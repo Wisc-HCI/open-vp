@@ -3,10 +3,6 @@ import { Preview, StoryFn } from "@storybook/react";
 import { ThemeProvider, createTheme, CssBaseline, styled } from "@mui/material";
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { prTheme } from "./manager";
-import React from "react";
-import { DocsContainer, Canvas } from '@storybook/blocks';
-import { ensure } from "@storybook/theming";
-
 
 const darkBlueTheme = createTheme({
   palette: { mode: "dark", primary: { main: "#4489ea" } },
@@ -33,16 +29,13 @@ const lightPurpleTheme = createTheme({
   palette: { mode: "light", primary: { main: "#a444ea" } },
 });
 
-const ThemedCanvas = styled(Canvas)({},({theme})=>({backgroundColor: 'white'}));
-
 const preview: Preview = {
   parameters: {
     backgrounds: { disable: true },
     layout: "centered",
     docs: { 
       toc: true,
-      theme: prTheme,
-      canvas: ThemedCanvas
+      theme: prTheme
     },
   },
   decorators: [

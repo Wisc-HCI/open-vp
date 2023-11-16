@@ -1,8 +1,6 @@
-import React from "react";
 import { useDragLayer } from "react-dnd";
 import { VisualBlock } from "@people_and_robots/open-blocks";
-import { useViewport } from "reactflow";
-import useMeasure, { RectReadOnly } from "react-use-measure";
+import { RectReadOnly } from "react-use-measure";
 import { CommentBlock } from "@people_and_robots/open-blocks/src/CommentBlock";
 import { MetaType } from "@people_and_robots/open-core";
 

@@ -1,7 +1,6 @@
-import React, { SyntheticEvent } from "react";
+import { SyntheticEvent } from "react";
 import styled from "@emotion/styled";
-import { FiChevronUp, FiChevronDown } from "react-icons/fi";
-import { Style } from "util";
+import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 
 const SpinnerButton = styled.button(
   {
@@ -31,7 +30,7 @@ const SpinnerButton = styled.button(
   ({disabled}) => ({ opacity: disabled ? 0.5 : 1 })
 );
 
-interface NumberSpinnerProps {
+export interface NumberSpinnerProps {
   onClickUp: (event: SyntheticEvent) => void;
   onClickDown: (event: SyntheticEvent) => void;
   disabled?: boolean;
@@ -66,14 +65,14 @@ export const NumberSpinner = ({
         onClick={onClickUp}
         style={{ borderBottomLeftRadius: 0, borderBottomRightRadius: 0 }}
       >
-        <FiChevronUp />
+        <ChevronUpIcon />
       </SpinnerButton>
       <SpinnerButton
         disabled={disabled || below}
         onClick={onClickDown}
         style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
       >
-        <FiChevronDown />
+        <ChevronDownIcon />
       </SpinnerButton>
     </div>
   );

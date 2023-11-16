@@ -1,27 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Block } from "@people_and_robots/open-blocks";
-import { FiPlus, FiSearch } from "react-icons/fi";
 import { Canvas } from "./Canvas";
 import useMeasure, { RectReadOnly } from "react-use-measure";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-// import IconButton from "@mui/material/IconButton";
 import {
   Stack,
   Box,
   Collapse,
   Card,
-  CardHeader,
-  CardActionArea,
-  Alert,
-  AlertTitle,
   useTheme,
   darken,
   lighten,
   CardContent,
-  CardActions,
-  Icon,
+  CardActions
 } from "@mui/material";
 import { CanvasTabs } from "./CanvasTabs";
 import {
@@ -67,7 +58,6 @@ const SectionStrip = ({
       {/* <Nav gap="xxsmall"> */}
       {drawers.map((drawer: DrawerSpec, drawerIdx: number) => {
         // console.log(drawerIdx);
-        const Icon = drawer.icon;
         return (
           <ActionIconButton
             key={`${drawer.title}-${drawerIdx}-drawer-tt`}
@@ -79,9 +69,8 @@ const SectionStrip = ({
               setSearchTerm("");
               setActiveDrawer(activeDrawer === drawerIdx ? null : drawerIdx);
             }}
-          >
-            <Icon />
-          </ActionIconButton>
+            icon={drawer.icon}
+          />
         );
       })}
       {/* </Nav> */}
@@ -160,7 +149,6 @@ const BlockPanel = ({
   const [headerRef, headerBounds] = useMeasure();
 
   const theme = useTheme();
-  console.log("THEME",theme.palette.mode,theme.palette.primary.main)
   
   return (
     <Stack
@@ -204,9 +192,8 @@ const BlockPanel = ({
                 placement="bottom"
                 title={`Add ${objectTypeInfo.name}`}
                 onClick={() => addInstance(drawers[activeDrawer].objectType)}
-              >
-                <FiPlus />
-              </ActionIconButton>
+                icon="PlusIcon"
+              />
             )}
         </Stack>
         <div>
@@ -357,7 +344,7 @@ export const Contents = ({
                 Create or open a tab to begin
               </CardContent>
               <CardActions>
-                <IconTextButton title="Create Tab" startIcon={<FiPlus/>} onClick={addTab}>Create Tab</IconTextButton>
+                <IconTextButton title="Create Tab" startIcon="PlusIcon" onClick={addTab}>Create Tab</IconTextButton>
               </CardActions>
             </Card>
           </Backdrop>

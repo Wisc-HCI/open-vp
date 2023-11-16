@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
-import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
-import { ActionIconButton } from "@people_and_robots/open-gui";
+import { ActionIconButton, type IconName } from "@people_and_robots/open-gui";
 import { FiMoreHorizontal, FiPlay } from "react-icons/fi";
 
 const meta: Meta<typeof ActionIconButton> = {
@@ -24,7 +22,7 @@ export const Primary: Story = {
       {...props}
     />
   ),
-  name: "Text Button",
+  name: "Add Button",
   args: {
     title: "Button Title",
     onClick: () => alert("Button Was Clicked"),
@@ -33,25 +31,7 @@ export const Primary: Story = {
     toggled: false,
     canToggle: false,
     size: 'small',
-    children: "Button Contents"
-  },
-};
-
-export const Secondary: Story = {
-  render: (props) => (
-    <ActionIconButton
-      {...props}
-    />
-  ),
-  name: "Icon Button",
-  args: {
-    title: "Button Title",
-    onClick: () => alert("Button Was Clicked"),
-    disabled: false,
-    placement: 'bottom',
-    toggled: false,
-    canToggle: false,
-    children: <FiMoreHorizontal />
+    icon: "CheckCircledIcon" as IconName
   },
 };
 
@@ -69,6 +49,6 @@ export const Toggle: Story = {
     placement: 'bottom',
     toggled: false,
     canToggle: true,
-    children: <FiPlay />
+    icon: "CheckCircledIcon" as IconName
   },
 };

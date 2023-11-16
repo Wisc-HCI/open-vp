@@ -1,29 +1,10 @@
-import React, {
+import {
   useState,
   ReactNode,
   ChangeEventHandler,
-  ReactHTMLElement,
   CSSProperties,
 } from "react";
-// import { Theme } from "@mui/material";
 import { styled, alpha, lighten, darken } from "@mui/material/styles";
-// import { TextField as MuiTextField } from "@mui/material";
-// export interface TextFieldProps {
-//   active?: boolean;
-//   editing?: boolean;
-// }
-
-// export const TextField = styled(MuiTextField, {
-//   shouldForwardProp: (prop: string) => !["active", "editing"].includes(prop),
-// })<TextFieldProps>(
-//   { color: "white", "& .MuiInputBase-input": { borderRadius: 4 } },
-//   ({ active, editing, theme }) => ({
-//     "& .MuiInputBase-input": {
-//       backgroundColor: active ? alpha(theme.palette.primary.main, 0.5) : "#22222299",
-//       userSelect: editing ? null : "none",
-//     },
-//   })
-// );
 
 export interface TextInputProps {
   wrapped?: boolean;

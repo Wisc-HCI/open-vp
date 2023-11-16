@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode, CSSProperties } from 'react';
 import * as RadixTooltip from '@radix-ui/react-tooltip';
 import { styled, alpha, darken, lighten, keyframes } from '@mui/material';
 
@@ -22,7 +22,7 @@ const slideLeftAndFade = keyframes({
     'to': { transform: 'translateX(0)', opacity: 1 },
 });
 
-const TooltipContent = styled(RadixTooltip.Content)({
+const TooltipContent = styled(RadixTooltip.Content,{shouldForwardProp: (prop: string)=>!["bgOverride"].includes(prop)})<{bgOverride?: string}>({
     padding: '5px 10px',
     fontSize: 12,
     lineHeight: '1.5',
@@ -30,7 +30,7 @@ const TooltipContent = styled(RadixTooltip.Content)({
     willChange: 'transform, opacity',
     boxShadow: '#00000050 0px 10px 38px -10px, #00000050 0px 10px 20px -15px',
     zIndex: 1000
-}, ({theme})=>({
+}, ({theme, bgOverride})=>({
     "&[data-state='delayed-open'][data-side='top']": {
       animation: `${slideUpAndFade} 500ms ${theme.transitions.easing.easeInOut}`,
     },
@@ -45,15 +45,15 @@ const TooltipContent = styled(RadixTooltip.Content)({
     },
     
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: theme.palette.mode === 'light' ? alpha(darken(theme.palette.background.paper, 0.3),0.75) : alpha(lighten(theme.palette.background.paper, 0.3),0.75),
+    backgroundColor: bgOverride ? bgOverride : theme.palette.mode === 'light' ? alpha(darken(theme.palette.background.paper, 0.3),0.75) : alpha(lighten(theme.palette.background.paper, 0.3),0.75),
     backdropFilter: 'blur(5px)',
     WebkitBackdropFilter: 'blur(5px)',
 }))
 
-const TooltipArrow = styled(RadixTooltip.Arrow)({
+const TooltipArrow = styled(RadixTooltip.Arrow,{shouldForwardProp: (prop: string)=>!["bgOverride"].includes(prop)})<{bgOverride?: string}>({
 
-}, ({theme})=>({
-    fill: theme.palette.mode === 'light' ? alpha(darken(theme.palette.background.paper, 0.3),0.75) : alpha(lighten(theme.palette.background.paper, 0.3),0.75),
+}, ({theme, bgOverride})=>({
+    fill: bgOverride ? bgOverride : theme.palette.mode === 'light' ? alpha(darken(theme.palette.background.paper, 0.3),0.75) : alpha(lighten(theme.palette.background.paper, 0.3),0.75),
 }))
 
 export interface TooltipProps {
@@ -61,9 +61,10 @@ export interface TooltipProps {
     children: ReactNode;
     placement?: 'top' | 'right' | 'bottom' | 'left';
     parent?: HTMLElement;
+    bgOverride?: string;
 }
 
-export const Tooltip = ({title, children, placement, parent}: TooltipProps) => {
+export const Tooltip = ({title, children, placement, parent, bgOverride}: TooltipProps) => {
   return (
     <RadixTooltip.Provider>
       <RadixTooltip.Root>
@@ -71,9 +72,9 @@ export const Tooltip = ({title, children, placement, parent}: TooltipProps) => {
           {children}
         </RadixTooltip.Trigger>
         <RadixTooltip.Portal container={parent}>
-          <TooltipContent sideOffset={5} side={placement}>
+          <TooltipContent sideOffset={5} side={placement} bgOverride={bgOverride}>
             {title}
-            <TooltipArrow />
+            <TooltipArrow bgOverride={bgOverride}/>
           </TooltipContent>
         </RadixTooltip.Portal>
       </RadixTooltip.Root>

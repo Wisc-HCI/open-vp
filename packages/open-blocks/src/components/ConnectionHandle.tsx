@@ -1,4 +1,3 @@
-import React from "react";
 import {
   useProgrammingStore,
   ConnectionDirection,
@@ -8,15 +7,14 @@ import {
 } from "@people_and_robots/open-core";
 import { styled } from "@mui/material";
 import { Handle, Position, HandleType, OnConnectStartParams } from "reactflow";
-import { shallow } from "zustand/shallow";
 
 interface StyledHandleProps {
   focused: boolean;
 }
-const StyledHandle = styled(Handle)<StyledHandleProps>(
+const StyledHandle = styled(Handle,{shouldForwardProp:(prop:string)=>!["focused"].includes(prop)})<StyledHandleProps>(
   ({ theme, focused }) => ({
     boxShadow: focused
-      ? `0pt 0pt 3pt 1pt ${theme.palette.primary.main}`
+      ? `0pt 0pt 0pt 2pt ${theme.palette.primary.main}`
       : undefined,
     backgroundColor: focused ? theme.palette.primary.main : "grey",
     opacity: focused ? 1 : 0.5,

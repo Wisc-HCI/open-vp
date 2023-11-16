@@ -1,19 +1,12 @@
-import React, { memo, useState, useEffect, useCallback } from "react";
+import { memo, useEffect, useCallback } from "react";
 import ReactFlow, {
   Background,
-  Controls,
   MiniMap,
   useReactFlow,
-  ControlButton,
-  Panel,
-  useViewport,
   BackgroundVariant,
   NodeProps,
-  EdgeProps,
   Node,
-  OnSelectionChangeParams,
-  NodeChange,
-  NodeSelectionChange
+  NodeChange
 } from "reactflow";
 import { useDrop } from "react-dnd";
 import {
@@ -36,23 +29,12 @@ import {
 import { useMemo } from "react";
 import {
   Block,
-  VisualBlock,
   blockSpecQuery,
 } from "@people_and_robots/open-blocks";
 import { CanvasEdge, DrawingCanvasEdge } from "./CanvasEdge";
-import useMeasure, { RectReadOnly } from "react-use-measure";
-import { FiClipboard, FiPlus, FiMinus, FiMaximize } from "react-icons/fi";
-// import { isEqual, pick } from "lodash";
-// import { FancyMenu, stringEquality, FancyStack, FancyIconButton } from "./Block/Utility";
-// import { shallow } from "zustand/shallow";
-// import { compareBlockData } from "./Block/Utility";
-import "reactflow/dist/style.css";
-// import "./canvas.css";
+import { RectReadOnly } from "react-use-measure";
+import { FiClipboard } from "react-icons/fi";
 import {
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Theme,
   styled,
   lighten,
   darken,
@@ -63,6 +45,8 @@ import { debounce } from "lodash";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import ResizePanel from "./ResizePanel";
 import { NestedContextMenu } from "@people_and_robots/open-gui";
+
+import "reactflow/dist/style.css";
 
 // const typeToBlockField = (dataType) =>
 //   dataType === DATA_TYPES.INSTANCE
@@ -75,15 +59,6 @@ import { NestedContextMenu } from "@people_and_robots/open-gui";
 
 const CanvasNode = memo(
   ({ id }: NodeProps) => {
-    // const { progress, ...rest } = data;
-
-    // const copy = useProgrammingStore((state) => state.copy);
-    // const cut = useProgrammingStore((state) => state.cut);
-
-    // const copyFn = () => copy({ data, context: rest.context, onCanvas: true });
-    // const cutFn = () => cut({ data, context: rest.context, onCanvas: true });
-
-    // const {zoom} = useViewport();
 
     return (
       <Block
@@ -99,13 +74,7 @@ const CanvasNode = memo(
           },
         }}
         dragDisabled
-        // typeSpec={rest.typeSpec}
-        // onCanvas
         context={[]}
-        // progress={progress}
-        // copyFn={copyFn}
-        // cutFn={cutFn}
-        // limitedRender={zoom < 0.5}
       />
     );
   }
@@ -127,15 +96,15 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
     (state: ProgrammingState) => state.setTabViewport
   );
   const setClipboardBlock = useProgrammingStore(
-    (state) => state.setClipboardBlock
+    (state: ProgrammingState) => state.setClipboardBlock
   );
 
-  const updateItemSelected = useProgrammingStore((state)=>state.updateItemSelected);
-  const setSelections = useProgrammingStore((state)=>state.setSelections);
+  const updateItemSelected = useProgrammingStore((state: ProgrammingState)=>state.updateItemSelected);
+  const setSelections = useProgrammingStore((state: ProgrammingState)=>state.setSelections);
 
   const drawerOpen = useProgrammingStore((state:ProgrammingState)=>state.activeDrawer !== null);
 
-  const activeTabData: Tab | null = useProgrammingStore((state) => {
+  const activeTabData: Tab | null = useProgrammingStore((state: ProgrammingState) => {
     let tabData = null;
     state.tabs.some((tab: Tab) => {
       if (tab.id === state.activeTab) {
@@ -148,9 +117,9 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
     return tabData;
   });
   // const setLocked = useProgrammingStore((state) => state.setLocked);
-  const createEdge = useProgrammingStore((state) => state.createEdge);
+  const createEdge = useProgrammingStore((state: ProgrammingState) => state.createEdge);
 
-  const paste = useProgrammingStore((state) => state.paste);
+  const paste = useProgrammingStore((state: ProgrammingState) => state.paste);
 
   // const clipboard = useProgrammingStore((state) => state.clipboard);
   
@@ -164,16 +133,16 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
       ].includes(state.clipboard.action || ClipboardAction.Select)
   );
 
-  const validateEdge = useProgrammingStore((state) => state.validateEdge);
-  const onOffClick = useProgrammingStore((state) => state.onOffVPEClick);
+  const validateEdge = useProgrammingStore((state: ProgrammingState) => state.validateEdge);
+  const onOffClick = useProgrammingStore((state: ProgrammingState) => state.onOffVPEClick);
   const setConnectionInfo = useProgrammingStore(
     (state) => state.setConnectionInfo
   );
-  const getTabViewport = useProgrammingStore((state) => state.getTabViewport);
+  const getTabViewport = useProgrammingStore((state: ProgrammingState) => state.getTabViewport);
 
   const nodes: Node[] = useProgrammingStore(
     useCallback(
-      (state) =>
+      (state: ProgrammingState) =>
         activeTabData?.blocks
           ?.map((blockId: string) => {
             const data: BlockData = state.programData[blockId] as BlockData;
@@ -242,10 +211,10 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
       }));
   });
 
-  const acceptTypes = useProgrammingStore((state) =>
+  const acceptTypes = useProgrammingStore((state: ProgrammingState) =>
     Object.entries(state.programSpec.objectTypes)
       .filter(
-        ([_, objectType]) =>
+        ([_, objectType]: [any, TypeSpec]) =>
           (objectType.primitiveType === PrimitiveType.Object &&
             (objectType.instanceBlock.onCanvas ||
               objectType.referenceBlock.onCanvas)) ||
@@ -267,12 +236,12 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
     },
   }
 
-  const moveNodes = useProgrammingStore((state) => state.moveBlocks);
+  const moveNodes = useProgrammingStore((state: ProgrammingState) => state.moveBlocks);
   const createPlacedNode = useProgrammingStore(
-    (state) => state.createPlacedBlock
+    (state: ProgrammingState) => state.createPlacedBlock
   );
 
-  const { project, fitView, setViewport } = useReactFlow();
+  const { screenToFlowPosition, fitView, setViewport } = useReactFlow();
 
   const drop = useDrop({
     accept: acceptTypes,
@@ -289,7 +258,7 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
         x: drawerOpen ? clientOffset.x - bounds.left - drawerWidth - 50 : clientOffset.x - bounds.left - 50,
         y: clientOffset.y - bounds.top - 50,
       };
-      const position = project(offset);
+      const position = screenToFlowPosition(clientOffset);
       if ((item as ClipboardProps).data) {
         createPlacedNode((item as ClipboardProps).data, position.x, position.y);
       }
@@ -319,28 +288,6 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
     })
   }
 
-  // const [contextMenu, setContextMenu] = useState(null);
-
-  // const handleContextMenu = (event: React.MouseEvent) => {
-  //   event.preventDefault();
-  //   setContextMenu(
-  //     contextMenu === null
-  //       ? {
-  //           mouseX: event.clientX + 2,
-  //           mouseY: event.clientY - 6,
-  //         }
-  //       : // repeated contextmenu when it is already open closes it with Chrome 84 on Ubuntu
-  //         // Other native context menus might behave different.
-  //         // With this behavior we prevent contextmenu from the backdrop to re-locale existing context menus.
-  //         null
-  //   );
-  //   event.stopPropagation();
-  // };
-
-  // const handleContextMenuClose = () => {
-  //   setContextMenu(null);
-  // };
-
   return (
     <Backdrop pastable={onCanvasPastable}>
       <ParentSize>
@@ -351,7 +298,7 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
               {
                 type: "ENTRY",
                 label: "Paste",
-                left: <FiClipboard />,
+                left:"ClipboardIcon",
                 disabled: !onCanvasPastable,
                 onClick: (data: {}, e: MouseEvent) => {
                   const viewport = getTabViewport(activeTabData?.id);
@@ -360,7 +307,7 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
                     x: drawerOpen ? e.clientX - bounds.left - drawerWidth - 50 : e.clientX - bounds.left - 50,
                     y: e.clientY - bounds.top,
                   };
-                  const { x, y } = project(offset);
+                  const { x, y } = screenToFlowPosition({x: e.clientX, y: e.clientY});
                   const coordinates = { x: x - 100 / zoom, y: y - 100 / zoom };
                   const clipboardProps: ClipboardProps = {
                     coordinates, 
@@ -371,38 +318,14 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
                   e.stopPropagation();
                 },
               },
-              // <MenuItem
-              //   onClick={(e) => {
-              //     // const { zoom } = getViewport();
-              //     const viewport = getTabViewport(activeTabData?.id);
-              //     const zoom = viewport?.zoom || 1;
-              //     const { x, y } = project({
-              //       x: e.clientX,
-              //       y: e.clientY,
-              //     });
-              //     const coordinates = { x: x - 100 / zoom, y: y - 100 / zoom };
-              //     paste({ coordinates, tab: activeTabData?.id });
-              //     handleContextMenuClose();
-              //     e.stopPropagation();
-              //   }}
-              // >
-              //   <ListItemIcon>
-              //     <FiClipboard />
-              //   </ListItemIcon>
-              //   <ListItemText primary="Paste"></ListItemText>
-              // </MenuItem>
             ]}
           >
             <ReactFlow
               ref={drop}
               maxZoom={1}
-              // height={height}
               style={{ height, width }}
-              // width={width}
               minZoom={0.25}
               nodesConnectable
-              // onNodesChange={onNodesChange}
-              // defaultViewport={activeTabData?.viewport}
               elevateNodesOnSelect
               onDoubleClick={(e) => {
                 setClipboardBlock(null);
@@ -481,37 +404,6 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
                 size={2}
               />
             </ReactFlow>
-            {/* <FancyMenu
-              open={onCanvasPastable && contextMenu !== null}
-              onClose={handleContextMenuClose}
-              anchorReference="anchorPosition"
-              anchorPosition={
-                contextMenu !== null
-                  ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-                  : undefined
-              }
-            >
-              <MenuItem
-                onClick={(e) => {
-                  // const { zoom } = getViewport();
-                  const viewport = getTabViewport(activeTabData?.id);
-                  const zoom = viewport?.zoom || 1;
-                  const { x, y } = project({
-                    x: e.clientX,
-                    y: e.clientY,
-                  });
-                  const coordinates = { x: x - 100 / zoom, y: y - 100 / zoom };
-                  paste({ coordinates, tab: activeTabData?.id });
-                  handleContextMenuClose();
-                  e.stopPropagation();
-                }}
-              >
-                <ListItemIcon>
-                  <FiClipboard />
-                </ListItemIcon>
-                <ListItemText primary="Paste"></ListItemText>
-              </MenuItem>
-            </FancyMenu> */}
           </NestedContextMenu>
         )}
       </ParentSize>

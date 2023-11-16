@@ -1,9 +1,8 @@
-import React from "react";
 import { styled } from "@mui/material";
 import { Box } from "@mui/material";
 import { TreeView as MuiTreeView } from "@mui/x-tree-view/TreeView";
 import { TreeItem, treeItemClasses } from "@mui/x-tree-view/TreeItem";
-import { FiChevronDown, FiChevronRight } from "react-icons/fi";
+import { ChevronDownIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.text.secondary,
@@ -116,6 +115,18 @@ const DataNode = ({ dataKey, data }: DataNodeProps) => {
         }
       />
     );
+  } else {
+    return (
+      <StyledTreeItem
+        key={dataKey}
+        nodeId={dataKey}
+        label={
+          <span>
+            {dataKey}: <span className="label-value">UNKNOWN</span>
+          </span>
+        }
+      />
+    );
   }
 };
 
@@ -143,8 +154,8 @@ export const TreeView = ({
     <Wrapper onClick={(e) => e.stopPropagation()}>
       <MuiTreeView
         sx={{ flex: 1 }}
-        defaultCollapseIcon={<FiChevronDown />}
-        defaultExpandIcon={<FiChevronRight />}
+        defaultCollapseIcon={<ChevronDownIcon />}
+        defaultExpandIcon={<ChevronRightIcon />}
       >
         {enclose ? (
           <DataNode dataKey="root" data={data} />
