@@ -1,6 +1,6 @@
 {
   "name": "@people_and_robots/open-core",
-  "version": "2.0.0-pre",
+  "version": "2.0.0-pre.0",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -16,7 +16,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@people_and_robots/open-gui":"*",
+    "@people_and_robots/open-gui": "*",
     "immer": "10.0.3",
     "lodash": "^4.17.21",
     "reactflow": "^11.10.1",

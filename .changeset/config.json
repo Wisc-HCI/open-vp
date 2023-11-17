@@ -4,6 +4,7 @@
   "commit": false,
   "fixed": [],
   "linked": [],
+  "baseBranch": "main",
   "access": "public",
   "updateInternalDependencies": "patch",
   "ignore": ["@people_and_robots/open-vp-docs"]
