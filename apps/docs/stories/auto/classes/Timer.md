@@ -59,7 +59,7 @@ A timer utility class.
 
 #### Defined in
 
-[timer.ts:23](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L23)
+[timer.ts:23](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L23)
 
 ## Properties
 
@@ -69,7 +69,7 @@ A timer utility class.
 
 #### Defined in
 
-[timer.ts:7](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L7)
+[timer.ts:7](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L7)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[timer.ts:8](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L8)
+[timer.ts:8](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L8)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[timer.ts:9](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L9)
+[timer.ts:9](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L9)
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 #### Defined in
 
-[timer.ts:12](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L12)
+[timer.ts:12](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L12)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[timer.ts:14](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L14)
+[timer.ts:14](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L14)
 
 ___
 
@@ -127,7 +127,7 @@ ___
 
 #### Defined in
 
-[timer.ts:6](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L6)
+[timer.ts:6](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L6)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[timer.ts:10](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L10)
+[timer.ts:10](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L10)
 
 ___
 
@@ -147,7 +147,7 @@ ___
 
 #### Defined in
 
-[timer.ts:11](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L11)
+[timer.ts:11](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L11)
 
 ___
 
@@ -157,7 +157,7 @@ ___
 
 #### Defined in
 
-[timer.ts:13](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L13)
+[timer.ts:13](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L13)
 
 ## Methods
 
@@ -171,7 +171,7 @@ ___
 
 #### Defined in
 
-[timer.ts:153](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L153)
+[timer.ts:153](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L153)
 
 ___
 
@@ -185,7 +185,7 @@ ___
 
 #### Defined in
 
-[timer.ts:52](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L52)
+[timer.ts:52](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L52)
 
 ___
 
@@ -199,7 +199,7 @@ ___
 
 #### Defined in
 
-[timer.ts:60](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L60)
+[timer.ts:60](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L60)
 
 ___
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[timer.ts:72](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L72)
+[timer.ts:72](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L72)
 
 ___
 
@@ -234,7 +234,7 @@ ___
 
 #### Defined in
 
-[timer.ts:165](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L165)
+[timer.ts:165](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L165)
 
 ___
 
@@ -248,7 +248,7 @@ ___
 
 #### Defined in
 
-[timer.ts:80](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L80)
+[timer.ts:80](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L80)
 
 ___
 
@@ -262,7 +262,7 @@ ___
 
 #### Defined in
 
-[timer.ts:86](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L86)
+[timer.ts:86](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L86)
 
 ___
 
@@ -276,7 +276,7 @@ ___
 
 #### Defined in
 
-[timer.ts:92](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L92)
+[timer.ts:92](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L92)
 
 ___
 
@@ -290,7 +290,7 @@ ___
 
 #### Defined in
 
-[timer.ts:98](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L98)
+[timer.ts:98](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L98)
 
 ___
 
@@ -304,7 +304,7 @@ ___
 
 #### Defined in
 
-[timer.ts:104](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L104)
+[timer.ts:104](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L104)
 
 ___
 
@@ -324,7 +324,7 @@ ___
 
 #### Defined in
 
-[timer.ts:112](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L112)
+[timer.ts:112](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L112)
 
 ___
 
@@ -344,7 +344,7 @@ ___
 
 #### Defined in
 
-[timer.ts:120](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L120)
+[timer.ts:120](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L120)
 
 ___
 
@@ -362,7 +362,7 @@ ___
 
 #### Defined in
 
-[timer.ts:159](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L159)
+[timer.ts:159](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L159)
 
 ___
 
@@ -376,4 +376,4 @@ ___
 
 #### Defined in
 
-[timer.ts:128](https://github.com/Wisc-HCI/open-vp/blob/c25824e2/packages/open-core/src/timer.ts#L128)
+[timer.ts:128](https://github.com/Wisc-HCI/open-vp/blob/7dd5e238/packages/open-core/src/timer.ts#L128)
