@@ -79,7 +79,7 @@ export const MenuSection = memo(
           {
             label: "Actions",
             type: ExtraType.Dropdown,
-            icon: "DotsHorizontalIcon",
+            icon: "MoreHorizRounded",
             contents: blockSpec.extras,
           },
         ]
@@ -126,7 +126,7 @@ export const MenuSection = memo(
               onClick={(e: MouseEvent) =>
                 dropdown.onClick ? dropdown.onClick(menuData,e) : () => {}
               }
-              icon={typeof dropdown.left === "function" ? dropdown.left(menuData) : typeof dropdown.left === "string" ? dropdown.left : "SquareIcon"}
+              icon={typeof dropdown.left === "function" ? dropdown.left(menuData) : typeof dropdown.left === "string" ? dropdown.left : "CheckBoxRounded"}
             />
           ) : (
             <Divider key={i} />
@@ -158,7 +158,7 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: "Delete",
-        left: "TrashIcon",
+        left: "DeleteRounded",
         onClick: deleteFn,
         disabled: interactionDisabled,
       } as DropdownEntry<MenuData & BlockData>;
@@ -166,7 +166,7 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: "Copy",
-        left: "CopyIcon",
+        left: "ContentCopyRounded",
         onClick: copyFn,
         disabled: interactionDisabled,
       } as DropdownData<MenuData & BlockData>;
@@ -174,7 +174,7 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: "Cut",
-        left: "ScissorsIcon",
+        left: "ContentCutRounded",
         onClick: cutFn,
         disabled: interactionDisabled,
       } as DropdownData<MenuData & BlockData>;
@@ -185,7 +185,7 @@ export function extrasToDropdown(
         label: (data: MenuData & BlockData) =>
           data.isDebugging ? "Stop Debugging" : "Debug",
         left: (data: MenuData & BlockData) =>
-          data.isDebugging ? "MinusCircledIcon" : "QuestionMarkCircledIcon",
+          data.isDebugging ? "RemoveCircleOutlineRounded" : "BugReportRounded",
         onClick: (data: MenuData & BlockData) => {
           setDebugging(!data.isDebugging);
         },
@@ -197,7 +197,7 @@ export function extrasToDropdown(
         label: (data: MenuData & BlockData) =>
           data.isSelected ? "Deselect" : "Select",
         left: (data: MenuData & BlockData) =>
-          data.isSelected ? "StarIcon" : "StarFilledIcon",
+          data.isSelected ? "StarOutlineRounded" : "StarRounded",
         onClick: (data: MenuData & BlockData) => {
           setSelected(!data.isSelected);
         },
@@ -208,7 +208,7 @@ export function extrasToDropdown(
         label: (data: MenuData & BlockData) =>
           data.docActive ? "Close Doc" : "Open Doc",
         left: (data: MenuData & BlockData) =>
-          data.docActive ? "MinusCircledIcon" : "InfoCircledIcon",
+          data.docActive ? "RemoveCircleOutlineRounded" : "ImportContactsRounded",
         onClick: (data: MenuData & BlockData) => {
           setDocActive(!data.docActive);
         },
@@ -219,7 +219,7 @@ export function extrasToDropdown(
         preventCloseOnClick: true,
         label: (data: MenuData & BlockData) =>
           data.isCollapsed ? "Expand" : "Collapse",
-        left: (data: MenuData & BlockData) => (data.isCollapsed ? "ExitFullScreenIcon" : "EnterFullScreenIcon"),
+        left: (data: MenuData & BlockData) => (data.isCollapsed ? "FullscreenExitRounded" : "FullscreenRounded"),
         onClick: (data: MenuData & BlockData) => {
           setCollapsed(!data.isCollapsed);
         },
@@ -249,7 +249,7 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: extra.label,
-        left: extra.icon || "DotsHorizontalIcon",
+        left: extra.icon || "MoreHorizRounded",
         inner: extrasToDropdown(
           extra.contents,
           copyFn,
@@ -296,7 +296,7 @@ export function extrasToDropdown(
       return {
         type: "ENTRY",
         label: "None",
-        left: "BoxIcon",
+        left: "CheckBoxRounded",
         disabled: true,
       } as DropdownData<MenuData & BlockData>;
     }

@@ -1,198 +1,205 @@
 import React, { memo } from "react";
-import { SIMPLE_PROPERTY_TYPES, UNRENDERED_PROPS } from "../Constants";
-import { useProgrammingStore } from "../ProgrammingContext";
-import { shallow } from "zustand/shallow";
 import {
-  Box,
-  Tooltip,
+  useProgrammingStore,
+  PropertyType,
+} from "@people_and_robots/open-core";
+import { shallow } from "zustand/shallow";
+import { Box, Stack, Typography, Skeleton, Card } from "@mui/material";
+import {
+  NumberInput,
+  Vector3Input,
+  ActionIconButton,
+  TextInput,
   Select,
-  Switch,
-  TextField,
-  Stack,
-  MenuItem,
-  Typography,
-  Skeleton,
-} from "@mui/material";
-import { NumberInput, Vector3Input } from "../Utility";
+  Toggle,
+  Icon,
+} from "@people_and_robots/open-gui";
 import { DropZone } from "./DropZone";
+import { List } from "./List";
 import { FullWidthStack, PropertySection } from "./BlockContainers";
+import { ProgrammingState } from "@people_and_robots/open-core";
+
+export interface MinifiedBarProps {
+  id: string;
+  propertyInfo: { [key: string]: any };
+  properties: { [key: string]: any };
+  interactionDisabled?: boolean;
+  context?: any;
+  limitedRender?: boolean;
+}
 
 export const MinifiedBar = memo(
   ({
     id,
     propertyInfo,
     properties,
-    canDragBlockRFR,
+    // canDragBlockRFR,
     interactionDisabled,
-    highlightColor,
     context,
     limitedRender,
-  }) => {
+  }: MinifiedBarProps) => {
     const updateItemSimpleProperty = useProgrammingStore(
-      (store) => store.updateItemSimpleProperty,
-      shallow
+      (store: ProgrammingState) => store.updateItemSimpleProperty
     );
 
-    const setLocked = useProgrammingStore((state) => state.setLocked, shallow);
     const propertyLength = Object.keys(propertyInfo).length;
 
     return (
       <FullWidthStack
-        align="center"
-        direction={propertyLength <= 3 ? "row" : "column"}
-        className={canDragBlockRFR ? null : "nodrag"}
+        direction={propertyLength > 1 || interactionDisabled ? "column" : "row"}
+        spacing={0.5}
+        alignItems="stretch"
+        justifyContent="flex-start"
+        style={{ paddingTop: 4 }}
       >
-        {Object.entries(propertyInfo)
-          ?.filter(
-            ([_, fieldInfo]) => !UNRENDERED_PROPS.includes(fieldInfo.type)
-          )
-          .map(([fieldKey, fieldInfo]) => (
-            <PropertySection key={fieldKey}>
-              <Stack
+        {Object.entries(propertyInfo)?.map(([fieldKey, fieldInfo]) => (
+          <Stack direction="column" justifyContent="center">
+            {limitedRender &&
+            Object.keys(PropertyType).includes(fieldInfo.type) ? (
+              <Skeleton
+                variant="rectangular"
+                height="39px"
+                width="100px"
+                sx={{ borderRadius: 1, bgcolor: "#aaa", margin: "3px" }}
+              />
+            ) : fieldInfo.type === PropertyType.Options ? (
+              <Select
                 key={fieldKey}
-                direction="row"
-                justifyContent="space-between"
-                onClick={(e) => e.stopPropagation()}
-                sx={{
-                  alignItems: "center",
-                  justify: "space-between",
-                }}
-              >
-                <Typography color="#eee" style={{ margin: "2px 2px 2px 5px" }}>
-                  {fieldInfo.name}
-                </Typography>
-                {limitedRender &&
-                Object.keys(SIMPLE_PROPERTY_TYPES).includes(fieldInfo.type) ? (
-                  <Skeleton
-                    variant="rectangular"
-                    height="39px"
-                    width="100px"
-                    sx={{ borderRadius: 1, bgcolor: "#aaa", margin: "3px" }}
-                  />
-                ) : fieldInfo.type === SIMPLE_PROPERTY_TYPES.OPTIONS ? (
-                  <Select
-                    key={fieldKey}
-                    disabled={interactionDisabled}
-                    size="small"
-                    color="primary"
-                    value={properties[fieldKey] ? properties[fieldKey] : ""}
-                    sx={{ margin: "3px" }}
-                    onChange={(e) =>
-                      updateItemSimpleProperty(id, fieldKey, e.target.value)
-                    }
-                  >
-                    {fieldInfo.options.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                ) : fieldInfo.type === SIMPLE_PROPERTY_TYPES.BOOLEAN ? (
-                  <Switch
-                    key={fieldKey}
-                    checked={properties[fieldKey]}
-                    onChange={(event) =>
-                      updateItemSimpleProperty(
-                        id,
-                        fieldKey,
-                        event.target.checked
-                      )
-                    }
-                    color="primary"
-                    disabled={interactionDisabled}
-                  />
-                ) : fieldInfo.type === SIMPLE_PROPERTY_TYPES.STRING ? (
-                  <TextField
-                    size="small"
-                    color="primary"
-                    className="nodrag"
-                    margin="none"
-                    key={fieldKey}
-                    // placeholder={fieldInfo.name}
-                    onMouseEnter={(_) => setLocked(true)}
-                    onMouseLeave={(_) => setLocked(false)}
-                    value={properties[fieldKey] ? properties[fieldKey] : ""}
-                    disabled={interactionDisabled}
-                    sx={{ width: 120, padding: "3px" }}
-                    InputProps={{
-                      sx: { color: "white" },
-                    }}
-                    onChange={(e) =>
-                      updateItemSimpleProperty(id, fieldKey, e.target.value)
-                    }
-                  />
-                ) : fieldInfo.type === SIMPLE_PROPERTY_TYPES.NUMBER ? (
-                  <Box key={fieldKey} sx={{ maxWidth: 120, padding: "3px" }}>
-                    <NumberInput
-                      onMouseEnter={(_) => setLocked(true)}
-                      onMouseLeave={(_) => setLocked(false)}
-                      className="nodrag"
+                disabled={interactionDisabled}
+                value={properties[fieldKey] ? properties[fieldKey] : ""}
+                onChange={(v) => updateItemSimpleProperty(id, fieldKey, v)}
+                options={fieldInfo.options}
+              />
+            ) : fieldInfo.type === PropertyType.Boolean ? (
+              <Toggle
+                key={fieldKey}
+                label={fieldInfo.name}
+                value={properties[fieldKey]}
+                defaultValue={false}
+                onChange={(v) => updateItemSimpleProperty(id, fieldKey, v)}
+                disabled={interactionDisabled}
+              />
+            ) : fieldInfo.type === PropertyType.String ? (
+              <Box key={fieldKey} width="xsmall">
+                <TextInput
+                  value={properties[fieldKey] ? properties[fieldKey] : ""}
+                  disabled={interactionDisabled}
+                  onChange={(e) =>
+                    updateItemSimpleProperty(id, fieldKey, e.target.value)
+                  }
+                />
+              </Box>
+            ) : fieldInfo.type === PropertyType.Number ? (
+              <Box key={fieldKey} width="xsmall">
+                <NumberInput
+                  // onMouseEnter={(_) => setLocked(true)}
+                  // onMouseLeave={(_) => setLocked(false)}
+                  label={fieldInfo.name}
+                  min={fieldInfo.min !== undefined ? fieldInfo.min : 0}
+                  max={fieldInfo.max !== undefined ? fieldInfo.max : 10}
+                  // style={{ width: 105 }}
+                  step={fieldInfo.step}
+                  suffix={fieldInfo.units}
+                  value={properties[fieldKey]}
+                  disabled={interactionDisabled}
+                  onChange={(value) => {
+                    console.log(value);
+                    updateItemSimpleProperty(id, fieldKey, value);
+                  }}
+                />
+              </Box>
+            ) : fieldInfo.type === PropertyType.Vector3 ? (
+              <Box key={fieldKey} sx={{ maxWidth: 200, padding: "3px" }}>
+                <Vector3Input
+                  key={fieldKey}
+                  disabled={interactionDisabled}
+                  value={
+                    properties[fieldKey] ? properties[fieldKey] : [0, 0, 0]
+                  }
+                  onChange={(v) => updateItemSimpleProperty(id, fieldKey, v)}
+                />
+              </Box>
+            ) : fieldInfo.type === PropertyType.Block ? (
+              <PropertySection key={fieldKey}>
+                <Stack
+                  key={fieldKey}
+                  direction="row"
+                  sx={{
+                    alignItems: "center",
+                    justify: "space-between",
+                  }}
+                >
+                  {limitedRender || interactionDisabled ? (
+                    !fieldInfo.fullWidth && (
+                      <Skeleton
+                        variant="rectangular"
+                        animation={false}
+                        height="32px"
+                        width="32px"
+                        sx={{
+                          borderRadius: 1,
+                          bgcolor: "#44444444",
+                          marginLeft: 0.5,
+                        }}
+                      />
+                    )
+                  ) : typeof fieldInfo.name === "string" ? (
+                    !fieldInfo.fullWidth && (
+                      <Typography
+                        color="#eee"
+                        style={{ margin: "2px 2px 2px 5px" }}
+                      >
+                        {typeof fieldInfo.name === "string" && fieldInfo.name}
+                      </Typography>
+                    )
+                  ) : (
+                    <Box style={{ paddingLeft: 5 }}>
+                      <Select
+                        key={fieldInfo.name.name}
+                        label={""}
+                        disabled={interactionDisabled}
+                        value={
+                          properties[fieldInfo.name.id]
+                            ? properties[fieldInfo.name.id]
+                            : ""
+                        }
+                        onChange={(v) =>
+                          updateItemSimpleProperty(id, fieldInfo.name.id, v)
+                        }
+                        options={fieldInfo.name.options}
+                      />
+                    </Box>
+                  )}
+                  {fieldInfo.isList ? (
+                    <List
                       key={fieldKey}
-                      style={{ width: 50, margin: 3 }}
-                      min={fieldInfo.min}
-                      max={fieldInfo.max}
-                      step={fieldInfo.step}
-                      suffix={fieldInfo.units}
-                      value={properties[fieldKey]}
-                      disabled={interactionDisabled}
-                      onChange={(value) =>
-                        !interactionDisabled &&
-                        updateItemSimpleProperty(id, fieldKey, value)
-                      }
+                      ids={properties[fieldKey]}
+                      regionInfo={{
+                        parentId: id,
+                        fieldInfo,
+                      }}
+                      interactionDisabled={interactionDisabled || false}
+                      context={context || []}
+                      limitedRender={limitedRender || false}
                     />
-                  </Box>
-                ) : fieldInfo.type === SIMPLE_PROPERTY_TYPES.VECTOR3 ? (
-                  <Box key={fieldKey} sx={{ maxWidth: 200, padding: "3px" }}>
-                    <Vector3Input
-                      onMouseEnter={(_) => setLocked(true)}
-                      onMouseLeave={(_) => setLocked(false)}
-                      className="nodrag"
-                      min={fieldInfo.min}
-                      max={fieldInfo.max}
-                      step={fieldInfo.step}
-                      endAdornment={fieldInfo.endAdornment}
-                      value={properties[fieldKey]}
-                      disabled={interactionDisabled}
-                      onChange={(event) =>
-                        !interactionDisabled &&
-                        updateItemSimpleProperty(
-                          id,
-                          fieldKey,
-                          event.target.value
-                        )
-                      }
+                  ) : (
+                    <DropZone
+                      key={fieldKey}
+                      id={properties[fieldKey]}
+                      regionInfo={{
+                        parentId: id,
+                        fieldInfo,
+                      }}
+                      interactionDisabled={interactionDisabled}
+                      context={context}
+                      limitedRender={limitedRender}
                     />
-                  </Box>
-                ) : fieldInfo.accepts && fieldInfo.isList ? (
-                  <List
-                    key={fieldKey}
-                    ids={properties[fieldKey]}
-                    fieldInfo={{ ...fieldInfo, value: fieldKey }}
-                    parentId={id}
-                    interactionDisabled={interactionDisabled}
-                    highlightColor={highlightColor}
-                    context={context}
-                    limitedRender={limitedRender}
-                  />
-                ) : fieldInfo.accepts && !fieldInfo.isList ? (
-                  <DropZone
-                    key={fieldKey}
-                    id={properties[fieldKey]}
-                    fieldInfo={{
-                      ...fieldInfo,
-                      value: fieldKey,
-                      name: !fieldInfo.fullWidth ? "" : fieldInfo.name,
-                    }}
-                    parentId={id}
-                    interactionDisabled={interactionDisabled}
-                    highlightColor={highlightColor}
-                    context={context}
-                    limitedRender={limitedRender}
-                  />
-                ) : null}
-              </Stack>
-            </PropertySection>
-          ))}
+                  )}
+                </Stack>
+              </PropertySection>
+            ) : null}
+          </Stack>
+        ))}
       </FullWidthStack>
     );
   }

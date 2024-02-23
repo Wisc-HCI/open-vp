@@ -6,7 +6,8 @@ import ReactFlow, {
   BackgroundVariant,
   NodeProps,
   Node,
-  NodeChange
+  NodeChange,
+  ProOptions
 } from "reactflow";
 import { useDrop } from "react-dnd";
 import {
@@ -88,8 +89,9 @@ export interface CanvasProps {
   snapToGrid?: boolean;
   drawerWidth: number;
   bounds: RectReadOnly;
+  reactflowProOptions?: ProOptions;
 }
-export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) => {
+export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOptions }: CanvasProps) => {
 
   const theme = useTheme();
   const setTabViewport = useProgrammingStore(
@@ -251,7 +253,7 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
         (item?.regionInfo?.parentId === SPAWNER &&
           item?.typeSpec &&
           blockSpecQuery(item?.typeSpec, "onCanvas", item?.data?.metaType))),
-    drop: (item: ClipboardProps, monitor) => {
+    drop: (item: ClipboardProps | undefined, monitor) => {
       const clientOffset = monitor.getClientOffset();
       if (!clientOffset) return;
       const offset = {
@@ -259,7 +261,7 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
         y: clientOffset.y - bounds.top - 50,
       };
       const position = screenToFlowPosition(clientOffset);
-      if ((item as ClipboardProps).data) {
+      if (item?.data) {
         createPlacedNode((item as ClipboardProps).data, position.x, position.y);
       }
     },
@@ -298,7 +300,7 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
               {
                 type: "ENTRY",
                 label: "Paste",
-                left:"ClipboardIcon",
+                left:"ContentCopyRounded",
                 disabled: !onCanvasPastable,
                 onClick: (data: {}, e: MouseEvent) => {
                   const viewport = getTabViewport(activeTabData?.id);
@@ -376,6 +378,7 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds }: CanvasProps) 
               fitView
               snapToGrid={snapToGrid}
               snapGrid={[30, 30]}
+              proOptions={reactflowProOptions}
             >
               <MiniMap
                 style={{

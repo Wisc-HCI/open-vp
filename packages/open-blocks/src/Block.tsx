@@ -90,8 +90,7 @@ export const Block = memo(
           } as ClipboardProps;
         },
         canDrag:
-          data?.metaType === MetaType.Comment ||
-          (!dragDisabled && !data?.editing && !data?.docActive),
+          !dragDisabled && !data?.editing,
         collect: (monitor) => ({ isDragging: monitor.isDragging() }),
       }),
       [data, typeSpec, regionInfo, dragDisabled]
@@ -132,6 +131,8 @@ export const Block = memo(
               data={data}
               bounded
               regionInfo={regionInfo}
+              copyFn={copyFn}
+              cutFn={cutFn}
             />
             
           </div>

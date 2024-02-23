@@ -14,41 +14,41 @@ export const imperativeDrawers: DrawerSpec[] = [
     title: "Structures",
     type: DrawerType.Multiple,
     metaType: MetaType.ObjectInstance,
-    objectTypes: ["stateType", "operationType", "blockType"],
-    icon: "BoxIcon",
+    objectTypes: ["programType", "operationType", "blockType"],
+    icon: "SquareRounded",
   },
   {
     title: "Declarations",
     type: DrawerType.Multiple,
     metaType: MetaType.FunctionDeclaration,
     objectTypes: ["functionType"],
-    icon: "ClipboardIcon",
+    icon: "AssignmentRounded",
   },
   {
     title: "Function Calls",
     type: DrawerType.Singular,
     metaType: MetaType.FunctionCall,
     objectType: "functionType",
-    icon: "ClipboardCopyIcon",
+    icon: "AssignmentReturnedRounded",
   },
   {
     title: "Hats",
     type: DrawerType.Singular,
     metaType: MetaType.ObjectReference,
     objectType: "hatType",
-    icon: "StarIcon",
+    icon: "SchoolRounded",
   },
   {
     title: "Boots",
     type: DrawerType.Singular,
     metaType: MetaType.ObjectReference,
     objectType: "bootType",
-    icon: "HeartIcon",
+    icon: "RollerSkatingRounded",
   },
 ]
 
 export const imperativeTypes: { [key: string]: TypeSpec } = {
-  stateType: {
+  programType: {
     name: "Program",
     primitiveType: PrimitiveType.Object,
     description: `# The Program
@@ -73,7 +73,7 @@ function main() {
     instanceBlock: {
       onCanvas: true,
       color: "#3f3f3f",
-      icon: "BoxIcon",
+      icon: "SquareRounded",
       extras: [
         {
           type: ExtraType.Dropdown,
@@ -89,7 +89,7 @@ function main() {
     referenceBlock: {
       onCanvas: true,
       color: "#3f3f3f",
-      icon: "BoxIcon",
+      icon: "SquareRounded",
       extras: [],
     },
     properties: {
@@ -123,19 +123,19 @@ function main() {
     name: "Block",
     primitiveType: PrimitiveType.Object,
     description: `# A Block
-The **Block** is a block. It can be included in a [Program](stateType) as a *child*.
+The **Block** is a block. It can be included in a [Program](programType) as a *child*.
 \`\`\`
     `,
     instanceBlock: {
       onCanvas: false,
       color: "#7f7f7f",
-      icon: "LayersIcon",
+      icon: "CheckBoxRounded",
       extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
     },
     referenceBlock: {
       onCanvas: false,
       color: "#7f7f7f",
-      icon: "LayersIcon",
+      icon: "CheckBoxRounded",
       extras: [],
     },
     properties: {
@@ -169,12 +169,12 @@ The **Block** is a block. It can be included in a [Program](stateType) as a *chi
     name: "Function",
     primitiveType: PrimitiveType.Function,
     description: `# The Function
-The **Function** does stuff and things. It can be included in a [Program](stateType) as a *child*.
+The **Function** does stuff and things. It can be included in a [Program](programType) as a *child*.
 `,
     functionBlock: {
       onCanvas: true,
       color: "#62869e",
-      icon: "ClipboardIcon",
+      icon: "AssignmentRounded",
       extras: [
         {
           type: ExtraType.Dropdown,
@@ -182,7 +182,7 @@ The **Function** does stuff and things. It can be included in a [Program](stateT
           contents: [
             {
               type: ExtraType.AddArgumentGroup,
-              icon: "PlusIcon",
+              icon: "AddRounded",
               label: "Add Arguments",
               allowed: ["hatType", "bootType"],
             },
@@ -196,7 +196,7 @@ The **Function** does stuff and things. It can be included in a [Program](stateT
     callBlock: {
       onCanvas: false,
       color: "#62869e",
-      icon: "ClipboardCopyIcon",
+      icon: "AssignmentReturnedRounded",
       extras: [ExtraType.DebugToggle, ExtraType.DocToggle],
     },
     properties: {
@@ -247,7 +247,7 @@ The **Function** does stuff and things. It can be included in a [Program](stateT
   operationType: {
     name: "Operation",
     description: `# The Operation
-The **Operation** does stuff and things. It can be included in a [Program](stateType) as a *child*. 
+The **Operation** does stuff and things. It can be included in a [Program](programType) as a *child*. 
 
 Equivalent code may look like this in javascript:
 \`\`\`javascript
@@ -263,14 +263,14 @@ topic.publish({
     instanceBlock: {
       onCanvas: false,
       color: "#629e6c",
-      icon: "BoxIcon",
+      icon: "SquareRounded",
       extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
       hideNewPrefix: true,
     },
     referenceBlock: {
       onCanvas: false,
       color: "#629e6c",
-      icon: "BoxIcon",
+      icon: "SquareRounded",
       extras: [],
       hideNewPrefix: true,
     },
@@ -362,13 +362,13 @@ topic.publish({
     instanceBlock: {
       onCanvas: false,
       color: "#AD1FDE",
-      icon: "StarIcon",
+      icon: "SchoolRounded",
       extras: [],
     },
     referenceBlock: {
       onCanvas: false,
       color: "#AD1FDE",
-      icon: "StarIcon",
+      icon: "SchoolRounded",
       extras: [],
     },
     properties: {},
@@ -391,13 +391,13 @@ topic.publish({
     instanceBlock: {
       onCanvas: false,
       color: "#B3A533",
-      icon: "HeartIcon",
+      icon: "RollerSkatingRounded",
       extras: [],
     },
     referenceBlock: {
       onCanvas: false,
       color: "#B3A533",
-      icon: "HeartIcon",
+      icon: "RollerSkatingRounded",
       extras: [],
     },
     properties: {},

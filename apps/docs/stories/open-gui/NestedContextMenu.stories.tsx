@@ -36,7 +36,7 @@ export const Primary: Story = {
         type: "ENTRY",
         label: "Toggle Mode",
         /* @ts-ignore */
-        left: (d: DataType) => "StarIcon",
+        left: (d: DataType) => "StarRounded",
         onClick: () => {
           alert("Clicked Button")
         },
@@ -55,7 +55,7 @@ export const Primary: Story = {
           { type: "HEADER", label: "Inner Menu" },
           {
             type: "ENTRY",
-            right: "StarIcon",
+            right: "StarRounded",
             /* @ts-ignore */
             label: (d: DataType) => `Piped Name: ${d.name}`,
           },
@@ -64,19 +64,3 @@ export const Primary: Story = {
     ]
   },
 };
-
-// export const Secondary: Story = {
-//   render: (props) => (
-//     <NestedDropdown
-//       {...props}
-//     />
-//   ),
-//   name: "Static Dropdown",
-//   args: {
-//     data: { name: 'Hat', color: "Red"},
-//     label?: string | ((data: T) => string);
-//     icon?: ReactNode | ((data: T) => ReactNode);
-//     onClick?: (data: T) => void;
-//     inner: DropdownData<T>[];
-//   },
-// };

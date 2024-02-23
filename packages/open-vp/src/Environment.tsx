@@ -3,13 +3,12 @@ import { DragLayer } from "./DragLayer";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
-import { ReactFlowProvider } from "reactflow";
+import { ProOptions, ReactFlowProvider } from "reactflow";
 import { Theme, ThemeProvider } from "@mui/material/styles";
 import {
   ProgrammingStore,
   ProgrammingProvider,
-  DrawerSpec,
-  TypeSpec,
+  ProgrammingStateStructures,
 } from "@people_and_robots/open-core";
 import useMeasure from "react-use-measure";
 
@@ -19,8 +18,8 @@ export interface EnvironmentProps {
   drawerWidth?: number;
   snapToGrid?: boolean;
   animateDrawer?: boolean;
-  drawers?: DrawerSpec[];
-  types?: { [key: string]: TypeSpec };
+  initial?: Partial<ProgrammingStateStructures>;
+  reactflowProOptions?: ProOptions;
 }
 export function Environment({
   store,
@@ -28,8 +27,8 @@ export function Environment({
   drawerWidth = 235,
   snapToGrid = false,
   animateDrawer = true,
-  drawers = [],
-  types = {},
+  initial,
+  reactflowProOptions,
 }: EnvironmentProps) {
   const [ref, bounds] = useMeasure();
 
@@ -39,6 +38,7 @@ export function Environment({
         <div
           ref={ref}
           style={{
+            userSelect: "none",
             padding: 0,
             margin: 0,
             display: "flex",
@@ -51,6 +51,7 @@ export function Environment({
             snapToGrid={snapToGrid}
             animateDrawer={animateDrawer}
             bounds={bounds}
+            reactflowProOptions={reactflowProOptions}
           />
         </div>
         <DragLayer bounds={bounds} />
@@ -60,13 +61,13 @@ export function Environment({
 
   if (muiTheme) {
     return (
-      <ProgrammingProvider store={store} drawers={drawers} types={types}>
+      <ProgrammingProvider store={store} initial={initial}>
         <ThemeProvider theme={muiTheme}>{getInner()}</ThemeProvider>
       </ProgrammingProvider>
     );
   } else {
     return (
-      <ProgrammingProvider store={store} drawers={drawers} types={types}>
+      <ProgrammingProvider store={store} initial={initial}>
         {getInner()}
       </ProgrammingProvider>
     );

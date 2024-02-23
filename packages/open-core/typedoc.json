@@ -1,0 +1,6 @@
+{
+    // Comments are supported, like tsconfig.json
+    "entryPoints": ["src/index.tsx"],
+    "out": "../../apps/docs/stories/auto",
+    "plugin": ["typedoc-plugin-markdown"],
+}

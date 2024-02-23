@@ -213,7 +213,7 @@ function InnerDropdown<T>({
             ? inner.label
             : "Menu Item"}
           <RightSlot>
-            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right ? inner.right : "ChevronRightIcon"} />
+            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right ? inner.right : "KeyboardArrowRightRounded"} />
           </RightSlot>
         </DropdownMenuSubTrigger>
         <DropdownMenu.Portal>
@@ -266,7 +266,7 @@ export function NestedDropdown<T>(props: NestedDropdownProps<T>) {
       <DropdownMenuTrigger asChild>
         <span>
         <IconButton size={props.size} style={{backgroundColor:'transparent'}}>
-          <Icon name={typeof props.icon == "function" ? props.icon(props.data) : typeof props.icon === "string" ? props.icon : props.inner ? "HamburgerMenuIcon" : "DotsHorizontalIcon"} />
+          <Icon name={typeof props.icon == "function" ? props.icon(props.data) : typeof props.icon === "string" ? props.icon : props.inner ? "MenuRounded" : "MoreHorizRounded"} />
         </IconButton>
         </span>
       </DropdownMenuTrigger>

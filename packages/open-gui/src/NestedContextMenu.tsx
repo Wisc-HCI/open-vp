@@ -115,7 +115,7 @@ function InnerContext<T>({
             ? inner.label
             : "Menu Item"}
           <RightSlot>
-            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right ? inner.right : "ChevronRightIcon"} />
+            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right ? inner.right : "KeyboardArrowRightRounded"} />
           </RightSlot>
         </ContextMenuSubTrigger>
         <ContextMenu.Portal>

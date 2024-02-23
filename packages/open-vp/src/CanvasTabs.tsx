@@ -1,48 +1,69 @@
 import { useState, useEffect } from "react";
 import { Reorder, AnimatePresence } from "framer-motion";
-import { ProgrammingState, Tab, useProgrammingStore } from "@people_and_robots/open-core";
+import {
+  ProgrammingState,
+  Tab,
+  useProgrammingStore,
+} from "@people_and_robots/open-core";
 import { styled, darken, useTheme, lighten } from "@mui/material/styles";
 import {
   ClickAwayListener,
-  Dialog,
   DialogTitle,
   DialogContentText,
   DialogActions,
   Button,
   DialogContent,
   Theme,
+  Icon,
 } from "@mui/material";
-import { NestedDropdown, TextInput } from "@people_and_robots/open-gui";
+import {
+  NestedDropdown,
+  TextInput,
+  Dialog,
+  IconTextButton,
+} from "@people_and_robots/open-gui";
 
-
-const Bar = styled("div")({
-  width: "100%",
-  display: "grid",
-  height: "45px",
-  gridTemplateColumns: "auto 46px",
-  // padding: 5,
-}, ({theme}) => ({
-  backgroundColor: theme.palette.mode === "dark" ? lighten(theme.palette.background.default,0.1) : darken(theme.palette.background.default,0.1),
-}));
+const Bar = styled("div")(
+  {
+    width: "100%",
+    display: "grid",
+    height: "45px",
+    alignItems: "center",
+    gridTemplateColumns: "auto 46px",
+    // padding: 5,
+  },
+  ({ theme }) => ({
+    backgroundColor:
+      theme.palette.mode === "dark"
+        ? lighten(theme.palette.background.default, 0.1)
+        : darken(theme.palette.background.default, 0.1),
+  })
+);
 
 export const CanvasTabs = ({}) => {
-  const tabs = useProgrammingStore(
-    (state:ProgrammingState) => state.tabs.filter((t) => t.visible)
+  const tabs = useProgrammingStore((state: ProgrammingState) =>
+    state.tabs.filter((t) => t.visible)
   );
-  const hiddenTabs = useProgrammingStore(
-    (state:ProgrammingState) => state.tabs.filter((t) => !t.visible)
+  const hiddenTabs = useProgrammingStore((state: ProgrammingState) =>
+    state.tabs.filter((t) => !t.visible)
   );
-  const setTabs = useProgrammingStore((state:ProgrammingState) => state.setTabs);
-  const activeTab = useProgrammingStore((state:ProgrammingState) => state.activeTab);
+  const setTabs = useProgrammingStore(
+    (state: ProgrammingState) => state.setTabs
+  );
+  const activeTab = useProgrammingStore(
+    (state: ProgrammingState) => state.activeTab
+  );
   const setActiveTab = useProgrammingStore(
-    (state:ProgrammingState) => state.setActiveTab
+    (state: ProgrammingState) => state.setActiveTab
   );
-  const removeTab = useProgrammingStore((state:ProgrammingState) => state.removeTab);
-  const addTab = useProgrammingStore((state:ProgrammingState) => state.addTab);
+  const removeTab = useProgrammingStore(
+    (state: ProgrammingState) => state.removeTab
+  );
+  const addTab = useProgrammingStore((state: ProgrammingState) => state.addTab);
   const setTabVisibility = useProgrammingStore(
-    (state:ProgrammingState) => state.setTabVisibility
+    (state: ProgrammingState) => state.setTabVisibility
   );
-  const [deleteFocus, setDeleteFocus] = useState<Tab|null>(null);
+  const [deleteFocus, setDeleteFocus] = useState<Tab | null>(null);
   const handleRemoveClick = (tabId: string) => {
     tabs.some((tab: Tab) => {
       if (tab.id === tabId) {
@@ -92,12 +113,12 @@ export const CanvasTabs = ({}) => {
           ))}
         </AnimatePresence>
       </Reorder.Group>
-      <div style={{padding:5}}>
-        
-      <NestedDropdown 
+
+      <div style={{ width: 34, height: 34, display: "flex" }}>
+        <NestedDropdown
           data={{}}
           label="Edit Tabs"
-          icon="PlusIcon"
+          icon="AddRounded"
           inner={[
             { type: "HEADER", label: "Tab Actions" },
             { type: "DIVIDER" },
@@ -105,36 +126,39 @@ export const CanvasTabs = ({}) => {
               type: "ENTRY",
               label: "Add Tab",
               /* @ts-ignore */
-              left: "PlusIcon",
+              left: "AddRounded",
               onClick: addTab,
               preventCloseOnClick: true,
             },
             {
               type: "ENTRY",
               label: "Open Existing...",
-              right: "CardStackPlusIcon",
-              inner: hiddenTabs.length >= 0 ? [
-                { type: "HEADER", label: "Open Existing Tab" },
-                ...hiddenTabs.map((tab: Tab) => (
-                  {
-                    type: "ENTRY",
-                    onClick: () => setTabVisibility(tab.id, true),
-                    label: tab.title,
-                    left: "FileIcon",
-                  }
-                )) 
-              ]:[ {
-                type: "ENTRY",
-                label: "No Hidden Tabs"
-              }],
+              right: "FolderOpenRounded",
+              inner:
+                hiddenTabs.length >= 0
+                  ? [
+                      { type: "HEADER", label: "Open Existing Tab" },
+                      ...hiddenTabs.map((tab: Tab) => ({
+                        type: "ENTRY",
+                        onClick: () => setTabVisibility(tab.id, true),
+                        label: tab.title,
+                        left: "InsertDriveFileRounded",
+                      })),
+                    ]
+                  : [
+                      {
+                        type: "ENTRY",
+                        label: "No Hidden Tabs",
+                      },
+                    ],
             },
           ]}
         />
-
       </div>
+
       <Dialog
-        open={deleteFocus !== null}
-        onClose={() => setDeleteFocus(null)}
+        isOpen={deleteFocus !== null}
+        onStateChange={() => setDeleteFocus(null)}
       >
         <DialogTitle>Delete "{deleteFocus?.title}"?</DialogTitle>
         <DialogContent>
@@ -147,26 +171,26 @@ export const CanvasTabs = ({}) => {
         </DialogContent>
 
         <DialogActions>
-          <Button
-            color="error"
+          <IconTextButton
             key="confirm-delete"
+            title="Delete"
+            color="error"
             onClick={() => {
               if (deleteFocus?.id) {
                 removeTab(deleteFocus.id);
                 setDeleteFocus(null);
               }
-              
             }}
           >
             Delete
-          </Button>
-          <Button
-            // color="vibrant"
+          </IconTextButton>
+          <IconTextButton
+            title="Cancel"
             key="confirm-cancel"
             onClick={() => setDeleteFocus(null)}
           >
             Cancel
-          </Button>
+          </IconTextButton>
         </DialogActions>
       </Dialog>
     </Bar>
@@ -181,11 +205,19 @@ interface TabItemProps {
   isSelected: boolean;
   peerCount: number;
 }
-const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabItemProps) => {
+const TabItem = ({
+  item,
+  onRemove,
+  isSelected,
+  peerCount = 2,
+  onSelect,
+}: TabItemProps) => {
   const [editing, setEditing] = useState(false);
-  const renameTab = useProgrammingStore((state:ProgrammingState) => state.renameTab);
+  const renameTab = useProgrammingStore(
+    (state: ProgrammingState) => state.renameTab
+  );
   const setTabVisibility = useProgrammingStore(
-    (state:ProgrammingState) => state.setTabVisibility
+    (state: ProgrammingState) => state.setTabVisibility
   );
 
   const theme: Theme = useTheme();
@@ -215,12 +247,12 @@ const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabIte
         type: "tween",
         duration: 0.4,
       },
-    }
+    },
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setEditing(isSelected);
-  },[isSelected])
+  }, [isSelected]);
 
   return (
     <ClickAwayListener onClickAway={() => setEditing(false)}>
@@ -231,10 +263,12 @@ const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabIte
         onClick={onSelect}
         onDoubleClick={() => setEditing(true)}
         // initial={{ opacity: 1 }}
-        style={{ borderRadius: 5, marginRight: 5, backgroundColor:'transparent' }}
-        animate={
-          isSelected ? "active" : "inactive"
-        }
+        style={{
+          borderRadius: 5,
+          marginRight: 5,
+          backgroundColor: "transparent",
+        }}
+        animate={isSelected ? "active" : "inactive"}
         initial="initial"
         variants={TABVARIANTS}
         exit={{ opacity: 0, y: 0, transition: { duration: 0.3 } }}
@@ -246,41 +280,42 @@ const TabItem = ({ item, onRemove, isSelected, peerCount = 2, onSelect }: TabIte
           hideLabelPrefix
           // disabled={!editing}
 
-          onFocus={()=>{
+          onFocus={() => {
             onSelect();
             setEditing(true);
           }}
           onBlur={() => setEditing(false)}
           onChange={(e) => renameTab(item.id, e.target.value)}
           extra={
-            <NestedDropdown 
+            <NestedDropdown
               data={{}}
               label="Edit Tab"
               size="small"
-              icon="Cross2Icon"
+              icon="CloseRounded"
               inner={[
                 { type: "HEADER", label: "Tab Actions" },
                 {
                   type: "ENTRY",
                   label: "Hide Tab",
                   /* @ts-ignore */
-                  left: "EyeNoneIcon",
-                  onClick:() => {
+                  left: "VisibilityOffRounded",
+                  onClick: () => {
                     setTabVisibility(item.id, false);
-                  }
+                  },
                 },
                 {
                   type: "ENTRY",
                   label: "Delete Tab",
                   /* @ts-ignore */
-                  left: "TrashIcon",
-                  onClick:() => {
+                  left: "DeleteRounded",
+                  onClick: () => {
                     onRemove();
-                  }
-                }
+                  },
+                },
               ]}
-          />}
-          />
+            />
+          }
+        />
       </Reorder.Item>
     </ClickAwayListener>
   );

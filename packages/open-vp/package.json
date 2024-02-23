@@ -21,7 +21,7 @@
     "@people_and_robots/open-core": "*",
     "@people_and_robots/open-gui": "*",
     "@visx/responsive": "^3.3.0",
-    "framer-motion": "^9.1.6",
+    "framer-motion": "^10.16.16",
     "lodash": "^4.17.21",
     "number-precision": "^1.5.2",
     "rdndmb-html5-to-touch": "^8.0.0",

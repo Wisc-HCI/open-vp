@@ -57,7 +57,7 @@ export const CommentContainer = motion(styled(Stack, {
       flex: 1,
       flexDireaction: 'row',
     },
-    ({ theme, bounded }) => ({
+    ({ theme, bounded, focused }) => ({
       // padding: 4,
       // backgroundColor: alpha(theme.palette.background.paper, 0.6),
       borderRadius: theme.shape.borderRadius,
@@ -67,6 +67,9 @@ export const CommentContainer = motion(styled(Stack, {
       "&:hover": {
         backgroundColor: alpha(theme.palette.background.paper, 0.75),
       },
+      boxShadow: focused
+        ? `0pt 0pt 0pt 2pt ${alpha(theme.palette.primary.main, 0.5)}`
+        : undefined,
     })
   ));
 
@@ -127,7 +130,7 @@ export const SettingsContainer = styled(Card)({
 
 export const PropertySection = styled(Card)({
   backgroundColor: "#ffffff20",
-  margin: "3px",
+  marginBottom: "3px",
 });
 
 export const FullWidthStack = styled(Stack)({ width: "100%" });

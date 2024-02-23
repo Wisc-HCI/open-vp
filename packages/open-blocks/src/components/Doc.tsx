@@ -205,7 +205,7 @@ const FieldInfoSection = ({
       <CardHeader
         variant="h5"
         color="text.primary"
-        title={fieldInfo.name}
+        title={typeof fieldInfo.name === 'string' ? fieldInfo.name : fieldInfo.name.name}
         sx={{ padding: 0 }}
         action={
           fieldInfo.type === PropertyType.Block && fieldInfo.accepts ? (
@@ -436,7 +436,7 @@ const ConnectionInfoSection = ({
             >
               {connectionInfo.allowed?.map((t) => (
                 <TypeLink
-                  label={typeInfo[t].name}
+                  label={typeInfo[t]?.name || 'Unknown'}
                   color={blockSpecQuery(typeInfo[t], "color")}
                   onClick={(e) => {
                     e.preventDefault();
@@ -743,7 +743,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
   let connectionData: { [key: string]: ConnectionInfo }[] = [];
   const activeTypeSpec = typeInfo[activeType];
   if (
-    activeTypeSpec.primitiveType === PrimitiveType.Object &&
+    activeTypeSpec && activeTypeSpec.primitiveType === PrimitiveType.Object &&
     activeTypeSpec?.instanceBlock?.onCanvas &&
     activeTypeSpec?.instanceBlock?.connections
   ) {
@@ -751,7 +751,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
     connectionData.push(activeTypeSpec.instanceBlock.connections);
   }
   if (
-    activeTypeSpec.primitiveType === PrimitiveType.Object &&
+    activeTypeSpec && activeTypeSpec.primitiveType === PrimitiveType.Object &&
     activeTypeSpec?.referenceBlock?.onCanvas &&
     activeTypeSpec?.referenceBlock?.connections
   ) {
@@ -759,7 +759,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
     connectionData.push(activeTypeSpec.referenceBlock.connections);
   }
   if (
-    activeTypeSpec.primitiveType === PrimitiveType.Function &&
+    activeTypeSpec && activeTypeSpec.primitiveType === PrimitiveType.Function &&
     activeTypeSpec?.functionBlock?.onCanvas &&
     activeTypeSpec?.functionBlock?.connections
   ) {
@@ -767,7 +767,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
     connectionData.push(activeTypeSpec.functionBlock.connections);
   }
   if (
-    activeTypeSpec.primitiveType === PrimitiveType.Function &&
+    activeTypeSpec && activeTypeSpec.primitiveType === PrimitiveType.Function &&
     activeTypeSpec?.callBlock?.onCanvas &&
     activeTypeSpec?.callBlock?.connections
   ) {

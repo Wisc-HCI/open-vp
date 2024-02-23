@@ -37,6 +37,7 @@ import {
 } from "@people_and_robots/open-gui";
 import { pick, pickBy } from "lodash";
 import { Backdrop } from "./Canvas";
+import { ProOptions } from "reactflow";
 
 interface SectionStripProps {
   setSearchTerm: (term: string) => void;
@@ -54,7 +55,7 @@ const SectionStrip = ({
     (state: ProgrammingState) => state.activeDrawer
   );
   return (
-    <Stack direction="column" sx={{ padding: "5px" }} spacing={1}>
+    <Stack direction="column" sx={{ padding: "5px", userSelect: "none", }} spacing={1}>
       {/* <Nav gap="xxsmall"> */}
       {drawers.map((drawer: DrawerSpec, drawerIdx: number) => {
         // console.log(drawerIdx);
@@ -155,6 +156,7 @@ const BlockPanel = ({
       ref={drawerRef}
       direction="column"
       sx={{
+        userSelect: "none",
         width: drawerWidth,
         backgroundColor:
           theme.palette.mode === "light"
@@ -192,7 +194,7 @@ const BlockPanel = ({
                 placement="bottom"
                 title={`Add ${objectTypeInfo.name}`}
                 onClick={() => addInstance(drawers[activeDrawer].objectType)}
-                icon="PlusIcon"
+                icon="AddRounded"
               />
             )}
         </Stack>
@@ -255,12 +257,14 @@ export interface ContentsProps {
   snapToGrid?: boolean;
   animateDrawer?: boolean;
   bounds: RectReadOnly;
+  reactflowProOptions?: ProOptions;
 }
 export const Contents = ({
   drawerWidth = 235,
   snapToGrid = true,
   animateDrawer = true,
   bounds,
+  reactflowProOptions
 }: ContentsProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const activeDrawer = useProgrammingStore(
@@ -333,6 +337,7 @@ export const Contents = ({
             drawerWidth={drawerWidth}
             snapToGrid={snapToGrid}
             bounds={bounds}
+            reactflowProOptions={reactflowProOptions}
           />
         ) : (
           <Backdrop sx={{backgroundColor:theme.palette.mode === 'dark' ? lighten(theme.palette.background.default,.05) : darken(theme.palette.background.default,.05)}}>
@@ -344,7 +349,7 @@ export const Contents = ({
                 Create or open a tab to begin
               </CardContent>
               <CardActions>
-                <IconTextButton title="Create Tab" startIcon="PlusIcon" onClick={addTab}>Create Tab</IconTextButton>
+                <IconTextButton title="Create Tab" startIcon="AddRounded" onClick={addTab}>Create Tab</IconTextButton>
               </CardActions>
             </Card>
           </Backdrop>

@@ -40,13 +40,14 @@ import { BlockHeader } from "./components/BlockHeader";
 import { SettingsSection } from "./components/SettingsSection";
 import { Doc } from "./components/Doc";
 import { Position } from "reactflow";
-import { NestedContextMenu, Dialog } from "@people_and_robots/open-gui";
+import { NestedContextMenu, Dialog, Select } from "@people_and_robots/open-gui";
 import {
   MenuData,
   MenuSection,
   extrasToDropdown,
 } from "./components/MenuSection";
 import { flattenMenuOnce } from "./util";
+import { MinifiedBar } from "./components/MinifiedBar";
 
 const UNRENDERED_PROPS = ["IGNORED", "METADATA"];
 const SIMPLE_PROPERTY_TYPES = [
@@ -163,7 +164,7 @@ export const VisualBlock = forwardRef(
 
     const onClick = useProgrammingStore((state) => state.onVPEClick);
 
-    const theme = useTheme();
+    const updateItemSimpleProperty = useProgrammingStore((state)=> state.updateItemSimpleProperty);
 
     // const locked = useProgrammingStore((state) => state.locked);
 
@@ -241,9 +242,7 @@ export const VisualBlock = forwardRef(
         <BlockContainer
           // contentEditable
           ref={ref}
-          onBlur={() => {
-            console.log("blur");
-          }}
+          // onBlur={() => {}}
           aria-labelledby={`${name} (${data.metaType})`}
           onClick={(e) => {
             onClick(data);
@@ -281,7 +280,7 @@ export const VisualBlock = forwardRef(
             direction="row"
             sx={{
               display: "flex",
-              margin: minified ? "1px" : "4px",
+              margin: "4px",
             }}
           >
             {/* The header, includes the name/text field and the extra bar */}
@@ -293,7 +292,7 @@ export const VisualBlock = forwardRef(
                 limitedRender={limitedRender}
                 nameId={refData ? refData.id : data.id}
                 name={name}
-                icon={blockSpec.icon ? blockSpec.icon : "BoxIcon"}
+                icon={blockSpec.icon ? blockSpec.icon : "CheckBoxRounded"}
                 editing={data.editing}
                 setIsEditing={
                   data.metaType === MetaType.ObjectReference ||
@@ -306,18 +305,14 @@ export const VisualBlock = forwardRef(
             )}
 
             {minified && (
-              <FullWidthStack>
-                {/* <MinifiedBar
-                    id={data.id}
-                    propertyInfo={typeSpec.properties}
-                    properties={data.properties}
-                    canDragBlockRFR={canDragBlockRFR}
-                    interactionDisabled={interactionDisabled}
-                    context={context}
-                    bounded={inDrawer}
-                    limitedRender={limitedRender}
-                  /> */}
-              </FullWidthStack>
+              <MinifiedBar
+                id={data.id}
+                propertyInfo={typeSpec.properties}
+                properties={data.properties}
+                interactionDisabled={interactionDisabled}
+                context={context}
+                limitedRender={limitedRender}
+              />
             )}
 
             {blockSpec.extras && !limitedRender && (
@@ -352,46 +347,6 @@ export const VisualBlock = forwardRef(
                 setIsDebugging={setIsDebugging}
               />
             )}
-
-            {
-              blockSpec?.extras && !limitedRender && null
-              // <ExtraBar
-              //   inDrawer={inDrawer}
-              //   fieldInfo={fieldInfo}
-              //   parentId={parentId}
-              //   copyFn={copyFn}
-              //   cutFn={cutFn}
-              //   interactionDisabled={interactionDisabled}
-              //   data={data}
-              //   blockSpec={blockSpec}
-              //   docActive={docActive}
-              //   isEditing={editing}
-              //   isCollapsed={isCollapsed}
-              //   isSelected={selected}
-              //   isDebugging={isDebugging}
-              //   setDocActive={(v) => setDocActive(data.id, v)}
-              //   setIsEditing={
-              //     data.dataType === DATA_TYPES.REFERENCE ||
-              //     data.dataType === DATA_TYPES.CALL
-              //       ? (v) => setIsEditing(data.ref, v)
-              //       : (v) => setIsEditing(data.id, v)
-              //   }
-              //   setIsSelected={
-              //     data.dataType === DATA_TYPES.REFERENCE ||
-              //     data.dataType === DATA_TYPES.CALL
-              //       ? (v) => {
-              //           // console.log(data);
-              //           setIsSelected(data.ref, v);
-              //         }
-              //       : (v) => {
-              //           // console.log(data);
-              //           setIsSelected(data.id, v);
-              //         }
-              //   }
-              //   setIsCollapsed={setIsCollapsed}
-              //   setIsDebugging={setIsDebugging}
-              // />
-            }
           </Stack>
 
           {/* Add Connection Info/Handles here for blocks */}
@@ -419,6 +374,9 @@ export const VisualBlock = forwardRef(
             // id={`${data.id}-doc`}
             isOpen={(docActive && !limitedRender) || false}
             onStateChange={(state) => setDocActive(data.id, state)}
+            showOverlay={false}
+            draggable
+            clickableOverlay={false}
             // onClose={() => setDocActive(data.id, false)}
             // aria-labelledby="doc-dialog"
             // PaperComponent={DraggablePaperComponent}
@@ -496,15 +454,31 @@ export const VisualBlock = forwardRef(
                             alignItems: "center",
                             justify: "space-between",
                           }}
-                        >
-                          {!fieldInfo.fullWidth && (
+                        > 
+                        {typeof innerLabel === "string" ? (
+                          !fieldInfo.fullWidth && (
                             <Typography
                               color="#eee"
                               style={{ margin: "2px 2px 2px 5px" }}
                             >
-                              {innerLabel}
+                              {typeof innerLabel === "string" && innerLabel}
                             </Typography>
-                          )}
+                          )
+                        ) : (
+                          <Box style={{paddingLeft:5}}>
+                            <Select
+                              key={innerLabel.name}
+                              label={""}
+                              disabled={interactionDisabled}
+                              value={data.properties[innerLabel.id] ? data.properties[innerLabel.id] : ""}
+                              onChange={(v) =>
+                                updateItemSimpleProperty(data.id, innerLabel.id, v)
+                              }
+                              options={innerLabel.options}
+                            />
+                          </Box>
+                        )}
+                          
                           {fieldInfo.isList ? (
                             <List
                               ids={

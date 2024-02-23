@@ -1,6 +1,6 @@
 import { OnConnectStartParams, NodeChange, Viewport, Position } from "reactflow";
 import { Timer } from "./timer";
-import { createProgrammingStore } from "./store";
+import { DefaultStore } from "./store";
 import { PrimitiveType, MetaType, ConnectionDirection, ClipboardAction, PropertyType, ConnectionType, DrawerType, ExtraType } from "./constants";
 import type { IconName } from "@people_and_robots/open-gui";
 import { CSSProperties } from "react";
@@ -58,7 +58,7 @@ export type Extra =
   | FunctionButtonExtra
   | IndicatorExtra;
 
-export interface ClipboardProps {
+export type ClipboardProps = {
   data?: BlockData | CommentData;
   typeSpec?: TypeSpec;
   regionInfo?: RegionInfo;
@@ -67,14 +67,15 @@ export interface ClipboardProps {
   tab?: string;
 }
 
-export interface CommentData {
+export type CommentData = {
   id: string;
   type: MetaType.Comment;
   metaType: MetaType.Comment;
   text: string;
+  editing: boolean;
 }
 
-export interface ObjectData {
+export type ObjectData = {
   id: string;
   name: string;
   metaType: MetaType.ObjectInstance;
@@ -88,7 +89,7 @@ export interface ObjectData {
   docActive: boolean;
 }
 
-export interface ObjectReferenceData {
+export type ObjectReferenceData = {
   id: string;
   name: string;
   metaType: MetaType.ObjectReference;
@@ -103,7 +104,7 @@ export interface ObjectReferenceData {
   // refData?: BlockData;
 }
 
-export interface ArgumentData {
+export type ArgumentData = {
   id: string;
   name: string;
   metaType: MetaType.Argument;
@@ -115,7 +116,7 @@ export interface ArgumentData {
   docActive: boolean;
 }
 
-export interface FunctionCallData {
+export type FunctionCallData = {
   id: string;
   name: string;
   metaType: MetaType.FunctionCall;
@@ -131,7 +132,7 @@ export interface FunctionCallData {
   // refData?: BlockData;
 }
 
-export interface FunctionDeclarationData {
+export type FunctionDeclarationData = {
   id: string;
   name: string;
   metaType: MetaType.FunctionDeclaration;
@@ -153,7 +154,7 @@ export type BlockData =
   | ObjectReferenceData
   | ArgumentData;
 
-export interface BlockSpec {
+export type BlockSpec = {
   onCanvas: boolean;
   color: string;
   icon: IconName;
@@ -169,7 +170,7 @@ export interface BlockSpec {
   style?: CSSProperties;
 }
 
-export interface NumberConnectionData {
+export type NumberConnectionData = {
   id: string;
   value: number;
   metaType: MetaType.Connection;
@@ -178,7 +179,7 @@ export interface NumberConnectionData {
   type: ConnectionType.Number;
 }
 
-export interface StringConnectionData {
+export type StringConnectionData = {
   id: string;
   value: string;
   metaType: MetaType.Connection;
@@ -189,7 +190,7 @@ export interface StringConnectionData {
 
 export type ConnectionData = NumberConnectionData | StringConnectionData;
 
-export interface ParserProps {
+export type ParserProps = {
   block: BlockData;
   name: string;
   depth: number;
@@ -201,26 +202,14 @@ export interface ParserProps {
     context: { [key: string]: BlockData } ) => string;
 }
 
-export interface BlockFieldInfo {
-  id: string;
-  name: string;
-  accepts: string[];
-  default: any;
-  isList?: boolean;
-  fullWidth?: boolean;
-  type: PropertyType.Block;
-  isFunctionArgument?: boolean;
-  isRequired?: boolean;
-}
-
-export interface SimpleBooleanFieldInfo {
+export type SimpleBooleanFieldInfo = {
   id: string;
   name: string;
   default: boolean;
   type: PropertyType.Boolean;
 }
 
-export interface SimpleNumberFieldInfo {
+export type SimpleNumberFieldInfo = {
   id: string;
   name: string;
   default: number;
@@ -231,14 +220,14 @@ export interface SimpleNumberFieldInfo {
   units?: string;
 }
 
-export interface SimpleStringFieldInfo {
+export type SimpleStringFieldInfo = {
   id: string;
   name: string;
   default: string;
   type: PropertyType.String;
 }
 
-export interface SimpleOptionsFieldInfo {
+export type SimpleOptionsFieldInfo = {
   id: string;
   name: string;
   default: string;
@@ -246,21 +235,14 @@ export interface SimpleOptionsFieldInfo {
   options: { value: string; label: string }[];
 }
 
-export interface SimpleIgnoredFieldInfo {
-  id: string;
-  name: string;
-  default: any;
-  type: PropertyType.Ignored;
-}
-
-export interface SimpleMetadataFieldInfo {
+export type SimpleMetadataFieldInfo = {
   id: string;
   name: string;
   default: any;
   type: PropertyType.Metadata;
 }
 
-export interface SimpleVector3FieldInfo {
+export type SimpleVector3FieldInfo = {
   id: string;
   name: string;
   default: number[];
@@ -272,13 +254,24 @@ export type SimpleFieldInfo =
   | SimpleNumberFieldInfo
   | SimpleStringFieldInfo
   | SimpleOptionsFieldInfo
-  | SimpleIgnoredFieldInfo
   | SimpleMetadataFieldInfo
   | SimpleVector3FieldInfo;
 
+  export type BlockFieldInfo = {
+    id: string;
+    name: string | SimpleOptionsFieldInfo;
+    accepts: string[];
+    default: any;
+    isList?: boolean;
+    fullWidth?: boolean;
+    type: PropertyType.Block;
+    isFunctionArgument?: boolean;
+    isRequired?: boolean;
+  }
+
 export type FieldInfo = BlockFieldInfo | SimpleFieldInfo;
 
-export interface ObjectTypeSpec {
+export type ObjectTypeSpec = {
   name: string;
   primitiveType: PrimitiveType.Object;
   description: string;
@@ -289,7 +282,7 @@ export interface ObjectTypeSpec {
   namePolicy: { [key: string]: (data: BlockData) => string };
 }
 
-export interface FunctionTypeSpec {
+export type FunctionTypeSpec = {
   name: string;
   primitiveType: PrimitiveType.Function;
   description: string;
@@ -302,7 +295,7 @@ export interface FunctionTypeSpec {
 
 export type TypeSpec = ObjectTypeSpec | FunctionTypeSpec;
 
-export interface ObjectDrawerSpec {
+export type ObjectDrawerSpec = {
   type: DrawerType.Multiple,
   title: string;
   icon: IconName;
@@ -310,7 +303,7 @@ export interface ObjectDrawerSpec {
   metaType: MetaType.ObjectInstance | MetaType.FunctionDeclaration;
 }
 
-export interface ReferenceDrawerSpec {
+export type ReferenceDrawerSpec = {
   type: DrawerType.Singular
   title: string;
   icon: IconName;
@@ -320,14 +313,14 @@ export interface ReferenceDrawerSpec {
 
 export type DrawerSpec = ObjectDrawerSpec | ReferenceDrawerSpec;
 
-export interface ProgramSpec {
+export type ProgramSpec = {
   drawers: DrawerSpec[];
   objectTypes: { [key: string]: TypeSpec };
 }
 
-export type ExecutionState = number | ((currentTime: number) => number);
+export type ExecutionState = number | 'indeterminite' | ((currentTime: number) => number | 'indeterminite');
 
-export interface Tab {
+export type Tab = {
   title: string;
   id: string;
   visible: boolean;
@@ -335,13 +328,13 @@ export interface Tab {
   viewport?: Viewport;
 }
 
-export interface RegionInfo {
+export type RegionInfo = {
   fieldInfo: FieldInfo;
   parentId: string;
   idx?: number;
 }
 
-export interface ProgrammingStateStructures {
+export type ProgrammingStateStructures = {
   activeDrawer: string | null;
   connectionInfo: OnConnectStartParams | null;
   programSpec: ProgramSpec;
@@ -361,7 +354,7 @@ export interface ProgrammingStateStructures {
   clock: Timer;
 }
 
-export interface ProgrammingStateActions {
+export type ProgrammingStateActions = {
   onVPEClick: (entryInfo: BlockData | ConnectionData | CommentData) => void;
   onOffVPEClick: (entryInfo: any) => void;
   setConnectionInfo: (info: OnConnectStartParams | null) => void;
@@ -425,13 +418,12 @@ export interface ProgrammingStateActions {
   setClipboardBlock: (block: BlockData | CommentData) => void;
 }
 
-export interface ProgrammingState
-  extends ProgrammingStateStructures,
-    ProgrammingStateActions {}
+export type ProgrammingState
+  = ProgrammingStateStructures & ProgrammingStateActions;
 
-export type ProgrammingStore = typeof createProgrammingStore;
+export type ProgrammingStore = typeof DefaultStore;
 
-// export interface BackReference {
+// export type BackReference {
 //   id: string;
 //   regionInfo: RegionInfo;
 //   pattern:

@@ -5,12 +5,22 @@ function getAbsolutePath(value) {
 }
 
 const config = {
-  stories: ["../stories/**/*.stories.tsx"],
+  stories: [
+    "../stories/Introduction.mdx",
+    "../stories/Installation.mdx",
+    "../stories/Usage.mdx",
+    "../stories/Types.mdx",
+    "../stories/ProgramSpec.mdx",
+    "../stories/TypeSpec.mdx",
+    "../stories/ProgramData.mdx",
+    "../stories/**/*.stories.tsx",
+    "../stories/**/*.stories.tsx"
+  ],
   addons: [
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
-    getAbsolutePath("@storybook/addon-docs"),
-    getAbsolutePath("@storybook/addon-themes"),
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "@storybook/addon-docs",
+    "@storybook/addon-themes",
   ],
   framework: {
     name: getAbsolutePath("@storybook/react-vite"),

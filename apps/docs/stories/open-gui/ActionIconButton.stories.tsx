@@ -31,7 +31,7 @@ export const Primary: Story = {
     toggled: false,
     canToggle: false,
     size: 'small',
-    icon: "CheckCircledIcon" as IconName
+    icon: "CheckRounded" as IconName
   },
 };
 
@@ -49,6 +49,6 @@ export const Toggle: Story = {
     placement: 'bottom',
     toggled: false,
     canToggle: true,
-    icon: "CheckCircledIcon" as IconName
+    icon: "CheckRounded"
   },
 };

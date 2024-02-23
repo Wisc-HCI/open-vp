@@ -21,7 +21,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsconfig": "workspace:*",
-    "turbo": "^1.10.16"
+    "turbo": "^1.10.16",
+    "typedoc": "^0.25.4",
+    "typedoc-plugin-markdown": "^3.17.1"
   },
   "packageManager": "npm@8.19.3",
   "workspaces": [

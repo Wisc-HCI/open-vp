@@ -9,21 +9,21 @@ import {
   useProgrammingStore,
   ProgrammingProvider,
   BlockData,
-  TypeSpec,
   RegionInfo,
   PropertyType,
+  ProgrammingStateStructures,
 } from "@people_and_robots/open-core";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
 
 interface InnerExternalBlockProps {
-    data: BlockData;
-    style?: React.CSSProperties;
-    context?: string[];
+  data: BlockData;
+  style?: React.CSSProperties;
+  context?: string[];
 }
-const InnerExternalBlock = (props:InnerExternalBlockProps) => {
-  const [data, typeSpec] = useProgrammingStore(
+const InnerExternalBlock = (props: InnerExternalBlockProps) => {
+  const [data, typeSpec, progress] = useProgrammingStore(
     useCallback(
       (state: ProgrammingState) =>
         combinedBlockData(
@@ -35,6 +35,8 @@ const InnerExternalBlock = (props:InnerExternalBlockProps) => {
       [props.data]
     )
   );
+
+  const updateItemSelected = useProgrammingStore((state) => state.updateItemSelected);
 
   const otherProps = {
     x: 0,
@@ -59,9 +61,17 @@ const InnerExternalBlock = (props:InnerExternalBlockProps) => {
       type: PropertyType.Block,
     },
   };
-  
+
   return (
-    <VisualBlock {...props} {...otherProps} regionInfo={regionInfo} data={data} typeSpec={typeSpec} context={props.context}/>
+    <VisualBlock
+      {...props}
+      {...otherProps}
+      regionInfo={regionInfo}
+      data={data}
+      typeSpec={typeSpec}
+      context={props.context}
+      progress={progress}
+    />
   );
 };
 
@@ -70,24 +80,33 @@ export interface ExternalBlockProps {
   muiTheme?: Theme;
   data: BlockData;
   context?: string[];
-  types?: { [key: string]: TypeSpec };
+  initial?: Partial<ProgrammingStateStructures>;
   style?: React.CSSProperties;
 }
 export const ExternalBlock = ({
   store,
-  muiTheme = createTheme(),
+  muiTheme,
   data,
   style = {},
-  types = {},
+  initial,
   context,
 }: ExternalBlockProps) => {
+  const getInner = () => (
+    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+      <InnerExternalBlock data={data} style={style} context={context} />
+    </DndProvider>
+  );
+
+  if (muiTheme) {
+    return (
+      <ProgrammingProvider store={store} initial={initial}>
+        <ThemeProvider theme={muiTheme}>{getInner()}</ThemeProvider>
+      </ProgrammingProvider>
+    );
+  }
   return (
-    <ProgrammingProvider store={store} drawers={[]} types={types}>
-      <ThemeProvider theme={muiTheme}>
-        <DndProvider backend={MultiBackend} options={HTML5toTouch}>
-          <InnerExternalBlock data={data} style={style} context={context} />
-        </DndProvider>
-      </ThemeProvider>
+    <ProgrammingProvider store={store} initial={initial}>
+      {getInner()}
     </ProgrammingProvider>
   );
 };

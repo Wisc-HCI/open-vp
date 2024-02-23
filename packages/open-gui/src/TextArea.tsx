@@ -179,7 +179,7 @@ export const TextArea = ({
   return (
     <FlexStack direction="row">
       <TextAreaWrapper
-        className={disableDrag ? "nodrag nopan" : undefined}
+        className={disableDrag ? "nodrag" : undefined}
         onDoubleClick={props.onDoubleClick}
         disabled={disabled}
         focused={focused}

@@ -17,14 +17,14 @@ export const flowDrawers: DrawerSpec[] = [
     type: DrawerType.Multiple,
     metaType: MetaType.ObjectInstance,
     objectTypes: ["stateType"],
-    icon: "BoxIcon",
+    icon: "SquareRounded",
   },
   {
     title: "Expressions",
     type: DrawerType.Multiple,
     metaType: MetaType.ObjectInstance,
     objectTypes: ["expressionType", "gestureType"],
-    icon: "FaceIcon",
+    icon: "EmojiEmotionsRounded",
   }
 ]
 
@@ -38,7 +38,7 @@ Each State is a collection of attributes, which can be dragged into the State. T
     instanceBlock: {
       onCanvas: true,
       color: "#3f3f3f",
-      icon: "BoxIcon",
+      icon: "SquareRounded",
       connections: {
         bottom: {
           allowed: ["stateType"],
@@ -53,7 +53,6 @@ Each State is a collection of attributes, which can be dragged into the State. T
         {
           type: ExtraType.Dropdown,
           label: "More",
-          icon: "DotsHorizontalIcon",
           contents: [
             ExtraType.CollapseToggle,
             ExtraType.SelectionToggle,
@@ -62,7 +61,6 @@ Each State is a collection of attributes, which can be dragged into the State. T
             {
               type: ExtraType.Dropdown,
               label: "More",
-              icon: "DotsHorizontalIcon",
               contents: [
                 ExtraType.CollapseToggle,
                 ExtraType.SelectionToggle,
@@ -77,7 +75,7 @@ Each State is a collection of attributes, which can be dragged into the State. T
     referenceBlock: {
       onCanvas: false,
       color: "#3f3f3f",
-      icon: "BoxIcon",
+      icon: "SquareRounded",
       extras: [],
     },
     properties: {
@@ -119,13 +117,13 @@ The **The Facial Expression Attribute** can be configured and added to individua
     instanceBlock: {
       onCanvas: false,
       color: "#AD1FDE",
-      icon: "FaceIcon",
+      icon: "EmojiEmotionsRounded",
       extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
     },
     referenceBlock: {
       onCanvas: false,
       color: "#AD1FDE",
-      icon: "FaceIcon",
+      icon: "EmojiEmotionsRounded",
       extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
     },
     properties: {
@@ -167,13 +165,13 @@ The **Hand Gesture Attribute** can be configured and added to individual [States
     instanceBlock: {
       onCanvas: false,
       color: "#B3A533",
-      icon: "HandIcon",
+      icon: "WavingHandRounded",
       extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
     },
     referenceBlock: {
       onCanvas: false,
       color: "#B3A533",
-      icon: "HandIcon",
+      icon: "WavingHandRounded",
       extras: [ExtraType.CollapseToggle, ExtraType.DocToggle],
     },
     properties: {

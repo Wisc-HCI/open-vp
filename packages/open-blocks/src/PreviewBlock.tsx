@@ -61,7 +61,7 @@ export const PreviewBlock = memo(
       },
     };
 
-    
+    console.log(data)
 
     if (!data) {
       return null;

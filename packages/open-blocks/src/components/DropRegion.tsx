@@ -23,16 +23,12 @@ import { TypeDescription, ChipMimic } from "./Doc";
 import { FiClipboard, FiHash } from "react-icons/fi";
 import { BlockData, BlockFieldInfo } from "@people_and_robots/open-core";
 import { NestedContextMenu, Tooltip } from "@people_and_robots/open-gui";
+import { useTheme } from "@mui/system";
 // import { useHover } from '@use-gesture/react';
 
 const DISABLED_STYLES = {
   backgroundColor: "#88888800",
   boxShadow: "none",
-};
-
-const VALID_DROP_STYLES = {
-  backgroundColor: "#88888888",
-  boxShadow: "inset 0pt 0pt 0pt 3pt #dddddd55",
 };
 
 const PERIPHERAL_STYLES = {
@@ -98,64 +94,72 @@ const WRAPPER_VARIANTS = {
   },
 };
 
-const REGION_VARIANTS = {
-  disabledPeripheralEmpty: {
-    ...DEFAULT_STYLES,
-    ...PERIPHERAL_STYLES,
-    ...DISABLED_STYLES,
-  },
-  disabledNonPeripheralEmpty: {
-    ...DEFAULT_STYLES,
-    ...DISABLED_STYLES,
-  },
-  validDropPeripheralEmpty: {
-    ...DEFAULT_STYLES,
-    ...PERIPHERAL_STYLES,
-    ...VALID_DROP_STYLES,
-  },
-  validDropNonPeripheralEmpty: {
-    ...DEFAULT_STYLES,
-    ...VALID_DROP_STYLES,
-  },
-  defaultPeripheralEmpty: {
-    ...DEFAULT_STYLES,
-    ...PERIPHERAL_STYLES,
-  },
-  defaultNonPeripheralEmpty: {
-    ...DEFAULT_STYLES,
-  },
-  disabledPeripheralFilled: {
-    ...DEFAULT_STYLES,
-    ...PERIPHERAL_STYLES,
-    ...DISABLED_STYLES,
-    ...FILLED_STYLES,
-  },
-  disabledNonPeripheralFilled: {
-    ...DEFAULT_STYLES,
-    ...DISABLED_STYLES,
-    ...FILLED_STYLES,
-  },
-  validDropPeripheralFilled: {
-    ...DEFAULT_STYLES,
-    ...PERIPHERAL_STYLES,
-    ...VALID_DROP_STYLES,
-    ...FILLED_STYLES,
-  },
-  validDropNonPeripheralFilled: {
-    ...DEFAULT_STYLES,
-    ...VALID_DROP_STYLES,
-    ...FILLED_STYLES,
-  },
-  defaultPeripheralFilled: {
-    ...DEFAULT_STYLES,
-    ...PERIPHERAL_STYLES,
-    ...FILLED_STYLES,
-  },
-  defaultNonPeripheralFilled: {
-    ...DEFAULT_STYLES,
-    ...FILLED_STYLES,
-  },
-};
+const getRegionVariants = (primary: string) => {
+
+  const VALID_DROP_STYLES = {
+    backgroundColor: "#88888888",
+    boxShadow: `inset 0pt 0pt 0pt 3pt ${primary}`,
+  };
+
+  return {
+    disabledPeripheralEmpty: {
+      ...DEFAULT_STYLES,
+      ...PERIPHERAL_STYLES,
+      ...DISABLED_STYLES,
+    },
+    disabledNonPeripheralEmpty: {
+      ...DEFAULT_STYLES,
+      ...DISABLED_STYLES,
+    },
+    validDropPeripheralEmpty: {
+      ...DEFAULT_STYLES,
+      ...PERIPHERAL_STYLES,
+      ...VALID_DROP_STYLES,
+    },
+    validDropNonPeripheralEmpty: {
+      ...DEFAULT_STYLES,
+      ...VALID_DROP_STYLES,
+    },
+    defaultPeripheralEmpty: {
+      ...DEFAULT_STYLES,
+      ...PERIPHERAL_STYLES,
+    },
+    defaultNonPeripheralEmpty: {
+      ...DEFAULT_STYLES,
+    },
+    disabledPeripheralFilled: {
+      ...DEFAULT_STYLES,
+      ...PERIPHERAL_STYLES,
+      ...DISABLED_STYLES,
+      ...FILLED_STYLES,
+    },
+    disabledNonPeripheralFilled: {
+      ...DEFAULT_STYLES,
+      ...DISABLED_STYLES,
+      ...FILLED_STYLES,
+    },
+    validDropPeripheralFilled: {
+      ...DEFAULT_STYLES,
+      ...PERIPHERAL_STYLES,
+      ...VALID_DROP_STYLES,
+      ...FILLED_STYLES,
+    },
+    validDropNonPeripheralFilled: {
+      ...DEFAULT_STYLES,
+      ...VALID_DROP_STYLES,
+      ...FILLED_STYLES,
+    },
+    defaultPeripheralFilled: {
+      ...DEFAULT_STYLES,
+      ...PERIPHERAL_STYLES,
+      ...FILLED_STYLES,
+    },
+    defaultNonPeripheralFilled: {
+      ...DEFAULT_STYLES,
+      ...FILLED_STYLES,
+    },
+  };
+}
 
 const transferBlockSelector = (state: ProgrammingState) => state.transferBlock;
 
@@ -182,6 +186,8 @@ export const DropRegion = memo(
     commentsEnabled = false,
   }: DropRegionProps) => {
     const transferBlock = useProgrammingStore(transferBlockSelector);
+
+    const theme = useTheme();
 
     const fieldInfo = regionInfo.fieldInfo as BlockFieldInfo;
 
@@ -226,6 +232,7 @@ export const DropRegion = memo(
           context: string[];
         }) =>
           !disabled &&
+          !id && 
           (item.data.metaType === MetaType.Comment ||
           (item.regionInfo.parentId !== CANVAS &&
           isEqual(intersection(context, item.context), item.context))),
@@ -238,6 +245,8 @@ export const DropRegion = memo(
     );
 
     const validDropType =
+      !disabled &&
+      !id &&
       acceptTypes.includes(dropProps.item?.data?.type) &&
       dropProps.item?.regionInfo.parentId !== CANVAS &&
       isEqual(
@@ -306,7 +315,7 @@ export const DropRegion = memo(
         inner={[
           {
             disabled: disabled || !validClipboard,
-            left: FiClipboard,
+            left: "ContentPasteRounded",
             type: "ENTRY",
             label: "Paste",
             onClick: (d, e) => {
@@ -319,7 +328,7 @@ export const DropRegion = memo(
           },
           {
             disabled: disabled || !commentsEnabled,
-            left: FiHash,
+            left: "TagRounded",
             type: "ENTRY",
             label: "Add Comment",
             onClick: (d, e) => {
@@ -402,7 +411,7 @@ export const DropRegion = memo(
                 // ...REGION_VARIANTS[variant],
               }}
               animate={variant}
-              variants={REGION_VARIANTS}
+              variants={getRegionVariants(theme.palette.primary.main)}
               // onContextMenu={validClipboard ? handleContextMenu : null}
             >
               {renderedData && !isPreview ? (
@@ -448,7 +457,7 @@ export const DropRegion = memo(
                   style={{ flex: 1 }}
                   key="field-empty"
                 >
-                  <Typography>{fieldInfo.name}</Typography>
+                  <Typography>{typeof fieldInfo.name === 'string' ? fieldInfo.name : fieldInfo.name.name}</Typography>
                 </motion.span>
               )}
             </motion.div>

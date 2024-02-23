@@ -1,6 +1,6 @@
 import { MouseEventHandler } from "react";
 import { styled, alpha } from '@mui/material/styles';
-import { Button as MuiButton } from "@mui/material";
+import { IconButton as MuiButton } from "@mui/material";
 import { Tooltip } from "./Tooltip";
 import { Icon, IconName } from "./Icon";
 
@@ -9,6 +9,7 @@ export interface IconButtonProps {
   size?: "small" | "medium" | "large" | undefined;
   toggled?: boolean;
   canToggle?: boolean;
+  color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
 }
 
 const sizeMap = {
@@ -26,14 +27,14 @@ const fontSizeMap = {
 export const IconButton = styled(MuiButton, {
   shouldForwardProp: (prop: string) =>
     !['canToggle', 'toggled'].includes(prop)
-})<IconButtonProps>(({ theme, toggled, size = "medium", canToggle }) => ({
+})<IconButtonProps>(({ theme, toggled, size = "medium", canToggle, color = 'primary' }) => ({
   backgroundColor: canToggle && toggled
-      ? alpha(theme.palette.primary.main, 0.6)
+      ? alpha(theme.palette[color].main, 0.6)
       : canToggle && !toggled
         ? 'transparent'
         : "rgba(100,100,100,0.5)",
     color: canToggle && toggled
-      ? alpha(theme.palette.getContrastText(theme.palette.primary.main), 0.8)
+      ? alpha(theme.palette.getContrastText(theme.palette[color].main), 0.8)
       : theme.palette.text.primary,
   fontSize: size ? fontSizeMap[size] : "1.4rem",
   "&.Mui-disabled": {
@@ -46,13 +47,13 @@ export const IconButton = styled(MuiButton, {
   // flex: 1,
   "&:hover": {
     backgroundColor: canToggle && toggled
-      ? alpha(theme.palette.primary.main, 0.8)
+      ? alpha(theme.palette[color].main, 0.8)
       : canToggle && !toggled
-        ? alpha(theme.palette.primary.main, 0.25)
+        ? alpha(theme.palette[color].main, 0.25)
         : "rgba(0,0,0,0.7)",
     color: canToggle && toggled
-      ? alpha(theme.palette.getContrastText(theme.palette.primary.main), 0.8)
-      : theme.palette.primary.main,
+      ? alpha(theme.palette.getContrastText(theme.palette[color].main), 0.8)
+      : theme.palette[color].main,
   },
   "&:focus-visible": {
     userSelect: "none",
@@ -73,6 +74,7 @@ export interface ActionIconButtonProps {
   toggled?: boolean;
   canToggle?: boolean;
   size?: "small" | "medium" | "large";
+  color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
   icon: IconName | (() => IconName);
 }
 
@@ -83,7 +85,8 @@ export const ActionIconButton = ({
   placement = "top",
   toggled = false,
   canToggle = false,
-  icon = "ValueIcon",
+  icon = "Circle",
+  color = "primary",
   size = "medium",
   ...props
 }: ActionIconButtonProps) => (
@@ -103,6 +106,7 @@ export const ActionIconButton = ({
         toggled={toggled}
         canToggle={canToggle}
         size={size}
+        color={color}
         {...props}
       >
         <Icon name={icon as IconName} size={size==='large' ? 36 : size ==='medium' ? 22 : 16}/>

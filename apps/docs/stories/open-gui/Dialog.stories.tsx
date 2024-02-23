@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ActionIconButton, Dialog } from "@people_and_robots/open-gui";
+import { IconTextButton, Dialog } from "@people_and_robots/open-gui";
 import { FiCheck } from "react-icons/fi";
 import { useState } from "react";
 
@@ -21,19 +21,43 @@ export const Primary: Story = {
     const [isOpen, setIsOpen] = useState(props.isOpen);
     return (
       <>
-        <ActionIconButton onClick={() => setIsOpen(!isOpen)}>
+        <IconTextButton onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? 'Close' : 'Open'}
-        </ActionIconButton>
+        </IconTextButton>
         <Dialog {...props} isOpen={isOpen} onStateChange={(open)=>setIsOpen(open)}/>
       </>
     );
   },
-  name: "Dialog",
+  name: "Fixed Dialog",
   args: {
     isOpen: false,
     onStateChange: (open: boolean) => alert("Dialog State Changed"),
     children: <div style={{padding:5, height: 100}}>Dialog Contents</div>,
     showOverlay: true,
+    draggable: false,
     clickableOverlay: true,
+  },
+};
+
+export const Draggable: Story = {
+  render: (props) => {
+    const [isOpen, setIsOpen] = useState(props.isOpen);
+    return (
+      <>
+        <IconTextButton onClick={() => setIsOpen(!isOpen)}>
+          {isOpen ? 'Close' : 'Open'}
+        </IconTextButton>
+        <Dialog {...props} isOpen={isOpen} onStateChange={(open)=>setIsOpen(open)}/>
+      </>
+    );
+  },
+  name: "Draggable Dialog",
+  args: {
+    isOpen: false,
+    onStateChange: (open: boolean) => alert("Dialog State Changed"),
+    children: <div style={{padding:5, height: 100}}>Dialog Contents</div>,
+    showOverlay: false,
+    draggable: true,
+    clickableOverlay: false,
   },
 };

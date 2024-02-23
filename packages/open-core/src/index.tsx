@@ -4,13 +4,22 @@ export type {
   ArgumentData,
   FunctionDeclarationData,
   FunctionCallData,
+  NumberConnectionData,
+  StringConnectionData,
   ConnectionData,
   CommentData,
   BlockData,
   TypeSpec,
   BlockSpec,
+  ObjectDrawerSpec,
+  ReferenceDrawerSpec,
   DrawerSpec,
   ParserProps,
+  AddArgumentExtra,
+  AddArgumentGroupExtra,
+  DropdownExtra,
+  FunctionButtonExtra,
+  IndicatorExtra,
   Extra,
   ProgrammingState,
   ExecutionState,
@@ -18,9 +27,18 @@ export type {
   ObjectTypeSpec,
   FunctionTypeSpec,
   FieldInfo,
+  SimpleBooleanFieldInfo,
+  SimpleNumberFieldInfo,
+  SimpleStringFieldInfo,
+  SimpleOptionsFieldInfo,
+  SimpleMetadataFieldInfo,
+  SimpleVector3FieldInfo,
   BlockFieldInfo,
   SimpleFieldInfo,
   RegionInfo,
+  ProgramSpec,
+  ProgrammingStateActions,
+  ProgrammingStateStructures,
   ProgrammingStore,
   Tab
 } from "./types";
@@ -46,4 +64,5 @@ export {
 export { generateId } from "./functions";
 export { Timer } from "./timer";
 export { useProgrammingStore, ProgrammingContext, ProgrammingProvider } from "./context";
+export type { ProgrammingProviderProps } from "./context";
 export { createProgrammingStore } from "./store";

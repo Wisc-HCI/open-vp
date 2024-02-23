@@ -9,6 +9,7 @@ export interface IconButtonProps {
   size?: "small" | "medium" | "large" | undefined;
   toggled?: boolean;
   canToggle?: boolean;
+  color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
 }
 
 const sizeMap = {
@@ -26,9 +27,9 @@ const fontSizeMap = {
 const InnerIconTextButton = styled(MuiButton, {
   shouldForwardProp: (prop: string) =>
     !['canToggle', 'toggled'].includes(prop)
-})<IconButtonProps>(({ theme, toggled, size = "medium", canToggle }) => ({
+})<IconButtonProps>(({ theme, toggled, size = "medium", canToggle, color = 'primary'}) => ({
   backgroundColor: canToggle && toggled
-    ? alpha(theme.palette.primary.main, 0.4)
+    ? alpha(theme.palette[color].main, 0.4)
     : canToggle && !toggled
       ? "transparent"
       : "rgba(100,100,100,0.5)",
@@ -46,11 +47,11 @@ const InnerIconTextButton = styled(MuiButton, {
   // flex: 1,
   "&:hover": {
     backgroundColor: canToggle && toggled
-      ? alpha(theme.palette.primary.main, 0.5)
+      ? alpha(theme.palette[color].main, 0.5)
       : canToggle && !toggled
-        ? alpha(theme.palette.primary.main, 0.25)
+        ? alpha(theme.palette[color].main, 0.25)
         : "rgba(0,0,0,0.7)",
-    color: theme.palette.primary.main,
+    color: theme.palette[color].main,
   },
   "&:focus-visible": {
     userSelect: "none",
@@ -73,6 +74,7 @@ export interface IconTextButtonProps {
   toggled?: boolean;
   canToggle?: boolean;
   size?: "small" | "medium" | "large";
+  color?: "primary" | "secondary" | "error" | "info" | "success" | "warning";
   children?: string | ReactNode;
 }
 
@@ -87,6 +89,7 @@ export const IconTextButton = ({
   canToggle = false,
   children = null,
   size = "medium",
+  color = "primary",
   ...props
 }: IconTextButtonProps) => {
   const startIconStr = typeof startIcon === "string" ? startIcon : typeof startIcon === "function" ? startIcon() : undefined as IconName | undefined;
@@ -111,6 +114,7 @@ export const IconTextButton = ({
         toggled={toggled}
         canToggle={canToggle}
         size={size}
+        color={color}
         {...props}
       >
         {children}

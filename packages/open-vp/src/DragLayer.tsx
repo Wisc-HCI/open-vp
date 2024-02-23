@@ -5,6 +5,7 @@ import { CommentBlock } from "@people_and_robots/open-blocks/src/CommentBlock";
 import { MetaType } from "@people_and_robots/open-core";
 
 export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
+  
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     currentOffset: monitor.getClientOffset(),
@@ -39,7 +40,6 @@ export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
           <CommentBlock
             data={item.data}
             regionInfo={item.regionInfo}
-            // isDragging={isDragging}
             interactionDisabled
             limitedRender
           />
@@ -56,7 +56,6 @@ export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
           <VisualBlock
             data={item.data}
             regionInfo={item.regionInfo}
-            // isDragging={isDragging}
             typeSpec={item.typeSpec}
             context={item.context}
             interactionDisabled

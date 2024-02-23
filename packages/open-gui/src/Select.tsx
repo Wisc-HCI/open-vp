@@ -10,7 +10,7 @@ import { TextInputExtra } from "./TextInput";
 
 export interface SelectProps {
   options: { value: string; label: string }[];
-  label: string;
+  label?: string;
   value: string;
   onChange: (value: string) => void;
   wrapped?: boolean;
@@ -26,9 +26,9 @@ export const Select = ({
 }: SelectProps) => (
   <RadixSelect.Root>
     <SelectTrigger aria-label={label} wrapped={wrapped} disabled={disabled}>
-      <TextInputExtra side='left'>{label}</TextInputExtra>
+      {label ? <TextInputExtra side='left'>{label}</TextInputExtra> : <span>{" "}</span>}
       <SelectValue placeholder={options.filter((v)=>(v.value===value))[0]?.label || "Unset"} />
-      <SelectIcon className="SelectIcon">
+      <SelectIcon>
         <ChevronDownIcon />
       </SelectIcon>
     </SelectTrigger>
@@ -39,7 +39,7 @@ export const Select = ({
         </SelectScrollUpButton>
         <SelectViewport>
           <RadixSelect.Group>
-            <SelectLabel>{label}</SelectLabel>
+            {label && <SelectLabel>{label}</SelectLabel>}
             {options.map((option: { value: string; label: string }) => (
               <SelectItem
                 key={option.value}
@@ -84,6 +84,7 @@ const SelectItemIndicator = styled(RadixSelect.ItemIndicator)({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
+  padding: 12
 });
 
 const SelectViewport = styled(RadixSelect.Viewport)({ padding: 5 });
@@ -155,18 +156,18 @@ const SelectTrigger = styled(RadixSelect.Trigger, {
     display: "flex",
     justifyContent: "space-between",
     padding: 0,
-    gap: "5px",
+    gap: "5px"
   },
   ({ theme, wrapped, disabled }) => ({
     background:
       theme.palette.mode === "light"
         ? alpha(
             darken(theme.palette.background.paper, 0.4),
-            disabled ? 0.1 : 0.75
+            disabled ? 0.5 : 0.75
           )
         : alpha(
             lighten(theme.palette.background.paper, 0.4),
-            disabled ? 0.1 : 0.75
+            disabled ? 0.5 : 0.75
           ),
     border: "none", //disabled ? `1px solid #24292f30` : `1px solid #24292f50`,
     borderRadius: wrapped

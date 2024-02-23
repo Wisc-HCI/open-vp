@@ -7,7 +7,6 @@ import {
   Box
 } from "@mui/material";
 import { SettingsContainer } from "./BlockContainers";
-import { ExpandCarrot } from "./ExpandCarrot";
 import { ProgrammingState, SimpleFieldInfo, PropertyType, useProgrammingStore } from "@people_and_robots/open-core";
 import { NumberInput, Vector3Input, ActionIconButton, TextInput, Select, Toggle } from "@people_and_robots/open-gui";
 
@@ -56,7 +55,7 @@ export const SettingsSection = ({
                     e.stopPropagation();
                   }
             }
-            icon={collapsed ? "ChevronRightIcon" : "ChevronDownIcon"}
+            icon={collapsed ? "KeyboardArrowRightRounded" : "KeyboardArrowDownRounded"}
           />
         }
       />
@@ -65,23 +64,6 @@ export const SettingsSection = ({
         {!collapsed &&
        
           Object.entries(simpleProperties).map(([propKey, propInfo]) => (
-            // <Stack
-            //   key={propKey}
-            //   direction="row"
-            //   justifyContent="space-between"
-            //   sx={{
-            //     backgroundColor: "#00000055",
-            //     borderRadius: 2,
-            //     display: "flex",
-            //     align: "center",
-            //     marginBottom: 1,
-            //     padding: 2,
-            //     alignItems: "center",
-            //   }}
-            //   justifyItems="between"
-            //   alignItems="center"
-            //   margin={{ bottom: "xsmall" }}
-            // >
             <>
               {propInfo.type === PropertyType.Boolean && (
                 <Toggle

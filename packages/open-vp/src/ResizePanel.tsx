@@ -28,7 +28,7 @@ export default function ResizePanel() {
           disabled={zoom >= 1}
           onClick={()=>zoomIn({duration:300})}
           placement="right"
-          icon="PlusIcon"
+          icon="AddRounded"
         />
         <VerticalSlider
           // @ts-ignore
@@ -44,13 +44,13 @@ export default function ResizePanel() {
           disabled={zoom <= 0.25}
           onClick={()=>zoomOut({duration:300})}
           placement="right"
-          icon="MinusIcon"
+          icon="RemoveRounded"
         />
         <ActionIconButton
           title="Fit View"
           onClick={()=>fitView({duration:300})}
           placement="right"
-          icon="EnterFullScreenIcon"
+          icon="FullscreenRounded"
         />
         {/* <FancyIconButton size='small' onClick={() => setLocked(!locked)}>{locked ? <FiLock /> : <FiUnlock />}</FancyIconButton> */}
       </StyledStack>

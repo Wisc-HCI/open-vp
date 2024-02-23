@@ -173,7 +173,7 @@ export const CanvasEdge = ({
                             toggleEdgeMode(edge.id);
                             e.stopPropagation();
                           }}
-                          icon="FrameIcon"
+                          icon="TagRounded"
                         />
                         <ActionIconButton
                           title="Delete edge"
@@ -182,7 +182,7 @@ export const CanvasEdge = ({
                             deleteEdge(edge.id);
                             e.stopPropagation();
                           }}
-                          icon="TrashIcon"
+                          icon="DeleteRounded"
                         />
                       </Stack>
                     }
@@ -201,7 +201,7 @@ export const CanvasEdge = ({
                             toggleEdgeMode(edge.id);
                             e.stopPropagation();
                           }}
-                          icon="TextIcon"
+                          icon="TextFieldsRounded"
                         />
                         <ActionIconButton
                           title="Delete edge"
@@ -210,7 +210,7 @@ export const CanvasEdge = ({
                             deleteEdge(edge.id);
                             e.stopPropagation();
                           }}
-                          icon="TrashIcon"
+                          icon="DeleteRounded"
                         />
                       </Stack>
                     }

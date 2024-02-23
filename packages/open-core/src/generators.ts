@@ -83,6 +83,12 @@ export function instanceTemplateFromSpec(
     Object.entries(typeSpec.properties).forEach(([propKey, propInfo]) => {
       (data as ObjectData | FunctionDeclarationData).properties[propKey] =
         propInfo.default;
+      if (typeof propInfo.name !== "string") {
+        console.log("label feature", data, propInfo.name);
+        (data as ObjectData | FunctionDeclarationData).properties[
+          propInfo.name.id
+        ] = propInfo.name.default;
+      }
     });
   }
   if (

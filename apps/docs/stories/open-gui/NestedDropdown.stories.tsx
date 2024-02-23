@@ -1,7 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ThemeProvider, createTheme, CssBaseline, PaletteMode } from "@mui/material";
-import { NestedDropdown, DropdownData } from "@people_and_robots/open-gui";
-import { FiMoreHorizontal, FiStar } from "react-icons/fi";
+import { NestedDropdown } from "@people_and_robots/open-gui";
 import type { IconName } from "@people_and_robots/open-gui";
 
 const meta: Meta<typeof NestedDropdown> = {
@@ -32,14 +30,14 @@ export const Primary: Story = {
   args: {
     data: { name: 'Red Star', color: "red" },
     label: "Dropdown",
-    icon: "DotsHorizontalIcon" as IconName,
+    icon: "MoreHorizRounded" as IconName,
     inner: [
       { type: "HEADER", label: "My Label" },
       {
         type: "ENTRY",
         label: "Toggle Mode",
         /* @ts-ignore */
-        left: (data: DataType) => "StarIcon", // eslint-disable-line no-eval
+        left: (data: DataType) => "StarRounded", // eslint-disable-line no-eval
         onClick: () => {
           alert("Clicked Button")
         },
@@ -58,7 +56,7 @@ export const Primary: Story = {
           { type: "HEADER", label: "Inner Menu" },
           {
             type: "ENTRY",
-            right: "StarIcon",
+            right: "StarRounded",
             /* @ts-ignore */
             label: (data: DataType) => `Piped Name: ${data.name}`, // eslint-disable-line no-eval
           },

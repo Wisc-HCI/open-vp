@@ -1,5 +1,11 @@
-import { useState, forwardRef, useCallback, Ref, ChangeEvent, CSSProperties } from "react";
-import { FiMoreVertical } from "react-icons/fi";
+import {
+  useState,
+  forwardRef,
+  useCallback,
+  Ref,
+  ChangeEvent,
+  CSSProperties,
+} from "react";
 import {
   useProgrammingStore,
   BlockData,
@@ -10,14 +16,11 @@ import {
   FieldInfo,
   CommentData,
 } from "@people_and_robots/open-core";
-import { useTheme, Skeleton } from "@mui/material";
-import {
-  CommentContainer
-} from "./components/BlockContainers";
+import { CommentContainer } from "./components/BlockContainers";
 import {
   NestedContextMenu,
-  ActionIconButton,
   TextArea,
+  NestedDropdown
 } from "@people_and_robots/open-gui";
 
 export interface CommentBlockProps {
@@ -57,8 +60,6 @@ export const CommentBlock = forwardRef(
     ref: Ref<HTMLElement | SVGElement> | undefined
   ) => {
     // const fieldInfo = regionInfo.fieldInfo as BlockFieldInfo;
-    const [isCollapsed, setIsCollapsed] = useState(false);
-
     const deleteBlock = useProgrammingStore(
       (state: ProgrammingState) => state.deleteBlock
     );
@@ -76,25 +77,47 @@ export const CommentBlock = forwardRef(
       )
     );
 
-    const onClick = useProgrammingStore((state: ProgrammingState) => state.onVPEClick);
+    const setEditing = useProgrammingStore(
+      state => state.updateItemEditing
+    )
 
-    const theme = useTheme();
+    const onClick = useProgrammingStore(
+      (state: ProgrammingState) => state.onVPEClick
+    );
 
     if (!data) {
       return null;
     }
 
-    // console.log(ref?.current)
-    // const menuData: MenuData & CommentData = {
-    //   ...data,
-    //   isCollapsed,
-    // };
-
     return (
       <NestedContextMenu
-        // data={menuData}
-        data={{}}
-        inner={[]}
+        data={data}
+        inner={[
+          {
+            label: "Copy",
+            left: "ContentCopyRounded",
+            type: "ENTRY",
+            onClick: () => {
+              copyFn();
+            },
+          },
+          {
+            label: "Cut",
+            left: "ContentCutRounded",
+            type: "ENTRY",
+            onClick: () => {
+              cutFn();
+            },
+          },
+          {
+            label: "Delete",
+            left: "DeleteOutlineRounded",
+            type: "ENTRY",
+            onClick: () => {
+              deleteBlock(data);
+            },
+          },
+        ]}
       >
         <CommentContainer
           // contentEditable
@@ -106,137 +129,55 @@ export const CommentBlock = forwardRef(
             // setClipboardBlock({data,fieldInfo,parentId,onCanvas,context});
             e.stopPropagation();
           }}
-          className={"nodrag nopan"}
           // onContextMenu={(e)=>e.stopPropagation()}
           bounded={bounded}
           focused={isCopying}
           style={style}
         >
-          {limitedRender ? <Skeleton /> : (
-            <TextArea
+          <TextArea
             value={data.text}
             label="#"
             extra={
-              <ActionIconButton>
-                <FiMoreVertical />
-              </ActionIconButton>
-            }
-            onChange={(event: ChangeEvent<HTMLTextAreaElement>) => updateCommentText(data.id, event.target.value)}
-          />
-          )}
-          
-
-          {/* {!limitedRender && (
-              <FancyMenu
-                key={`${data.id}-contextmenu`}
-                open={contextMenu !== null}
-                onClose={handleContextMenuClose}
-                anchorReference="anchorPosition"
-                anchorPosition={
-                  contextMenu !== null
-                    ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-                    : undefined
-                }
-              >
-                <RightClickMenu
-                  key={`${data.id}-inner-contextmenu`}
-                  fieldInfo={fieldInfo}
-                  parentId={parentId}
-                  copyFn={copyFn}
-                  cutFn={cutFn}
-                  interactionDisabled={interactionDisabled}
+              !limitedRender && (
+                <NestedDropdown
                   data={data}
-                  blockSpec={blockSpec}
-                  isEditing={editing}
-                  isCollapsed={isCollapsed}
-                  isSelected={selected}
-                  isDebugging={isDebugging}
-                  docActive={docActive}
-                  setDocActive={(v) => setDocActive(data.id, v)}
-                  setIsEditing={
-                    data.dataType === DATA_TYPES.REFERENCE ||
-                    data.dataType === DATA_TYPES.CALL
-                      ? (v) => setIsEditing(data.ref, v)
-                      : (v) => setIsEditing(data.id, v)
-                  }
-                  setIsSelected={
-                    data.dataType === DATA_TYPES.REFERENCE ||
-                    data.dataType === DATA_TYPES.CALL
-                      ? (v) => {
-                          // console.log(data);
-                          setIsSelected(data.ref, v);
-                        }
-                      : (v) => {
-                          // console.log(data);
-                          setIsSelected(data.id, v);
-                        }
-                  }
-                  setIsCollapsed={setIsCollapsed}
-                  setIsDebugging={setIsDebugging}
+                  inner={[
+                    {
+                      label: "Copy",
+                      left: "ContentCopyRounded",
+                      type: "ENTRY",
+                      onClick: () => {
+                        copyFn();
+                      },
+                    },
+                    {
+                      label: "Cut",
+                      left: "ContentCutRounded",
+                      type: "ENTRY",
+                      onClick: () => {
+                        cutFn;
+                      },
+                    },
+                    {
+                      label: "Delete",
+                      left: "DeleteOutlineRounded",
+                      type: "ENTRY",
+                      onClick: () => {
+                        deleteBlock(data);
+                      },
+                    },
+                  ]}
                 />
-              </FancyMenu>
-            )} */}
-
-          {/* <Stack
-            justifyContent="space-between"
-            className="nodrag"
-            alignItems="center"
-            spacing={1}
-            direction="row"
-            sx={{
-              display: "flex",
-              margin: "4px",
-            }}
-          >
-
-            
-              <FullWidthStack>
-                Comment 
-                {/* <MinifiedBar
-                    id={data.id}
-                    propertyInfo={typeSpec.properties}
-                    properties={data.properties}
-                    canDragBlockRFR={canDragBlockRFR}
-                    interactionDisabled={interactionDisabled}
-                    context={context}
-                    bounded={inDrawer}
-                    limitedRender={limitedRender}
-                  /> */}
-
-          {/* {blockSpec.extras && !limitedRender && (
-              <MenuSection
-                data={data}
-                inDrawer={inDrawer}
-                copyFn={copyFn}
-                cutFn={cutFn}
-                deleteFn={() =>
-                  deleteBlock(data, regionInfo.parentId, regionInfo.fieldInfo)
-                }
-                interactionDisabled={interactionDisabled}
-                blockSpec={blockSpec}
-                isCollapsed={isCollapsed}
-                setIsCollapsed={setIsCollapsed}
-                isSelected={selected}
-                setIsSelected={
-                  data.metaType === MetaType.ObjectReference ||
-                  data.metaType === MetaType.FunctionCall
-                    ? (v: boolean) => {
-                        // console.log(data);
-                        setIsSelected(data.ref, v);
-                      }
-                    : (v: boolean) => {
-                        // console.log(data);
-                        setIsSelected(data.id, v);
-                      }
-                }
-                docActive={docActive}
-                setDocActive={(v: boolean) => setDocActive(data.id, v)}
-                isDebugging={isDebugging}
-                setIsDebugging={setIsDebugging}
-              />
-            )} */}
-          {/* </Stack>
-          {data.text} */}
+              )
+            }
+            readonly={!data.editing}
+            disableDrag={data.editing}
+            onFocus={() => setEditing(data.id, true)}
+            onBlur={() => setEditing(data.id, false)}
+            onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+              updateCommentText(data.id, event.target.value)
+            }
+          />
         </CommentContainer>
       </NestedContextMenu>
     );

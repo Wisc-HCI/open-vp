@@ -3,6 +3,7 @@ import { Environment } from "@people_and_robots/open-vp";
 import React from "react";
 import { flowDrawers, flowTypes } from "../typespecs/flow";
 import { imperativeDrawers, imperativeTypes } from "../typespecs/imperative";
+import { triggerDrawers, triggerTypes } from "../typespecs/trigger";
 
 const meta: Meta<typeof Environment> = {
   component: Environment,
@@ -38,15 +39,45 @@ type Story = StoryObj<typeof Environment>;
 export const Primary: Story = {
   name: "Imperative Programming",
   args: {
-    types: imperativeTypes,
-    drawers: imperativeDrawers,
+    initial: {
+      programSpec: {
+        objectTypes: imperativeTypes,
+        drawers: imperativeDrawers,
+      }
+    },
+    reactflowProOptions: {
+      hideAttribution: true
+    }
   },
 };
 
 export const Secondary: Story = {
   name: "Flow-Based Programming",
   args: {
-    types: flowTypes,
-    drawers: flowDrawers,
+    initial: {
+      programSpec: {
+        objectTypes: flowTypes,
+        drawers: flowDrawers,
+      }
+    },
+    reactflowProOptions: {
+      hideAttribution: true
+    }
   },
 };
+
+export const Tertiary: Story = {
+  name: "SOBORO Programming",
+  args: {
+    initial: {
+      programSpec: {
+        objectTypes: triggerTypes,
+        drawers: triggerDrawers,
+      }
+    },
+    reactflowProOptions: {
+      hideAttribution: true
+    }
+  },
+};
+

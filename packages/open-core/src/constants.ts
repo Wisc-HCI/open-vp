@@ -39,7 +39,6 @@ export enum PropertyType {
   Number = "NUMBER",
   String = "STRING",
   Options = "OPTIONS",
-  Ignored = "IGNORED",
   Metadata = "METADATA",
   Vector3 = "VECTOR3",
   Custom = "CUSTOM",

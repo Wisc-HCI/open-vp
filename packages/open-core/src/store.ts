@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create, createStore } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { produce } from "immer";
 import { mapValues, remove } from "lodash";
@@ -29,6 +29,7 @@ import {
   ProgrammingState,
   BlockFieldInfo,
   CommentData,
+  ProgrammingStateStructures,
 } from "./types";
 import {
   MetaType,
@@ -93,12 +94,14 @@ export const ProgrammingSlice = (
   setActiveDoc: (id: string, value: boolean) => {
     set({ activeDoc: value ? id : null });
   },
-  tabs: [{
-    title: "Main",
-    id: tab1ID,
-    visible: true,
-    blocks: [],
-  }],
+  tabs: [
+    {
+      title: "Main",
+      id: tab1ID,
+      visible: true,
+      blocks: [],
+    },
+  ],
   setTabs: (newTabs: Tab[]) => set({ tabs: newTabs }),
   activeTab: tab1ID,
   parse: (
@@ -180,7 +183,11 @@ export const ProgrammingSlice = (
         });
       })
     ),
-  deleteBlock: (data: BlockData | CommentData, parentId: string, fieldInfo: FieldInfo) => {
+  deleteBlock: (
+    data: BlockData | CommentData,
+    parentId: string,
+    fieldInfo: FieldInfo
+  ) => {
     set(
       produce((state: ProgrammingState) => {
         console.warn("deleteBlock", data.id, data, parentId, fieldInfo);
@@ -311,30 +318,38 @@ export const ProgrammingSlice = (
   updateItemSelected: (id: string, value: boolean) => {
     set(
       produce((state: ProgrammingState) => {
-        const item: BlockData = state.programData[id] as BlockData;
+        const item: BlockData | undefined  = state.programData[id] as BlockData | undefined ;
+        if (!item) {
+          return;
+        }
         const usedId =
           item.metaType === "FUNCTION-CALL" ||
           item.metaType === "OBJECT-REFERENCE"
             ? item.ref
             : id;
 
-        let updatedItem: BlockData = state.programData[usedId] as BlockData;
-        updatedItem.selected = value;
-        state.programData[usedId] = updatedItem;
+        let updatedItem: BlockData | undefined = state.programData[usedId] as BlockData | undefined;
+        if (updatedItem) {
+          updatedItem.selected = value;
+          state.programData[usedId] = updatedItem;
+        }
       })
     );
   },
   setSelections: (selections: string[]) => {
     set(
       produce((state: ProgrammingState) => {
-        state.programData = mapValues(state.programData, (item: BlockData | ConnectionData | CommentData) => {
-          if (item.metaType === MetaType.Connection) {
-            return item;
+        state.programData = mapValues(
+          state.programData,
+          (item: BlockData | ConnectionData | CommentData) => {
+            if (item.metaType === MetaType.Connection) {
+              return item;
+            }
+            return { ...item, selected: selections.includes(item.id) };
           }
-          return { ...item, selected: selections.includes(item.id) };
-        });
+        );
       })
-    )
+    );
   },
   updateItemEditing: (id: string, value: boolean) => {
     set(
@@ -377,7 +392,7 @@ export const ProgrammingSlice = (
         current.text = value;
         state.programData[id] = current;
       })
-    )
+    );
   },
   deleteEdge: (id: string) => {
     set(
@@ -748,12 +763,14 @@ export const ProgrammingSlice = (
         ) {
           // Paste the last thing that was copied or pasted
           console.log("Pasting the last that was copied or pasted");
-          const [newBlocks, newId]: [{ [key: string]: BlockData | CommentData }, string] =
-            deepCopy(
-              state.programData,
-              state.programSpec.objectTypes,
-              clipboardBlock.id
-            );
+          const [newBlocks, newId]: [
+            { [key: string]: BlockData | CommentData },
+            string,
+          ] = deepCopy(
+            state.programData,
+            state.programSpec.objectTypes,
+            clipboardBlock.id
+          );
           if (clipboardProps.regionInfo?.parentId === CANVAS) {
             console.log("New block is on the canvas");
             // Set the position based on the coordinates of the paste
@@ -925,9 +942,19 @@ export const ProgrammingSlice = (
 export const DefaultSlice =
   subscribeWithSelector<ProgrammingState>(ProgrammingSlice);
 
-export const createProgrammingStore = create<ProgrammingState>()(
-  subscribeWithSelector<ProgrammingState>(ProgrammingSlice)
-);
+export const createProgrammingStore = (
+  initProps: Partial<ProgrammingStateStructures>
+) =>
+  create<ProgrammingState>()(
+    subscribeWithSelector<ProgrammingState>((set, get, store) => {
+      return {
+        ...DefaultSlice(set, get, store),
+        ...initProps,
+      };
+    })
+  );
+
+export const DefaultStore = createProgrammingStore({});
 
 // export const createProgrammingStore = (initProps?: Partial<ProgrammingState>) => {
 //   return createStore<ProgrammingState>()((set, get, store) => ({

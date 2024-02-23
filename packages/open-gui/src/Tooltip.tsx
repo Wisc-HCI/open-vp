@@ -1,4 +1,4 @@
-import { ReactNode, CSSProperties } from 'react';
+import { ReactNode } from 'react';
 import * as RadixTooltip from '@radix-ui/react-tooltip';
 import { styled, alpha, darken, lighten, keyframes } from '@mui/material';
 
