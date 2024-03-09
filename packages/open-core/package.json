@@ -1,18 +1,15 @@
 {
   "name": "@people_and_robots/open-core",
-  "version": "2.0.0-pre.2",
+  "version": "2.0.0-pre.5",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "sideEffects": false,
   "license": "MIT",
-  "files": [
-    "dist/**"
-  ],
+  "files": ["dist/**"],
   "scripts": {
-    "build": "npm run typedoc && tsup src/index.tsx --format esm,cjs --dts --external react",
-    "dev": "npm run typedoc && typedoc && tsup src/index.tsx --format esm,cjs --watch --dts --external react",
-    "typedoc": "npx typedoc --plugin typedoc-plugin-markdown",
+    "build": "tsup src/index.tsx --format esm,cjs --dts --external react",
+    "dev": "tsup src/index.tsx --format esm,cjs --watch --dts --external react",
     "lint": "eslint src/",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },

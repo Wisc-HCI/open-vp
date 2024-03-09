@@ -63,27 +63,28 @@ export const MenuSection = memo(
     setIsDebugging, // setIsEditing,
   }: MenuSectionProps) => {
     const storeFns = useProgrammingStore((state: ProgrammingState) =>
-      pickBy(state, (v) => typeof v === "function")
+      pickBy(state, (v) => typeof v === "function"),
     );
 
-    const typeSpecs = useProgrammingStore((state: ProgrammingState) => 
-        state.programSpec.objectTypes
+    const typeSpecs = useProgrammingStore(
+      (state: ProgrammingState) => state.programSpec.objectTypes,
     );
 
     if (blockSpec.extras.length === 0) {
       return null;
     }
 
-    let usedExtras: Extra[] = inDrawer && blockSpec.extras.length > 1
-      ? [
-          {
-            label: "Actions",
-            type: ExtraType.Dropdown,
-            icon: "MoreHorizRounded",
-            contents: blockSpec.extras,
-          },
-        ]
-      : blockSpec.extras;
+    let usedExtras: Extra[] =
+      inDrawer && blockSpec.extras.length > 1
+        ? [
+            {
+              label: "Actions",
+              type: ExtraType.Dropdown,
+              icon: "MoreHorizRounded",
+              contents: blockSpec.extras,
+            },
+          ]
+        : blockSpec.extras;
     // const setLocked = useProgrammingStore((state:ProgrammingState) => state.setLocked);
     // console.log(usedExtras);
 
@@ -97,11 +98,11 @@ export const MenuSection = memo(
       setDocActive,
       setIsCollapsed,
       (id: string, type: string) => {
-        storeFns.addArgument(id, type);
+        storeFns.addArgument ? storeFns.addArgument(id, type) : () => {};
       },
-      storeFns,
+      storeFns as { [key: string]: (...args: any[]) => void },
       typeSpecs,
-      interactionDisabled
+      interactionDisabled,
     );
 
     let menuData = {
@@ -115,18 +116,28 @@ export const MenuSection = memo(
 
     return (
       <Stack direction="row" gap={1}>
-        {dropdowns.map((dropdown: DropdownData<MenuData & BlockData>,i) => {
+        {dropdowns.map((dropdown: DropdownData<MenuData & BlockData>, i) => {
           return dropdown.type === "ENTRY" && dropdown.inner ? (
             <NestedDropdown key={i} data={menuData} inner={dropdown.inner} />
           ) : dropdown.type === "ENTRY" ? (
             <ActionIconButton
               key={i}
-              title={typeof dropdown.label === "function" ? dropdown.label(menuData) : dropdown.label}
+              title={
+                typeof dropdown.label === "function"
+                  ? dropdown.label(menuData)
+                  : dropdown.label
+              }
               // @ts-ignore
               onClick={(e: MouseEvent) =>
-                dropdown.onClick ? dropdown.onClick(menuData,e) : () => {}
+                dropdown.onClick ? dropdown.onClick(menuData, e) : () => {}
               }
-              icon={typeof dropdown.left === "function" ? dropdown.left(menuData) : typeof dropdown.left === "string" ? dropdown.left : "CheckBoxRounded"}
+              icon={
+                typeof dropdown.left === "function"
+                  ? dropdown.left(menuData)
+                  : typeof dropdown.left === "string"
+                    ? dropdown.left
+                    : "CheckBoxRounded"
+              }
             />
           ) : (
             <Divider key={i} />
@@ -134,7 +145,7 @@ export const MenuSection = memo(
         })}
       </Stack>
     );
-  }
+  },
 );
 
 export function extrasToDropdown(
@@ -149,7 +160,7 @@ export function extrasToDropdown(
   addArgument: (id: string, type: string) => void,
   storeFns: { [key: string]: (...args: any[]) => void },
   typeSpecs: { [key: string]: TypeSpec },
-  interactionDisabled: boolean
+  interactionDisabled: boolean,
 ): DropdownData<MenuData & BlockData>[] {
   return extras.map((extra: Extra) => {
     if (extra === ExtraType.Divider) {
@@ -208,7 +219,9 @@ export function extrasToDropdown(
         label: (data: MenuData & BlockData) =>
           data.docActive ? "Close Doc" : "Open Doc",
         left: (data: MenuData & BlockData) =>
-          data.docActive ? "RemoveCircleOutlineRounded" : "ImportContactsRounded",
+          data.docActive
+            ? "RemoveCircleOutlineRounded"
+            : "ImportContactsRounded",
         onClick: (data: MenuData & BlockData) => {
           setDocActive(!data.docActive);
         },
@@ -219,7 +232,8 @@ export function extrasToDropdown(
         preventCloseOnClick: true,
         label: (data: MenuData & BlockData) =>
           data.isCollapsed ? "Expand" : "Collapse",
-        left: (data: MenuData & BlockData) => (data.isCollapsed ? "FullscreenExitRounded" : "FullscreenRounded"),
+        left: (data: MenuData & BlockData) =>
+          data.isCollapsed ? "FullscreenExitRounded" : "FullscreenRounded",
         onClick: (data: MenuData & BlockData) => {
           setCollapsed(!data.isCollapsed);
         },
@@ -236,8 +250,8 @@ export function extrasToDropdown(
         typeof extra.onClick === "function"
           ? extra.onClick
           : storeFns[extra.onClick]
-          ? storeFns[extra.onClick]
-          : (data: any) => {};
+            ? storeFns[extra.onClick]
+            : (data: any) => {};
       return {
         type: "ENTRY",
         label: extra.label,
@@ -262,7 +276,7 @@ export function extrasToDropdown(
           addArgument,
           storeFns,
           typeSpecs,
-          interactionDisabled
+          interactionDisabled,
         ),
       } as DropdownData<MenuData & BlockData>;
     } else if (extra.type === ExtraType.AddArgument) {
@@ -280,17 +294,18 @@ export function extrasToDropdown(
         type: "ENTRY",
         label: "Add Arguments",
         left: extra.icon,
-        inner: extra.allowed?.map((type: string) => {
-          return {
-            type: "ENTRY",
-            label: `Add ${typeSpecs[type].name}`,
-            left: getIconFromTypeSpec(typeSpecs[type]),
-            onClick: (data: MenuData & BlockData) => {
-              addArgument(data.id, type);
-            },
-            disabled: interactionDisabled,
-          };
-        }) || [],
+        inner:
+          extra.allowed?.map((type: string) => {
+            return {
+              type: "ENTRY",
+              label: `Add ${typeSpecs[type].name}`,
+              left: getIconFromTypeSpec(typeSpecs[type]),
+              onClick: (data: MenuData & BlockData) => {
+                addArgument(data.id, type);
+              },
+              disabled: interactionDisabled,
+            };
+          }) || [],
       } as DropdownData<MenuData & BlockData>;
     } else {
       return {
@@ -304,19 +319,19 @@ export function extrasToDropdown(
 }
 
 const getIconFromTypeSpec = (typeSpec: TypeSpec) => {
-    if (typeSpec.primitiveType === PrimitiveType.Object) {
-        if (typeSpec.instanceBlock.icon) {
-            return typeSpec.instanceBlock.icon
-        } else if (typeSpec.referenceBlock.icon) {
-            return typeSpec.referenceBlock.icon
-        }
-    } else if (typeSpec.primitiveType === PrimitiveType.Function) {
-        if (typeSpec.functionBlock.icon) {
-            return typeSpec.functionBlock.icon
-        } else if (typeSpec.callBlock.icon) {
-            return typeSpec.callBlock.icon
-        } 
-    } 
-    
-    return "BoxIcon"
-}
+  if (typeSpec.primitiveType === PrimitiveType.Object) {
+    if (typeSpec.instanceBlock.icon) {
+      return typeSpec.instanceBlock.icon;
+    } else if (typeSpec.referenceBlock.icon) {
+      return typeSpec.referenceBlock.icon;
+    }
+  } else if (typeSpec.primitiveType === PrimitiveType.Function) {
+    if (typeSpec.functionBlock.icon) {
+      return typeSpec.functionBlock.icon;
+    } else if (typeSpec.callBlock.icon) {
+      return typeSpec.callBlock.icon;
+    }
+  }
+
+  return "BoxIcon";
+};

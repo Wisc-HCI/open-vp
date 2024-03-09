@@ -36,18 +36,20 @@ export type {
   BlockFieldInfo,
   SimpleFieldInfo,
   RegionInfo,
+  ResponsiveIcon,
   ProgramSpec,
   ProgrammingStateActions,
   ProgrammingStateStructures,
   ProgrammingStore,
-  Tab
-} from "./types";
+  Tab,
+} from "./types.ts";
 export {
   instanceTemplateFromSpec,
   functionInstanceAsType,
   referenceTemplateFromSpec,
   combinedBlockData,
-} from "./generators";
+  functionTypeSpec,
+} from "./generators.ts";
 export {
   SPAWNER,
   CANVAS,
@@ -59,10 +61,14 @@ export {
   ConnectionDirection,
   PropertyType,
   ExtraType,
-  ConnectionType
-} from "./constants";
-export { generateId } from "./functions";
-export { Timer } from "./timer";
-export { useProgrammingStore, ProgrammingContext, ProgrammingProvider } from "./context";
-export type { ProgrammingProviderProps } from "./context";
-export { createProgrammingStore } from "./store";
+  ConnectionType,
+} from "./constants.ts";
+export { generateId } from "./functions.ts";
+export { Timer } from "./timer.ts";
+export {
+  useProgrammingStore,
+  ProgrammingContext,
+  ProgrammingProvider,
+} from "./context.tsx";
+export type { ProgrammingProviderProps } from "./context.tsx";
+export { createProgrammingStore, DefaultStore, DefaultSlice } from "./store.ts";

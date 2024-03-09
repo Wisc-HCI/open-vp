@@ -20,7 +20,7 @@ import { CommentContainer } from "./components/BlockContainers";
 import {
   NestedContextMenu,
   TextArea,
-  NestedDropdown
+  NestedDropdown,
 } from "@people_and_robots/open-gui";
 
 export interface CommentBlockProps {
@@ -53,19 +53,20 @@ export const CommentBlock = forwardRef(
       data,
       bounded = false,
       limitedRender,
+      regionInfo,
       copyFn = () => {},
       cutFn = () => {},
       style,
     }: CommentBlockProps,
-    ref: Ref<HTMLElement | SVGElement> | undefined
+    ref: Ref<HTMLElement | SVGElement> | undefined,
   ) => {
     // const fieldInfo = regionInfo.fieldInfo as BlockFieldInfo;
     const deleteBlock = useProgrammingStore(
-      (state: ProgrammingState) => state.deleteBlock
+      (state: ProgrammingState) => state.deleteBlock,
     );
 
     const updateCommentText = useProgrammingStore(
-      (state: ProgrammingState) => state.updateCommentText
+      (state: ProgrammingState) => state.updateCommentText,
     );
 
     const isCopying = useProgrammingStore(
@@ -73,16 +74,14 @@ export const CommentBlock = forwardRef(
         (state) =>
           state.clipboard?.block?.id === data.id &&
           state.clipboard.action === "COPY",
-        [data.id]
-      )
+        [data.id],
+      ),
     );
 
-    const setEditing = useProgrammingStore(
-      state => state.updateItemEditing
-    )
+    const setEditing = useProgrammingStore((state) => state.updateItemEditing);
 
     const onClick = useProgrammingStore(
-      (state: ProgrammingState) => state.onVPEClick
+      (state: ProgrammingState) => state.onVPEClick,
     );
 
     if (!data) {
@@ -114,7 +113,7 @@ export const CommentBlock = forwardRef(
             left: "DeleteOutlineRounded",
             type: "ENTRY",
             onClick: () => {
-              deleteBlock(data);
+              deleteBlock(data, regionInfo.parentId, regionInfo.fieldInfo);
             },
           },
         ]}
@@ -163,7 +162,11 @@ export const CommentBlock = forwardRef(
                       left: "DeleteOutlineRounded",
                       type: "ENTRY",
                       onClick: () => {
-                        deleteBlock(data);
+                        deleteBlock(
+                          data,
+                          regionInfo.parentId,
+                          regionInfo.fieldInfo,
+                        );
                       },
                     },
                   ]}
@@ -181,5 +184,5 @@ export const CommentBlock = forwardRef(
         </CommentContainer>
       </NestedContextMenu>
     );
-  }
+  },
 );

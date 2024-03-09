@@ -7,6 +7,7 @@
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "changeset": "changeset",
+    "typedoc": "turbo run typedoc",
     "version-packages": "changeset version",
     "release": "turbo run build --filter=docs^... && changeset publish"
   },
@@ -26,8 +27,5 @@
     "typedoc-plugin-markdown": "^3.17.1"
   },
   "packageManager": "npm@8.19.3",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "workspaces": ["apps/*", "packages/*"]
 }

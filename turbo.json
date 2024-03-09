@@ -16,6 +16,9 @@
     },
     "clean": {
       "cache": false
+    },
+    "release": {
+      "cache": false
     }
   }
 }

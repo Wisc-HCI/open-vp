@@ -13,7 +13,6 @@ import {
   RegionInfo,
   SPAWNER,
   CANVAS,
-  OUTSIDE,
   BlockFieldInfo,
   SimpleFieldInfo,
   MetaType,
@@ -29,12 +28,8 @@ import { Block } from "./Block";
 import { pickBy } from "lodash";
 import { ConnectionHandle } from "./components/ConnectionHandle";
 import Typography from "@mui/material/Typography";
-import { Collapse, Box, Stack, useTheme } from "@mui/material";
-import {
-  BlockContainer,
-  FullWidthStack,
-  PropertySection,
-} from "./components/BlockContainers";
+import { Collapse, Box, Stack } from "@mui/material";
+import { BlockContainer, PropertySection } from "./components/BlockContainers";
 import { BlockHeader } from "./components/BlockHeader";
 // import { MinifiedBar } from "./components/MinifiedBar";
 import { SettingsSection } from "./components/SettingsSection";
@@ -104,7 +99,7 @@ export const VisualBlock = forwardRef(
       cutFn = () => {},
       style,
     }: VisualBlockProps,
-    ref: Ref<HTMLElement | SVGElement> | undefined
+    ref: Ref<HTMLElement | SVGElement> | undefined,
   ) => {
     // const fieldInfo = regionInfo.fieldInfo as BlockFieldInfo;
     const onCanvas = regionInfo.parentId === CANVAS;
@@ -125,7 +120,7 @@ export const VisualBlock = forwardRef(
 
     if (!blockSpec) {
       throw new Error(
-        `Missing BlockSpec for Visual Block ${data.type}, ${data.metaType}`
+        `Missing BlockSpec for Visual Block ${data.type}, ${data.metaType}`,
       );
     }
 
@@ -133,24 +128,24 @@ export const VisualBlock = forwardRef(
     const [isDebugging, setIsDebugging] = useState(false);
 
     const setIsEditing = useProgrammingStore(
-      (state: ProgrammingState) => state.updateItemEditing
+      (state: ProgrammingState) => state.updateItemEditing,
     );
     const setIsSelected = useProgrammingStore(
-      (state: ProgrammingState) => state.updateItemSelected
+      (state: ProgrammingState) => state.updateItemSelected,
     );
     const typeSpecs = useProgrammingStore(
-      (state: ProgrammingState) => state.programSpec.objectTypes
+      (state: ProgrammingState) => state.programSpec.objectTypes,
     );
 
     const docActive = useProgrammingStore(
-      (state: ProgrammingState) => state.activeDoc === data.id
+      (state: ProgrammingState) => state.activeDoc === data.id,
     );
     const setDocActive = useProgrammingStore(
-      (state: ProgrammingState) => state.setActiveDoc
+      (state: ProgrammingState) => state.setActiveDoc,
     );
 
     const deleteBlock = useProgrammingStore(
-      (state: ProgrammingState) => state.deleteBlock
+      (state: ProgrammingState) => state.deleteBlock,
     );
 
     const isCopying = useProgrammingStore(
@@ -158,13 +153,15 @@ export const VisualBlock = forwardRef(
         (state) =>
           state.clipboard?.block?.id === data.id &&
           state.clipboard.action === "COPY",
-        [data.id]
-      )
+        [data.id],
+      ),
     );
 
     const onClick = useProgrammingStore((state) => state.onVPEClick);
 
-    const updateItemSimpleProperty = useProgrammingStore((state)=> state.updateItemSimpleProperty);
+    const updateItemSimpleProperty = useProgrammingStore(
+      (state) => state.updateItemSimpleProperty,
+    );
 
     // const locked = useProgrammingStore((state) => state.locked);
 
@@ -177,14 +174,14 @@ export const VisualBlock = forwardRef(
             typeSpec.properties,
             (entry) =>
               Object.values(SIMPLE_PROPERTY_TYPES).includes(entry.type) &&
-              !UNRENDERED_PROPS.includes(entry.type)
+              !UNRENDERED_PROPS.includes(entry.type),
           ) as { [key: string]: SimpleFieldInfo })
         : {};
 
     const standardProperties: { [key: string]: BlockFieldInfo } =
       typeSpec && typeSpec.properties
         ? (pickBy(typeSpec.properties, (entry) =>
-            validateProp(data, entry)
+            validateProp(data, entry),
           ) as {
             [key: string]: BlockFieldInfo;
           })
@@ -235,7 +232,7 @@ export const VisualBlock = forwardRef(
             (id: string, type: string) => {},
             {},
             typeSpecs,
-            interactionDisabled
+            interactionDisabled,
           ) || []
         }
       >
@@ -454,31 +451,39 @@ export const VisualBlock = forwardRef(
                             alignItems: "center",
                             justify: "space-between",
                           }}
-                        > 
-                        {typeof innerLabel === "string" ? (
-                          !fieldInfo.fullWidth && (
-                            <Typography
-                              color="#eee"
-                              style={{ margin: "2px 2px 2px 5px" }}
-                            >
-                              {typeof innerLabel === "string" && innerLabel}
-                            </Typography>
-                          )
-                        ) : (
-                          <Box style={{paddingLeft:5}}>
-                            <Select
-                              key={innerLabel.name}
-                              label={""}
-                              disabled={interactionDisabled}
-                              value={data.properties[innerLabel.id] ? data.properties[innerLabel.id] : ""}
-                              onChange={(v) =>
-                                updateItemSimpleProperty(data.id, innerLabel.id, v)
-                              }
-                              options={innerLabel.options}
-                            />
-                          </Box>
-                        )}
-                          
+                        >
+                          {typeof innerLabel === "string" ? (
+                            !fieldInfo.fullWidth && (
+                              <Typography
+                                color="#eee"
+                                style={{ margin: "2px 2px 2px 5px" }}
+                              >
+                                {typeof innerLabel === "string" && innerLabel}
+                              </Typography>
+                            )
+                          ) : (
+                            <Box style={{ paddingLeft: 5 }}>
+                              <Select
+                                key={innerLabel.name}
+                                label={""}
+                                disabled={interactionDisabled}
+                                value={
+                                  data.properties[innerLabel.id]
+                                    ? data.properties[innerLabel.id]
+                                    : ""
+                                }
+                                onChange={(v) =>
+                                  updateItemSimpleProperty(
+                                    data.id,
+                                    innerLabel.id,
+                                    v,
+                                  )
+                                }
+                                options={innerLabel.options}
+                              />
+                            </Box>
+                          )}
+
                           {fieldInfo.isList ? (
                             <List
                               ids={
@@ -518,7 +523,7 @@ export const VisualBlock = forwardRef(
                         </Stack>
                       </PropertySection>
                     );
-                  }
+                  },
                 )}
             </Box>
           </Collapse>
@@ -535,7 +540,7 @@ export const VisualBlock = forwardRef(
         </BlockContainer>
       </NestedContextMenu>
     );
-  }
+  },
 );
 // Prevent re-renders when the position moves
 // (previous, next) => {

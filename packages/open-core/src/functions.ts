@@ -1,6 +1,6 @@
 import { remove, pickBy, omitBy, mapValues } from "lodash";
 import { v4 as uuidv4 } from "uuid";
-import {
+import type {
   FieldInfo,
   BlockData,
   TypeSpec,
@@ -13,14 +13,14 @@ import {
   ProgrammingState,
   CommentData,
 } from "./types";
-import { SPAWNER, MetaType } from "./constants";
+import { SPAWNER, MetaType } from "./constants.ts";
 
 export const generateId = (type: string) => {
   return `${type}-${uuidv4()}`;
 };
 
 // Credit: https://www.npmjs.com/package/lodash-move
-export function move(array: any[], moveIndex: number, toIndex: number) {
+export function move<T>(array: T[], moveIndex: number, toIndex: number): T[] {
   /* #move - Moves an array item from one position in an array to another.
        Note: This is a pure function so a new array will be returned, instead
        of altering the array argument.
@@ -56,7 +56,7 @@ export function move(array: any[], moveIndex: number, toIndex: number) {
 
 export function pruneEdgesFromBlock(
   state: ProgrammingState,
-  blockId: string
+  blockId: string,
 ): ProgrammingState {
   state.programData = omitBy(
     state.programData,
@@ -66,10 +66,9 @@ export function pruneEdgesFromBlock(
         (data.parent.id === blockId || data.child.id === blockId)
       ) {
         return true;
-      } else {
-        return false;
       }
-    }
+      return false;
+    },
   );
   return state;
 }
@@ -77,7 +76,7 @@ export function pruneEdgesFromBlock(
 export function deleteFromChildren(
   state: ProgrammingState,
   idsToDelete: string[],
-  parentData: BlockData | ConnectionData | CommentData
+  parentData: BlockData | ConnectionData | CommentData,
 ): ProgrammingState {
   // Corner case for call blocks (don't look at parent's information)
   if (parentData && parentData.metaType === MetaType.FunctionCall) {
@@ -88,7 +87,7 @@ export function deleteFromChildren(
             state.programData[parentData.properties[propName]] as
               | ObjectReferenceData
               | FunctionCallData
-          ).ref
+          ).ref,
         )
       ) {
         delete state.programData[parentData.properties[propName]];
@@ -110,7 +109,7 @@ export function deleteFromChildren(
     // Clear children and properties (if applicable)
     if (state.programSpec.objectTypes[parentData.type]?.properties) {
       Object.keys(
-        state.programSpec.objectTypes[parentData.type].properties
+        state.programSpec.objectTypes[parentData.type].properties,
       ).forEach((propName) => {
         if (propName) {
           const property: FieldInfo =
@@ -124,7 +123,7 @@ export function deleteFromChildren(
               state = deleteFromChildren(
                 state,
                 idsToDelete,
-                state.programData[child]
+                state.programData[child],
               );
             });
             idsToDelete.forEach((idToDelete) => {
@@ -143,7 +142,7 @@ export function deleteFromChildren(
                     state.programData[field] as
                       | ObjectReferenceData
                       | FunctionCallData
-                  ).ref !== idToDelete
+                  ).ref !== idToDelete,
               );
               (
                 state.programData[parentData.id] as
@@ -164,7 +163,7 @@ export function deleteFromChildren(
                   state.programData[parentData.properties[propName]] as
                     | ObjectReferenceData
                     | FunctionCallData
-                ).ref
+                ).ref,
               ))
           ) {
             // Delete Reference to Child
@@ -188,13 +187,13 @@ export function deleteFromChildren(
 
 export function deleteFromProgram(
   state: ProgrammingState,
-  idsToDelete: string[]
+  idsToDelete: string[],
 ): ProgrammingState {
   const searches = pickBy(
     state.programData,
     (entry) =>
       entry.metaType === MetaType.ObjectInstance ||
-      entry.metaType === MetaType.FunctionDeclaration
+      entry.metaType === MetaType.FunctionDeclaration,
   );
   // Search through all instances for occurances of the ids we're deleting
   Object.keys(searches).forEach((entry) => {
@@ -211,7 +210,7 @@ export function deleteSelfBlock(
   data: BlockData | ConnectionData | CommentData,
   parentId?: string,
   fieldInfo?: FieldInfo,
-  isSpawner?: boolean
+  isSpawner?: boolean,
 ): ProgrammingState {
   if (data.metaType === MetaType.FunctionDeclaration) {
     // Find all references to the function
@@ -219,7 +218,7 @@ export function deleteSelfBlock(
       state.programData,
       (entry) =>
         entry.metaType === MetaType.FunctionCall &&
-        (entry as FunctionCallData).ref === data.id
+        (entry as FunctionCallData).ref === data.id,
     ) as { [key: string]: FunctionCallData };
 
     Object.values(callReferences).forEach((call: FunctionCallData) => {
@@ -246,7 +245,7 @@ export function deleteSelfBlock(
       ) {
         // Iterate through properties
         Object.keys(
-          state.programSpec.objectTypes[entry.type].properties
+          state.programSpec.objectTypes[entry.type].properties,
         ).forEach((propName) => {
           if (propName) {
             const property: FieldInfo =
@@ -266,10 +265,10 @@ export function deleteSelfBlock(
                   ) {
                     remove(
                       entry.properties[propName],
-                      (field) => field === callRef.id
+                      (field) => field === callRef.id,
                     );
                   }
-                }
+                },
               );
             } else if (
               (entry.metaType === MetaType.ObjectInstance ||
@@ -280,7 +279,7 @@ export function deleteSelfBlock(
               // Delete reference from property
               if (
                 Object.values(callReferences).includes(
-                  entry.properties[propName]
+                  entry.properties[propName],
                 )
               ) {
                 entry.properties[propName] = null;
@@ -310,7 +309,7 @@ export function deleteSelfBlock(
         ];
         state = pruneEdgesFromBlock(
           state,
-          (data as FunctionCallData | ObjectReferenceData).ref
+          (data as FunctionCallData | ObjectReferenceData).ref,
         );
       }
     } else if (parentId) {
@@ -318,7 +317,7 @@ export function deleteSelfBlock(
       state = deleteFromChildren(
         state,
         [(data as FunctionCallData).ref],
-        state.programData[parentId]
+        state.programData[parentId],
       );
 
       // Remove argument from function
@@ -327,7 +326,7 @@ export function deleteSelfBlock(
       ) {
         remove(
           (state.programData[parentId] as FunctionDeclarationData).arguments,
-          (field) => field === (data as FunctionCallData).ref
+          (field) => field === (data as FunctionCallData).ref,
         );
       }
     }
@@ -344,7 +343,7 @@ export function deleteChildren(
   state: ProgrammingState,
   data: BlockData | ConnectionData | CommentData,
   parentId?: string,
-  fieldInfo?: FieldInfo
+  fieldInfo?: FieldInfo,
 ): ProgrammingState {
   if (!data || data.metaType === MetaType.Comment) {
     return state;
@@ -363,7 +362,7 @@ export function deleteChildren(
           state,
           state.programData[data.properties[argument]] as BlockData,
           parentId,
-          fieldInfo
+          fieldInfo,
         );
       }
     });
@@ -390,13 +389,13 @@ export function deleteChildren(
                   state,
                   state.programData[child] as BlockData,
                   parentId,
-                  fieldInfo
+                  fieldInfo,
                 );
                 state = deleteSelfBlock(
                   state,
                   state.programData[child] as BlockData,
                   parentId,
-                  fieldInfo
+                  fieldInfo,
                 );
               });
             }
@@ -406,17 +405,17 @@ export function deleteChildren(
               state,
               state.programData[data.properties[propName]] as BlockData,
               parentId,
-              fieldInfo
+              fieldInfo,
             );
             state = deleteSelfBlock(
               state,
               state.programData[data.properties[propName]] as BlockData,
               parentId,
-              fieldInfo
+              fieldInfo,
             );
           }
         }
-      }
+      },
     );
   }
 
@@ -433,8 +432,8 @@ export function parseBlock(
     language: string,
     nodeId?: string,
     depth?: number,
-    context?: { [key: string]: BlockData }
-  ) => string
+    context?: { [key: string]: BlockData },
+  ) => string,
 ): string {
   if (
     (block.metaType === MetaType.ObjectReference ||
@@ -459,7 +458,7 @@ export function parseBlock(
     });
   } else {
     console.warn(
-      `Block "${block.id}" of type "${block.type}" does not have a valid parser or name policy for language "${language}". Ignoring.`
+      `Block "${block.id}" of type "${block.type}" does not have a valid parser or name policy for language "${language}". Ignoring.`,
     );
     return "";
   }
@@ -469,7 +468,7 @@ export function applyTransfer(
   state: ProgrammingState,
   data: BlockData | CommentData,
   sourceInfo: RegionInfo,
-  destInfo: RegionInfo
+  destInfo: RegionInfo,
 ): void {
   console.log("applyTransfer", data, sourceInfo, destInfo);
 
@@ -503,7 +502,7 @@ export function applyTransfer(
           | FunctionCallData
       ).properties[destInfo.fieldInfo.id],
       sourceInfo.idx || 0,
-      destInfo.idx || 0
+      destInfo.idx || 0,
     );
   } else {
     // Place the value in its new location
@@ -548,13 +547,13 @@ export function applyTransfer(
       ).properties[sourceInfo.fieldInfo.id] = null;
     }
   }
-  console.log(state.programData)
+  console.log(state.programData);
 }
 
 export function deepCopy(
   programData: { [key: string]: BlockData | ConnectionData | CommentData },
   typeSpec: { [key: string]: TypeSpec },
-  id: string
+  id: string,
 ): [{ [key: string]: BlockData | CommentData }, string] {
   let newBlocks = {};
   const toCopy = programData[id];
@@ -587,7 +586,7 @@ export function deepCopy(
             const [newInnerBlocks, newInnerId] = deepCopy(
               programData,
               typeSpec,
-              listValue
+              listValue,
             );
             newBlocks = { ...newInnerBlocks, ...newBlocks };
             propList.push(newInnerId);
@@ -598,7 +597,7 @@ export function deepCopy(
             const [newInnerBlocks, newInnerId] = deepCopy(
               programData,
               typeSpec,
-              propValue
+              propValue,
             );
             newBlocks = { ...newInnerBlocks, ...newBlocks };
             return newInnerId;
@@ -608,7 +607,7 @@ export function deepCopy(
         } else {
           return propValue;
         }
-      }
+      },
     );
   }
 
@@ -618,11 +617,11 @@ export function deepCopy(
         const [newInnerBlocks, newInnerId] = deepCopy(
           programData,
           typeSpec,
-          arg
+          arg,
         );
         newBlocks = { ...newInnerBlocks, ...newBlocks };
         return newInnerId;
-      }
+      },
     );
   }
 

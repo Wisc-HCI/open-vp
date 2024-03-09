@@ -1,4 +1,5 @@
-import {
+import { mapValues } from "lodash";
+import type {
   ObjectData,
   ArgumentData,
   BlockData,
@@ -8,25 +9,21 @@ import {
   FunctionCallData,
   ConnectionData,
   ExecutionState,
-  CommentData
-} from "./types";
-import { 
-  PrimitiveType,
-  MetaType, 
-  PropertyType} from "./constants";
-import { mapValues } from "lodash";
+  CommentData,
+} from "./types.ts";
+import { PrimitiveType, MetaType, PropertyType } from "./constants.ts";
 
 export function instanceTemplateFromSpec(
   type: string,
   typeSpec: TypeSpec,
-  isArg: boolean
+  isArg: boolean,
 ): ObjectData | ArgumentData | FunctionDeclarationData {
   let hideNewPrefix =
     typeSpec.primitiveType === PrimitiveType.Object
       ? typeSpec.instanceBlock?.hideNewPrefix
       : typeSpec.primitiveType === PrimitiveType.Function
-      ? typeSpec.functionBlock?.hideNewPrefix
-      : false;
+        ? typeSpec.functionBlock?.hideNewPrefix
+        : false;
 
   let data: ObjectData | ArgumentData | FunctionDeclarationData;
 
@@ -75,7 +72,7 @@ export function instanceTemplateFromSpec(
     };
   } else {
     throw new Error(
-      `Unknown type being generated: Cannot create instance of ${type}`
+      `Unknown type being generated: Cannot create instance of ${type}`,
     );
   }
 
@@ -92,8 +89,10 @@ export function instanceTemplateFromSpec(
     });
   }
   if (
-    (typeSpec.primitiveType === PrimitiveType.Object && typeSpec.instanceBlock?.onCanvas) ||
-    (typeSpec.primitiveType === PrimitiveType.Function && typeSpec.functionBlock?.onCanvas)
+    (typeSpec.primitiveType === PrimitiveType.Object &&
+      typeSpec.instanceBlock?.onCanvas) ||
+    (typeSpec.primitiveType === PrimitiveType.Function &&
+      typeSpec.functionBlock?.onCanvas)
   ) {
     (data as ObjectData | FunctionDeclarationData).position = { x: 0, y: 0 };
   }
@@ -102,8 +101,13 @@ export function instanceTemplateFromSpec(
 
 export function referenceTemplateFromSpec(
   type: string,
-  instanceReference: ArgumentData | ObjectData | FunctionDeclarationData | FunctionCallData | ObjectReferenceData,
-  typeSpec: TypeSpec
+  instanceReference:
+    | ArgumentData
+    | ObjectData
+    | FunctionDeclarationData
+    | FunctionCallData
+    | ObjectReferenceData,
+  typeSpec: TypeSpec,
 ): FunctionCallData | ObjectReferenceData {
   let data: FunctionCallData | ObjectReferenceData;
 
@@ -122,7 +126,7 @@ export function referenceTemplateFromSpec(
       selected: false,
       docActive: false,
     };
-  } else if (typeSpec.primitiveType ===PrimitiveType.Object) {
+  } else if (typeSpec.primitiveType === PrimitiveType.Object) {
     data = {
       id: `new-${type}-${instanceReference.id}`,
       metaType: MetaType.ObjectReference,
@@ -138,7 +142,7 @@ export function referenceTemplateFromSpec(
     };
   } else {
     throw new Error(
-      `Unknown type being generated: Cannot create reference of ${type}`
+      `Unknown type being generated: Cannot create reference of ${type}`,
     );
   }
   return data;
@@ -148,15 +152,15 @@ export function referenceTemplateFromSpec(
 export function functionInstanceAsType(
   functionTypeSpec: TypeSpec,
   functionInstance: FunctionDeclarationData,
-  programData: { [key: string]: BlockData | ConnectionData | CommentData}
+  programData: { [key: string]: BlockData | ConnectionData | CommentData },
 ): TypeSpec {
   const initialFunctionDef = {
     ...functionTypeSpec,
     name: functionInstance.name,
     specificType: functionInstance.type,
   };
-  let newProperties: {[key: string]: any} = {};
-  functionInstance.arguments?.forEach((arg:string) => {
+  let newProperties: { [key: string]: any } = {};
+  functionInstance.arguments?.forEach((arg: string) => {
     const argBlock = programData[arg] as ArgumentData;
     newProperties[arg] = {
       id: argBlock.id,
@@ -184,15 +188,19 @@ export function combinedBlockData(
   programData: { [key: string]: BlockData | ConnectionData | CommentData },
   executionData: { [key: string]: ExecutionState },
   objectTypes: { [key: string]: TypeSpec },
-  info: string | BlockData | CommentData
-): [null | BlockData | ConnectionData | CommentData, null | TypeSpec, null | ExecutionState, null | BlockData] {
-  const data: BlockData | ConnectionData | CommentData | undefined = typeof info === "string" 
-    ? programData[info]
-    : info;
+  info: string | BlockData | CommentData,
+): [
+  null | BlockData | ConnectionData | CommentData,
+  null | TypeSpec,
+  null | ExecutionState,
+  null | BlockData,
+] {
+  const data: BlockData | ConnectionData | CommentData | undefined =
+    typeof info === "string" ? programData[info] : info;
 
   if (!data) {
     // This is likely present because of cleanup. Return null to be removed
-    return [null, null, null, null]
+    return [null, null, null, null];
   }
   if (data.metaType === MetaType.Connection) {
     return [data, null, null, null];
@@ -204,13 +212,25 @@ export function combinedBlockData(
 
   const progress = executionData[data.id];
   const typeSpec = objectTypes[data.type];
-  const robustTypeSpec = data.metaType === MetaType.FunctionDeclaration
-    ? functionInstanceAsType(typeSpec, data as FunctionDeclarationData, programData)
-    : data.metaType === MetaType.FunctionCall
-    ? functionInstanceAsType(typeSpec, programData[data.ref as string] as FunctionDeclarationData, programData)
-    : typeSpec;
+  const robustTypeSpec =
+    data.metaType === MetaType.FunctionDeclaration
+      ? functionInstanceAsType(
+          typeSpec,
+          data as FunctionDeclarationData,
+          programData,
+        )
+      : data.metaType === MetaType.FunctionCall
+        ? functionInstanceAsType(
+            typeSpec,
+            programData[data.ref as string] as FunctionDeclarationData,
+            programData,
+          )
+        : typeSpec;
   let refData: BlockData | null;
-  if (data.metaType === MetaType.FunctionCall || data.metaType === MetaType.ObjectReference) {
+  if (
+    data.metaType === MetaType.FunctionCall ||
+    data.metaType === MetaType.ObjectReference
+  ) {
     refData = programData[data.ref as string] as BlockData;
   } else {
     refData = null;
@@ -222,22 +242,22 @@ export function combinedBlockData(
     { ...data, selected, editing } as BlockData,
     robustTypeSpec,
     progress,
-    refData || null
+    refData || null,
   ];
 }
 
-export const functionTypeSpec = (typeSpec: {[key:string]: TypeSpec}, programData: { [key: string]: BlockData | ConnectionData }) => {
-  let augmented = {...typeSpec};
+export const functionTypeSpec = (
+  typeSpec: { [key: string]: TypeSpec },
+  programData: { [key: string]: BlockData | ConnectionData },
+) => {
+  let augmented = { ...typeSpec };
   Object.values(programData)
-    .filter(
-      (data) =>
-        data.metaType === MetaType.FunctionDeclaration
-    )
+    .filter((data) => data.metaType === MetaType.FunctionDeclaration)
     .forEach((functionInstance) => {
       augmented[functionInstance.id] = functionInstanceAsType(
         typeSpec[functionInstance.type],
         functionInstance as FunctionDeclarationData,
-        programData
+        programData,
       );
     });
   return augmented;

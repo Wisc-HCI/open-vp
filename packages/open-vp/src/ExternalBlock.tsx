@@ -30,13 +30,13 @@ const InnerExternalBlock = (props: InnerExternalBlockProps) => {
           state.programData,
           state.executionData,
           state.programSpec.objectTypes,
-          props.data
+          props.data,
         ),
-      [props.data]
-    )
+      [props.data],
+    ),
   );
 
-  const updateItemSelected = useProgrammingStore((state) => state.updateItemSelected);
+  // const updateItemSelected = useProgrammingStore((state) => state.updateItemSelected);
 
   const otherProps = {
     x: 0,
@@ -54,7 +54,7 @@ const InnerExternalBlock = (props: InnerExternalBlockProps) => {
     fieldInfo: {
       id: "PREVIEW",
       name: "PREVIEW",
-      accepts: [data.type],
+      accepts: [data?.type || ""],
       default: null,
       isList: false,
       fullWidth: false,
@@ -62,15 +62,19 @@ const InnerExternalBlock = (props: InnerExternalBlockProps) => {
     },
   };
 
+  if (!typeSpec) {
+    throw new Error(`Missing typeSpec entry for ${props.data.type}`);
+  }
+
   return (
     <VisualBlock
       {...props}
       {...otherProps}
       regionInfo={regionInfo}
-      data={data}
+      data={data as BlockData}
       typeSpec={typeSpec}
       context={props.context}
-      progress={progress}
+      progress={progress || undefined}
     />
   );
 };

@@ -1,5 +1,17 @@
 {
   "extends": "tsconfig/react-library.json",
   "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": ["dist", "build", "node_modules"],
+  "typedocOptions": {
+    "entryPoints": ["src/index.tsx"],
+    "out": "../../docs/api",
+    // "excludeExternals": true,
+    // "excludePrivate": true,
+    // "excludeProtected": true,
+    // "excludeInternal": true,
+    // "excludeNotExported": true,
+    "readme": "none",
+    "name": "open-blocks",
+    "plugin": ["typedoc-plugin-markdown"]
+  }
 }

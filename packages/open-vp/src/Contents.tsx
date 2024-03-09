@@ -12,7 +12,7 @@ import {
   darken,
   lighten,
   CardContent,
-  CardActions
+  CardActions,
 } from "@mui/material";
 import { CanvasTabs } from "./CanvasTabs";
 import {
@@ -49,14 +49,29 @@ const SectionStrip = ({
   setActiveDrawer,
 }: SectionStripProps) => {
   const drawers = useProgrammingStore(
-    (state: ProgrammingState) => state.programSpec.drawers
+    (state: ProgrammingState) => state.programSpec.drawers,
   );
   const activeDrawer = useProgrammingStore(
-    (state: ProgrammingState) => state.activeDrawer
+    (state: ProgrammingState) => state.activeDrawer,
   );
   return (
-    <Stack direction="column" sx={{ padding: "5px", userSelect: "none", }} spacing={1}>
-      {/* <Nav gap="xxsmall"> */}
+    <Stack
+      direction="column"
+      sx={{ padding: "5px", userSelect: "none" }}
+      spacing={1}
+    >
+      {/* If there are no drawers, create a default one */}
+      {drawers.length === 0 && (
+        <ActionIconButton
+          key={`default-drawer-tt`}
+          title={"Default"}
+          placement={"right"}
+          canToggle
+          toggled={false}
+          onClick={() => {}}
+          icon={"AddBox"}
+        />
+      )}
       {drawers.map((drawer: DrawerSpec, drawerIdx: number) => {
         // console.log(drawerIdx);
         return (
@@ -90,13 +105,13 @@ const BlockPanel = ({
   drawerWidth,
 }: BlockPanelProps) => {
   const drawers = useProgrammingStore(
-    (state: ProgrammingState) => state.programSpec.drawers
+    (state: ProgrammingState) => state.programSpec.drawers,
   );
   const activeDrawer = useProgrammingStore(
-    (state: ProgrammingState) => state.activeDrawer
+    (state: ProgrammingState) => state.activeDrawer,
   );
   const addInstance = useProgrammingStore(
-    (state: ProgrammingState) => state.addInstance
+    (state: ProgrammingState) => state.addInstance,
   );
 
   const [blockData, types, drawerType, objectType, objectTypeInfo]: [
@@ -120,7 +135,7 @@ const BlockPanel = ({
             (d) =>
               d.type === drawer.objectType &&
               (d.metaType === MetaType.ObjectInstance ||
-                d.metaType === MetaType.FunctionDeclaration)
+                d.metaType === MetaType.FunctionDeclaration),
           );
           return [
             blockData,
@@ -132,25 +147,25 @@ const BlockPanel = ({
         }
       }
       return [{}, {}, null, null, null];
-    }
+    },
   );
 
   const blocks =
     drawerType === DrawerType.Multiple
       ? Object.keys(types).map((t) =>
-          instanceTemplateFromSpec(t, types[t], false)
+          instanceTemplateFromSpec(t, types[t], false),
         )
       : drawerType === DrawerType.Singular && objectType && objectTypeInfo
-      ? Object.keys(blockData).map((b) =>
-          referenceTemplateFromSpec(objectType, blockData[b], objectTypeInfo)
-        )
-      : [];
+        ? Object.keys(blockData).map((b) =>
+            referenceTemplateFromSpec(objectType, blockData[b], objectTypeInfo),
+          )
+        : [];
 
   const [drawerRef, drawerBounds] = useMeasure();
   const [headerRef, headerBounds] = useMeasure();
 
   const theme = useTheme();
-  
+
   return (
     <Stack
       ref={drawerRef}
@@ -182,7 +197,7 @@ const BlockPanel = ({
           sx={{ alignItems: "center", justify: "space-between", width: "100%" }}
           justifyContent="space-between"
         >
-          <Typography style={{color:theme.palette.text.secondary}}>
+          <Typography style={{ color: theme.palette.text.secondary }}>
             {activeDrawer !== null && drawers[activeDrawer].title}
           </Typography>
           {activeDrawer !== null &&
@@ -224,7 +239,7 @@ const BlockPanel = ({
               .filter(
                 (b) =>
                   searchTerm === "" ||
-                  b.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  b.name.toLowerCase().includes(searchTerm.toLowerCase()),
               )
               .map((block: BlockData) => (
                 <Block
@@ -264,21 +279,21 @@ export const Contents = ({
   snapToGrid = true,
   animateDrawer = true,
   bounds,
-  reactflowProOptions
+  reactflowProOptions,
 }: ContentsProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const activeDrawer = useProgrammingStore(
-    (state: ProgrammingState) => state.activeDrawer
+    (state: ProgrammingState) => state.activeDrawer,
   );
   const setActiveDrawer = useProgrammingStore(
-    (state: ProgrammingState) => state.setActiveDrawer
+    (state: ProgrammingState) => state.setActiveDrawer,
   );
 
   const activeTab = useProgrammingStore(
-    (state: ProgrammingState) => state.activeTab
+    (state: ProgrammingState) => state.activeTab,
   );
 
-  const addTab = useProgrammingStore((state:ProgrammingState) => state.addTab);
+  const addTab = useProgrammingStore((state: ProgrammingState) => state.addTab);
 
   const theme = useTheme();
 
@@ -340,7 +355,14 @@ export const Contents = ({
             reactflowProOptions={reactflowProOptions}
           />
         ) : (
-          <Backdrop sx={{backgroundColor:theme.palette.mode === 'dark' ? lighten(theme.palette.background.default,.05) : darken(theme.palette.background.default,.05)}}>
+          <Backdrop
+            sx={{
+              backgroundColor:
+                theme.palette.mode === "dark"
+                  ? lighten(theme.palette.background.default, 0.05)
+                  : darken(theme.palette.background.default, 0.05),
+            }}
+          >
             <Card>
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
@@ -349,7 +371,13 @@ export const Contents = ({
                 Create or open a tab to begin
               </CardContent>
               <CardActions>
-                <IconTextButton title="Create Tab" startIcon="AddRounded" onClick={addTab}>Create Tab</IconTextButton>
+                <IconTextButton
+                  title="Create Tab"
+                  startIcon="AddRounded"
+                  onClick={addTab}
+                >
+                  Create Tab
+                </IconTextButton>
               </CardActions>
             </Card>
           </Backdrop>

@@ -1,13 +1,11 @@
 {
   "name": "@people_and_robots/open-vp",
-  "version": "2.0.0-pre.2",
+  "version": "2.0.0-pre.5",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "license": "MIT",
-  "files": [
-    "dist/**"
-  ],
+  "files": ["dist/**"],
   "scripts": {
     "lint": "eslint .",
     "generate:component": "turbo gen react-component",
@@ -35,14 +33,12 @@
     "react-use-measure": "^2.1.1",
     "zustand": "^4.4.6",
     "@mui/material": "^5.14.18",
-    "@mui/system": "^5.14.18"
-  },
-  "peerDependencies": {
-    "react": "^18.2.0",
+    "@mui/system": "^5.14.18",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3"
   },
   "devDependencies": {
+    "@people_and_robots/open-blocks": "*",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@types/lodash": "^4.14.199",
@@ -53,8 +49,6 @@
     "tsconfig": "*",
     "tsup": "^7.2.0",
     "typescript": "^5.2.2",
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
     "@types/react-syntax-highlighter": "^15.5.7",
     "rollup-plugin-import-css": "^3.3.5"
   },

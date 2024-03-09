@@ -7,7 +7,9 @@ import ReactFlow, {
   NodeProps,
   Node,
   NodeChange,
-  ProOptions
+  ProOptions,
+  Position,
+  type Connection,
 } from "reactflow";
 import { useDrop } from "react-dnd";
 import {
@@ -28,20 +30,10 @@ import {
   CommentData,
 } from "@people_and_robots/open-core";
 import { useMemo } from "react";
-import {
-  Block,
-  blockSpecQuery,
-} from "@people_and_robots/open-blocks";
+import { Block, blockSpecQuery } from "@people_and_robots/open-blocks";
 import { CanvasEdge, DrawingCanvasEdge } from "./CanvasEdge";
 import { RectReadOnly } from "react-use-measure";
-import { FiClipboard } from "react-icons/fi";
-import {
-  styled,
-  lighten,
-  darken,
-  alpha,
-  useTheme
-} from "@mui/material";
+import { styled, lighten, darken, alpha, useTheme } from "@mui/material";
 import { debounce } from "lodash";
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import ResizePanel from "./ResizePanel";
@@ -60,7 +52,6 @@ import "reactflow/dist/style.css";
 
 const CanvasNode = memo(
   ({ id }: NodeProps) => {
-
     return (
       <Block
         id={id}
@@ -78,7 +69,7 @@ const CanvasNode = memo(
         context={[]}
       />
     );
-  }
+  },
   // Prevent rerenders when only position or something ignored changes
   // (previous, next) =>
   //   compareBlockData(previous.data, next.data, next.data.typeSpec.properties)
@@ -91,40 +82,54 @@ export interface CanvasProps {
   bounds: RectReadOnly;
   reactflowProOptions?: ProOptions;
 }
-export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOptions }: CanvasProps) => {
-
+export const Canvas = ({
+  snapToGrid = true,
+  drawerWidth,
+  bounds,
+  reactflowProOptions,
+}: CanvasProps) => {
   const theme = useTheme();
   const setTabViewport = useProgrammingStore(
-    (state: ProgrammingState) => state.setTabViewport
+    (state: ProgrammingState) => state.setTabViewport,
   );
   const setClipboardBlock = useProgrammingStore(
-    (state: ProgrammingState) => state.setClipboardBlock
+    (state: ProgrammingState) => state.setClipboardBlock,
   );
 
-  const updateItemSelected = useProgrammingStore((state: ProgrammingState)=>state.updateItemSelected);
-  const setSelections = useProgrammingStore((state: ProgrammingState)=>state.setSelections);
+  const updateItemSelected = useProgrammingStore(
+    (state: ProgrammingState) => state.updateItemSelected,
+  );
+  const setSelections = useProgrammingStore(
+    (state: ProgrammingState) => state.setSelections,
+  );
 
-  const drawerOpen = useProgrammingStore((state:ProgrammingState)=>state.activeDrawer !== null);
+  const drawerOpen = useProgrammingStore(
+    (state: ProgrammingState) => state.activeDrawer !== null,
+  );
 
-  const activeTabData: Tab | null = useProgrammingStore((state: ProgrammingState) => {
-    let tabData = null;
-    state.tabs.some((tab: Tab) => {
-      if (tab.id === state.activeTab) {
-        tabData = tab;
-        return true;
-      } else {
-        return false;
-      }
-    });
-    return tabData;
-  });
+  const activeTabData: Tab | null = useProgrammingStore(
+    (state: ProgrammingState) => {
+      let tabData = null;
+      state.tabs.some((tab: Tab) => {
+        if (tab.id === state.activeTab) {
+          tabData = tab;
+          return true;
+        } else {
+          return false;
+        }
+      });
+      return tabData as Tab | null;
+    },
+  );
   // const setLocked = useProgrammingStore((state) => state.setLocked);
-  const createEdge = useProgrammingStore((state: ProgrammingState) => state.createEdge);
+  const createEdge = useProgrammingStore(
+    (state: ProgrammingState) => state.createEdge,
+  );
 
   const paste = useProgrammingStore((state: ProgrammingState) => state.paste);
 
   // const clipboard = useProgrammingStore((state) => state.clipboard);
-  
+
   const onCanvasPastable = useProgrammingStore(
     (state: ProgrammingState) =>
       state.clipboard?.regionInfo?.parentId === CANVAS &&
@@ -132,20 +137,26 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
         ClipboardAction.Paste,
         ClipboardAction.Copy,
         ClipboardAction.Cut,
-      ].includes(state.clipboard.action || ClipboardAction.Select)
+      ].includes(state.clipboard.action || ClipboardAction.Select),
   );
 
-  const validateEdge = useProgrammingStore((state: ProgrammingState) => state.validateEdge);
-  const onOffClick = useProgrammingStore((state: ProgrammingState) => state.onOffVPEClick);
-  const setConnectionInfo = useProgrammingStore(
-    (state) => state.setConnectionInfo
+  const validateEdge = useProgrammingStore(
+    (state: ProgrammingState) => state.validateEdge,
   );
-  const getTabViewport = useProgrammingStore((state: ProgrammingState) => state.getTabViewport);
+  const onOffClick = useProgrammingStore(
+    (state: ProgrammingState) => state.onOffVPEClick,
+  );
+  const setConnectionInfo = useProgrammingStore(
+    (state: ProgrammingState) => state.setConnectionInfo,
+  );
+  const getTabViewport = useProgrammingStore(
+    (state: ProgrammingState) => state.getTabViewport,
+  );
 
   const nodes: Node[] = useProgrammingStore(
     useCallback(
       (state: ProgrammingState) =>
-        activeTabData?.blocks
+        ((activeTabData as Tab | null)?.blocks
           ?.map((blockId: string) => {
             const data: BlockData = state.programData[blockId] as BlockData;
             if (!data) return null;
@@ -157,50 +168,17 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
               data: { typeSpec: state.programSpec.objectTypes[data.type] },
               selected: data.selected,
             } as Node;
-            // const typeSpec = state.programSpec.objectTypes[data.type];
-            // const progress = state.executionData[data.id];
-            // const blockType = typeToBlockField(data.dataType);
-            // const color =
-            //   state.programSpec.objectTypes[data.type][blockType]?.color;
-            // const onCanvas =
-            //   state.programSpec.objectTypes[data.type][blockType]?.onCanvas;
-            // const ref = data.ref ? state.programData[data.ref] : null;
-            // const argumentBlocks = data?.arguments
-            //   ? data.arguments
-            //   : ref?.arguments
-            //   ? ref.arguments
-            //   : [];
-            // const argumentBlockData = argumentBlocks.map((instanceId) => {
-            //   const inst = state.programData[instanceId];
-            //   const instType = state.programSpec.objectTypes[inst.type];
-            //   return referenceTemplateFromSpec(inst.type, inst, instType);
-            // });
-            // return {
-            //   id: data.id,
-            //   position: data.position,
-            //   type: "canvasNode",
-            //   selected: data.selected,
-            //   // draggable:!locked,
-            //   data: {
-            //     ...data,
-            //     ref,
-            //     typeSpec: { ...typeSpec, color, onCanvas },
-            //     context: data.arguments ? data.arguments : [],
-            //     argumentBlockData,
-            //     progress,
-            //   },
-            // };
           })
-          ?.filter((data: any) => data !== null) || [],
-      [activeTabData]
-    )
+          ?.filter((data: any) => data !== null) as Node[]) || ([] as Node[]),
+      [activeTabData],
+    ),
   );
 
   const edges = useProgrammingStore((state: ProgrammingState) => {
     return Object.values(state.programData)
       .filter(
         (data: ConnectionData | BlockData | CommentData) =>
-          data.metaType === MetaType.Connection
+          data.metaType === MetaType.Connection,
       )
       .map((data: ConnectionData | BlockData | CommentData) => ({
         id: data.id,
@@ -222,9 +200,9 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
               objectType.referenceBlock.onCanvas)) ||
           (objectType.primitiveType === PrimitiveType.Function &&
             (objectType.functionBlock.onCanvas ||
-              objectType.callBlock.onCanvas))
+              objectType.callBlock.onCanvas)),
       )
-      .map(([objectKey]) => objectKey)
+      .map(([objectKey]) => objectKey),
   );
 
   const canvasRegion: RegionInfo = {
@@ -236,39 +214,44 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
       default: null,
       type: PropertyType.Block,
     },
-  }
+  };
 
-  const moveNodes = useProgrammingStore((state: ProgrammingState) => state.moveBlocks);
+  const moveNodes = useProgrammingStore(
+    (state: ProgrammingState) => state.moveBlocks,
+  );
   const createPlacedNode = useProgrammingStore(
-    (state: ProgrammingState) => state.createPlacedBlock
+    (state: ProgrammingState) => state.createPlacedBlock,
   );
 
   const { screenToFlowPosition, fitView, setViewport } = useReactFlow();
 
-  const drop = useDrop({
-    accept: acceptTypes,
-    canDrop: (item?: ClipboardProps) =>
-      item &&
-      (item?.regionInfo?.parentId === CANVAS ||
-        (item?.regionInfo?.parentId === SPAWNER &&
-          item?.typeSpec &&
-          blockSpecQuery(item?.typeSpec, "onCanvas", item?.data?.metaType))),
-    drop: (item: ClipboardProps | undefined, monitor) => {
-      const clientOffset = monitor.getClientOffset();
-      if (!clientOffset) return;
-      const offset = {
-        x: drawerOpen ? clientOffset.x - bounds.left - drawerWidth - 50 : clientOffset.x - bounds.left - 50,
-        y: clientOffset.y - bounds.top - 50,
-      };
-      const position = screenToFlowPosition(clientOffset);
-      if (item?.data) {
-        createPlacedNode((item as ClipboardProps).data, position.x, position.y);
-      }
+  const drop = useDrop(
+    {
+      accept: acceptTypes,
+      canDrop: (item?: ClipboardProps) =>
+        item &&
+        (item?.regionInfo?.parentId === CANVAS ||
+          (item?.regionInfo?.parentId === SPAWNER &&
+            item?.typeSpec &&
+            blockSpecQuery(item?.typeSpec, "onCanvas", item?.data?.metaType))),
+      drop: (item: ClipboardProps | undefined, monitor) => {
+        const clientOffset = monitor.getClientOffset();
+        if (!clientOffset) return;
+        const position = screenToFlowPosition(clientOffset);
+        if (item?.data) {
+          createPlacedNode(
+            (item as ClipboardProps).data as BlockData,
+            position.x,
+            position.y,
+          );
+        }
+      },
     },
-  },[drawerWidth, acceptTypes, drawerWidth, bounds, drawerOpen])[1];
+    [drawerWidth, acceptTypes, drawerWidth, bounds, drawerOpen],
+  )[1];
 
   useEffect(() => {
-    const viewport = getTabViewport(activeTabData?.id);
+    const viewport = getTabViewport(activeTabData?.id || "");
     if (viewport) {
       // console.log('setting viewport',activeTabData.viewport)
       setViewport(viewport);
@@ -278,17 +261,17 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
     return () => {};
   }, [activeTabData?.id]);
 
-  const onNodesChange = (changes: NodeChange[])=>{
+  const onNodesChange = (changes: NodeChange[]) => {
     moveNodes(changes);
     // clearSelections();
     // setSelections(changes.nodes.map((node:Node)=>node.id));
-    changes.forEach((nodeChange:NodeChange)=>{
-      if (nodeChange.type !== 'select') return;
-      console.log(nodeChange)
+    changes.forEach((nodeChange: NodeChange) => {
+      if (nodeChange.type !== "select") return;
+      console.log(nodeChange);
       // console.log('node selected?', nodeChange..id, node.selected)
-      updateItemSelected(nodeChange.id, nodeChange.selected)
-    })
-  }
+      updateItemSelected(nodeChange.id, nodeChange.selected);
+    });
+  };
 
   return (
     <Backdrop pastable={onCanvasPastable}>
@@ -300,22 +283,29 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
               {
                 type: "ENTRY",
                 label: "Paste",
-                left:"ContentCopyRounded",
+                left: "ContentCopyRounded",
                 disabled: !onCanvasPastable,
-                onClick: (data: {}, e: MouseEvent) => {
-                  const viewport = getTabViewport(activeTabData?.id);
+                onClick: (_data: {}, e: MouseEvent) => {
+                  const viewport = getTabViewport(
+                    (activeTabData as Tab | null)?.id || "",
+                  );
                   const zoom = viewport?.zoom || 1;
-                  const offset = {
-                    x: drawerOpen ? e.clientX - bounds.left - drawerWidth - 50 : e.clientX - bounds.left - 50,
-                    y: e.clientY - bounds.top,
-                  };
-                  const { x, y } = screenToFlowPosition({x: e.clientX, y: e.clientY});
+                  // const offset = {
+                  //   x: drawerOpen
+                  //     ? e.clientX - bounds.left - drawerWidth - 50
+                  //     : e.clientX - bounds.left - 50,
+                  //   y: e.clientY - bounds.top,
+                  // };
+                  const { x, y } = screenToFlowPosition({
+                    x: e.clientX,
+                    y: e.clientY,
+                  });
                   const coordinates = { x: x - 100 / zoom, y: y - 100 / zoom };
                   const clipboardProps: ClipboardProps = {
-                    coordinates, 
-                    tab: activeTabData?.id, 
-                    regionInfo: canvasRegion
-                  }
+                    coordinates,
+                    tab: (activeTabData as Tab | null)?.id,
+                    regionInfo: canvasRegion,
+                  };
                   paste(clipboardProps);
                   e.stopPropagation();
                 },
@@ -330,18 +320,18 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
               nodesConnectable
               elevateNodesOnSelect
               onDoubleClick={(e) => {
-                setClipboardBlock(null);
+                setClipboardBlock();
                 setSelections([]);
               }}
               onClick={(e) => {
-                onOffClick();
-                setClipboardBlock(null);
+                onOffClick(null);
+                setClipboardBlock();
                 // handleContextMenuClose();
                 e.stopPropagation();
               }}
               onMove={debounce((_, viewport) => {
                 if (activeTabData) {
-                  setTabViewport(activeTabData.id, viewport);
+                  setTabViewport((activeTabData as Tab).id, viewport);
                 }
               }, 3000)}
               elementsSelectable={true}
@@ -350,21 +340,21 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
               nodes={nodes}
               edges={edges}
               connectionLineComponent={DrawingCanvasEdge}
-              onConnect={(data) => {
+              onConnect={(data: Connection) => {
                 if (
                   validateEdge(
-                    data.source,
-                    data.sourceHandle,
-                    data.target,
-                    data.targetHandle
+                    data.source || "",
+                    data.sourceHandle as Position,
+                    data.target || "",
+                    data.targetHandle as Position,
                   )
                 ) {
                   // console.log('valid edge found')
                   createEdge(
-                    data.source,
-                    data.sourceHandle,
-                    data.target,
-                    data.targetHandle
+                    data.source || "",
+                    data.sourceHandle as Position,
+                    data.target || "",
+                    data.targetHandle as Position,
                   );
                 }
               }}
@@ -386,18 +376,21 @@ export const Canvas = ({ snapToGrid = true, drawerWidth, bounds, reactflowProOpt
                   WebkitBackdropFilter: "blur(10px)",
                   backdropFilter: "blur(10px)",
                   borderRadius: 5,
-                  overflow: 'hidden',
+                  overflow: "hidden",
                   padding: 0,
-                  height: 100
+                  height: 100,
                 }}
-                maskColor={theme.palette.mode === 'dark' ? "#d0d0d070" : "#20202070"}
+                maskColor={
+                  theme.palette.mode === "dark" ? "#d0d0d070" : "#20202070"
+                }
                 nodeStrokeColor={"transparent"}
                 nodeColor={(n: Node) =>
                   blockSpecQuery(n.data.typeSpec, "color", n.data.metaType) ||
                   "#fff"
                 }
                 nodeBorderRadius={10}
-                pannable zoomable
+                pannable
+                zoomable
               />
               <ResizePanel />
               <Background
@@ -432,21 +425,21 @@ export const Backdrop = styled("div")<BackdropProps>(
     backgroundColor: pastable
       ? lighten(theme.palette.background.default, 0.3)
       : theme.palette.background.default,
-    '& .react-flow__selection': {
-        background: alpha(darken(theme.palette.primary.main,0.5),0.3),
-        border: `1px dotted ${alpha(theme.palette.primary.main,0.8)}`,
-        borderRadius: 3,
-        outline: 'none',
-      },
-    '& .react-flow__nodesselection-rect': {
-      background: alpha(darken(theme.palette.primary.main,0.5),0.3),
-      border: `1px dotted ${alpha(theme.palette.primary.main,0.8)}`,
+    "& .react-flow__selection": {
+      background: alpha(darken(theme.palette.primary.main, 0.5), 0.3),
+      border: `1px dotted ${alpha(theme.palette.primary.main, 0.8)}`,
       borderRadius: 3,
-      outline: 'none',
+      outline: "none",
+    },
+    "& .react-flow__nodesselection-rect": {
+      background: alpha(darken(theme.palette.primary.main, 0.5), 0.3),
+      border: `1px dotted ${alpha(theme.palette.primary.main, 0.8)}`,
+      borderRadius: 3,
+      outline: "none",
       zIndex: 1,
-      },
-    '& .react-flow__nodesselection': {
-        background: "transparent",
-        },
-  })
+    },
+    "& .react-flow__nodesselection": {
+      background: "transparent",
+    },
+  }),
 );

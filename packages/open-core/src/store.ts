@@ -1,9 +1,15 @@
-import { create, createStore } from "zustand";
+import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { produce } from "immer";
 import { mapValues, remove } from "lodash";
-import { instanceTemplateFromSpec } from "./generators";
-import { Timer } from "./timer";
+import type {
+  OnConnectStartParams,
+  NodeChange,
+  Viewport,
+  Position,
+} from "reactflow";
+import { instanceTemplateFromSpec } from "./generators.ts";
+import { Timer } from "./timer.ts";
 import {
   generateId,
   deleteChildren,
@@ -11,8 +17,8 @@ import {
   parseBlock,
   applyTransfer,
   deepCopy,
-} from "./functions";
-import {
+} from "./functions.ts";
+import type {
   BlockData,
   ProgramSpec,
   FieldInfo,
@@ -27,35 +33,28 @@ import {
   ObjectReferenceData,
   ClipboardProps,
   ProgrammingState,
-  BlockFieldInfo,
   CommentData,
   ProgrammingStateStructures,
-} from "./types";
+} from "./types.ts";
 import {
   MetaType,
   PrimitiveType,
   CANVAS,
   SPAWNER,
   ClipboardAction,
-  ConnectionDirection,
+  type ConnectionDirection,
   ConnectionType,
   PropertyType,
-} from "./constants";
+} from "./constants.ts";
 
-import {
-  OnConnectStartParams,
-  NodeChange,
-  Viewport,
-  Position,
-} from "reactflow";
 // import { temporal } from "zundo";
 // import type { TemporalState } from "zundo";
 
-const randInt8 = () => {
+const randInt8 = (): number => {
   return Math.floor(Math.random() * 256);
 };
 
-const randomColor = () => {
+const randomColor = (): string => {
   return `rgb(${randInt8()},${randInt8()},${randInt8()})`;
 };
 
@@ -72,20 +71,23 @@ export const ProgrammingSlice = (
       | ProgrammingState
       | Partial<ProgrammingState>
       | ((
-          state: ProgrammingState
+          state: ProgrammingState,
         ) => ProgrammingState | Partial<ProgrammingState>),
-    replace?: boolean | undefined
+    replace?: boolean | undefined,
   ) => void,
-  get: () => ProgrammingState
+  get: () => ProgrammingState,
 ) => ({
   onVPEClick: (entryInfo: BlockData | ConnectionData | CommentData) =>
     console.log(`Clicked Entry:`, entryInfo),
   onOffVPEClick: () => console.log(`Missed VPE Click:`),
   activeDrawer: null,
   connectionInfo: null,
-  setConnectionInfo: (info: OnConnectStartParams | null) =>
-    set({ connectionInfo: info }),
-  setActiveDrawer: (activeDrawer: string | null) => set({ activeDrawer }),
+  setConnectionInfo: (info: OnConnectStartParams | null) => {
+    set({ connectionInfo: info });
+  },
+  setActiveDrawer: (activeDrawer: number | null) => {
+    set({ activeDrawer });
+  },
   programSpec: DEFAULT_PROGRAM_SPEC,
   programData: {},
   executionData: {},
@@ -102,13 +104,15 @@ export const ProgrammingSlice = (
       blocks: [],
     },
   ],
-  setTabs: (newTabs: Tab[]) => set({ tabs: newTabs }),
+  setTabs: (newTabs: Tab[]) => {
+    set({ tabs: newTabs });
+  },
   activeTab: tab1ID,
   parse: (
     language: string,
     nodeId: undefined | string,
     depth: undefined | number,
-    context: undefined | { [key: string]: BlockData }
+    context: undefined | Record<string, BlockData>,
   ) => {
     let parsed = "";
     const typeSpec = get().programSpec.objectTypes;
@@ -125,14 +129,14 @@ export const ProgrammingSlice = (
               typeSpec,
               language,
               depth || 0,
-              block.metaType === "FUNCTION-CALL" ||
-                block.metaType === "OBJECT-REFERENCE"
+              block.metaType === MetaType.FunctionCall ||
+                block.metaType === MetaType.ObjectReference
                 ? {
                     ...context,
                     [block.ref]: programData[block.ref] as BlockData,
                   }
-                : context || ({} as { [key: string]: BlockData }),
-              storeParser
+                : context || ({} as Record<string, BlockData>),
+              storeParser,
             );
           });
       });
@@ -143,11 +147,11 @@ export const ProgrammingSlice = (
         typeSpec,
         language,
         depth || 0,
-        block.metaType === "FUNCTION-CALL" ||
-          block.metaType === "OBJECT-REFERENCE"
+        block.metaType === MetaType.FunctionCall ||
+          block.metaType === MetaType.ObjectReference
           ? { ...context, [block.ref]: programData[block.ref] as BlockData }
-          : context || ({} as { [key: string]: BlockData }),
-        storeParser
+          : context || ({} as Record<string, BlockData>),
+        storeParser,
       );
     }
     return parsed;
@@ -155,15 +159,15 @@ export const ProgrammingSlice = (
   transferBlock: (
     data: BlockData | CommentData,
     sourceInfo: RegionInfo,
-    destInfo: RegionInfo
+    destInfo: RegionInfo,
   ) => {
     set(
-      produce((state: ProgrammingState) =>
-        applyTransfer(state, data, sourceInfo, destInfo)
-      )
+      produce((state: ProgrammingState) => {
+        applyTransfer(state, data, sourceInfo, destInfo);
+      }),
     );
   },
-  moveBlocks: (changes: NodeChange[]) =>
+  moveBlocks: (changes: NodeChange[]) => {
     set(
       produce((state: ProgrammingState) => {
         changes.forEach((change) => {
@@ -181,12 +185,13 @@ export const ProgrammingSlice = (
             state.programData[change.id] = block;
           }
         });
-      })
-    ),
+      }),
+    );
+  },
   deleteBlock: (
     data: BlockData | CommentData,
     parentId: string,
-    fieldInfo: FieldInfo
+    fieldInfo: FieldInfo,
   ) => {
     set(
       produce((state: ProgrammingState) => {
@@ -227,11 +232,11 @@ export const ProgrammingSlice = (
                 | FunctionCallData;
             remove(
               block.properties[fieldInfo.id],
-              (entry) => entry === data.id
+              (entry) => entry === data.id,
             );
           }
         }
-      })
+      }),
     );
   },
   createPlacedBlock: (data: BlockData, x: number, y: number) => {
@@ -257,9 +262,9 @@ export const ProgrammingSlice = (
 
         // Add Block to the current tab
         state.tabs = state.tabs.map((t) =>
-          t.id === state.activeTab ? { ...t, blocks: [...t.blocks, id] } : t
+          t.id === state.activeTab ? { ...t, blocks: [...t.blocks, id] } : t,
         );
-      })
+      }),
     );
   },
   addInstance: (instanceType: string) => {
@@ -270,12 +275,12 @@ export const ProgrammingSlice = (
           ...instanceTemplateFromSpec(
             instanceType,
             state.programSpec.objectTypes[instanceType],
-            false
+            false,
           ),
           id,
         };
         state.programData[id] = template;
-      })
+      }),
     );
   },
   addArgument: (parentFunctionId: string, argumentType: string) => {
@@ -286,7 +291,7 @@ export const ProgrammingSlice = (
           ...(instanceTemplateFromSpec(
             argumentType,
             state.programSpec.objectTypes[argumentType],
-            true
+            true,
           ) as ArgumentData),
           id,
         };
@@ -296,7 +301,7 @@ export const ProgrammingSlice = (
         ] as FunctionDeclarationData;
         parentFunction.arguments.push(id);
         state.programData[parentFunctionId] = parentFunction;
-      })
+      }),
     );
   },
   updateItemName: (id: string, value: string) => {
@@ -312,13 +317,15 @@ export const ProgrammingSlice = (
           // @ts-ignore (ts is not smart enough to figure out that this is a valid assignment)
           state.programData[usedId].name = value;
         }
-      })
+      }),
     );
   },
   updateItemSelected: (id: string, value: boolean) => {
     set(
       produce((state: ProgrammingState) => {
-        const item: BlockData | undefined  = state.programData[id] as BlockData | undefined ;
+        const item: BlockData | undefined = state.programData[id] as
+          | BlockData
+          | undefined;
         if (!item) {
           return;
         }
@@ -328,12 +335,14 @@ export const ProgrammingSlice = (
             ? item.ref
             : id;
 
-        let updatedItem: BlockData | undefined = state.programData[usedId] as BlockData | undefined;
+        let updatedItem: BlockData | undefined = state.programData[usedId] as
+          | BlockData
+          | undefined;
         if (updatedItem) {
           updatedItem.selected = value;
           state.programData[usedId] = updatedItem;
         }
-      })
+      }),
     );
   },
   setSelections: (selections: string[]) => {
@@ -346,9 +355,9 @@ export const ProgrammingSlice = (
               return item;
             }
             return { ...item, selected: selections.includes(item.id) };
-          }
+          },
         );
-      })
+      }),
     );
   },
   updateItemEditing: (id: string, value: boolean) => {
@@ -361,7 +370,7 @@ export const ProgrammingSlice = (
           item.editing = value;
           state.programData[id] = item;
         }
-      })
+      }),
     );
   },
   updateItemSimpleProperty: (id: string, property: string, value: any) => {
@@ -373,7 +382,7 @@ export const ProgrammingSlice = (
             | FunctionDeclarationData
             | FunctionCallData
         ).properties[property] = value;
-      })
+      }),
     );
   },
   updateEdgeValue: (id: string, value: string) => {
@@ -382,7 +391,7 @@ export const ProgrammingSlice = (
         let current = state.programData[id] as ConnectionData;
         current.value = value;
         state.programData[id] = current;
-      })
+      }),
     );
   },
   updateCommentText: (id: string, value: string) => {
@@ -391,27 +400,27 @@ export const ProgrammingSlice = (
         let current = state.programData[id] as CommentData;
         current.text = value;
         state.programData[id] = current;
-      })
+      }),
     );
   },
   deleteEdge: (id: string) => {
     set(
       produce((state: ProgrammingState) => {
         delete state.programData[id];
-      })
+      }),
     );
   },
   createEdge: (
     source: string,
     sourceHandle: Position,
     target: string,
-    targetHandle: Position
+    targetHandle: Position,
   ) => {
     set(
       produce((state: ProgrammingState) => {
         // console.log("createEdge", { source, sourceHandle, target, targetHandle });
         const edgeCount = Object.values(state.programData).filter(
-          (d) => d.metaType === MetaType.Connection
+          (d) => d.metaType === MetaType.Connection,
         ).length;
         const newEdge: ConnectionData = {
           id: generateId("edge"),
@@ -423,23 +432,23 @@ export const ProgrammingSlice = (
         };
         state.programData[newEdge.id] = newEdge;
         // console.log('createEdge',{source,sourceHandle,target,targetHandle})
-      })
+      }),
     );
   },
   validateEdge: (
     source: string,
     sourceHandle: Position,
     target: string,
-    targetHandle: Position
+    targetHandle: Position,
   ) => {
     if (source === target) {
       return false;
     }
     const edges: ConnectionData[] = Object.values(
-      get().programData as { [key: string]: BlockData | ConnectionData }
+      get().programData as { [key: string]: BlockData | ConnectionData },
     ).filter(
       (value: BlockData | ConnectionData) =>
-        value.metaType === MetaType.Connection
+        value.metaType === MetaType.Connection,
     ) as ConnectionData[];
 
     // Get info on source
@@ -542,7 +551,7 @@ export const ProgrammingSlice = (
       return false;
     } else if (
       edges.some(
-        (edge) => edge.parent.id === source && edge.child.id === target
+        (edge) => edge.parent.id === source && edge.child.id === target,
       )
     ) {
       return false;
@@ -559,7 +568,7 @@ export const ProgrammingSlice = (
           (state.programData[id] as ConnectionData).value = 0;
         } else {
           const edgeCount = Object.values(state.programData).filter(
-            (d) => d.metaType === MetaType.Connection
+            (d) => d.metaType === MetaType.Connection,
           ).length;
           (state.programData[id] as ConnectionData).type =
             ConnectionType.String;
@@ -567,7 +576,7 @@ export const ProgrammingSlice = (
             edgeCount + 1
           }`;
         }
-      })
+      }),
     );
   },
   // Just to illustrate alternative functionExtraTypes
@@ -584,7 +593,7 @@ export const ProgrammingSlice = (
           thisTypeSpec.referenceBlock.color = color;
         }
         state.programSpec.objectTypes[data.type] = thisTypeSpec;
-      })
+      }),
     );
   },
   clock: new Timer(undefined, undefined, undefined),
@@ -598,7 +607,7 @@ export const ProgrammingSlice = (
     get().clock._elapsed = time ? time * 1000 : 0;
   },
   setActiveTab: (tab: Tab) => set({ activeTab: tab.id }),
-  removeTab: (tab: string) =>
+  removeTab: (tab: string) => {
     set(
       produce((state: ProgrammingState) => {
         // console.log(get().programData)
@@ -628,9 +637,10 @@ export const ProgrammingSlice = (
           state.activeTab = activeTab;
         }
         state.tabs = newTabs;
-      })
-    ),
-  addTab: () =>
+      }),
+    );
+  },
+  addTab: () => {
     set(
       produce((state: ProgrammingState) => {
         const id = generateId("tab");
@@ -641,30 +651,33 @@ export const ProgrammingSlice = (
           ],
           activeTab: id,
         };
-      })
-    ),
-  renameTab: (id: string, title: string) =>
+      }),
+    );
+  },
+  renameTab: (id: string, title: string) => {
     set(
       produce((state: ProgrammingState) => ({
         tabs: state.tabs.map((t: Tab) => (t.id === id ? { ...t, title } : t)),
-      }))
-    ),
-  setTabViewport: (id: string, viewport: Viewport) =>
+      })),
+    );
+  },
+  setTabViewport: (id: string, viewport: Viewport) => {
     set(
       produce((state: ProgrammingState) => ({
         tabs: state.tabs.map((t: Tab) =>
-          t.id === id ? { ...t, viewport } : t
+          t.id === id ? { ...t, viewport } : t,
         ),
-      }))
-    ),
-  getTabViewport: (id: string) =>
+      })),
+    );
+  },
+  getTabViewport: (id?: string) =>
     get().tabs.filter((t: Tab) => t.id === id)[0]?.viewport,
-  setTabVisibility: (id: string, visible: boolean) =>
+  setTabVisibility: (id: string, visible: boolean) => {
     set(
-      produce((state: ProgrammingState) => {
+      produce((state: ProgrammingState): void => {
         if (visible) {
           state.tabs = state.tabs.map((t: Tab) =>
-            t.id === id ? { ...t, visible } : t
+            t.id === id ? { ...t, visible } : t,
           );
           state.activeTab = id;
         } else {
@@ -689,10 +702,11 @@ export const ProgrammingSlice = (
           }
           state.tabs = newTabs;
         }
-      })
-    ),
+      }),
+    );
+  },
   clipboard: {},
-  copy: (clipboardProps: ClipboardProps) =>
+  copy: (clipboardProps: ClipboardProps) => {
     set(
       produce((state: ProgrammingState) => {
         console.log("handling copy...");
@@ -700,9 +714,10 @@ export const ProgrammingSlice = (
         state.clipboard.regionInfo = clipboardProps.regionInfo;
         state.clipboard.context = clipboardProps.context;
         state.clipboard.action = ClipboardAction.Copy;
-      })
-    ),
-  cut: (clipboardProps: ClipboardProps) =>
+      }),
+    );
+  },
+  cut: (clipboardProps: ClipboardProps) => {
     set(
       produce((state: ProgrammingState) => {
         console.log("handling cut...");
@@ -727,23 +742,24 @@ export const ProgrammingSlice = (
             state,
             block,
             state.clipboard.regionInfo?.parentId || undefined,
-            state.clipboard.regionInfo?.fieldInfo || undefined
+            state.clipboard.regionInfo?.fieldInfo || undefined,
           );
           // Delete current block
           state = deleteSelfBlock(
             state,
             block,
             state.clipboard.regionInfo?.parentId || undefined,
-            state.clipboard.regionInfo?.fieldInfo || undefined
+            state.clipboard.regionInfo?.fieldInfo || undefined,
           );
         }
         state.clipboard.block = clipboardProps.data;
         state.clipboard.regionInfo = clipboardProps.regionInfo;
         state.clipboard.context = clipboardProps.context;
         state.clipboard.action = ClipboardAction.Cut;
-      })
-    ),
-  paste: (clipboardProps: ClipboardProps) =>
+      }),
+    );
+  },
+  paste: (clipboardProps: ClipboardProps) => {
     set(
       produce((state: ProgrammingState) => {
         if (!state.clipboard.block?.id || !state.clipboard.action) {
@@ -769,7 +785,7 @@ export const ProgrammingSlice = (
           ] = deepCopy(
             state.programData,
             state.programSpec.objectTypes,
-            clipboardBlock.id
+            clipboardBlock.id,
           );
           if (clipboardProps.regionInfo?.parentId === CANVAS) {
             console.log("New block is on the canvas");
@@ -784,7 +800,7 @@ export const ProgrammingSlice = (
             state.tabs = state.tabs.map((t) =>
               t.id === state.activeTab
                 ? { ...t, blocks: [...t.blocks, newId] }
-                : t
+                : t,
             );
           } else if (clipboardProps.regionInfo?.parentId) {
             console.log("New block is not on the canvas");
@@ -804,7 +820,7 @@ export const ProgrammingSlice = (
               ).properties[clipboardProps.regionInfo.fieldInfo.id].splice(
                 clipboardProps.regionInfo.idx,
                 0,
-                newId
+                newId,
               );
             } else {
               // Otherwise, just set the property
@@ -833,10 +849,10 @@ export const ProgrammingSlice = (
                 ? {
                     ...t,
                     blocks: t.blocks.filter(
-                      (b) => b !== state.clipboard.block?.id
+                      (b) => b !== state.clipboard.block?.id,
                     ),
                   }
-                : t
+                : t,
             );
           } else {
             let parentBlock =
@@ -880,7 +896,7 @@ export const ProgrammingSlice = (
             state.tabs = state.tabs.map((t) =>
               t.id === state.activeTab
                 ? { ...t, blocks: [...t.blocks, clipboardBlock.id] }
-                : t
+                : t,
             );
           } else {
             let parentBlock =
@@ -901,7 +917,7 @@ export const ProgrammingSlice = (
                 ].splice(
                   clipboardProps.regionInfo.idx,
                   0,
-                  state.clipboard.block?.id
+                  state.clipboard.block?.id,
                 );
               } else if (
                 clipboardProps.regionInfo.fieldInfo.type === PropertyType.Block
@@ -916,34 +932,25 @@ export const ProgrammingSlice = (
         }
 
         state.clipboard.action = ClipboardAction.Paste;
-      })
-    ),
-  setClipboardBlock: (block: BlockData | CommentData) =>
+      }),
+    );
+  },
+  setClipboardBlock: (block?: BlockData | CommentData) => {
     set(
       produce((state: ProgrammingState) => {
         state.clipboard.block = block;
         state.clipboard.action = ClipboardAction.Select;
         state.clipboard.regionInfo = undefined;
-      })
-    ),
+      }),
+    );
+  },
 });
 
-// const DefaultSlice = immer(subscribeWithSelector(temporal(ProgrammingSlice, {
-//   partialize: (state: ProgrammingState) => {
-//     return { programSpec: state.programSpec, programData: state.programData };
-//   },
-//   limit: 100,
-//   handleSet: (handleSet) =>
-//     throttle((state) => {
-//       handleSet(state);
-//     }, 1000),
-// })));
-// export const DefaultSlice = SelectorSlice;
 export const DefaultSlice =
   subscribeWithSelector<ProgrammingState>(ProgrammingSlice);
 
 export const createProgrammingStore = (
-  initProps: Partial<ProgrammingStateStructures>
+  initProps: Partial<ProgrammingStateStructures>,
 ) =>
   create<ProgrammingState>()(
     subscribeWithSelector<ProgrammingState>((set, get, store) => {
@@ -951,14 +958,7 @@ export const createProgrammingStore = (
         ...DefaultSlice(set, get, store),
         ...initProps,
       };
-    })
+    }),
   );
 
 export const DefaultStore = createProgrammingStore({});
-
-// export const createProgrammingStore = (initProps?: Partial<ProgrammingState>) => {
-//   return createStore<ProgrammingState>()((set, get, store) => ({
-//     ...DefaultSlice(set,get, store),
-//     ...initProps,
-//   }))
-// }
