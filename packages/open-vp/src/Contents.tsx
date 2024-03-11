@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Block } from "@people_and_robots/open-blocks";
-import { Canvas } from "./Canvas";
 import useMeasure, { RectReadOnly } from "react-use-measure";
-import Typography from "@mui/material/Typography";
 import {
+  Typography,
   Stack,
   Box,
   Collapse,
@@ -14,7 +13,6 @@ import {
   CardContent,
   CardActions,
 } from "@mui/material";
-import { CanvasTabs } from "./CanvasTabs";
 import {
   useProgrammingStore,
   DrawerSpec,
@@ -36,8 +34,9 @@ import {
   TextInput,
 } from "@people_and_robots/open-gui";
 import { pick, pickBy } from "lodash";
-import { Backdrop } from "./Canvas";
 import { ProOptions } from "reactflow";
+import { CanvasTabs } from "./CanvasTabs";
+import { Canvas, Backdrop } from "./Canvas";
 
 interface SectionStripProps {
   setSearchTerm: (term: string) => void;
@@ -374,7 +373,7 @@ export const Contents = ({
                 <IconTextButton
                   title="Create Tab"
                   startIcon="AddRounded"
-                  onClick={addTab}
+                  onClick={() => addTab()}
                 >
                   Create Tab
                 </IconTextButton>

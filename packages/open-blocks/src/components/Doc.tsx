@@ -19,13 +19,7 @@ import {
   CardActions,
   AlertColor,
 } from "@mui/material";
-import {
-  darken,
-  lighten,
-  emphasize,
-  styled,
-  useTheme,
-} from "@mui/material/styles";
+import { darken, lighten, emphasize, styled, useTheme } from "@mui/material";
 import { useState, useCallback, useRef } from "react";
 import {
   useProgrammingStore,
@@ -40,25 +34,15 @@ import {
   ConnectionData,
 } from "@people_and_robots/open-core";
 import { Remark } from "react-remark";
-import {
-  FiChevronDown,
-  FiCircle,
-  FiCode,
-  FiLogIn,
-  FiList,
-  FiLogOut,
-  FiStar,
-  FiDownload,
-  FiSquare,
-} from "react-icons/fi";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import oneDark from "./OneDark";
 import { pickBy } from "lodash";
 import { blockSpecQuery } from "../util";
 import { Position } from "reactflow";
 import { ObjectReferenceData } from "@people_and_robots/open-core";
-import { functionTypeSpec } from "@people_and_robots/open-core/src/generators";
+import { functionTypeSpec } from "@people_and_robots/open-core";
 import {
+  Icon,
   IconTextButton,
   ScrollRegion,
   Tooltip,
@@ -104,7 +88,7 @@ const StyledBreadcrumb = styled(Chip)(({ theme }) => {
 
 function getReferences(
   typeSpec: { [key: string]: TypeSpec },
-  usedType: string
+  usedType: string,
 ): { parent: string; fields: string[] }[] {
   // @ts-ignore
   const referent = typeSpec[usedType]?.specificType || usedType;
@@ -180,21 +164,21 @@ const FieldInfoSection = ({
             } else {
               return Object.keys(
                 // @ts-ignore
-                pickBy(typeInfo, (info) => info.specificType === a)
+                pickBy(typeInfo, (info) => info.specificType === a),
               );
             }
           })
           .reduce(
             (accumulator, currentValue) => [...accumulator, ...currentValue],
-            []
+            [],
           )
       : [];
   const variant =
     fieldInfo.type === PropertyType.Block && fieldInfo?.accepts
       ? "block"
       : SHOWN_SIMPLE_TYPES.includes(fieldInfo?.type)
-      ? "simple"
-      : "na";
+        ? "simple"
+        : "na";
 
   if (variant === "na") {
     return null;
@@ -205,7 +189,11 @@ const FieldInfoSection = ({
       <CardHeader
         variant="h5"
         color="text.primary"
-        title={typeof fieldInfo.name === 'string' ? fieldInfo.name : fieldInfo.name.name}
+        title={
+          typeof fieldInfo.name === "string"
+            ? fieldInfo.name
+            : fieldInfo.name.name
+        }
         sx={{ padding: 0 }}
         action={
           fieldInfo.type === PropertyType.Block && fieldInfo.accepts ? (
@@ -223,7 +211,7 @@ const FieldInfoSection = ({
                       backgroundColor: DOC_FLAG_COLORS.IS_LIST,
                     }}
                   >
-                    <FiList />
+                    <Icon name="ListRounded" />
                   </Avatar>
                 </Tooltip>
               )}
@@ -240,7 +228,7 @@ const FieldInfoSection = ({
                       backgroundColor: DOC_FLAG_COLORS.FULL_WIDTH,
                     }}
                   >
-                    <FiCode />
+                    <Icon name="WidthFullRounded" />
                   </Avatar>
                 </Tooltip>
               )}
@@ -257,7 +245,7 @@ const FieldInfoSection = ({
                       backgroundColor: DOC_FLAG_COLORS.REQUIRED,
                     }}
                   >
-                    <FiStar />
+                    <Icon name="StarRounded" />
                   </Avatar>
                 </Tooltip>
               )}
@@ -274,7 +262,7 @@ const FieldInfoSection = ({
                       backgroundColor: DOC_FLAG_COLORS.FUNCTION_ARGUMENT,
                     }}
                   >
-                    <FiDownload />
+                    <Icon name="AssignmentReturnedRounded" />
                   </Avatar>
                 </Tooltip>
               )}
@@ -292,7 +280,7 @@ const FieldInfoSection = ({
                       backgroundColor: DOC_FLAG_COLORS.FUNCTION_PROPERTY,
                     }}
                   >
-                    <FiSquare />
+                    <Icon name="CropSquareRounded" />
                   </Avatar>
                 </Tooltip>
               )}
@@ -325,8 +313,8 @@ const FieldInfoSection = ({
           }}
           component="ul"
         >
-          {fullAccepts?.map((t: string) => (
-            <li style={{ margin: 1 }}>
+          {fullAccepts?.map((t: string, i: number) => (
+            <li key={`${t}-${i}`} style={{ margin: 1 }}>
               <TypeLink
                 key={t}
                 label={typeInfo[t]?.name || "Unrecognized"}
@@ -375,7 +363,7 @@ const ConnectionInfoSection = ({
   const theme = useTheme();
   return (
     <Card sx={{ padding: 2 }}>
-      <Grid container spacing={1}>
+      <Grid key={`${side}-container`} container spacing={1}>
         <Grid key={side} item xs={4}>
           <Typography
             variant="h5"
@@ -415,9 +403,9 @@ const ConnectionInfoSection = ({
                   }}
                 >
                   {connectionInfo.direction === ConnectionDirection.Outbound ? (
-                    <FiLogOut />
+                    <Icon name="LogoutRounded" />
                   ) : (
-                    <FiLogIn />
+                    <Icon name="LoginRounded" />
                   )}
                 </Avatar>
               </Tooltip>
@@ -436,7 +424,7 @@ const ConnectionInfoSection = ({
             >
               {connectionInfo.allowed?.map((t) => (
                 <TypeLink
-                  label={typeInfo[t]?.name || 'Unknown'}
+                  label={typeInfo[t]?.name || "Unknown"}
                   color={blockSpecQuery(typeInfo[t], "color")}
                   onClick={(e) => {
                     e.preventDefault();
@@ -463,7 +451,9 @@ const TypeLink = ({ label, color, onClick }: TypeLinkProps) => {
   return (
     <ChipMimic onClick={onClick}>
       {label}{" "}
-      <FiCircle
+      <Icon
+        name="Circle"
+        size={10}
         style={{
           position: "relative",
           alignSelf: "center",
@@ -474,6 +464,16 @@ const TypeLink = ({ label, color, onClick }: TypeLinkProps) => {
           fill: color,
         }}
       />
+      {/* style={{
+          position: "relative",
+          alignSelf: "center",
+          height: 15,
+          width: 15,
+          top: 2.5,
+          //   bottom:-3,
+          fill: color,
+        }}
+      /> */}
       <span
         style={{
           height: 15,
@@ -492,7 +492,7 @@ const TypeLink = ({ label, color, onClick }: TypeLinkProps) => {
 
 export const TypeDescription = ({ type }: { type: string }) => {
   const info = useProgrammingStore(
-    useCallback((state) => state.programSpec.objectTypes[type], [type])
+    useCallback((state) => state.programSpec.objectTypes[type], [type]),
   );
   return (
     <TypeLink
@@ -512,14 +512,17 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
     data?.metaType === MetaType.FunctionDeclaration
       ? data.id
       : data.metaType === MetaType.FunctionCall
-      ? data.ref
-      : data.type;
+        ? data.ref
+        : data.type;
   const [path, setPath] = useState([typeKey]);
   const activeType = path[path.length - 1];
 
   const typeInfo: { [key: string]: TypeSpec } = useProgrammingStore(
     (state: ProgrammingState) =>
-      functionTypeSpec(state.programSpec.objectTypes, state.programData as {[key: string]: BlockData | ConnectionData})
+      functionTypeSpec(
+        state.programSpec.objectTypes,
+        state.programData as { [key: string]: BlockData | ConnectionData },
+      ),
   );
 
   const docRef = useRef<HTMLDivElement>(null);
@@ -530,19 +533,21 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
       : lighten(blockSpecQuery(typeInfo[activeType], "color"), 0.5);
 
   const setActiveDoc = useProgrammingStore(
-    (state: ProgrammingState) => state.setActiveDoc
+    (state: ProgrammingState) => state.setActiveDoc,
   );
   const featuredDoc = useProgrammingStore((state: ProgrammingState) =>
     typeof state.featuredDocs[data.id] === "string"
       ? state.featuredDocs[data.id]
       : [MetaType.FunctionCall, MetaType.ObjectReference].includes(
-          data.metaType
-        ) &&
-        typeof state.featuredDocs[
-          (data as FunctionCallData | ObjectReferenceData).ref
-        ] === "string"
-      ? state.featuredDocs[(data as FunctionCallData | ObjectReferenceData).ref]
-      : null
+            data.metaType,
+          ) &&
+          typeof state.featuredDocs[
+            (data as FunctionCallData | ObjectReferenceData).ref
+          ] === "string"
+        ? state.featuredDocs[
+            (data as FunctionCallData | ObjectReferenceData).ref
+          ]
+        : null,
   );
   const tabs = featuredDoc
     ? ["featured", "description", "usage"]
@@ -743,7 +748,8 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
   let connectionData: { [key: string]: ConnectionInfo }[] = [];
   const activeTypeSpec = typeInfo[activeType];
   if (
-    activeTypeSpec && activeTypeSpec.primitiveType === PrimitiveType.Object &&
+    activeTypeSpec &&
+    activeTypeSpec.primitiveType === PrimitiveType.Object &&
     activeTypeSpec?.instanceBlock?.onCanvas &&
     activeTypeSpec?.instanceBlock?.connections
   ) {
@@ -751,7 +757,8 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
     connectionData.push(activeTypeSpec.instanceBlock.connections);
   }
   if (
-    activeTypeSpec && activeTypeSpec.primitiveType === PrimitiveType.Object &&
+    activeTypeSpec &&
+    activeTypeSpec.primitiveType === PrimitiveType.Object &&
     activeTypeSpec?.referenceBlock?.onCanvas &&
     activeTypeSpec?.referenceBlock?.connections
   ) {
@@ -759,7 +766,8 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
     connectionData.push(activeTypeSpec.referenceBlock.connections);
   }
   if (
-    activeTypeSpec && activeTypeSpec.primitiveType === PrimitiveType.Function &&
+    activeTypeSpec &&
+    activeTypeSpec.primitiveType === PrimitiveType.Function &&
     activeTypeSpec?.functionBlock?.onCanvas &&
     activeTypeSpec?.functionBlock?.connections
   ) {
@@ -767,7 +775,8 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
     connectionData.push(activeTypeSpec.functionBlock.connections);
   }
   if (
-    activeTypeSpec && activeTypeSpec.primitiveType === PrimitiveType.Function &&
+    activeTypeSpec &&
+    activeTypeSpec.primitiveType === PrimitiveType.Function &&
     activeTypeSpec?.callBlock?.onCanvas &&
     activeTypeSpec?.callBlock?.connections
   ) {
@@ -832,10 +841,16 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
                   handleLinkClick(item);
                 }}
                 deleteIcon={
-                  <FiCircle
+                  <Icon
+                    name="Circle"
                     style={{
-                      height: 13,
-                      width: 13,
+                      // position: "relative",
+                      // alignSelf: "center",
+                      height: 15,
+                      width: 15,
+                      marginRight: 5,
+                      // top: 2.5,
+                      //   bottom:-3,
                       fill: blockSpecQuery(typeInfo[item], "color"),
                     }}
                   />
@@ -880,7 +895,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
             <>
               <Accordion key="fields">
                 <AccordionSummary
-                  expandIcon={<FiChevronDown />}
+                  expandIcon={<Icon name="ExpandMoreRounded" />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                 >
@@ -909,23 +924,23 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
                   )}
                   <Stack spacing={1}>
                     {Object.keys(typeInfo[activeType]?.properties || {}).map(
-                      (key) => (
+                      (key, i) => (
                         <FieldInfoSection
-                          key={key}
+                          key={`${key}-${i}`}
                           parent={activeType}
                           field={key}
                           typeInfo={typeInfo}
                           handleLinkClick={handleLinkClick}
                           container={docRef.current || undefined}
                         />
-                      )
+                      ),
                     )}
                   </Stack>
                 </AccordionDetails>
               </Accordion>
               <Accordion key="as-field">
                 <AccordionSummary
-                  expandIcon={<FiChevronDown />}
+                  expandIcon={<Icon name="ExpandMoreRounded" />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                 >
@@ -959,7 +974,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
                             label={typeInfo[block.parent]?.name}
                             color={blockSpecQuery(
                               typeInfo[block.parent],
-                              "color"
+                              "color",
                             )}
                             onClick={(e) => {
                               e.preventDefault();
@@ -985,7 +1000,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
               </Accordion>
               <Accordion key="connections">
                 <AccordionSummary
-                  expandIcon={<FiChevronDown />}
+                  expandIcon={<Icon name="ExpandMoreRounded" />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
                 >
@@ -1019,7 +1034,7 @@ export const Doc = ({ data, typeSpec }: DocProps) => {
                               typeInfo={typeInfo}
                               handleLinkClick={handleLinkClick}
                             />
-                          )
+                          ),
                         )}
                       </>
                     ))

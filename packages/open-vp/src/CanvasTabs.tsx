@@ -5,16 +5,17 @@ import {
   Tab,
   useProgrammingStore,
 } from "@people_and_robots/open-core";
-import { styled, darken, useTheme, lighten } from "@mui/material/styles";
 import {
+  styled,
+  darken,
+  useTheme,
+  lighten,
   ClickAwayListener,
   DialogTitle,
   DialogContentText,
   DialogActions,
-  Button,
   DialogContent,
   Theme,
-  Icon,
 } from "@mui/material";
 import {
   NestedDropdown,
@@ -37,31 +38,31 @@ const Bar = styled("div")(
       theme.palette.mode === "dark"
         ? lighten(theme.palette.background.default, 0.1)
         : darken(theme.palette.background.default, 0.1),
-  })
+  }),
 );
 
 export const CanvasTabs = ({}) => {
   const tabs = useProgrammingStore((state: ProgrammingState) =>
-    state.tabs.filter((t) => t.visible)
+    state.tabs.filter((t) => t.visible),
   );
   const hiddenTabs = useProgrammingStore((state: ProgrammingState) =>
-    state.tabs.filter((t) => !t.visible)
+    state.tabs.filter((t) => !t.visible),
   );
   const setTabs = useProgrammingStore(
-    (state: ProgrammingState) => state.setTabs
+    (state: ProgrammingState) => state.setTabs,
   );
   const activeTab = useProgrammingStore(
-    (state: ProgrammingState) => state.activeTab
+    (state: ProgrammingState) => state.activeTab,
   );
   const setActiveTab = useProgrammingStore(
-    (state: ProgrammingState) => state.setActiveTab
+    (state: ProgrammingState) => state.setActiveTab,
   );
   const removeTab = useProgrammingStore(
-    (state: ProgrammingState) => state.removeTab
+    (state: ProgrammingState) => state.removeTab,
   );
   const addTab = useProgrammingStore((state: ProgrammingState) => state.addTab);
   const setTabVisibility = useProgrammingStore(
-    (state: ProgrammingState) => state.setTabVisibility
+    (state: ProgrammingState) => state.setTabVisibility,
   );
   const [deleteFocus, setDeleteFocus] = useState<Tab | null>(null);
   const handleRemoveClick = (tabId: string) => {
@@ -214,10 +215,10 @@ const TabItem = ({
 }: TabItemProps) => {
   const [editing, setEditing] = useState(false);
   const renameTab = useProgrammingStore(
-    (state: ProgrammingState) => state.renameTab
+    (state: ProgrammingState) => state.renameTab,
   );
   const setTabVisibility = useProgrammingStore(
-    (state: ProgrammingState) => state.setTabVisibility
+    (state: ProgrammingState) => state.setTabVisibility,
   );
 
   const theme: Theme = useTheme();

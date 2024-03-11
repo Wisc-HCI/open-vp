@@ -1,10 +1,5 @@
-import {
-  useState,
-  ReactNode,
-  ChangeEventHandler,
-  CSSProperties,
-} from "react";
-import { styled, alpha, lighten, darken } from "@mui/material/styles";
+import { useState, ReactNode, ChangeEventHandler, CSSProperties } from "react";
+import { styled, alpha, lighten, darken } from "@mui/material";
 import TextareaAutosize from "react-textarea-autosize";
 import { Stack } from "@mui/material";
 
@@ -50,11 +45,11 @@ export const TextAreaWrapper = styled("label", {
       theme.palette.mode === "light"
         ? alpha(
             darken(theme.palette.background.paper, 0.4),
-            disabled ? 0.1 : 0.75
+            disabled ? 0.1 : 0.75,
           )
         : alpha(
             lighten(theme.palette.background.paper, 0.4),
-            disabled ? 0.1 : 0.75
+            disabled ? 0.1 : 0.75,
           ),
     border: "none", //disabled ? `1px solid #24292f30` : `1px solid #24292f50`,
     borderRadius: wrapped
@@ -84,7 +79,7 @@ export const TextAreaWrapper = styled("label", {
       userSelect: "none",
       outline: 0,
     },
-  })
+  }),
 );
 
 export interface TextAreaExtraProps {
@@ -108,34 +103,34 @@ export const TextAreaExtra = styled("span")<TextAreaExtraProps>(
   ({ theme, wrapped, side }) => ({
     background: alpha(
       theme.palette.background.paper,
-      side === "left" ? 0.2 : 0.1
+      side === "left" ? 0.2 : 0.1,
     ),
     borderTopRightRadius:
       side !== "right"
         ? 0
         : wrapped
-        ? theme.shape.borderRadius * 0.66
-        : theme.shape.borderRadius,
+          ? theme.shape.borderRadius * 0.66
+          : theme.shape.borderRadius,
     borderBottomRightRadius:
       side !== "right"
         ? 0
         : wrapped
-        ? theme.shape.borderRadius * 0.66
-        : theme.shape.borderRadius,
+          ? theme.shape.borderRadius * 0.66
+          : theme.shape.borderRadius,
     borderTopLeftRadius:
       side !== "left"
         ? 0
         : wrapped
-        ? theme.shape.borderRadius * 0.66
-        : theme.shape.borderRadius,
+          ? theme.shape.borderRadius * 0.66
+          : theme.shape.borderRadius,
     borderBottomLeftRadius:
       side !== "left"
         ? 0
         : wrapped
-        ? theme.shape.borderRadius * 0.66
-        : theme.shape.borderRadius,
+          ? theme.shape.borderRadius * 0.66
+          : theme.shape.borderRadius,
     color: theme.palette.text.primary,
-  })
+  }),
 );
 
 const StyledTextArea = styled(TextareaAutosize)(
@@ -149,14 +144,14 @@ const StyledTextArea = styled(TextareaAutosize)(
     caretColor: theme.palette.primary.main,
     "::selection": {
       color: theme.palette.getContrastText(theme.palette.primary.main),
-      backgroundColor: theme.palette.primary.main
+      backgroundColor: theme.palette.primary.main,
     },
     color: theme.palette.text.primary,
     textHighlight: theme.palette.primary.main,
-  })
+  }),
 );
 
-const FlexStack = styled(Stack)({flex:1})
+const FlexStack = styled(Stack)({ flex: 1 });
 
 export const TextArea = ({
   disabled,

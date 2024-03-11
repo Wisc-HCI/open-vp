@@ -1,43 +1,61 @@
-import clsx from 'clsx';
-import Heading from '@theme/Heading';
-import styles from './styles.module.css';
+import clsx from "clsx";
+import Heading from "@theme/Heading";
+import PaletteIcon from "@mui/icons-material/Palette";
+import SkateboardingRoundedIcon from "@mui/icons-material/SkateboardingRounded";
+import SettingsSuggestRoundedIcon from "@mui/icons-material/SettingsSuggestRounded";
+import styles from "./styles.module.css";
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: "Configurable",
+    Svg: () => (
+      <PaletteIcon
+        style={{ height: 100, width: 100, color: "var(--ifm-color-primary)" }}
+      />
+    ),
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        OpenVP is agnostic to the way you want your program to work. Create
+        whatever blocks you want, and handle the interpretation however you
+        want!
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: "Portable",
+    Svg: () => (
+      <SkateboardingRoundedIcon
+        style={{ height: 100, width: 100, color: "var(--ifm-color-primary)" }}
+      />
+    ),
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        OpenVP is built with react, and can be easily included within other
+        web-based applications. That includes desktop tools like Electron or
+        Tauri too!.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: "Integrable",
+    Svg: () => (
+      <SettingsSuggestRoundedIcon
+        style={{ height: 100, width: 100, color: "var(--ifm-color-primary)" }}
+      />
+    ),
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        OpenVP is built to function headless, but if you want to dive deeper,
+        you can fully customize and drive the experience by tapping into
+        interaction events and the program data.
       </>
     ),
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({ Svg, title, description }) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
         <Svg className={styles.featureSvg} role="img" />
       </div>

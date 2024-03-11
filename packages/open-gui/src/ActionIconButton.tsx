@@ -1,5 +1,5 @@
 import { MouseEventHandler } from "react";
-import { styled, alpha } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material";
 import { IconButton as MuiButton } from "@mui/material";
 import { Tooltip } from "./Tooltip";
 import { Icon, IconName } from "./Icon";
@@ -63,7 +63,7 @@ export const IconButton = styled(MuiButton, {
       userSelect: "none",
       outline: 0,
     },
-  })
+  }),
 );
 
 export const ToolbarButtonWrapper = styled("span")(({}) => ({

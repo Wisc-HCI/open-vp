@@ -18,6 +18,7 @@ const config = {
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: "/open-vp/",
+  trailingSlash: false,
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
@@ -39,33 +40,10 @@ const config = {
   markdown: {
     mermaid: true,
   },
-  // typedocSidebar: [
-  //   {
-  //     type: "category",
-  //     label: "API",
-  //     link: { type: "doc", id: "api/index" },
-  //     items: require("./docs/api/typedoc-sidebar.cjs"),
-  //   },
-  // ],
-
-  plugins: [
-    // [
-    //   "docusaurus-plugin-typedoc",
-    //   // Plugin / TypeDoc options
-    //   {
-    //     entryPoints: [
-    //       "../../packages/open-core/src/index.tsx",
-    //       "../../packages/open-gui/src/index.tsx",
-    //       "../../packages/open-vp/src/index.tsx",
-    //     ],
-    //     // tsconfig: "../../packages/open-core/tsconfig.json",
-    //   },
-    // ],
-  ],
 
   presets: [
     [
-      "@docusaurus/preset-classic",
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
@@ -92,78 +70,72 @@ const config = {
     ],
   ],
   themes: ["@docusaurus/theme-mermaid", "@docusaurus/theme-live-codeblock"],
-  themeConfig:
-    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
-    ({
-      liveCodeBlock: {
-        /**
-         * The position of the live playground, above or under the editor
-         * Possible values: "top" | "bottom"
-         */
-        playgroundPosition: "top",
+  themeConfig: {
+    liveCodeBlock: {
+      /**
+       * The position of the live playground, above or under the editor
+       * Possible values: "top" | "bottom"
+       */
+      playgroundPosition: "bottom",
+    },
+    // Replace with your project's social card
+    image: "img/banner_openvp_docs_social.png",
+    navbar: {
+      title: "OpenVP",
+      logo: {
+        alt: "OpenVP Logo",
+        src: "img/logo.svg",
       },
-      // Replace with your project's social card
-      image: "img/docusaurus-social-card.jpg",
-      navbar: {
-        title: "OpenVP",
-        logo: {
-          alt: "OpenVP Logo",
-          src: "img/logo.svg",
+      items: [
+        {
+          type: "docSidebar",
+          sidebarId: "tutorialSidebar",
+          position: "left",
+          label: "Tutorial",
         },
-        items: [
-          {
-            type: "docSidebar",
-            sidebarId: "tutorialSidebar",
-            position: "left",
-            label: "Tutorial",
-          },
-          {
-            type: "docSidebar",
-            sidebarId: "apiSidebar",
-            position: "left",
-            label: "API",
-          },
-          // { to: "/blog", label: "Blog", position: "left" },
-          {
-            href: "https://github.com/facebook/docusaurus",
-            label: "GitHub",
-            position: "right",
-          },
-        ],
-      },
-      footer: {
-        style: "dark",
-        links: [
-          {
-            title: "Docs",
-            items: [
-              {
-                label: "Tutorial",
-                to: "/docs/intro",
-              },
-            ],
-          },
-          {
-            title: "More",
-            items: [
-              {
-                label: "Blog",
-                to: "/blog",
-              },
-              {
-                label: "GitHub",
-                href: "https://github.com/facebook/docusaurus",
-              },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} People and Robots Lab. Built with Docusaurus.`,
-      },
-      prism: {
-        theme: prismThemes.github,
-        darkTheme: prismThemes.dracula,
-      },
-    }),
+        {
+          type: "docSidebar",
+          sidebarId: "apiSidebar",
+          position: "left",
+          label: "API",
+        },
+        // { to: "/blog", label: "Blog", position: "left" },
+        {
+          href: "https://github.com/Wisc-HCI/open-vp",
+          label: "GitHub",
+          position: "right",
+        },
+      ],
+    },
+    footer: {
+      style: "dark",
+      links: [
+        {
+          title: "Tutorial",
+          items: [
+            {
+              label: "Tutorial",
+              to: "/docs/tutorial/intro",
+            },
+          ],
+        },
+        {
+          title: "API",
+          items: [
+            {
+              label: "API",
+              to: "/docs/api/intro",
+            },
+          ],
+        },
+      ],
+      copyright: `Copyright © ${new Date().getFullYear()} People and Robots Lab. Built with Docusaurus.`,
+    },
+    prism: {
+      theme: prismThemes.github,
+      darkTheme: prismThemes.dracula,
+    },
+  },
 };
 
 export default config;

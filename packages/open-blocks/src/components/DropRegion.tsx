@@ -16,15 +16,11 @@ import { Block } from "../Block";
 import { PreviewBlock } from "../PreviewBlock";
 import { isEqual, intersection } from "lodash";
 import { motion } from "framer-motion";
-import {
-  Typography
-} from "@mui/material";
+import { Typography, alpha, lighten } from "@mui/material";
 import { TypeDescription, ChipMimic } from "./Doc";
-import { FiClipboard, FiHash } from "react-icons/fi";
 import { BlockData, BlockFieldInfo } from "@people_and_robots/open-core";
 import { NestedContextMenu, Tooltip } from "@people_and_robots/open-gui";
-import { useTheme } from "@mui/system";
-// import { useHover } from '@use-gesture/react';
+import { useTheme } from "@mui/material";
 
 const DISABLED_STYLES = {
   backgroundColor: "#88888800",
@@ -95,10 +91,12 @@ const WRAPPER_VARIANTS = {
 };
 
 const getRegionVariants = (primary: string) => {
-
   const VALID_DROP_STYLES = {
-    backgroundColor: "#88888888",
-    boxShadow: `inset 0pt 0pt 0pt 3pt ${primary}`,
+    backgroundColor: alpha(primary || "white", 0.7),
+    borderStyle: "solid",
+    borderColor: lighten(primary || "white", 0.2),
+    borderWidth: 4,
+    // boxShadow: `0pt 0pt 0pt 3pt ${lighten(primary || "white", 0.3)}`,
   };
 
   return {
@@ -159,7 +157,7 @@ const getRegionVariants = (primary: string) => {
       ...FILLED_STYLES,
     },
   };
-}
+};
 
 const transferBlockSelector = (state: ProgrammingState) => state.transferBlock;
 
@@ -194,8 +192,8 @@ export const DropRegion = memo(
     const data: BlockData | null = useProgrammingStore(
       useCallback(
         (state: ProgrammingState) => (id ? state.programData[id] : null),
-        [id]
-      )
+        [id],
+      ),
     );
 
     const validClipboard = useProgrammingStore(
@@ -205,24 +203,31 @@ export const DropRegion = memo(
           !state.clipboard.onCanvas &&
           isEqual(
             intersection(context, state.clipboard.context),
-            state.clipboard.context
+            state.clipboard.context,
           ),
-        [regionInfo.parentId]
-      )
+        [regionInfo.parentId],
+      ),
     );
 
     const lastAction = useProgrammingStore(
-      (state: ProgrammingState) => state.clipboard.action
+      (state: ProgrammingState) => state.clipboard.action,
     );
 
     const paste = useProgrammingStore((state: ProgrammingState) => state.paste);
 
-    const acceptTypes = regionInfo.fieldInfo.type === PropertyType.Block && regionInfo.fieldInfo.isList ? [...fieldInfo.accepts, MetaType.Comment] : fieldInfo.accepts;
+    const acceptTypes =
+      regionInfo.fieldInfo.type === PropertyType.Block &&
+      regionInfo.fieldInfo.isList
+        ? [...fieldInfo.accepts, MetaType.Comment]
+        : fieldInfo.accepts;
 
     const [dropProps, drop] = useDrop(
       () => ({
         accept: acceptTypes,
-        drop: (item: { data: BlockData | CommentData; regionInfo: RegionInfo }, _) => {
+        drop: (
+          item: { data: BlockData | CommentData; regionInfo: RegionInfo },
+          _,
+        ) => {
           console.log("DROP", item);
           transferBlock(item.data, item.regionInfo, regionInfo);
         },
@@ -232,16 +237,16 @@ export const DropRegion = memo(
           context: string[];
         }) =>
           !disabled &&
-          !id && 
+          !id &&
           (item.data.metaType === MetaType.Comment ||
-          (item.regionInfo.parentId !== CANVAS &&
-          isEqual(intersection(context, item.context), item.context))),
+            (item.regionInfo.parentId !== CANVAS &&
+              isEqual(intersection(context, item.context), item.context))),
         collect: (monitor) => ({
           isOver: monitor.isOver(),
           item: monitor.getItem(),
         }),
       }),
-      [fieldInfo, regionInfo, context, disabled]
+      [fieldInfo, regionInfo, context, disabled],
     );
 
     const validDropType =
@@ -251,15 +256,15 @@ export const DropRegion = memo(
       dropProps.item?.regionInfo.parentId !== CANVAS &&
       isEqual(
         intersection(context, dropProps.item.context),
-        dropProps.item.context
+        dropProps.item.context,
       );
     // console.log({validDropType,disabled})
 
     const renderedData = data
       ? data
       : dropProps.item && validDropType && !disabled && dropProps.isOver
-      ? dropProps.item.data
-      : null;
+        ? dropProps.item.data
+        : null;
 
     const isPreview = renderedData && renderedData !== data;
 
@@ -270,7 +275,7 @@ export const DropRegion = memo(
       lastAction === ClipboardAction.Cut;
 
     const [tooltipState, setTooltipState] = useState<"open" | "expanded">(
-      "open"
+      "open",
     );
 
     const filled = renderedData || !hideText;
@@ -281,33 +286,33 @@ export const DropRegion = memo(
       filled && disabled && peripheral
         ? "disabledPeripheralFilled"
         : filled && disabled && !peripheral
-        ? "disabledNonPeripheralFilled"
-        : filled && matched && peripheral
-        ? "validDropPeripheralFilled"
-        : filled && matched && !peripheral
-        ? "validDropNonPeripheralFilled"
-        : filled && peripheral
-        ? "defaultPeripheralFilled"
-        : filled
-        ? "defaultNonPeripheralFilled"
-        : !filled && disabled && peripheral
-        ? "disabledPeripheralEmpty"
-        : !filled && disabled && !peripheral
-        ? "disabledNonPeripheralEmpty"
-        : !filled && matched && peripheral
-        ? "validDropPeripheralEmpty"
-        : !filled && matched && !peripheral
-        ? "validDropNonPeripheralEmpty"
-        : !filled && peripheral
-        ? "defaultPeripheralEmpty"
-        : "defaultNonPeripheralEmpty";
+          ? "disabledNonPeripheralFilled"
+          : filled && matched && peripheral
+            ? "validDropPeripheralFilled"
+            : filled && matched && !peripheral
+              ? "validDropNonPeripheralFilled"
+              : filled && peripheral
+                ? "defaultPeripheralFilled"
+                : filled
+                  ? "defaultNonPeripheralFilled"
+                  : !filled && disabled && peripheral
+                    ? "disabledPeripheralEmpty"
+                    : !filled && disabled && !peripheral
+                      ? "disabledNonPeripheralEmpty"
+                      : !filled && matched && peripheral
+                        ? "validDropPeripheralEmpty"
+                        : !filled && matched && !peripheral
+                          ? "validDropNonPeripheralEmpty"
+                          : !filled && peripheral
+                            ? "defaultPeripheralEmpty"
+                            : "defaultNonPeripheralEmpty";
 
     const accepts =
       tooltipState === "expanded"
         ? fieldInfo.accepts
         : fieldInfo.accepts
-        ? fieldInfo.accepts.slice(0, 2)
-        : [];
+          ? fieldInfo.accepts.slice(0, 2)
+          : [];
 
     return (
       <NestedContextMenu
@@ -332,13 +337,21 @@ export const DropRegion = memo(
             type: "ENTRY",
             label: "Add Comment",
             onClick: (d, e) => {
-              transferBlock({id: generateId('comment'), type: MetaType.Comment, metaType: MetaType.Comment}, {
-                fieldInfo: {
-                  type: PropertyType.Block,
-                  accepts: [],
+              transferBlock(
+                {
+                  id: generateId("comment"),
+                  type: MetaType.Comment,
+                  metaType: MetaType.Comment,
                 },
-                parentId: SPAWNER
-              }, regionInfo)
+                {
+                  fieldInfo: {
+                    type: PropertyType.Block,
+                    accepts: [],
+                  },
+                  parentId: SPAWNER,
+                },
+                regionInfo,
+              );
               // paste({
               //   context,
               //   regionInfo,
@@ -366,22 +379,29 @@ export const DropRegion = memo(
               }}
             >
               {accepts.map((accept) => (
-                <li key={accept} style={{margin:1}}><TypeDescription type={accept} /></li>
+                <li key={accept} style={{ margin: 1 }}>
+                  <TypeDescription type={accept} />
+                </li>
               ))}
               {tooltipState === "open" &&
                 fieldInfo.accepts?.length - accepts.length > 0 && (
-                  <li key='show-more' style={{margin:1}}>
-                  <ChipMimic
-                    sx={{borderRadius: 2, backgroundColor: "#00000022", color: "#00000088", padding: '1pt 5pt'}}
-                    onClick={(event) => {
-                      setTooltipState(
-                        tooltipState === "open" ? "expanded" : "open"
-                      );
-                      event.stopPropagation();
-                    }}
-                  >
-                    + {fieldInfo.accepts.length - accepts.length}
-                  </ChipMimic>
+                  <li key="show-more" style={{ margin: 1 }}>
+                    <ChipMimic
+                      sx={{
+                        borderRadius: 2,
+                        backgroundColor: "#00000022",
+                        color: "#00000088",
+                        padding: "1pt 5pt",
+                      }}
+                      onClick={(event) => {
+                        setTooltipState(
+                          tooltipState === "open" ? "expanded" : "open",
+                        );
+                        event.stopPropagation();
+                      }}
+                    >
+                      + {fieldInfo.accepts.length - accepts.length}
+                    </ChipMimic>
                   </li>
                 )}
             </ul>
@@ -411,7 +431,7 @@ export const DropRegion = memo(
                 // ...REGION_VARIANTS[variant],
               }}
               animate={variant}
-              variants={getRegionVariants(theme.palette.primary.main)}
+              variants={getRegionVariants(theme?.palette?.primary?.main)}
               // onContextMenu={validClipboard ? handleContextMenu : null}
             >
               {renderedData && !isPreview ? (
@@ -457,7 +477,11 @@ export const DropRegion = memo(
                   style={{ flex: 1 }}
                   key="field-empty"
                 >
-                  <Typography>{typeof fieldInfo.name === 'string' ? fieldInfo.name : fieldInfo.name.name}</Typography>
+                  <Typography>
+                    {typeof fieldInfo.name === "string"
+                      ? fieldInfo.name
+                      : fieldInfo.name.name}
+                  </Typography>
                 </motion.span>
               )}
             </motion.div>
@@ -465,5 +489,5 @@ export const DropRegion = memo(
         </Tooltip>
       </NestedContextMenu>
     );
-  }
+  },
 );

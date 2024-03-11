@@ -6,6 +6,7 @@
     "lint": "turbo run lint",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "docs:deploy": "turbo run docs:deploy",
     "changeset": "changeset",
     "typedoc": "turbo run typedoc",
     "version-packages": "changeset version",

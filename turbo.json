@@ -19,6 +19,9 @@
     },
     "release": {
       "cache": false
+    },
+    "docs:deploy": {
+      "cache": false
     }
   }
 }

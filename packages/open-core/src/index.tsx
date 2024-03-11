@@ -42,14 +42,14 @@ export type {
   ProgrammingStateStructures,
   ProgrammingStore,
   Tab,
-} from "./types.ts";
+} from "./types";
 export {
   instanceTemplateFromSpec,
   functionInstanceAsType,
   referenceTemplateFromSpec,
   combinedBlockData,
   functionTypeSpec,
-} from "./generators.ts";
+} from "./generators";
 export {
   SPAWNER,
   CANVAS,
@@ -62,13 +62,13 @@ export {
   PropertyType,
   ExtraType,
   ConnectionType,
-} from "./constants.ts";
-export { generateId } from "./functions.ts";
-export { Timer } from "./timer.ts";
+} from "./constants";
+export { generateId } from "./functions";
+export { Timer } from "./timer";
 export {
   useProgrammingStore,
   ProgrammingContext,
   ProgrammingProvider,
-} from "./context.tsx";
-export type { ProgrammingProviderProps } from "./context.tsx";
-export { createProgrammingStore, DefaultStore, DefaultSlice } from "./store.ts";
+} from "./context";
+export type { ProgrammingProviderProps } from "./context";
+export { createProgrammingStore, DefaultStore, DefaultSlice } from "./store";

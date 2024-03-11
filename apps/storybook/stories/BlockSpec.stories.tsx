@@ -12,12 +12,11 @@ import {
   type TypeSpec,
 } from "@people_and_robots/open-core";
 import { ExternalBlock } from "@people_and_robots/open-vp";
-import { Card, CardContent, CardHeader, Container } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Card, CardContent, CardHeader, Container, Stack } from "@mui/material";
 import { flowTypes } from "./typespecs/flow";
 import { imperativeTypes } from "./typespecs/imperative";
 
-const BlockRenderer = (typeSpec: TypeSpec & {id: string}) => {
+const BlockRenderer = (typeSpec: TypeSpec & { id: string }) => {
   const instance = instanceTemplateFromSpec(typeSpec.id, typeSpec, false);
   const reference = referenceTemplateFromSpec(typeSpec.id, instance, typeSpec);
 
@@ -30,9 +29,13 @@ const BlockRenderer = (typeSpec: TypeSpec & {id: string}) => {
             <ExternalBlock
               data={instance}
               initial={{
-                executionData: {[instance.id]: (t)=>t%2000/2000},
+                executionData: { [instance.id]: (t) => (t % 2000) / 2000 },
                 programSpec: {
-                  objectTypes: { ...flowTypes, ...imperativeTypes, [typeSpec.id]: typeSpec },
+                  objectTypes: {
+                    ...flowTypes,
+                    ...imperativeTypes,
+                    [typeSpec.id]: typeSpec,
+                  },
                   drawers: [],
                 },
               }}
@@ -45,9 +48,13 @@ const BlockRenderer = (typeSpec: TypeSpec & {id: string}) => {
             <ExternalBlock
               data={reference}
               initial={{
-                executionData: {[reference.id]: (t)=>t%2000/2000},
+                executionData: { [reference.id]: (t) => (t % 2000) / 2000 },
                 programSpec: {
-                  objectTypes: { ...flowTypes, ...imperativeTypes, [typeSpec.id]: typeSpec },
+                  objectTypes: {
+                    ...flowTypes,
+                    ...imperativeTypes,
+                    [typeSpec.id]: typeSpec,
+                  },
                   drawers: [],
                 },
               }}
@@ -93,7 +100,7 @@ type Story = StoryObj<typeof BlockRenderer>;
 export const ObjectExample: Story = {
   name: "Object Block",
   args: {
-    id: 'blockType',
+    id: "blockType",
     name: "Block",
     primitiveType: PrimitiveType.Object,
     description: `# A Block
@@ -146,11 +153,11 @@ if (true) {
 export const FlowExample: Story = {
   name: "Flow-Based Programming",
   args: {
-    id: 'stateType',
+    id: "stateType",
     name: "State",
     primitiveType: PrimitiveType.Object,
     description: `# The State
-Each State is a collection of attributes, which can be dragged into the State. These attributes include [Face Expression](expressionType) and [Hand Gesture](gestureType). 
+Each State is a collection of attributes, which can be dragged into the State. These attributes include [Face Expression](expressionType) and [Hand Gesture](gestureType).
     `,
     instanceBlock: {
       onCanvas: true,
@@ -184,7 +191,7 @@ Each State is a collection of attributes, which can be dragged into the State. T
                 ExtraType.DeleteButton,
                 ExtraType.DocToggle,
               ],
-            }
+            },
           ],
         },
       ],

@@ -1,18 +1,17 @@
 import { useDragLayer } from "react-dnd";
 import { VisualBlock } from "@people_and_robots/open-blocks";
 import { RectReadOnly } from "react-use-measure";
-import { CommentBlock } from "@people_and_robots/open-blocks/src/CommentBlock";
+import { CommentBlock } from "@people_and_robots/open-blocks";
 import { MetaType } from "@people_and_robots/open-core";
 
-export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
-  
+export const DragLayer = ({ bounds }: { bounds: RectReadOnly }) => {
   const { isDragging, item, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     currentOffset: monitor.getClientOffset(),
     isDragging: monitor.isDragging(),
   }));
 
-  if (!isDragging || !item) return null
+  if (!isDragging || !item) return null;
 
   return (
     <div
@@ -32,8 +31,8 @@ export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
       {item.data && item.data.metaType === MetaType.Comment && (
         <div
           style={{
-            transform: `translate(${currentOffset ? currentOffset.x - bounds.top : 0}px, ${
-              currentOffset ? currentOffset.y - bounds.left : 0
+            transform: `translate(${currentOffset ? currentOffset.x : 0}px, ${
+              currentOffset ? currentOffset.y : 0
             }px)`,
           }}
         >
@@ -48,8 +47,8 @@ export const DragLayer = ({bounds}:{bounds:RectReadOnly}) => {
       {item.data && item.data.metaType !== MetaType.Comment && (
         <div
           style={{
-            transform: `translate(${currentOffset ? currentOffset.x - bounds.top : 0}px, ${
-              currentOffset ? currentOffset.y - bounds.left : 0
+            transform: `translate(${currentOffset ? currentOffset.x : 0}px, ${
+              currentOffset ? currentOffset.y : 0
             }px)`,
           }}
         >

@@ -1,14 +1,14 @@
-import { ReactNode, memo } from "react";
+import { memo } from "react";
 import { Skeleton, lighten, darken, useTheme } from "@mui/material";
 import {
   useProgrammingStore,
   ExecutionState,
   ProgrammingState,
 } from "@people_and_robots/open-core";
-import { FullWidthStack } from "./BlockContainers";
-import { BlockAvatar } from "./BlockAvatar";
 import { TextInput, Tooltip } from "@people_and_robots/open-gui";
 import { Icon, type IconName } from "@people_and_robots/open-gui";
+import { FullWidthStack } from "./BlockContainers";
+import { BlockAvatar } from "./BlockAvatar";
 
 export interface BlockHeaderProps {
   id: string;
@@ -36,29 +36,33 @@ export const BlockHeader = memo(
   }: BlockHeaderProps) => {
     const updateItemName: (id: string, value: string) => void =
       useProgrammingStore(
-        (state: ProgrammingState) => state.updateItemName
+        (state: ProgrammingState) => state.updateItemName,
       ) as (id: string, value: string) => void;
 
-    const theme = useTheme()
+    const theme = useTheme();
 
     return (
       <Tooltip
         key={`${id}-title`}
         title={name ? name : ""}
         placement="top"
-        bgOverride={theme.palette.mode === 'light' ? lighten(color, 0.5) : darken(color, 0.5)}
+        bgOverride={
+          theme.palette.mode === "light"
+            ? lighten(color, 0.5)
+            : darken(color, 0.5)
+        }
       >
         <FullWidthStack
           alignContent="center"
           direction="row"
           spacing={1}
-          style={{cursor: "move", userSelect: "none"}}
+          style={{ cursor: "move", userSelect: "none" }}
           // onMouseLeave={(_) => setIsEditing(false)}
         >
           {!limitedRender ? (
             <BlockAvatar progress={progress}>
               {/* @ts-ignore */}
-              <Icon name={icon} size={22}/>
+              <Icon name={icon} size={22} />
             </BlockAvatar>
           ) : (
             <Skeleton
@@ -119,5 +123,5 @@ export const BlockHeader = memo(
         </FullWidthStack>
       </Tooltip>
     );
-  }
+  },
 );

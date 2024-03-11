@@ -1,7 +1,6 @@
 import { Avatar, Card, lighten, Stack } from "@mui/material";
-import { alpha, styled } from "@mui/material/styles";
+import { alpha, styled } from "@mui/material";
 import { motion } from "framer-motion";
-import Paper from "@mui/material/Paper";
 
 export interface BlockContainerProps {
   minified?: boolean;
@@ -24,7 +23,7 @@ export const BlockContainer = motion(
       padding: minified ? 0 : "4px",
       backgroundColor: alpha(
         focused ? lighten(color || "white", 0.1) : color || "white",
-        0.8
+        0.8,
       ),
       backdropFilter: "blur(5px)",
       borderRadius: theme.shape.borderRadius,
@@ -34,28 +33,29 @@ export const BlockContainer = motion(
       "&:hover": {
         backgroundColor: alpha(
           focused ? lighten(color || "white", 0.1) : color || "white",
-          0.95
+          0.95,
         ),
       },
       boxShadow:
         selected && focused
           ? `0pt 0pt 0pt 3pt ${lighten(theme.palette.primary.main, 0.5)}`
           : selected
-          ? `0pt 0pt 0pt 3pt ${theme.palette.primary.main}`
-          : focused
-          ? `0pt 0pt 0pt 3pt ${lighten(color || "white", 0.5)}}`
-          : undefined,
-    })
-  )
+            ? `0pt 0pt 0pt 3pt ${theme.palette.primary.main}`
+            : focused
+              ? `0pt 0pt 0pt 3pt ${lighten(color || "white", 0.5)}}`
+              : undefined,
+    }),
+  ),
 );
 
-export const CommentContainer = motion(styled(Stack, {
+export const CommentContainer = motion(
+  styled(Stack, {
     shouldForwardProp: (prop: string) => !["bounded"].includes(prop),
   })<BlockContainerProps>(
     {
       minWidth: 150,
       flex: 1,
-      flexDireaction: 'row',
+      flexDireaction: "row",
     },
     ({ theme, bounded, focused }) => ({
       // padding: 4,
@@ -70,28 +70,32 @@ export const CommentContainer = motion(styled(Stack, {
       boxShadow: focused
         ? `0pt 0pt 0pt 2pt ${alpha(theme.palette.primary.main, 0.5)}`
         : undefined,
-    })
-  ));
+    }),
+  ),
+);
 
-export const CommentText = styled('span')(
+export const CommentText = styled("span")(
   {
-    all: 'unset',
-    flex:1,
-    padding: 3
-  },({theme})=>({
+    all: "unset",
+    flex: 1,
+    padding: 3,
+  },
+  ({ theme }) => ({
     color: alpha(theme.palette.text.primary, 0.8),
-  }));
+  }),
+);
 
-export const CommentHeader = styled('div')(
+export const CommentHeader = styled("div")(
   {
-    padding: 4
-  }, 
+    padding: 4,
+  },
   ({ theme }) => ({
     backgroundColor: alpha(theme.palette.background.paper, 0.7),
     borderTopLeftRadius: theme.shape.borderRadius,
     borderBottomLeftRadius: theme.shape.borderRadius,
-    color: theme.palette.text.disabled
-}));
+    color: theme.palette.text.disabled,
+  }),
+);
 
 // export const OuterAvatarContainer = styled(Box)({
 //   height: "39px",
@@ -107,7 +111,7 @@ export const BlockAvatarContainer = motion(
     height: 35,
     width: 35,
     position: "relative",
-  })
+  }),
 );
 
 // export const OuterProgressContainer = styled(Box)({

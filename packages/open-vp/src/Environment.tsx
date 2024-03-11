@@ -4,7 +4,7 @@ import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { MultiBackend } from "react-dnd-multi-backend";
 import { DndProvider } from "react-dnd";
 import { ProOptions, ReactFlowProvider } from "reactflow";
-import { Theme, ThemeProvider } from "@mui/material/styles";
+import { Theme, ThemeProvider } from "@mui/material";
 import {
   ProgrammingStore,
   ProgrammingProvider,

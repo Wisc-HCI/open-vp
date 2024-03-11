@@ -4,29 +4,18 @@ sidebar_position: 3
 
 # Empty Project
 
-Now that you have your react project, and `OpenVP` is installed, let's add the `<Environment>` to your app.
+The first step to using OpenVP is to import the `Environment` component and include it within your app, wherever it needs to go. By default, the `Environment` component will expand to fill the size of the parent element.
 
 ```jsx live
-function Clock(props) {
-  const [date, setDate] = useState(new Date());
-  useEffect(() => {
-    const timerID = setInterval(() => tick(), 1000);
+// import { Environment } from "@people_and_robots/open-vp"
 
-    return function cleanup() {
-      clearInterval(timerID);
-    };
-  });
-
-  function tick() {
-    setDate(new Date());
-  }
-
+function App(props) {
   return (
-    <div>
-      <h2>It is {date.toLocaleTimeString()}.</h2>
+    <div style={{ height: 400, width: "100%" }}>
+      <Environment />
     </div>
   );
 }
 ```
 
-By default, the `<Environment>` expands to fill the size of the parent element. Since our app covers the full webpage, `OpenVP` is full-screen.
+This will create a blank canvas that you can use to start building your own visual programming environment. The `Environment` component is the main entry point for the OpenVP library.

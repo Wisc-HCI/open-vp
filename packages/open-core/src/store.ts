@@ -8,8 +8,8 @@ import type {
   Viewport,
   Position,
 } from "reactflow";
-import { instanceTemplateFromSpec } from "./generators.ts";
-import { Timer } from "./timer.ts";
+import { instanceTemplateFromSpec } from "./generators";
+import { Timer } from "./timer";
 import {
   generateId,
   deleteChildren,
@@ -17,7 +17,7 @@ import {
   parseBlock,
   applyTransfer,
   deepCopy,
-} from "./functions.ts";
+} from "./functions";
 import type {
   BlockData,
   ProgramSpec,
@@ -35,7 +35,7 @@ import type {
   ProgrammingState,
   CommentData,
   ProgrammingStateStructures,
-} from "./types.ts";
+} from "./types";
 import {
   MetaType,
   PrimitiveType,
@@ -45,7 +45,7 @@ import {
   type ConnectionDirection,
   ConnectionType,
   PropertyType,
-} from "./constants.ts";
+} from "./constants";
 
 // import { temporal } from "zundo";
 // import type { TemporalState } from "zundo";

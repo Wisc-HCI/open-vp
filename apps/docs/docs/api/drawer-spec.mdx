@@ -1,0 +1,18 @@
+import DocViewer from "@site/src/components/DocViewer";
+import { ObjectDrawerSpec, ReferenceDrawerSpec } from "@site/static/doc-data";
+
+# DrawerSpec
+
+The `DrawerSpec` comes in two variants, the `ObjectDrawerSpec` and the `ReferenceDrawerSpec`. The `ObjectDrawerSpec` is used to specify a drawer that contains multiple different types of block instances, while the `ReferenceDrawerSpec` is used to provide draggable references to existing instances (or calls to existing functions) defined in the program.
+
+## ObjectDrawerSpec
+
+<DocViewer
+rows={ObjectDrawerSpec}
+/>
+
+## ReferenceDrawerSpec
+
+<DocViewer
+rows={ReferenceDrawerSpec}
+/>

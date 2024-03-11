@@ -1,6 +1,10 @@
 import * as RadixSelect from "@radix-ui/react-select";
-import { ChevronDownIcon, ChevronUpIcon, CheckIcon } from "@radix-ui/react-icons";
-import { styled, alpha, lighten, darken } from "@mui/material/styles";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  CheckIcon,
+} from "@radix-ui/react-icons";
+import { styled, alpha, lighten, darken } from "@mui/material";
 import {
   CONTENT_STYLES,
   ITEM_STYLES,
@@ -26,8 +30,16 @@ export const Select = ({
 }: SelectProps) => (
   <RadixSelect.Root>
     <SelectTrigger aria-label={label} wrapped={wrapped} disabled={disabled}>
-      {label ? <TextInputExtra side='left'>{label}</TextInputExtra> : <span>{" "}</span>}
-      <SelectValue placeholder={options.filter((v)=>(v.value===value))[0]?.label || "Unset"} />
+      {label ? (
+        <TextInputExtra side="left">{label}</TextInputExtra>
+      ) : (
+        <span> </span>
+      )}
+      <SelectValue
+        placeholder={
+          options.filter((v) => v.value === value)[0]?.label || "Unset"
+        }
+      />
       <SelectIcon>
         <ChevronDownIcon />
       </SelectIcon>
@@ -70,12 +82,12 @@ const SelectContent = styled(RadixSelect.Content)(
   ({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     backgroundColor: alpha(theme.palette.background.paper, 0.7),
-  })
+  }),
 );
 
 const SelectValue = styled(RadixSelect.Value)({
-    flex: 1
-})
+  flex: 1,
+});
 
 const SelectItemIndicator = styled(RadixSelect.ItemIndicator)({
   position: "absolute",
@@ -84,20 +96,23 @@ const SelectItemIndicator = styled(RadixSelect.ItemIndicator)({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
-  padding: 12
+  padding: 12,
 });
 
 const SelectViewport = styled(RadixSelect.Viewport)({ padding: 5 });
 
-const SelectItem = styled(RadixSelect.Item)({
+const SelectItem = styled(RadixSelect.Item)(
+  {
     ...ITEM_STYLES,
-    display: 'flex',
-  alignItems: 'center',
-  height: 25,
-  padding: '0 35px 0 25px',
-  position: 'relative',
-  userSelect: 'none',
-}, ITEM_THEMED_STYLES);
+    display: "flex",
+    alignItems: "center",
+    height: 25,
+    padding: "0 35px 0 25px",
+    position: "relative",
+    userSelect: "none",
+  },
+  ITEM_THEMED_STYLES,
+);
 
 const SelectLabel = styled(RadixSelect.Label)(
   {
@@ -107,16 +122,19 @@ const SelectLabel = styled(RadixSelect.Label)(
   },
   ({ theme }) => ({
     color: alpha(theme.palette.primary.main, 0.8),
-  })
+  }),
 );
 
-const SelectIcon = styled(RadixSelect.Icon)({
+const SelectIcon = styled(RadixSelect.Icon)(
+  {
     fontSize: 20,
     height: 35,
-    padding: 8
-}, ({ theme }) => ({
-    background: alpha(theme.palette.background.paper,.1),
-}))
+    padding: 8,
+  },
+  ({ theme }) => ({
+    background: alpha(theme.palette.background.paper, 0.1),
+  }),
+);
 
 const SelectScrollDownButton = styled(RadixSelect.ScrollDownButton)(
   {
@@ -128,21 +146,21 @@ const SelectScrollDownButton = styled(RadixSelect.ScrollDownButton)(
   },
   ({ theme }) => ({
     color: alpha(theme.palette.primary.main, 0.8),
-  })
+  }),
 );
 
 const SelectScrollUpButton = styled(RadixSelect.ScrollUpButton)(
-    {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      height: 25,
-      cursor: "default",
-    },
-    ({ theme }) => ({
-      color: alpha(theme.palette.primary.main, 0.8),
-    })
-  );
+  {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 25,
+    cursor: "default",
+  },
+  ({ theme }) => ({
+    color: alpha(theme.palette.primary.main, 0.8),
+  }),
+);
 
 const SelectTrigger = styled(RadixSelect.Trigger, {
   shouldForwardProp: (prop: string) => !["wrapped"].includes(prop),
@@ -156,18 +174,18 @@ const SelectTrigger = styled(RadixSelect.Trigger, {
     display: "flex",
     justifyContent: "space-between",
     padding: 0,
-    gap: "5px"
+    gap: "5px",
   },
   ({ theme, wrapped, disabled }) => ({
     background:
       theme.palette.mode === "light"
         ? alpha(
             darken(theme.palette.background.paper, 0.4),
-            disabled ? 0.5 : 0.75
+            disabled ? 0.5 : 0.75,
           )
         : alpha(
             lighten(theme.palette.background.paper, 0.4),
-            disabled ? 0.5 : 0.75
+            disabled ? 0.5 : 0.75,
           ),
     border: "none", //disabled ? `1px solid #24292f30` : `1px solid #24292f50`,
     borderRadius: wrapped
@@ -193,5 +211,5 @@ const SelectTrigger = styled(RadixSelect.Trigger, {
       userSelect: "none",
       outline: 0,
     },
-  })
+  }),
 );

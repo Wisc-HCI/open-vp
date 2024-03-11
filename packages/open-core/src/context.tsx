@@ -4,8 +4,8 @@ import type {
   ProgrammingState,
   ProgrammingStore,
   ProgrammingStateStructures,
-} from "./types.ts";
-import { createProgrammingStore } from "./store.ts";
+} from "./types";
+import { createProgrammingStore } from "./store";
 
 export const ProgrammingContext = createContext<ProgrammingStore | null>(null);
 

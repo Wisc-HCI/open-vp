@@ -1,7 +1,7 @@
 import { styled } from "@mui/material";
 import { Box } from "@mui/material";
-import { TreeView as MuiTreeView } from "@mui/x-tree-view/TreeView";
-import { TreeItem, treeItemClasses } from "@mui/x-tree-view/TreeItem";
+import { TreeView as MuiTreeView } from "@mui/x-tree-view";
+import { TreeItem, treeItemClasses } from "@mui/x-tree-view";
 import { ChevronDownIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
@@ -38,15 +38,19 @@ const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   },
 }));
 
-const BoolPill = styled('span')<{value: boolean}>(({ theme, value }) => ({
-    paddingTop: 3,
-    paddingBottom: 3,
-    paddingRight: 8,
-    paddingLeft: 8,
-    borderRadius: 18,
-    color: value ? theme.palette.success.contrastText : theme.palette.error.contrastText,
-    backgroundColor: value ? theme.palette.success.main : theme.palette.error.main,
-  }));
+const BoolPill = styled("span")<{ value: boolean }>(({ theme, value }) => ({
+  paddingTop: 3,
+  paddingBottom: 3,
+  paddingRight: 8,
+  paddingLeft: 8,
+  borderRadius: 18,
+  color: value
+    ? theme.palette.success.contrastText
+    : theme.palette.error.contrastText,
+  backgroundColor: value
+    ? theme.palette.success.main
+    : theme.palette.error.main,
+}));
 
 interface DataNodeProps {
   dataKey: string;
@@ -130,26 +134,25 @@ const DataNode = ({ dataKey, data }: DataNodeProps) => {
   }
 };
 
-const Wrapper = styled(Box)({
-  whiteSpace: "pre",
-  fontFamily: "monospace",
-  margin: "3px",
-  padding: "5px",
-  borderRadius: 4,
-},({theme})=>({
+const Wrapper = styled(Box)(
+  {
+    whiteSpace: "pre",
+    fontFamily: "monospace",
+    margin: "3px",
+    padding: "5px",
+    borderRadius: 4,
+  },
+  ({ theme }) => ({
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
-}));
+  }),
+);
 
 export interface TreeViewProps {
   data: any;
   enclose?: boolean;
 }
-export const TreeView = ({
-  data,
-  enclose,
-}: TreeViewProps) => {
-
+export const TreeView = ({ data, enclose }: TreeViewProps) => {
   return (
     <Wrapper onClick={(e) => e.stopPropagation()}>
       <MuiTreeView
@@ -159,10 +162,10 @@ export const TreeView = ({
       >
         {enclose ? (
           <DataNode dataKey="root" data={data} />
-        ) : typeof data === "object" ? 
-          Object.entries(data).map(([k, d]: [number|string,any]) => (
+        ) : typeof data === "object" ? (
+          Object.entries(data).map(([k, d]: [number | string, any]) => (
             <DataNode key={k} dataKey={k.toString()} data={d} />
-          )
+          ))
         ) : (
           <DataNode dataKey="root" data={data} />
         )}

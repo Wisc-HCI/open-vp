@@ -8,7 +8,7 @@ import {
 } from "@people_and_robots/open-core";
 import { styled } from "@mui/material";
 import { Handle, Position, HandleType, OnConnectStartParams } from "reactflow";
-import { ProgrammingState } from "@people_and_robots/open-core/src/types";
+import { ProgrammingState } from "@people_and_robots/open-core";
 
 interface StyledHandleProps {
   focused: boolean;

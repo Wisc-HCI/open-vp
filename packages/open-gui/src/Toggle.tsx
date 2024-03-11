@@ -1,6 +1,6 @@
 import * as Switch from "@radix-ui/react-switch";
 import { TextInputWrapper, TextInputExtra } from "./TextInput";
-import { styled, lighten, darken } from "@mui/material/styles";
+import { styled, lighten, darken } from "@mui/material";
 
 export interface ToggleProps {
   value?: boolean;
@@ -16,9 +16,18 @@ export const Toggle = ({
   onChange = (value: boolean) => {},
   disabled = false,
 }: ToggleProps) => (
-  <TextInputWrapper disabled={disabled} style={{justifyContent:'space-between', paddingRight: 5}} onDoubleClick={e=>e.stopPropagation()}>
+  <TextInputWrapper
+    disabled={disabled}
+    style={{ justifyContent: "space-between", paddingRight: 5 }}
+    onDoubleClick={(e) => e.stopPropagation()}
+  >
     <TextInputExtra side="left">{label}</TextInputExtra>
-    <SwitchRoot checked={value} defaultChecked={defaultValue} onCheckedChange={onChange} disabled={disabled}>
+    <SwitchRoot
+      checked={value}
+      defaultChecked={defaultValue}
+      onCheckedChange={onChange}
+      disabled={disabled}
+    >
       <SwitchThumb />
     </SwitchRoot>
   </TextInputWrapper>
@@ -26,7 +35,7 @@ export const Toggle = ({
 
 const SwitchRoot = styled(Switch.Root)(
   {
-    all: 'unset',
+    all: "unset",
     width: 42,
     height: 25,
     borderRadius: 100,
@@ -46,7 +55,7 @@ const SwitchRoot = styled(Switch.Root)(
     "&[data-state='checked']": {
       backgroundColor: theme.palette.primary.main,
     },
-  })
+  }),
 );
 
 const SwitchThumb = styled(Switch.Thumb)(
@@ -61,14 +70,11 @@ const SwitchThumb = styled(Switch.Thumb)(
     transform: "translateX(2px)",
     willChange: "transform",
     "&[data-state='checked']": {
-        transform: 'translateX(19px)'
-    }
+      transform: "translateX(19px)",
+    },
   },
   ({ theme }) => ({
-    borderRadius: theme.shape.borderRadius * .66,
-    backgroundColor:
-      theme.palette.mode === "light"
-        ? '#444'
-        : '#ccc',
-  })
+    borderRadius: theme.shape.borderRadius * 0.66,
+    backgroundColor: theme.palette.mode === "light" ? "#444" : "#ccc",
+  }),
 );

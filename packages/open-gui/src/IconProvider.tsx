@@ -2,7 +2,9 @@ import { SvgIconTypeMap } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { createContext, useContext, ReactNode } from "react";
 
-export type IconSet = {[key: string]: OverridableComponent<SvgIconTypeMap<{}, "svg">>};
+export type IconSet = {
+  [key: string]: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
+};
 
 export const IconContext = createContext<IconSet>({});
 
@@ -12,14 +14,11 @@ export function useIconSet() {
 }
 
 export interface IconProviderProps {
-  iconSet: IconSet,
+  iconSet: IconSet;
   children: ReactNode;
 }
 export function IconProvider({ iconSet, children }: IconProviderProps) {
-
   return (
-    <IconContext.Provider value={iconSet}>
-        {children}
-    </IconContext.Provider>
+    <IconContext.Provider value={iconSet}>{children}</IconContext.Provider>
   );
 }

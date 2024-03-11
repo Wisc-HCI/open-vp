@@ -1,4 +1,4 @@
-import { memo, useEffect, useCallback } from "react";
+import { memo, useEffect, useCallback, ReactNode } from "react";
 import ReactFlow, {
   Background,
   MiniMap,
@@ -35,20 +35,10 @@ import { CanvasEdge, DrawingCanvasEdge } from "./CanvasEdge";
 import { RectReadOnly } from "react-use-measure";
 import { styled, lighten, darken, alpha, useTheme } from "@mui/material";
 import { debounce } from "lodash";
-import ParentSize from "@visx/responsive/lib/components/ParentSize";
+import { ParentSize } from "@visx/responsive";
 import ResizePanel from "./ResizePanel";
 import { NestedContextMenu } from "@people_and_robots/open-gui";
-
 import "reactflow/dist/style.css";
-
-// const typeToBlockField = (dataType) =>
-//   dataType === DATA_TYPES.INSTANCE
-//     ? "instanceBlock"
-//     : dataType === DATA_TYPES.CALL
-//     ? "callBlock"
-//     : dataType === DATA_TYPES.REFERENCE
-//     ? "referenceBlock"
-//     : null;
 
 const CanvasNode = memo(
   ({ id }: NodeProps) => {
@@ -82,12 +72,12 @@ export interface CanvasProps {
   bounds: RectReadOnly;
   reactflowProOptions?: ProOptions;
 }
-export const Canvas = ({
+export function Canvas({
   snapToGrid = true,
   drawerWidth,
   bounds,
   reactflowProOptions,
-}: CanvasProps) => {
+}: CanvasProps): ReactNode {
   const theme = useTheme();
   const setTabViewport = useProgrammingStore(
     (state: ProgrammingState) => state.setTabViewport,
@@ -290,12 +280,6 @@ export const Canvas = ({
                     (activeTabData as Tab | null)?.id || "",
                   );
                   const zoom = viewport?.zoom || 1;
-                  // const offset = {
-                  //   x: drawerOpen
-                  //     ? e.clientX - bounds.left - drawerWidth - 50
-                  //     : e.clientX - bounds.left - 50,
-                  //   y: e.clientY - bounds.top,
-                  // };
                   const { x, y } = screenToFlowPosition({
                     x: e.clientX,
                     y: e.clientY,
@@ -405,7 +389,7 @@ export const Canvas = ({
       </ParentSize>
     </Backdrop>
   );
-};
+}
 
 export interface BackdropProps {
   pastable?: boolean;

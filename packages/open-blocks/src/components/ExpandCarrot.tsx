@@ -1,17 +1,16 @@
 import { MouseEventHandler } from "react";
 import { motion } from "framer-motion";
-import SvgIcon from "@mui/material/SvgIcon";
+import { SvgIcon } from "@mui/material";
 
 export interface ExpandCarrotProps {
   expanded?: boolean;
   onClick?: MouseEventHandler<SVGSVGElement>;
 }
 
-export const ExpandCarrot = ({ 
-  expanded = false, 
-  onClick = ()=>{} 
+export const ExpandCarrot = ({
+  expanded = false,
+  onClick = () => {},
 }: ExpandCarrotProps) => {
-  
   const variants = {
     open: { d: "M770.578,215.347L399.578,586.347L26.887,213.656" },
     closed: { d: "M214.078,28.156L585.078,399.156L212.387,771.847" },

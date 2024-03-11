@@ -1,7 +1,15 @@
 import { ReactNode } from "react";
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import { styled, alpha, Theme, keyframes } from "@mui/material";
-import { CONTENT_STYLES, ITEM_STYLES, ITEM_THEMED_STYLES, TRIGGER_THEMED_STYLES, DropdownData, RightSlot, LeftSlot } from "./NestedDropdown";
+import {
+  CONTENT_STYLES,
+  ITEM_STYLES,
+  ITEM_THEMED_STYLES,
+  TRIGGER_THEMED_STYLES,
+  DropdownData,
+  RightSlot,
+  LeftSlot,
+} from "./NestedDropdown";
 import { Icon } from "./Icon";
 
 export const slideUpAndFade = keyframes({
@@ -35,7 +43,7 @@ export const ORIGIN_TRIGGER_THEMED_STYLES = ({ theme }: { theme: Theme }) => ({
 });
 
 const ContextMenuTrigger = styled(ContextMenu.Trigger)(
-  {flex:1},
+  { flex: 1 },
   ORIGIN_TRIGGER_THEMED_STYLES,
 );
 const ContextMenuSubTrigger = styled(ContextMenu.SubTrigger)(
@@ -86,13 +94,7 @@ const ContextMenuLabel = styled(ContextMenu.Label)(
   }),
 );
 
-function InnerContext<T>({
-  data,
-  inner,
-}: {
-  data: T;
-  inner: DropdownData<T>;
-}) {
+function InnerContext<T>({ data, inner }: { data: T; inner: DropdownData<T> }) {
   if (inner.type === "DIVIDER") {
     return <ContextMenuSeparator />;
   } else if (inner.type === "HEADER") {
@@ -101,8 +103,8 @@ function InnerContext<T>({
         {typeof inner.label == "function"
           ? inner.label(data)
           : inner.label
-          ? inner.label
-          : "Header"}
+            ? inner.label
+            : "Header"}
       </ContextMenuLabel>
     );
   } else if (inner.inner) {
@@ -112,10 +114,18 @@ function InnerContext<T>({
           {typeof inner.label == "function"
             ? inner.label(data)
             : inner.label
-            ? inner.label
-            : "Menu Item"}
+              ? inner.label
+              : "Menu Item"}
           <RightSlot>
-            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right ? inner.right : "KeyboardArrowRightRounded"} />
+            <Icon
+              name={
+                typeof inner.right == "function"
+                  ? inner.right(data)
+                  : inner.right
+                    ? inner.right
+                    : "KeyboardArrowRightRounded"
+              }
+            />
           </RightSlot>
         </ContextMenuSubTrigger>
         <ContextMenu.Portal>
@@ -143,7 +153,7 @@ function InnerContext<T>({
         // }}
         onClick={(e: MouseEvent) => {
           if (typeof inner.onClick === "function") {
-            inner.onClick(data,e);
+            inner.onClick(data, e);
             if (inner.preventCloseOnClick) {
               e.preventDefault();
             }
@@ -153,17 +163,27 @@ function InnerContext<T>({
       >
         {inner.left && (
           <LeftSlot>
-            <Icon name={typeof inner.left == "function" ? inner.left(data) : inner.left} />
+            <Icon
+              name={
+                typeof inner.left == "function" ? inner.left(data) : inner.left
+              }
+            />
           </LeftSlot>
         )}
         {typeof inner.label == "function"
           ? inner.label(data)
           : inner.label
-          ? inner.label
-          : "Menu Item"}
+            ? inner.label
+            : "Menu Item"}
         {inner.right && (
           <RightSlot>
-            <Icon name={typeof inner.right == "function" ? inner.right(data) : inner.right} />
+            <Icon
+              name={
+                typeof inner.right == "function"
+                  ? inner.right(data)
+                  : inner.right
+              }
+            />
           </RightSlot>
         )}
       </ContextMenuItem>
@@ -174,9 +194,7 @@ function InnerContext<T>({
 export function NestedContextMenu<T>(props: NestedContextMenuProps<T>) {
   return (
     <ContextMenu.Root>
-      <ContextMenuTrigger>
-        {props.children}
-      </ContextMenuTrigger>
+      <ContextMenuTrigger>{props.children}</ContextMenuTrigger>
 
       <ContextMenu.Portal>
         <ContextMenuContent>

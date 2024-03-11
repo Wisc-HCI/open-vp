@@ -1,6 +1,6 @@
 {
   "name": "@people_and_robots/open-blocks",
-  "version": "2.0.0-pre.5",
+  "version": "2.0.0-pre.8",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -19,7 +19,6 @@
     "framer-motion": "^10.16.16",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-icons": "^4.4.0",
     "react-remark": "^2.1.0",
     "react-syntax-highlighter": "^15.5.0",
     "zustand": "^4.4.6",

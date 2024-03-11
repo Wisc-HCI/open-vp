@@ -13,7 +13,7 @@ import type {
   ProgrammingState,
   CommentData,
 } from "./types";
-import { SPAWNER, MetaType } from "./constants.ts";
+import { SPAWNER, MetaType } from "./constants";
 
 export const generateId = (type: string) => {
   return `${type}-${uuidv4()}`;
@@ -441,21 +441,35 @@ export function parseBlock(
       block.metaType === MetaType.Argument) &&
     typeSpec[block.type]?.namePolicy?.[language]
   ) {
-    return typeSpec[block.type].namePolicy[language](block);
+    const namePolicy = typeSpec[block.type].namePolicy;
+    if (namePolicy) {
+      return namePolicy[language](block);
+    } else {
+      return "";
+    }
   } else if (
     (block.metaType === MetaType.ObjectInstance ||
       block.metaType === MetaType.FunctionDeclaration) &&
     typeSpec[block.type]?.parsers?.[language] &&
     typeSpec[block.type]?.namePolicy?.[language]
   ) {
-    const name = typeSpec[block.type].namePolicy[language](block);
-    return typeSpec[block.type].parsers[language]({
-      block,
-      name,
-      depth,
-      context,
-      storeParser,
-    });
+    const namePolicy = typeSpec[block.type].namePolicy;
+    let name = "";
+    if (namePolicy) {
+      name = namePolicy[language](block);
+    }
+    const parsers = typeSpec[block.type].parsers;
+    if (parsers) {
+      return parsers[language]({
+        block,
+        name,
+        depth,
+        context,
+        storeParser,
+      });
+    } else {
+      return "";
+    }
   } else {
     console.warn(
       `Block "${block.id}" of type "${block.type}" does not have a valid parser or name policy for language "${language}". Ignoring.`,

@@ -10,8 +10,8 @@ import type {
   ConnectionData,
   ExecutionState,
   CommentData,
-} from "./types.ts";
-import { PrimitiveType, MetaType, PropertyType } from "./constants.ts";
+} from "./types";
+import { PrimitiveType, MetaType, PropertyType } from "./constants";
 
 export function instanceTemplateFromSpec(
   type: string,

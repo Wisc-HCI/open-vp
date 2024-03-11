@@ -6,8 +6,8 @@ import type {
   Position,
 } from "reactflow";
 import type { IconName } from "@people_and_robots/open-gui";
-import type { Timer } from "./timer.ts";
-import type { DefaultStore } from "./store.ts";
+import type { Timer } from "./timer";
+import type { DefaultStore } from "./store";
 import type {
   PrimitiveType,
   MetaType,
@@ -17,7 +17,7 @@ import type {
   ConnectionType,
   DrawerType,
   ExtraType,
-} from "./constants.ts";
+} from "./constants";
 
 export type ResponsiveIcon = IconName | ((block: BlockData) => IconName);
 
@@ -290,8 +290,8 @@ export interface ObjectTypeSpec {
   instanceBlock: BlockSpec;
   referenceBlock: BlockSpec;
   properties: { [key: string]: FieldInfo };
-  parsers: { [key: string]: (props: ParserProps) => string };
-  namePolicy: { [key: string]: (data: BlockData) => string };
+  parsers?: { [key: string]: (props: ParserProps) => string };
+  namePolicy?: { [key: string]: (data: BlockData) => string };
 }
 
 export interface FunctionTypeSpec {
@@ -380,7 +380,7 @@ export interface ProgrammingStateActions {
   renameTab: (id: string, name: string) => void;
   setTabVisibility: (id: string, visible: boolean) => void;
   removeTab: (id: string) => void;
-  addTab: (id: string, title: string, visible: boolean) => void;
+  addTab: () => void;
   setActiveTab: (tab: Tab) => void;
   setActiveDoc: (id: string, value: boolean) => void;
   parse: (

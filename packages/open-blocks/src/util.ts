@@ -6,7 +6,6 @@ import {
   ExtraType,
 } from "@people_and_robots/open-core";
 import { DropdownExtra } from "@people_and_robots/open-core/src/types";
-import { FiAlertCircle } from "react-icons/fi";
 
 export type Query =
   | "onCanvas"
@@ -21,7 +20,7 @@ export type Query =
 export function blockSpecQuery(
   typeSpec: TypeSpec,
   query: Query,
-  knownMetaType?: MetaType
+  knownMetaType?: MetaType,
 ): any {
   if (typeSpec && typeSpec.primitiveType === PrimitiveType.Object) {
     if (knownMetaType && knownMetaType === MetaType.ObjectInstance) {

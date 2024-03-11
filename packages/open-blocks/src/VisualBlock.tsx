@@ -27,7 +27,7 @@ import { DebugSection } from "./components/DebugSection";
 import { Block } from "./Block";
 import { pickBy } from "lodash";
 import { ConnectionHandle } from "./components/ConnectionHandle";
-import Typography from "@mui/material/Typography";
+import { Typography } from "@mui/material";
 import { Collapse, Box, Stack } from "@mui/material";
 import { BlockContainer, PropertySection } from "./components/BlockContainers";
 import { BlockHeader } from "./components/BlockHeader";
@@ -304,11 +304,15 @@ export const VisualBlock = forwardRef(
             {minified && (
               <MinifiedBar
                 id={data.id}
+                blockName={typeSpec.name}
                 propertyInfo={typeSpec.properties}
                 properties={data.properties}
                 interactionDisabled={interactionDisabled}
                 context={context}
                 limitedRender={limitedRender}
+                icon={blockSpec.icon ? blockSpec.icon : "CheckBoxRounded"}
+                progress={progress}
+                inDrawer={inDrawer}
               />
             )}
 

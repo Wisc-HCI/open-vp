@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { ThemeProvider, createTheme, Theme } from "@mui/material";
+import { ThemeProvider, Theme } from "@mui/material";
 import { VisualBlock } from "@people_and_robots/open-blocks";
 import {
   OUTSIDE,
