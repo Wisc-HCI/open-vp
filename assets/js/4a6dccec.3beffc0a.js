@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_people_and_robots_open_vp_docs=self.webpackChunk_people_and_robots_open_vp_docs||[]).push([[5838],{61966:e=>{e.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"default"}')}}]);
