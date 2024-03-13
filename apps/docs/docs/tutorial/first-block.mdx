@@ -1,0 +1,232 @@
+---
+sidebar_position: 5
+---
+
+import BlockViewer from "@site/src/components/BlockViewer";
+
+# First Block
+
+Let's create our first block. Each block type in the OpenVP system follows a convention for specification. Individual blocks are generated according to the specifications of that block.
+
+## Simple Scaffold
+
+Here is a simple example block specification that we can use as a scaffold:
+
+```js
+import { PrimitiveType } from "@people_and_robots/open-core";
+
+{
+  // The key is the id of the block type
+  simpleType: {
+    // This is the name of the block that gets displayed to the user
+    name: "Simple Block",
+    // This is the overall type of the block
+    // There are two main categories: "OBJECT" and "FUNCTION"
+    // For convenience, these labels are exported from
+    // @people_and_robots/open-core
+    primitiveType: PrimitiveType.Object, // "OBJECT"
+    // This is a markdown-flavored description of the block.
+    // This gets rendered in the block's documentation,
+    // alongside the auto-generated documentation.
+    description: "# Markdown-Flavored Description String",
+    // Since this block is an "OBJECT", you will need to define
+    // two sub-blocks: "instanceBlock" and "referenceBlock".
+    // The "instanceBlock" is the block that gets renders the
+    // block's instance or literal.
+    instanceBlock: {
+      // Whether the block is rendered on the canvas.
+      // Otherwise, it must be dragged into another block.
+      onCanvas: true,
+      // The background color of the block.
+      color: "#3f3f3f",
+      // The icon that gets displayed on the block.
+      // By default these icons are those used by
+      // @mui/icons-material.
+      icon: "SquareRounded",
+      // The "extras are elements that get rendered in the top-right
+      // corner of the block, or accessible from a left-click/context
+      // menu. These are typically used to display menus and other
+      // interactive elements, or to display additional information.
+      extras: [],
+    },
+    // The "referenceBlock" is the block that gets rendered when
+    // the a block is rendered to reference an instance block.
+    // These follow the same conventions as the "instanceBlock".
+    referenceBlock: {
+      onCanvas: true,
+      color: "#3f3f3f",
+      icon: "SquareRounded",
+      extras: [],
+    },
+    // Key-value pairs of property descriptions for the block. We'll
+    // cover this in more detail in the later sections.
+    properties: {},
+  }
+}
+```
+
+The result of such a block specification is a block that looks like this:
+
+<BlockViewer id="simpleType" typeSpec={{
+  name: "Simple Block",
+  primitiveType: "OBJECT",
+  description: "# Markdown-Flavored Description String",
+  instanceBlock: {
+    onCanvas: true,
+    color: "#3f3f3f",
+    icon: "SquareRounded",
+    extras: [],
+  },
+  referenceBlock: {
+    onCanvas: true,
+    color: "#3f3f3f",
+    icon: "SquareRounded",
+    extras: [],
+  },
+  properties: {},
+}}/>
+
+## Block Properties
+
+You may notice that these two blocks appear the same! That is because the main difference between the rendering of an instance block and a reference block is how the properties are handled. Properties are displayed as fields in the instance blocks, but are not present in the references. Since we don't currently have any properties in our type, both blocks appear the same.
+
+Let's explore what effect properties have on the rendering of blocks.
+
+Into the `properties` attribute of our type specification, we can add the following values:
+
+```js
+import { PrimitiveType, PropertyType } from "@people_and_robots/open-core";
+
+{
+  simpleType: {
+    // ... other attributes from above
+    properties: {
+      // The id of the property should match the key of the proeprty
+      // in the properties object.
+      myProperty: {
+        id: "myProperty",
+        // This specifies that the field is populated by dragging other
+        // blocks into it.
+        type: PropertyType.Block, // "BLOCK"
+        // This is the name of the property that gets displayed to the user.
+        name: "My Property",
+        // This is an array of block types that are allowed to be dragged
+        // into this property. These should match the keys of the type in
+        // the whole type specification object.
+        accepts: [],
+        // This is the default value of the property. Since it is a single
+        //  block, we set it to null. List properties would have an empty
+        //  array, for example.
+        default: null,
+        // This specifies whether the property is a list of re-orderable
+        // blocks or not.
+        isList: false,
+        // This specifies whether the property takes up the full width of
+        // the block or not. If the block is full-width, the label will not
+        // show.
+        fullWidth: false,
+      },
+    }
+}
+```
+
+<BlockViewer id="simpleType" typeSpec={{
+  name: "Simple Block",
+  primitiveType: "OBJECT",
+  description: "# Markdown-Flavored Description String",
+  instanceBlock: {
+    onCanvas: true,
+    color: "#3f3f3f",
+    icon: "SquareRounded",
+    extras: [],
+  },
+  referenceBlock: {
+    onCanvas: true,
+    color: "#3f3f3f",
+    icon: "SquareRounded",
+    extras: [],
+  },
+  properties: {
+    myProperty: {
+      id: "myProperty",
+      type: "BLOCK",
+      name: "My Property",
+      accepts: [],
+      default: [],
+      isList: false,
+      fullWidth: false
+    },
+  },
+}}/>
+
+## Simple Properties
+
+The `myProperty` property here is a [BlockFieldInfo](/docs/api/field-info) type property. Since it is also useful to encode other, non-block based attributes, we can also specify a number of additional types of properties using other types of more simple [FieldInfo](/docs/api/field-info) properties, which will be shown in the settings for the block:
+
+```js
+{
+  simpleType: {
+    // ... other attributes from above
+    properties: {
+      // The id of the property should match the key of the proeprty
+      // in the properties object.
+      myNumericalProperty: {
+        id: "myNumericalProperty",
+        // This specifies that the field is mapped to a number.
+        type: PropertyType.Number, // "NUMBER"
+        // This is the name of the property that gets displayed to the user.
+        name: "My Number",
+        // This is the default value of the property. Since it is a number,
+        // we will default to 10
+        default: 10,
+        // This specifies the minimum value possible
+        min: 0,
+        // This specifies the maximum value possible
+        max: 100,
+        // This specifies the step value for the number input
+        step: 1,
+        // This specifies the units of the number input
+        units: "m/s",
+      },
+    }
+}
+```
+
+<BlockViewer id="simpleType" typeSpec={{
+  name: "Simple Block",
+  primitiveType: "OBJECT",
+  description: "# Markdown-Flavored Description String",
+  instanceBlock: {
+    onCanvas: true,
+    color: "#3f3f3f",
+    icon: "SquareRounded",
+    extras: [],
+  },
+  referenceBlock: {
+    onCanvas: true,
+    color: "#3f3f3f",
+    icon: "SquareRounded",
+    extras: [],
+  },
+  properties: {
+    myProperty: {
+      id: "myProperty",
+      type: "BLOCK",
+      name: "My Property",
+      accepts: [],
+      default: [],
+      isList: false,
+      fullWidth: false
+    },
+    myNumericalProperty: {
+      id: "myNumericalProperty",
+      type: "NUMBER",
+      name: "My Number",
+      default: 10,
+      min: 0,
+      max: 100,
+      step: 1,
+      units: "m/s",
+    },
+  },
+}}/>

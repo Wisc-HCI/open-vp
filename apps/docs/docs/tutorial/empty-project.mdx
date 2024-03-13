@@ -1,0 +1,21 @@
+---
+sidebar_position: 3
+---
+
+# Empty Project
+
+The first step to using OpenVP is to import the `Environment` component and include it within your app, wherever it needs to go. By default, the `Environment` component will expand to fill the size of the parent element.
+
+```jsx live
+// import { Environment } from "@people_and_robots/open-vp"
+
+function App(props) {
+  return (
+    <div style={{ height: 400, width: "100%" }}>
+      <Environment />
+    </div>
+  );
+}
+```
+
+This will create a blank canvas that you can use to start building your own visual programming environment. The `Environment` component is the main entry point for the OpenVP library.

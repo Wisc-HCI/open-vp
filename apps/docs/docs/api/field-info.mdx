@@ -1,0 +1,48 @@
+import DocViewer from "@site/src/components/DocViewer";
+import { BlockFieldInfo, SimpleNumberFieldInfo, SimpleBooleanFieldInfo, SimpleStringFieldInfo, SimpleOptionsFieldInfo, SimpleMetadataFieldInfo, SimpleVector3FieldInfo } from "@site/src/components/DocData";
+
+# FieldInfo
+
+There are multiple variants of `FieldInfo`. The most common is the `BlockFieldInfo`, which is used to specify a field that is a block. The other variants encode "Simple" fields, such as numbers, strings, booleans, and options.
+
+## BlockFieldInfo
+
+<DocViewer
+rows={BlockFieldInfo}
+/>
+
+## SimpleBooleanFieldInfo
+
+<DocViewer
+rows={SimpleBooleanFieldInfo}
+/>
+
+## SimpleNumberFieldInfo
+
+<DocViewer
+rows={SimpleNumberFieldInfo}
+/>
+
+## SimpleStringFieldInfo
+
+<DocViewer
+rows={SimpleStringFieldInfo}
+/>
+
+## SimpleOptionsFieldInfo
+
+<DocViewer
+rows={SimpleOptionsFieldInfo}
+/>
+
+## SimpleMetadataFieldInfo
+
+<DocViewer
+rows={SimpleMetadataFieldInfo}
+/>
+
+## SimpleVector3FieldInfo
+
+<DocViewer
+rows={SimpleVector3FieldInfo}
+/>

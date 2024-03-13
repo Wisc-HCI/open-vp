@@ -1,0 +1,8 @@
+{
+  "label": "Enums",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Constants bundled in enums, accessible through the `@people_and_robots/open-core` library."
+  }
+}

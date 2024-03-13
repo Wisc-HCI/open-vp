@@ -1,0 +1,18 @@
+{
+  "extends": "tsconfig/react-library.json",
+  "include": ["."],
+  "exclude": ["dist", "build", "node_modules"],
+  "typedocOptions": {
+    "entryPoints": ["src/index.tsx"],
+    "out": "../../docs/api",
+    // "excludeExternals": true,
+    // "excludePrivate": true,
+    // "excludeProtected": true,
+    // "excludeInternal": true,
+    // "excludeNotExported": true,
+    // "excludeNotDocumented": true,
+    "readme": "none",
+    "name": "open-gui",
+    "plugin": ["typedoc-plugin-markdown"]
+  }
+}

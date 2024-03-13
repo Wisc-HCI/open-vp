@@ -1,0 +1,114 @@
+---
+sidebar_position: 7
+---
+
+import Environment from "@site/src/components/Environment";
+
+# Drawers
+
+To start dragging in blocks into the canvas, we will need a place to drag them from. That is where the drawer comes in. The drawer is located on the left-hand side of the environment, and organizes blocks based on a specification you provide. Let's use the previous blocks we created, and create some drawers for them.
+
+## DrawerSpec
+
+The drawer is customized with a set of [DrawerSpec](/docs/api/drawer-spec) entries. The `DrawerSpec` comes in two variants, the `ObjectDrawerSpec` and the `ReferenceDrawerSpec`. The `ObjectDrawerSpec` is used to specify a drawer that contains multiple different types of block instances, while the `ReferenceDrawerSpec` is used to provide draggable references to existing instances (or calls to existing functions) defined in the program.
+
+For our purposes here, we will only be using the `ObjectDrawerSpec`. First, let's create a single drawer that includes both blocks we created in the previous section.
+
+```js
+const drawers = [
+  {
+    title: "Blocks",
+    type: DrawerType.Multiple,
+    metaType: MetaType.ObjectInstance,
+    objectTypes: ["simpleType", "textType"],
+    icon: "SquareRounded",
+  },
+];
+```
+
+And here is the result of that configuration, rendered in the environment:
+
+<div style={{ height: 400, width: "100%" }}>
+<Environment
+initial={{
+    programSpec: {
+      drawers: [
+        {
+          title: "Blocks",
+          type: "MULTIPLE",
+          metaType: "OBJECT-INSTANCE",
+          objectTypes: ["simpleType", "textType"],
+          icon: "SquareRounded",
+        },
+      ],
+      objectTypes: {
+        simpleType: {
+          name: "Simple Block",
+          primitiveType: "OBJECT",
+          description: "# Markdown-Flavored Description String",
+          instanceBlock: {
+            onCanvas: true,
+            color: "#3f3f3f",
+            icon: "SquareRounded",
+            extras: [],
+          },
+          referenceBlock: {
+            onCanvas: true,
+            color: "#3f3f3f",
+            icon: "SquareRounded",
+            extras: [],
+          },
+          properties: {
+            myProperty: {
+              id: "myProperty",
+              type: "BLOCK",
+              name: "My Property",
+              accepts: ["textType"],
+              default: null,
+              isList: false,
+              fullWidth: false,
+            },
+            myNumericalProperty: {
+              id: "myNumericalProperty",
+              type: "NUMBER",
+              name: "My Number",
+              default: 10,
+              min: 0,
+              max: 100,
+              step: 1,
+              units: "m/s",
+            },
+          },
+        },
+        textType: {
+          name: "Text Block",
+          primitiveType: "OBJECT",
+          description: "# Markdown-Flavored Description String",
+          instanceBlock: {
+            onCanvas: false,
+            color: "#629e6c",
+            icon: "SquareRounded",
+            extras: [],
+            minified: true,
+          },
+          referenceBlock: {
+            onCanvas: false,
+            color: "#629e6c",
+            icon: "SquareRounded",
+            extras: [],
+            minified: true,
+          },
+          properties: {
+            text: {
+              id: "text",
+              type: "STRING",
+              name: "Text",
+              default: "Hello World!",
+            },
+          },
+        },
+      },
+    },
+  }}
+/>
+</div>

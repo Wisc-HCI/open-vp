@@ -1,0 +1,8 @@
+{
+  "label": "Tutorial",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "A tutorial covering the basics of OpenVP."
+  }
+}
