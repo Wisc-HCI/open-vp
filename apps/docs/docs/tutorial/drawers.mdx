@@ -2,8 +2,7 @@
 sidebar_position: 7
 ---
 
-import { Environment } from "@people_and_robots/open-vp";
-import BrowserOnly from "@docusaurus/BrowserOnly";
+import Environment from "@site/src/components/Environment";
 
 # Drawers
 
@@ -30,7 +29,6 @@ const drawers = [
 And here is the result of that configuration, rendered in the environment:
 
 <div style={{ height: 400, width: "100%" }}>
-<BrowserOnly>
 <Environment
 initial={{
     programSpec: {
@@ -113,5 +111,4 @@ initial={{
     },
   }}
 />
-</BrowserOnly>
 </div>

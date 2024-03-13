@@ -55,13 +55,7 @@ export const MinifiedBar = memo(
 
     return (
       <FullWidthStack
-        direction={
-          inDrawer
-            ? "row"
-            : propertyLength > 1 || interactionDisabled
-              ? "column"
-              : "row"
-        }
+        direction={inDrawer ? "row" : propertyLength > 1 ? "column" : "row"}
         spacing={0.5}
         alignItems="stretch"
         justifyContent="flex-start"

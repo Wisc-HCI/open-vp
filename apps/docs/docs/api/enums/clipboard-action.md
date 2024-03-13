@@ -1,6 +1,6 @@
 # ClipboardAction
 
-```ts
+```js
 enum ClipboardAction {
   Copy = "COPY",
   Cut = "CUT",

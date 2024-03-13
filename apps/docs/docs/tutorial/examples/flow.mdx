@@ -1,0 +1,21 @@
+---
+sidebar_position: 2
+---
+
+import Environment from "@site/src/components/Environment";
+import { flowTypes, flowDrawers } from "@site/src/components/Examples/flow";
+
+# Flow-Based Programming
+
+An example showing how to use the Environment to create a simple flow-based programming environment.
+
+<div style={{ height: 400, width: "100%" }}>
+<Environment
+initial={{
+    programSpec:{
+      drawers:flowDrawers,
+      objectTypes:flowTypes
+    }
+  }}
+/>
+</div>

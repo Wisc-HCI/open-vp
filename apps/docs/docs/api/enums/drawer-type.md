@@ -1,6 +1,6 @@
 # DrawerType
 
-```ts
+```js
 enum DrawerType {
   Singular = "SINGULAR",
   Multiple = "MULTIPLE",

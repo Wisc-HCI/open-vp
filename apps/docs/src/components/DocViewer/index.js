@@ -8,6 +8,7 @@ import {
   TableBody,
   Paper,
 } from "@mui/material";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 import CodeBlock from "@theme/CodeBlock";
 import Link from "@docusaurus/Link";
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -49,47 +50,57 @@ export default function DocViewer({ rows = [] }) {
   );
 
   return (
-    <ThemeProvider theme={theme}>
-      <TableContainer component={Paper} componentProps={{ sx: {} }}>
-        <Table
-          size="small"
-          sx={{ minWidth: 650, marginBottom: 0 }}
-          aria-label="simple table"
-        >
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Type</TableCell>
-              <TableCell align="right">Required</TableCell>
-              <TableCell align="right">Description</TableCell>
-              <TableCell align="left">Example</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.name}
-                // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="right">{getType(row.type, true)}</TableCell>
-                <TableCell align="right">{row.required ? "★" : ""}</TableCell>
-                <TableCell align="right">{row.description}</TableCell>
-                <TableCell align="right">
-                  {row.example ? (
-                    <CodeBlock language="javascript">{row.example}</CodeBlock>
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </ThemeProvider>
+    <BrowserOnly fallback={<div>Loading...</div>}>
+      {() => (
+        <ThemeProvider theme={theme}>
+          <TableContainer component={Paper} componentProps={{ sx: {} }}>
+            <Table
+              size="small"
+              sx={{ minWidth: 650, marginBottom: 0 }}
+              aria-label="simple table"
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell align="right">Type</TableCell>
+                  <TableCell align="right">Required</TableCell>
+                  <TableCell align="right">Description</TableCell>
+                  <TableCell align="left">Example</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow
+                    key={row.name}
+                    // sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="right">
+                      {getType(row.type, true)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {row.required ? "★" : ""}
+                    </TableCell>
+                    <TableCell align="right">{row.description}</TableCell>
+                    <TableCell align="right">
+                      {row.example ? (
+                        <CodeBlock language="javascript">
+                          {row.example}
+                        </CodeBlock>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </ThemeProvider>
+      )}
+    </BrowserOnly>
   );
 }
 

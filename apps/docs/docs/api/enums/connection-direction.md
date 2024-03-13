@@ -1,6 +1,6 @@
 # ConnectionDirection
 
-```ts
+```js
 enum ConnectionDirection {
   Inbound = "INBOUND",
   Outbound = "OUTBOUND",

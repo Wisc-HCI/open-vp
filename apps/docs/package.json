@@ -1,6 +1,6 @@
 {
   "name": "@people_and_robots/open-vp-docs",
-  "version": "2.0.0-pre.8",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",

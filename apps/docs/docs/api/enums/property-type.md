@@ -1,6 +1,6 @@
 # PropertyType
 
-```ts
+```js
 enum PropertyType {
   Boolean = "BOOLEAN",
   Number = "NUMBER",

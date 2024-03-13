@@ -9,7 +9,6 @@ class Timer {
   _timescale: number;
   _useFixedDelta: boolean;
   _fixedDelta: number;
-  _pageVisibilityHandler: () => void;
 
   /**
    * A timer utility class.
@@ -33,28 +32,10 @@ class Timer {
 
     this._useFixedDelta = useFixedDelta || false;
     this._fixedDelta = fixedDelta || 16.67; // ms, corresponds to approx. 60 FPS
-
-    // use Page Visibility API to avoid large time delta values
-    this._pageVisibilityHandler = handleVisibilityChange.bind(this);
-
-    document.addEventListener(
-      "visibilitychange",
-      this._pageVisibilityHandler,
-      false,
-    );
   }
 
   disableFixedDelta(): this {
     this._useFixedDelta = false;
-
-    return this;
-  }
-
-  dispose(): this {
-    document.removeEventListener(
-      "visibilitychange",
-      this._pageVisibilityHandler,
-    );
 
     return this;
   }
@@ -131,10 +112,6 @@ class Timer {
   fromJson({ timescale = 1 }): Timer {
     return new Timer(undefined, undefined, timescale);
   }
-}
-
-function handleVisibilityChange(this: Timer): void {
-  if (document.hidden) this.reset();
 }
 
 export { Timer };

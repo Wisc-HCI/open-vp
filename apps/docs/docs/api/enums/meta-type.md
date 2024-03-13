@@ -1,6 +1,6 @@
 # MetaType
 
-```ts
+```js
 enum MetaType {
   ObjectInstance = "OBJECT-INSTANCE",
   ObjectReference = "OBJECT-REFERENCE",

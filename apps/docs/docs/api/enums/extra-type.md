@@ -1,6 +1,6 @@
 # ExtraType
 
-```ts
+```js
 enum ExtraType {
   SelectionToggle = "SELECTION_TOGGLE",
   DocToggle = "DOC_TOGGLE",

@@ -1,0 +1,21 @@
+---
+sidebar_position: 3
+---
+
+import Environment from "@site/src/components/Environment";
+import { triggerTypes, triggerDrawers } from "@site/src/components/Examples/trigger";
+
+# Trigger-Based Programming
+
+An example showing how to use the Environment to create a simple trigger-based programming environment.
+
+<div style={{ height: 400, width: "100%" }}>
+<Environment
+initial={{
+    programSpec:{
+      drawers:triggerDrawers,
+      objectTypes:triggerTypes
+    }
+  }}
+/>
+</div>
